@@ -6,15 +6,12 @@
     <version>0.1-SNAPSHOT</version>
     <artifactId>reference-data</artifactId>
     <packaging>pom</packaging>
-    <!--<modules>-->
-        <!--<module>ananya-flw</module>-->
-        <!--<module>ananya-report</module>-->
-        <!--<module>ananya-transaction</module>-->
-        <!--<module>ananya-service</module>-->
-        <!--<module>ananya-performance</module>-->
-        <!--<module>ananya-web</module>-->
-        <!--<module>ananya-tool</module>-->
-    <!--</modules>-->
+    <modules>
+        <module>reference-data-domain</module>
+        <module>reference-data-service</module>
+        <module>reference-data-performance</module>
+        <module>reference-data-web</module>
+    </modules>
     <name>Reference-Data</name>
 
     <properties>
