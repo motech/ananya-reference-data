@@ -2,15 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.motechproject.referencedata</groupId>
+    <groupId>org.motechproject.ananya.referencedata</groupId>
     <version>0.1-SNAPSHOT</version>
-    <artifactId>reference-data</artifactId>
+    <artifactId>ananya-reference-data</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>reference-data-domain</module>
-        <module>reference-data-service</module>
-        <module>reference-data-performance</module>
-        <module>reference-data-web</module>
+        <module>ananya-reference-data-domain</module>
+        <module>ananya-reference-data-service</module>
+        <module>ananya-reference-data-performance</module>
+        <module>ananya-reference-data-web</module>
     </modules>
     <name>Reference-Data</name>
 
