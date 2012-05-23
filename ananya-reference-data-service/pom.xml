@@ -8,7 +8,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <name>Reference Data Service</name>
+    <name>Ananya Reference Data Service</name>
 
     <artifactId>ananya-reference-data-service</artifactId>
 

@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ananya-reference-data-web</artifactId>
     <packaging>war</packaging>
-    <name>reference-data</name>
+    <name>Ananya Reference Data Web</name>
 
     <properties>
         <jetty.port>9979</jetty.port>

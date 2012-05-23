@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ananya-reference-data-performance</artifactId>
-    <name>Reference Data Performance</name>
+    <name>Ananya Reference Data Performance</name>
 
     <dependencies>
         <dependency>

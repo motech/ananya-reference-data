@@ -12,7 +12,7 @@
         <module>ananya-reference-data-performance</module>
         <module>ananya-reference-data-web</module>
     </modules>
-    <name>Reference-Data</name>
+    <name>Ananya Reference-Data</name>
 
     <properties>
         <spring.version>3.0.5.RELEASE</spring.version>
