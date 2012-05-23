@@ -7,17 +7,16 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
+
     <context:property-placeholder location="classpath*:*.properties"/>
-    <util:properties id="activemqProperties" location="classpath:/activemq.properties"/>
-    <util:properties id="apiKeys" location="classpath:/apiKeys.properties"/>
+    <context:annotation-config/>
+    <context:spring-configured/>
+
     <import resource="classpath:applicationPlatformServerAPI.xml"/>
 
     <context:component-scan base-package="org.motechproject.referencedata"/>
 
-    <import resource="classpath:applicationContext-domain.xml"/>
     <import resource="classpath:applicationContext-services.xml"/>
-
-    <context:spring-configured/>
-    <context:annotation-config/>
+    <import resource="classpath:applicationContext-domain.xml"/>
 
 </beans>
