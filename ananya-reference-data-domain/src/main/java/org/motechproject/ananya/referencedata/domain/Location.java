@@ -19,15 +19,16 @@ public class Location {
     @Column(name = "panchayat")
     private String panchayat;
 
-    @Column(name = "districtCode")
+    @Column(name = "district_code")
     private Integer districtCode;
 
-    @Column(name = "blockCode")
+    @Column(name = "block_code")
     private Integer blockCode;
 
-    @Column(name = "panchayatCode")
+    @Column(name = "panchayat_code")
     private Integer panchayatCode;
 
+    @Transient
     private String locationId;
 
     public Location() {
@@ -40,7 +41,7 @@ public class Location {
         this.districtCode = districtCode;
         this.blockCode = blockCode;
         this.panchayatCode = panchayatCode;
-        locationId = "S01" + "D" + prependZeros(districtCode) + "B" + prependZeros(blockCode) + "V" + prependZeros(panchayatCode);
+        updateLocationId();
     }
 
     public Location(String district, String block, String panchayat) {
@@ -73,10 +74,15 @@ public class Location {
         return panchayatCode;
     }
 
+    public String getLocationId() {
+        return locationId;
+    }
+
     public void updateLocationCode(Integer districtCode, Integer blockCode, Integer panchayatCode) {
         this.districtCode = districtCode;
         this.blockCode = blockCode;
         this.panchayatCode = panchayatCode;
+        updateLocationId();
     }
 
     @Override
@@ -99,6 +105,19 @@ public class Location {
         result = 31 * result + (block != null ? block.hashCode() : 0);
         result = 31 * result + (panchayat != null ? panchayat.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "district=\"" + district + '"' +
+                ", block=\"" + block + '"' +
+                ", panchayat=\"" + panchayat + '"' +
+                '}';
+    }
+
+    private void updateLocationId() {
+        locationId = "S01" + "D" + prependZeros(districtCode) + "B" + prependZeros(blockCode) + "V" + prependZeros(panchayatCode);
     }
 
     private String prependZeros(int code) {

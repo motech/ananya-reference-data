@@ -6,6 +6,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class LocationListTest {
 
@@ -63,5 +65,17 @@ public class LocationListTest {
         assertEquals(2, (int) updatedLocation.getDistrictCode());
         assertEquals(1, (int) updatedLocation.getBlockCode());
         assertEquals(1, (int) updatedLocation.getPanchayatCode());
+    }
+
+    @Test
+    public void shouldReturnIfLocationIsAlreadyPresentInTheDb() {
+        Location alreadyPresentLocation = new Location("D1","B1","P1");
+        Location locationNotPresent = new Location("D5","B1","P1");
+
+        boolean isPresent = locationList.isAlreadyPresent(alreadyPresentLocation);
+        assertTrue(isPresent);
+
+        isPresent = locationList.isAlreadyPresent(locationNotPresent);
+        assertFalse(isPresent);
     }
 }

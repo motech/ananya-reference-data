@@ -8,10 +8,12 @@
         <sql splitStatements="false">
             CREATE TABLE reference_data.location_dimension(
             id serial,
-            location_id varchar(30),
             district varchar(255),
             block varchar(255),
-            panchayat varchar(255)
+            panchayat varchar(255),
+            district_code int,
+            block_code int,
+            panchayat_code int
             );
         </sql>
     </changeSet>

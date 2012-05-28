@@ -13,6 +13,10 @@ public class LocationList {
         }
     }
 
+    public boolean isAlreadyPresent(Location location) {
+        return findFor(location.getDistrict(), location.getBlock(), location.getPanchayat()) != null;
+    }
+
     public Location updateLocationCode(Location currentLocation) {
         Location location = findFor(currentLocation.getDistrict(), currentLocation.getBlock(), currentLocation.getPanchayat());
 
