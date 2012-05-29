@@ -34,7 +34,7 @@ public class LocationServiceTest {
 
         LocationCreationResponse locationCreationResponse = locationService.add(locationRequest);
 
-        assertTrue(locationCreationResponse.toString().contains("{message = \"Blank district, block or panchayat\", location ={district=\"null\", block=\"block\", panchayat=\"panchayat\"}}"));
+        assertTrue(locationCreationResponse.getMessage().contains("Blank district, block or panchayat"));
     }
 
     @Test

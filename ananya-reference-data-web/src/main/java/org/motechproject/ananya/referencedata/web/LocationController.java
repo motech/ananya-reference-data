@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/location")
@@ -22,8 +22,7 @@ public class    LocationController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView create(@RequestBody LocationRequest locationRequest) {
-        LocationCreationResponse locationCreationResponse = locationService.add(locationRequest);
-        return new ModelAndView("creation").addObject("response",locationCreationResponse);
+    public @ResponseBody LocationCreationResponse create(@RequestBody LocationRequest locationRequest) {
+        return locationService.add(locationRequest);
     }
 }

@@ -7,7 +7,6 @@ import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
 import org.motechproject.ananya.referencedata.response.LocationCreationResponse;
 import org.motechproject.ananya.referencedata.service.LocationService;
-import org.springframework.web.servlet.ModelAndView;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -32,8 +31,7 @@ public class LocationControllerTest {
         LocationCreationResponse response = new LocationCreationResponse(new Location());
         when(locationService.add(locationRequest)).thenReturn(response);
 
-        ModelAndView modelAndView = locationController.create(locationRequest);
-
-        assertEquals(response, modelAndView.getModel().get("response"));
+        LocationCreationResponse actualResponse = locationController.create(locationRequest);
+        assertEquals(response, actualResponse);
     }
 }
