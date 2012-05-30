@@ -2,7 +2,7 @@ package org.motechproject.ananya.referencedata.response;
 
 public class ValidationResponse {
     private String message;
-    private boolean isValid;
+    private boolean isValid = true;
 
     public ValidationResponse forSuccessfulCreation() {
         isValid = true;
@@ -19,6 +19,24 @@ public class ValidationResponse {
     public ValidationResponse forDuplicate() {
         isValid = false;
         this.message = "Location already present";
+        return this;
+    }
+
+    public ValidationResponse forInvalidMsisdn() {
+        isValid = false;
+        this.message = "Invalid msisdn";
+        return this;
+    }
+
+    public ValidationResponse forInvalidDesignation() {
+        isValid = false;
+        this.message = "Invalid designation";
+        return this;
+    }
+
+    public ValidationResponse forInvalidLocation() {
+        isValid = false;
+        this.message = "Invalid location";
         return this;
     }
 

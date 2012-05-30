@@ -7,7 +7,7 @@
     <changeSet context="setup" author="ThoughtWorks" id="1">
         <sql splitStatements="false">
             CREATE TABLE reference_data.location_dimension(
-            id serial,
+            id serial primary key,
             district varchar(255),
             block varchar(255),
             panchayat varchar(255),
@@ -23,11 +23,9 @@
             CREATE TABLE reference_data.front_line_worker_dimension(
             id serial,
             msisdn bigint,
-            operator varchar(30),
             name varchar(255),
-            status varchar(30),
             designation varchar(30),
-            circle varchar(30)
+            location_id integer REFERENCES reference_data.location_dimension(id)
             );
         </sql>
     </changeSet>

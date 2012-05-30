@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 
 public class AllLocationsTest extends SpringIntegrationTest {
 
@@ -45,5 +44,18 @@ public class AllLocationsTest extends SpringIntegrationTest {
         List<Location> locations = allLocations.getAll();
 
         assertEquals(2, locations.size());
+    }
+
+    @Test
+    public void shouldReturnLocationWhenLocationForGivenLocationDetailsExists() {
+        String district = "district";
+        String block = "block";
+        String panchayat = "panchayat";
+        Location location = new Location(district, block, panchayat);
+
+        allLocations.add(location);
+
+        Location locationFromDB = allLocations.getFor(district, block, panchayat);
+        assertNotNull(locationFromDB);
     }
 }

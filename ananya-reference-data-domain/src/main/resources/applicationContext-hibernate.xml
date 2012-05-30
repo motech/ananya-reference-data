@@ -7,7 +7,7 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="annotatedClasses">
             <list>
-                <!--<value>org.motechproject.ananya.domain.dimension.FrontLineWorkerDimension</value>-->
+                <value>org.motechproject.ananya.referencedata.domain.FLWData</value>
                 <value>org.motechproject.ananya.referencedata.domain.Location</value>
             </list>
         </property>

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/location")
-public class    LocationController {
+public class LocationController {
 
     private LocationService locationService;
 
@@ -22,7 +22,9 @@ public class    LocationController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody LocationCreationResponse create(@RequestBody LocationRequest locationRequest) {
+    public
+    @ResponseBody
+    LocationCreationResponse create(@RequestBody LocationRequest locationRequest) {
         return locationService.add(locationRequest);
     }
 }
