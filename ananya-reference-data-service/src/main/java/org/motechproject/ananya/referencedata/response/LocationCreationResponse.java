@@ -1,22 +1,18 @@
 package org.motechproject.ananya.referencedata.response;
 
-import org.motechproject.ananya.referencedata.domain.Location;
+import org.apache.commons.lang.StringUtils;
 
 public class LocationCreationResponse {
-    private Location location;
     private String message;
 
-    public LocationCreationResponse(Location location) {
-        this.location = location;
-    }
-
-    public LocationCreationResponse withValidationResponse(ValidationResponse validationResponse) {
-        this.message = validationResponse.getMessage();
+    public LocationCreationResponse withCreated() {
+        this.message = "Location created successfully";
         return this;
     }
 
-    public Location getLocation() {
-        return location;
+    public LocationCreationResponse withValidationResponse(ValidationResponse validationResponse) {
+        this.message = StringUtils.join(validationResponse.getMessage(), ',');
+        return this;
     }
 
     public String getMessage() {

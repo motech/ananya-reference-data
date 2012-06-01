@@ -21,15 +21,16 @@ public class LocationService {
     }
 
     public LocationCreationResponse add(LocationRequest locationRequest) {
+        LocationCreationResponse response = new LocationCreationResponse();
+
         Location location = LocationMapper.mapFrom(locationRequest);
         LocationList locationList = new LocationList(this.allLocations.getAll());
-        LocationValidator locationValidator = new LocationValidator(locationList);
-        LocationCreationResponse response = new LocationCreationResponse(location);
 
-        ValidationResponse validationResponse = locationValidator.validate(location);
+        ValidationResponse validationResponse = new LocationValidator(locationList).validate(location);
         if(validationResponse.isValid()) {
             location = locationList.updateLocationCode(location);
             this.allLocations.add(location);
+            return response.withCreated();
         }
 
         return response.withValidationResponse(validationResponse);

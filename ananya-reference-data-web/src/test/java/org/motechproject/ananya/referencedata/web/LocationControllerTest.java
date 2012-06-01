@@ -3,7 +3,6 @@ package org.motechproject.ananya.referencedata.web;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
 import org.motechproject.ananya.referencedata.response.LocationCreationResponse;
 import org.motechproject.ananya.referencedata.service.LocationService;
@@ -28,7 +27,7 @@ public class LocationControllerTest {
     @Test
     public void shouldAddNewLocation() {
         LocationRequest locationRequest = new LocationRequest();
-        LocationCreationResponse response = new LocationCreationResponse(new Location());
+        LocationCreationResponse response = new LocationCreationResponse();
         when(locationService.add(locationRequest)).thenReturn(response);
 
         LocationCreationResponse actualResponse = locationController.create(locationRequest);

@@ -36,7 +36,7 @@ public class DataAPITest extends SpringIntegrationTest {
         JsonHttpClient jsonHttpClient = new JsonHttpClient(LocationCreationResponse.class);
         LocationCreationResponse locationResponse = (LocationCreationResponse) jsonHttpClient.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
 
-        assertEquals("Successfully created location", locationResponse.getMessage());
+        assertEquals("Location created successfully", locationResponse.getMessage());
     }
 
     @Test
@@ -60,6 +60,8 @@ public class DataAPITest extends SpringIntegrationTest {
 
     @Test
     public void shouldNotCreateNewFLWForInvalidMsisdn() throws IOException {
+        JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient(LocationCreationResponse.class);
+        jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
         JsonHttpClient jsonHttpClient = new JsonHttpClient(FLWResponse.class);
         FLWResponse flwResponse = (FLWResponse) jsonHttpClient.post("http://localhost:9979/reference-data/flw", new FLWRequest("9999", "name", "ASHA", "district", "block", "panchayat"));
 
@@ -68,6 +70,8 @@ public class DataAPITest extends SpringIntegrationTest {
 
     @Test
     public void shouldNotCreateNewFLWForInvalidDesignation() throws IOException {
+        JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient(LocationCreationResponse.class);
+        jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
         JsonHttpClient jsonHttpClient = new JsonHttpClient(FLWResponse.class);
         FLWResponse flwResponse = (FLWResponse) jsonHttpClient.post("http://localhost:9979/reference-data/flw", new FLWRequest("9999888822", "name", "invalid_designation", "district", "block", "panchayat"));
 

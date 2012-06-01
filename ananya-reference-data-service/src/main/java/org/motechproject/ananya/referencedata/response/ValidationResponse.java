@@ -1,55 +1,47 @@
 package org.motechproject.ananya.referencedata.response;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ValidationResponse {
-    private String message;
+    private List<String> message = new ArrayList<String>();
     private boolean isValid = true;
 
-    public ValidationResponse forSuccessfulCreationOfLocation() {
-        isValid = true;
-        this.message = "Successfully created location";
-        return this;
+    public void forBlankFieldsInLocation() {
+        isValid = false;
+        this.message.add("Blank district, block or panchayat");
     }
 
-    public ValidationResponse forBlankFieldsInLocation() {
+    public void forDuplicateLocation() {
         isValid = false;
-        this.message = "Blank district, block or panchayat";
-        return this;
+        this.message.add("Location already present");
     }
 
-    public ValidationResponse forDuplicateLocation() {
+    public void forInvalidMsisdn() {
         isValid = false;
-        this.message = "Location already present";
-        return this;
+        this.message.add("Invalid msisdn");
     }
 
-    public ValidationResponse forInvalidMsisdn() {
+    public void forInvalidDesignation() {
         isValid = false;
-        this.message = "Invalid msisdn";
-        return this;
+        this.message.add("Invalid designation");
     }
 
-    public ValidationResponse forInvalidDesignation() {
+    public void forInvalidLocation() {
         isValid = false;
-        this.message = "Invalid designation";
-        return this;
-    }
-
-    public ValidationResponse forInvalidLocation() {
-        isValid = false;
-        this.message = "Invalid location";
-        return this;
+        this.message.add("Invalid location");
     }
 
     public boolean isValid() {
         return isValid;
     }
 
-    public String getMessage() {
+    public List<String> getMessage() {
         return message;
     }
 
     @Override
     public String toString() {
-        return message;
+        return message.toString();
     }
 }

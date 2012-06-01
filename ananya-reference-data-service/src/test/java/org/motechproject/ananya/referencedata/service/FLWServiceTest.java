@@ -14,6 +14,7 @@ import org.motechproject.ananya.referencedata.request.FLWRequest;
 import org.motechproject.ananya.referencedata.response.FLWResponse;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -89,6 +90,7 @@ public class FLWServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
         FLWResponse flwResponse = flwService.add(flwRequest);
 
@@ -114,6 +116,7 @@ public class FLWServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
         FLWResponse flwResponse = flwService.add(flwRequest);
 
@@ -157,6 +160,25 @@ public class FLWServiceTest {
         FLWResponse flwResponse = flwService.add(flwRequest);
 
         assertEquals("Invalid location", flwResponse.getMessage());
+        verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
+    }
+
+    @Test
+    public void shouldNotAddFLWIfInvalidMsisdnInvalidDesignationAndLocationIsNotAvailable() {
+        String msisdn = "99998888";
+        String name = "name";
+        String designation = "Random";
+        String district = "~district";
+        String block = "~block";
+        String panchayat = "~panchayat";
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        when(allLocations.getFor(district, block, panchayat)).thenReturn(null);
+
+        FLWResponse flwResponse = flwService.add(flwRequest);
+
+        assertTrue(flwResponse.getMessage().contains("Invalid msisdn"));
+        assertTrue(flwResponse.getMessage().contains("Invalid designation"));
+        assertTrue(flwResponse.getMessage().contains("Invalid location"));
         verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
     }
 
@@ -214,6 +236,7 @@ public class FLWServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
         FLWResponse flwResponse = flwService.update(flwRequest);
 
@@ -230,6 +253,7 @@ public class FLWServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
         FLWResponse flwResponse = flwService.update(flwRequest);
 

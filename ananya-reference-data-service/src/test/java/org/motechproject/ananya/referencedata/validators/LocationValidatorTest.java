@@ -19,7 +19,7 @@ public class LocationValidatorTest {
         ValidationResponse validationResponse = locationValidator.validate(location);
 
         assertFalse(validationResponse.isValid());
-        assertEquals("Blank district, block or panchayat", validationResponse.getMessage());
+        assertTrue(validationResponse.getMessage().contains("Blank district, block or panchayat"));
     }
 
     @Test
@@ -33,7 +33,7 @@ public class LocationValidatorTest {
         ValidationResponse validationResponse = locationValidator.validate(location);
 
         assertFalse(validationResponse.isValid());
-        assertEquals("Location already present", validationResponse.getMessage());
+        assertTrue(validationResponse.getMessage().contains("Location already present"));
     }
 
     @Test
@@ -45,6 +45,6 @@ public class LocationValidatorTest {
         ValidationResponse validationResponse = locationValidator.validate(location);
 
         assertTrue(validationResponse.isValid());
-        assertEquals("Successfully created location", validationResponse.getMessage());
+        assertTrue(validationResponse.getMessage().isEmpty());
     }
 }

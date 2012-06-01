@@ -1,5 +1,7 @@
 package org.motechproject.ananya.referencedata.response;
 
+import org.apache.commons.lang.StringUtils;
+
 public class FLWResponse {
     private String message;
 
@@ -8,7 +10,7 @@ public class FLWResponse {
     }
 
     public FLWResponse withValidationResponse(ValidationResponse validationResponse) {
-        this.message = validationResponse.getMessage();
+        this.message = StringUtils.join(validationResponse.getMessage(), ',');
         return this;
     }
 
