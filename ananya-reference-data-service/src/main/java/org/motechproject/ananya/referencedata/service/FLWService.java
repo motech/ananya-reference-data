@@ -26,28 +26,39 @@ public class FLWService {
     }
 
     public FLWResponse add(FLWRequest flwRequest) {
+        FLWResponse flwResponse = new FLWResponse();
+
         Location location = allLocations.getFor(flwRequest.getDistrict(), flwRequest.getBlock(), flwRequest.getPanchayat());
-        ValidationResponse validationResponse = new FLWValidator().validate(flwRequest, location);
+        ValidationResponse validationResponse = new FLWValidator().validateCreateRequest(flwRequest, location);
         if(!validationResponse.isValid())
-            return new FLWResponse().withValidationResponse(validationResponse);
+            return flwResponse.withValidationResponse(validationResponse);
+
+        if(existingFLW(flwRequest) != null)
+            return flwResponse.withFLWExists();
 
         allFrontLineWorkers.add(FLWMapper.mapFrom(flwRequest, location));
-        return new FLWResponse().withCreated();
+        return flwResponse.withCreated();
     }
 
     public FLWResponse update(FLWRequest flwRequest) {
-        Location location = allLocations.getFor(flwRequest.getDistrict(), flwRequest.getBlock(), flwRequest.getPanchayat());
-        ValidationResponse validationResponse = new FLWValidator().validate(flwRequest, location);
-        if(!validationResponse.isValid())
-            return new FLWResponse().withValidationResponse(validationResponse);
+        FLWResponse flwResponse = new FLWResponse();
 
-        String msisdn = flwRequest.getMsisdn();
-        FrontLineWorker existingFrontLineWorker = StringUtils.isBlank(msisdn) ? null : allFrontLineWorkers.getFor(Long.valueOf(msisdn));
-        if(existingFrontLineWorker == null) {
+        Location location = allLocations.getFor(flwRequest.getDistrict(), flwRequest.getBlock(), flwRequest.getPanchayat());
+        ValidationResponse validationResponse = new FLWValidator().validateUpdateRequest(flwRequest, location);
+        if(!validationResponse.isValid())
+            return flwResponse.withValidationResponse(validationResponse);
+
+        FrontLineWorker frontLineWorkerInDB = existingFLW(flwRequest);
+        if(frontLineWorkerInDB == null) {
             return add(flwRequest);
         }
 
-        allFrontLineWorkers.update(FLWMapper.mapFrom(existingFrontLineWorker, flwRequest, location));
-        return new FLWResponse().withUpdated();
+        allFrontLineWorkers.update(FLWMapper.mapFrom(frontLineWorkerInDB, flwRequest, location));
+        return flwResponse.withUpdated();
+    }
+
+    private FrontLineWorker existingFLW(FLWRequest flwRequest) {
+        String msisdn = flwRequest.getMsisdn();
+        return StringUtils.isBlank(msisdn) ? null : allFrontLineWorkers.getFor(Long.valueOf(msisdn));
     }
 }

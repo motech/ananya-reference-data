@@ -14,6 +14,7 @@ import org.motechproject.ananya.referencedata.request.FLWRequest;
 import org.motechproject.ananya.referencedata.response.FLWResponse;
 
 import static junit.framework.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -62,6 +63,24 @@ public class FLWServiceTest {
     }
 
     @Test
+    public void shouldNotAddFLWIfFLWWithSameMsisdnExists() {
+        String msisdn = "9999888822";
+        String name = "name";
+        String designation = "ASHA";
+        String district = "district";
+        String block = "block";
+        String panchayat = "panchayat";
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
+        when(allFrontLineWorkers.getFor(Long.valueOf(msisdn))).thenReturn(new FrontLineWorker());
+
+        FLWResponse flwResponse = flwService.add(flwRequest);
+
+        assertEquals("FLW already exists", flwResponse.getMessage());
+        verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
+    }
+
+    @Test
     public void shouldNotAddFLWWithInvalidMSISDN() {
         String msisdn = "99998888";
         String name = "name";
@@ -100,6 +119,27 @@ public class FLWServiceTest {
 
         assertEquals("Invalid designation", flwResponse.getMessage());
         verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
+    }
+
+    @Test
+    public void shouldAddFLWEvenIfMsisdnIsBlankOrNull() {
+        String msisdn = "";
+        String name = "name";
+        String designation = "ASHA";
+        String district = "district";
+        String block = "block";
+        String panchayat = "panchayat";
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
+
+        FLWResponse flwResponse = flwService.add(flwRequest);
+
+        ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
+        verify(allFrontLineWorkers).add(captor.capture());
+        FrontLineWorker frontLineWorker = captor.getValue();
+
+        assertEquals(null, frontLineWorker.getMsisdn());
+        assertEquals("FLW created successfully", flwResponse.getMessage());
     }
 
     @Test
@@ -211,5 +251,24 @@ public class FLWServiceTest {
 
         verify(allFrontLineWorkers,never()).getFor(Long.valueOf(msisdn));
         assertEquals("Invalid location", flwResponse.getMessage());
+    }
+
+    @Test
+    public void shouldNotUpdateWhenMsisdnInTheRequestIsBlankOrNull() {
+        String msisdn = "";
+        String newName = "new name";
+        String newDesignation = "ASHA";
+        String newDistrict = "district1";
+        String newBlock = "block1";
+        String newPanchayat = "panchayat1";
+        FLWRequest flwRequest = new FLWRequest(msisdn, newName, newDesignation, newDistrict, newBlock, newPanchayat);
+
+        when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
+
+        FLWResponse flwResponse = flwService.update(flwRequest);
+
+        verify(allFrontLineWorkers, never()).getFor(Matchers.<Long>any());
+        verify(allFrontLineWorkers,never()).update(any(FrontLineWorker.class));
+        assertEquals("Invalid msisdn", flwResponse.getMessage());
     }
 }

@@ -7,12 +7,32 @@ import org.motechproject.ananya.referencedata.request.FLWRequest;
 import org.motechproject.ananya.referencedata.response.ValidationResponse;
 
 public class FLWValidator {
-    public ValidationResponse validate(FLWRequest flwRequest, Location location) {
+    public ValidationResponse validateCreateRequest(FLWRequest flwRequest, Location location) {
+        ValidationResponse validationResponse = new ValidationResponse();
+
+        String msisdn = flwRequest.getMsisdn();
+        if(!StringUtils.isBlank(msisdn) && (msisdn.length() < 10 || !StringUtils.isNumeric(msisdn))){
+            return validationResponse.forInvalidMsisdn();
+        }
+
+        String designation = flwRequest.getDesignation();
+        if(designation != null && !Designation.contains(designation)){
+            return validationResponse.forInvalidDesignation();
+        }
+        
+        if(location == null){
+            return validationResponse.forInvalidLocation();
+        }
+
+        return validationResponse;
+    }
+
+    public ValidationResponse validateUpdateRequest(FLWRequest flwRequest, Location location) {
         ValidationResponse validationResponse = new ValidationResponse();
 
         String msisdn = flwRequest.getMsisdn();
         String designation = flwRequest.getDesignation();
-        if(StringUtils.length(msisdn) < 10 || !StringUtils.isNumeric(msisdn)){
+        if(msisdn.length() < 10 || !StringUtils.isNumeric(msisdn)){
             return validationResponse.forInvalidMsisdn();
         }
         if(designation != null && !Designation.contains(designation)){

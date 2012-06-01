@@ -21,4 +21,9 @@ public class FLWResponse {
         this.message = "FLW created successfully";
         return this;
     }
+
+    public FLWResponse withFLWExists() {
+        this.message = "FLW already exists";
+        return this;
+    }
 }

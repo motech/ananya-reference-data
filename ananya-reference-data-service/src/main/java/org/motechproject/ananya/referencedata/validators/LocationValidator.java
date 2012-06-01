@@ -16,9 +16,9 @@ public class LocationValidator {
     public ValidationResponse validate(Location location) {
         ValidationResponse response = new ValidationResponse();
         if(StringUtils.isEmpty(location.getDistrict()) || StringUtils.isEmpty(location.getBlock()) || StringUtils.isEmpty(location.getPanchayat()))
-            return response.forBlankFields();
+            return response.forBlankFieldsInLocation();
         if(locationList.isAlreadyPresent(location))
-            return response.forDuplicate();
-        return response.forSuccessfulCreation();
+            return response.forDuplicateLocation();
+        return response.forSuccessfulCreationOfLocation();
     }
 }
