@@ -2,7 +2,7 @@ package org.motechproject.ananya.referencedata.service;
 
 import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.mapper.FLWMapper;
-import org.motechproject.ananya.referencedata.repository.AllFLWData;
+import org.motechproject.ananya.referencedata.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.repository.AllLocations;
 import org.motechproject.ananya.referencedata.request.FLWRequest;
 import org.motechproject.ananya.referencedata.response.FLWResponse;
@@ -15,12 +15,12 @@ import org.springframework.stereotype.Service;
 public class FLWService {
 
     private AllLocations allLocations;
-    private AllFLWData allFlwData;
+    private AllFrontLineWorkers allFrontLineWorkers;
 
     @Autowired
-    public FLWService(AllLocations allLocations, AllFLWData allFlwData) {
+    public FLWService(AllLocations allLocations, AllFrontLineWorkers allFrontLineWorkers) {
         this.allLocations = allLocations;
-        this.allFlwData = allFlwData;
+        this.allFrontLineWorkers = allFrontLineWorkers;
     }
 
     public FLWResponse add(FLWRequest flwRequest) {
@@ -30,7 +30,7 @@ public class FLWService {
         if(!validationResponse.isValid())
             return new FLWResponse().withValidationResponse(validationResponse);
 
-        allFlwData.add(FLWMapper.mapFrom(flwRequest, location));
+        allFrontLineWorkers.add(FLWMapper.mapFrom(flwRequest, location));
         return new FLWResponse();
     }
 }

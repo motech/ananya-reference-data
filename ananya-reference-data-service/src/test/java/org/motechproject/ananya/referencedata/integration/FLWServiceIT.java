@@ -3,8 +3,8 @@ package org.motechproject.ananya.referencedata.integration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.motechproject.ananya.referencedata.domain.FLWData;
-import org.motechproject.ananya.referencedata.repository.AllFLWData;
+import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
+import org.motechproject.ananya.referencedata.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.repository.AllLocations;
 import org.motechproject.ananya.referencedata.request.FLWRequest;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
@@ -23,14 +23,14 @@ public class FLWServiceIT extends SpringIntegrationTest{
     @Autowired
     private LocationService locationService;
     @Autowired
-    private AllFLWData allFLWData;
+    private AllFrontLineWorkers allFrontLineWorkers;
     @Autowired
     private AllLocations allLocations;
 
     @Before
     @After
     public void setUp(){
-        template.deleteAll(allFLWData.getAll());
+        template.deleteAll(allFrontLineWorkers.getAll());
         template.deleteAll(allLocations.getAll());
     }
 
@@ -39,8 +39,8 @@ public class FLWServiceIT extends SpringIntegrationTest{
         locationService.add(new LocationRequest("district", "block", "panchayat"));
         flwService.add(new FLWRequest("9999888822", "name", "ASHA", "district", "block", "panchayat"));
 
-        List<FLWData> flwDataList = allFLWData.getAll();
+        List<FrontLineWorker> frontLineWorkerList = allFrontLineWorkers.getAll();
 
-        assertEquals(1, flwDataList.size());
+        assertEquals(1, frontLineWorkerList.size());
     }
 }

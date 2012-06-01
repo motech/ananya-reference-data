@@ -22,9 +22,8 @@ public class LocationController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public
     @ResponseBody
-    LocationCreationResponse create(@RequestBody LocationRequest locationRequest) {
+    public LocationCreationResponse create(@RequestBody LocationRequest locationRequest) {
         return locationService.add(locationRequest);
     }
 }

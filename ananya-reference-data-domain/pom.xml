@@ -12,7 +12,7 @@
     <name>Ananya Reference Data Domain</name>
 
     <dependencies>
-         <dependency>
+        <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-server-api</artifactId>
             <version>0.10</version>
@@ -110,9 +110,9 @@
                                      userid="${postgres.user}"
                                      classpathref="dependencies"
                                      password="${postgres.password}">
-                                     DROP SCHEMA IF EXISTS ${postgres.schema} CASCADE;
-                                    CREATE SCHEMA ${postgres.schema} AUTHORIZATION ${postgres.user};
-                                    GRANT ALL ON SCHEMA ${postgres.schema} TO ${postgres.user};
+                                        DROP SCHEMA IF EXISTS ${postgres.schema} CASCADE;
+                                        CREATE SCHEMA ${postgres.schema} AUTHORIZATION ${postgres.user};
+                                        GRANT ALL ON SCHEMA ${postgres.schema} TO ${postgres.user};
                                 </sql>
                                 <echo message="Reference-data DB reset: END"/>
                             </target>

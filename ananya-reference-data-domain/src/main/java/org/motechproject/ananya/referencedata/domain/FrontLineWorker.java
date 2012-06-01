@@ -3,8 +3,8 @@ package org.motechproject.ananya.referencedata.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "front_line_worker_dimension")
-public class FLWData {
+@Table(name = "front_line_worker")
+public class FrontLineWorker {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +23,10 @@ public class FLWData {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    public FLWData(){
+    public FrontLineWorker(){
     }
 
-    public FLWData(Long msisdn, String name, Designation designation, Location location) {
+    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location) {
         this.msisdn = msisdn;
         this.name = name;
         this.designation = designation.name();

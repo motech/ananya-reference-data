@@ -5,9 +5,9 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.motechproject.ananya.referencedata.domain.FLWData;
+import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.domain.Location;
-import org.motechproject.ananya.referencedata.repository.AllFLWData;
+import org.motechproject.ananya.referencedata.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.repository.AllLocations;
 import org.motechproject.ananya.referencedata.request.FLWRequest;
 import org.motechproject.ananya.referencedata.response.FLWResponse;
@@ -23,14 +23,14 @@ public class FLWServiceTest {
     @Mock
     private AllLocations allLocations;
     @Mock
-    private AllFLWData allFLWData;
+    private AllFrontLineWorkers allFrontLineWorkers;
 
     private FLWService flwService;
 
     @Before
     public void setUp() {
         initMocks(this);
-        flwService = new FLWService(allLocations, allFLWData);
+        flwService = new FLWService(allLocations, allFrontLineWorkers);
     }
 
     @Test
@@ -47,16 +47,16 @@ public class FLWServiceTest {
 
         FLWResponse flwResponse = flwService.add(flwRequest);
 
-        ArgumentCaptor<FLWData> captor = ArgumentCaptor.forClass(FLWData.class);
-        verify(allFLWData).add(captor.capture());
-        FLWData flwData = captor.getValue();
+        ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
+        verify(allFrontLineWorkers).add(captor.capture());
+        FrontLineWorker frontLineWorker = captor.getValue();
 
-        assertEquals((Long) Long.parseLong(msisdn), flwData.getMsisdn());
-        assertEquals(name, flwData.getName());
-        assertEquals(designation, flwData.getDesignation());
-        assertEquals(district, flwData.getLocation().getDistrict());
-        assertEquals(block, flwData.getLocation().getBlock());
-        assertEquals(panchayat, flwData.getLocation().getPanchayat());
+        assertEquals((Long) Long.parseLong(msisdn), frontLineWorker.getMsisdn());
+        assertEquals(name, frontLineWorker.getName());
+        assertEquals(designation, frontLineWorker.getDesignation());
+        assertEquals(district, frontLineWorker.getLocation().getDistrict());
+        assertEquals(block, frontLineWorker.getLocation().getBlock());
+        assertEquals(panchayat, frontLineWorker.getLocation().getPanchayat());
         assertEquals("FLW created successfully", flwResponse.getMessage());
     }
 
@@ -73,7 +73,7 @@ public class FLWServiceTest {
         FLWResponse flwResponse = flwService.add(flwRequest);
 
         assertEquals("Invalid msisdn", flwResponse.getMessage());
-        verify(allFLWData, never()).add(Matchers.<FLWData>any());
+        verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
 
         msisdn = "9A99888822";
         flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
@@ -81,7 +81,7 @@ public class FLWServiceTest {
         flwResponse = flwService.add(flwRequest);
 
         assertEquals("Invalid msisdn", flwResponse.getMessage());
-        verify(allFLWData, never()).add(Matchers.<FLWData>any());
+        verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
 
     }
 
@@ -98,7 +98,7 @@ public class FLWServiceTest {
         FLWResponse flwResponse = flwService.add(flwRequest);
 
         assertEquals("Invalid designation", flwResponse.getMessage());
-        verify(allFLWData, never()).add(Matchers.<FLWData>any());
+        verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
     }
 
     @Test
@@ -116,6 +116,6 @@ public class FLWServiceTest {
         FLWResponse flwResponse = flwService.add(flwRequest);
 
         assertEquals("Invalid location", flwResponse.getMessage());
-        verify(allFLWData, never()).add(Matchers.<FLWData>any());
+        verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
     }
 }

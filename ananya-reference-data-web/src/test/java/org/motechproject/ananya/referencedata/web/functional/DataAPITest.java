@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.motechproject.ananya.referencedata.domain.FLWData;
+import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.request.FLWRequest;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
@@ -20,7 +20,7 @@ public class DataAPITest extends SpringIntegrationTest{
     @Before
     @After
     public void tearDown(){
-        template.deleteAll(template.loadAll(FLWData.class));
+        template.deleteAll(template.loadAll(FrontLineWorker.class));
         template.deleteAll(template.loadAll(Location.class));
     }
 
