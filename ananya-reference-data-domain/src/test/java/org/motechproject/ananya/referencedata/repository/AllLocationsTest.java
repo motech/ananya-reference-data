@@ -58,4 +58,15 @@ public class AllLocationsTest extends SpringIntegrationTest {
         Location locationFromDB = allLocations.getFor(district, block, panchayat);
         assertNotNull(locationFromDB);
     }
+
+    @Test
+    public void shouldReturnNullWhenALocationDoesNotExistInDB(){
+        String district = "district";
+        String block = "block";
+        String panchayat = "panchayat";
+
+        Location locationInDB = allLocations.getFor(district, block, panchayat);
+
+        assertNull(locationInDB);
+    }
 }

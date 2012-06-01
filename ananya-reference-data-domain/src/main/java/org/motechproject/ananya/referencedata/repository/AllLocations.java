@@ -36,6 +36,7 @@ public class AllLocations {
         criteria.add(Restrictions.eq("block", block));
         criteria.add(Restrictions.eq("panchayat", panchayat));
 
-        return (Location) template.findByCriteria(criteria).get(0);
+        List locationList = template.findByCriteria(criteria);
+        return locationList.isEmpty() ? null : (Location) locationList.get(0);
     }
 }
