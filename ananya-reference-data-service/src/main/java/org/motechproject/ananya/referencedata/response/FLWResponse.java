@@ -1,7 +1,7 @@
 package org.motechproject.ananya.referencedata.response;
 
 public class FLWResponse {
-    private String message = "FLW created successfully";
+    private String message;
 
     public String getMessage() {
         return message;
@@ -9,6 +9,16 @@ public class FLWResponse {
 
     public FLWResponse withValidationResponse(ValidationResponse validationResponse) {
         this.message = validationResponse.getMessage();
+        return this;
+    }
+
+    public FLWResponse withUpdated() {
+        this.message = "FLW updated successfully";
+        return this;
+    }
+
+    public FLWResponse withCreated() {
+        this.message = "FLW created successfully";
         return this;
     }
 }

@@ -14,11 +14,11 @@ import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 
-public class DataAPITest extends SpringIntegrationTest{
+public class DataAPITest extends SpringIntegrationTest {
 
     @Before
     @After
-    public void tearDown(){
+    public void tearDown() {
         template.deleteAll(template.loadAll(FrontLineWorker.class));
         template.deleteAll(template.loadAll(Location.class));
     }
@@ -82,5 +82,28 @@ public class DataAPITest extends SpringIntegrationTest{
         FLWResponse flwResponse = (FLWResponse) jsonHttpClient.post("http://localhost:9979/reference-data/flw", new FLWRequest("9999888822", "name", "ASHA", "district", "block", "invalid_panchayat"));
 
         assertEquals("Invalid location", flwResponse.getMessage());
+    }
+
+    @Test
+    public void shouldUpdateAnExistingFLW() throws IOException {
+        JsonHttpClient jsonHttpClientFLW = new JsonHttpClient(FLWResponse.class);
+        JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient(LocationCreationResponse.class);
+        jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
+        jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw", new FLWRequest("9999888822", "name", "ASHA", "district", "block", "panchayat"));
+        
+        FLWResponse flwResponse = (FLWResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw?_method=PUT", new FLWRequest("9999888822", "new_name", "ANM", "district", "block", "panchayat"));
+
+        assertEquals("FLW updated successfully", flwResponse.getMessage());
+    }
+
+    @Test
+    public void shouldAddFLWWhenFLWDoesNotExistForUpdate() throws IOException {
+        JsonHttpClient jsonHttpClientFLW = new JsonHttpClient(FLWResponse.class);
+        JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient(LocationCreationResponse.class);
+        jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
+
+        FLWResponse flwResponse = (FLWResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw?_method=PUT", new FLWRequest("9999888822", "new_name", "ANM", "district", "block", "panchayat"));
+
+        assertEquals("FLW created successfully", flwResponse.getMessage());
     }
 }

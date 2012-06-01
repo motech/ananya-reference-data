@@ -48,4 +48,16 @@ public class FrontLineWorker {
     public Location getLocation() {
         return location;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDesignation(Designation designation) {
+        this.designation = designation.name();
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
 }

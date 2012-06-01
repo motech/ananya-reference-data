@@ -26,4 +26,11 @@ public class FLWController {
     FLWResponse create(@RequestBody FLWRequest flwRequest) {
         return flwService.add(flwRequest);
     }
+
+    @RequestMapping(params = "_method=PUT")
+    public
+    @ResponseBody
+    FLWResponse update(@RequestBody FLWRequest flwRequest) {
+        return flwService.update(flwRequest);
+    }
 }

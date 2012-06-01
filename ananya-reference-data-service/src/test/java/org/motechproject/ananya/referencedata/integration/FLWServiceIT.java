@@ -43,4 +43,15 @@ public class FLWServiceIT extends SpringIntegrationTest{
 
         assertEquals(1, frontLineWorkerList.size());
     }
+
+    @Test
+    public void shouldUpdateExistingFlw(){
+        locationService.add(new LocationRequest("district", "block", "panchayat"));
+        flwService.add(new FLWRequest("9999888822", "name", "ASHA", "district", "block", "panchayat"));
+        flwService.update(new FLWRequest("9999888822", "newName", "ANM", "district", "block", "panchayat"));
+
+        List<FrontLineWorker> frontLineWorkerList = allFrontLineWorkers.getAll();
+
+        assertEquals(1, frontLineWorkerList.size());
+    }
 }

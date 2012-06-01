@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.motechproject.ananya.referencedata.domain.Designation;
 import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.repository.AllFrontLineWorkers;
@@ -117,5 +118,98 @@ public class FLWServiceTest {
 
         assertEquals("Invalid location", flwResponse.getMessage());
         verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
+    }
+
+    @Test
+    public void shouldUpdateExistingFLWBasedOnMsisdn() {
+        String msisdn = "9999888822";
+        String newName = "new name";
+        String newDesignation = "ASHA";
+        String newDistrict = "district1";
+        String newBlock = "block1";
+        String newPanchayat = "panchayat1";
+        FLWRequest flwRequest = new FLWRequest(msisdn, newName, newDesignation, newDistrict, newBlock, newPanchayat);
+        when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
+        when(allFrontLineWorkers.getFor(Long.valueOf(msisdn))).thenReturn(new FrontLineWorker(Long.valueOf(msisdn), "name", Designation.ANM, new Location("district", "block", "panchayat")));
+
+        FLWResponse flwResponse = flwService.update(flwRequest);
+
+        ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
+        verify(allFrontLineWorkers).update(captor.capture());
+
+        FrontLineWorker value = captor.getValue();
+
+        assertEquals((Long)Long.parseLong(msisdn), value.getMsisdn());
+        assertEquals(newName, value.getName());
+        assertEquals(newDesignation, value.getDesignation());
+        assertEquals(newDistrict, value.getLocation().getDistrict());
+        assertEquals(newBlock, value.getLocation().getBlock());
+        assertEquals(newPanchayat, value.getLocation().getPanchayat());
+        assertEquals("FLW updated successfully", flwResponse.getMessage());
+    }
+
+    @Test
+    public void shouldAddFLWIfFLWDoesNotExistToUpdateBasedOnMsisdn() {
+        String msisdn = "9999888822";
+        String name = "name";
+        String designation = "ASHA";
+        String district = "district";
+        String block = "block";
+        String panchayat = "panchayat";
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        when(allFrontLineWorkers.getFor(Long.valueOf(msisdn))).thenReturn(null);
+        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
+        
+        FLWResponse flwResponse = flwService.update(flwRequest);
+
+        assertEquals("FLW created successfully", flwResponse.getMessage());
+    }
+
+    @Test
+    public void shouldNotUpdateIfNewMsisdnIsNotValid() {
+        String msisdn = "99998888";
+        String name = "name";
+        String designation = "ASHA";
+        String district = "district";
+        String block = "block";
+        String panchayat = "panchayat";
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+
+        FLWResponse flwResponse = flwService.update(flwRequest);
+
+        verify(allFrontLineWorkers,never()).getFor(Long.valueOf(msisdn));
+        assertEquals("Invalid msisdn", flwResponse.getMessage());
+    }
+
+    @Test
+    public void shouldNotUpdateIfNewDesignationIsNotValid() {
+        String msisdn = "9999888822";
+        String name = "name";
+        String designation = "invalid_designation";
+        String district = "district";
+        String block = "block";
+        String panchayat = "panchayat";
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+
+        FLWResponse flwResponse = flwService.update(flwRequest);
+
+        verify(allFrontLineWorkers,never()).getFor(Long.valueOf(msisdn));
+        assertEquals("Invalid designation", flwResponse.getMessage());
+    }
+
+    @Test
+    public void shouldNotUpdateIfNewLocationDoesNotExist() {
+        String msisdn = "9999888822";
+        String name = "name";
+        String designation = "ASHA";
+        String district = "district";
+        String block = "block";
+        String panchayat = "panchayat";
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+
+        FLWResponse flwResponse = flwService.update(flwRequest);
+
+        verify(allFrontLineWorkers,never()).getFor(Long.valueOf(msisdn));
+        assertEquals("Invalid location", flwResponse.getMessage());
     }
 }

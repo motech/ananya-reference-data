@@ -1,5 +1,7 @@
 package org.motechproject.ananya.referencedata.service;
 
+import org.apache.commons.lang.StringUtils;
+import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.mapper.FLWMapper;
 import org.motechproject.ananya.referencedata.repository.AllFrontLineWorkers;
@@ -26,11 +28,26 @@ public class FLWService {
     public FLWResponse add(FLWRequest flwRequest) {
         Location location = allLocations.getFor(flwRequest.getDistrict(), flwRequest.getBlock(), flwRequest.getPanchayat());
         ValidationResponse validationResponse = new FLWValidator().validate(flwRequest, location);
-
         if(!validationResponse.isValid())
             return new FLWResponse().withValidationResponse(validationResponse);
 
         allFrontLineWorkers.add(FLWMapper.mapFrom(flwRequest, location));
-        return new FLWResponse();
+        return new FLWResponse().withCreated();
+    }
+
+    public FLWResponse update(FLWRequest flwRequest) {
+        Location location = allLocations.getFor(flwRequest.getDistrict(), flwRequest.getBlock(), flwRequest.getPanchayat());
+        ValidationResponse validationResponse = new FLWValidator().validate(flwRequest, location);
+        if(!validationResponse.isValid())
+            return new FLWResponse().withValidationResponse(validationResponse);
+
+        String msisdn = flwRequest.getMsisdn();
+        FrontLineWorker existingFrontLineWorker = StringUtils.isBlank(msisdn) ? null : allFrontLineWorkers.getFor(Long.valueOf(msisdn));
+        if(existingFrontLineWorker == null) {
+            return add(flwRequest);
+        }
+
+        allFrontLineWorkers.update(FLWMapper.mapFrom(existingFrontLineWorker, flwRequest, location));
+        return new FLWResponse().withUpdated();
     }
 }

@@ -8,6 +8,7 @@ import org.motechproject.ananya.referencedata.request.FLWRequest;
 import org.motechproject.ananya.referencedata.service.FLWService;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -45,5 +46,20 @@ public class FLWControllerTest {
         assertEquals(district, captorValue.getDistrict());
         assertEquals(block, captorValue.getBlock());
         assertEquals(panchayat, captorValue.getPanchayat());
+    }
+
+    @Test
+    public void shouldUpdateAnExistingFLW() {
+        String msisdn = "9999888822";
+        String name = "name";
+        String designation = "ASHA";
+        String district = "district";
+        String block = "block";
+        String panchayat = "panchayat";
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+
+        flwController.update(flwRequest);
+
+        verify(flwService).update(any(FLWRequest.class));
     }
 }
