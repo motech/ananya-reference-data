@@ -27,6 +27,11 @@ public class ValidationResponse {
         this.message.add("Invalid location");
     }
 
+    public void forInvalidName() {
+        isValid = false;
+        this.message.add("Invalid name");
+    }
+
     public boolean isValid() {
         return isValid;
     }

@@ -4,16 +4,16 @@ public class FLWRequest {
     private String msisdn;
     private String name;
     private String designation;
-    private LocationRequest locationRequest;
+    private LocationRequest location;
     
     public FLWRequest(){
     }
 
-    public FLWRequest(String msisdn, String name, String designation, LocationRequest locationRequest) {
+    public FLWRequest(String msisdn, String name, String designation, LocationRequest location) {
         this.msisdn = msisdn;
         this.name = name;
         this.designation = designation;
-        this.locationRequest = locationRequest;
+        this.location = location;
     }
 
     public String getMsisdn() {
@@ -28,8 +28,8 @@ public class FLWRequest {
         return designation;
     }
 
-    public LocationRequest getLocationRequest() {
-        return locationRequest;
+    public LocationRequest getLocation() {
+        return location;
     }
 
     public void setMsisdn(String msisdn) {
@@ -44,7 +44,7 @@ public class FLWRequest {
         this.designation = designation;
     }
 
-    public void setLocationRequest(LocationRequest locationRequest) {
-        this.locationRequest = locationRequest;
+    public void setLocation(LocationRequest location) {
+        this.location = location;
     }
 }

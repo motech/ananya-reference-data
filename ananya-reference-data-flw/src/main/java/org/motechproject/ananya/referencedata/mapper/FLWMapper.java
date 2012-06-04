@@ -10,15 +10,19 @@ public class FLWMapper {
     public static FrontLineWorker mapFrom(FLWRequest flwRequest, Location location) {
         Long msisdn = StringUtils.isBlank(flwRequest.getMsisdn()) ? null : Long.parseLong(formatMsisdn(flwRequest.getMsisdn()));
 
-        return new FrontLineWorker(msisdn, flwRequest.getName(), getDesignation(flwRequest.getDesignation()), location);
+        return new FrontLineWorker(msisdn, trim(flwRequest.getName()), getDesignation(flwRequest.getDesignation()), location);
     }
 
     public static FrontLineWorker mapFrom(FrontLineWorker existingFrontLineWorker, FLWRequest flwRequest, Location location) {
-        existingFrontLineWorker.setName(flwRequest.getName());
+        existingFrontLineWorker.setName(trim(flwRequest.getName()));
         existingFrontLineWorker.setDesignation(getDesignation(flwRequest.getDesignation()));
         existingFrontLineWorker.setLocation(location);
 
         return existingFrontLineWorker;
+    }
+
+    private static String trim(String name) {
+        return StringUtils.defaultIfEmpty(StringUtils.strip(name), StringUtils.EMPTY);
     }
 
     public static String formatMsisdn(String msisdn) {

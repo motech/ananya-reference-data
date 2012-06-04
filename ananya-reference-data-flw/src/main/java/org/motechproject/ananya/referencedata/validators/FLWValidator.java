@@ -8,6 +8,7 @@ import org.motechproject.ananya.referencedata.response.ValidationResponse;
 public class FLWValidator {
     public ValidationResponse validateCreateRequest(FLWRequest flwRequest, Location location) {
         ValidationResponse validationResponse = new ValidationResponse();
+        String name = flwRequest.getName();
 
         String msisdn = flwRequest.getMsisdn();
         if (!StringUtils.isBlank(msisdn) && anInvalidMsisdn(msisdn)) { // Blank msisdn is considered Valid for create request
@@ -16,6 +17,9 @@ public class FLWValidator {
 
         if (location == null) {
             validationResponse.forInvalidLocation();
+        }
+        if( StringUtils.isNotBlank(name) && !StringUtils.isAlphanumericSpace(name)) {
+            validationResponse.forInvalidName();
         }
 
         return validationResponse;
@@ -30,6 +34,10 @@ public class FLWValidator {
 
         if (location == null) {
             validationResponse.forInvalidLocation();
+        }
+        String name = flwRequest.getName();
+        if( StringUtils.isNotBlank(name) && !StringUtils.isAlphanumericSpace(name)) {
+            validationResponse.forInvalidName();
         }
 
         return validationResponse;

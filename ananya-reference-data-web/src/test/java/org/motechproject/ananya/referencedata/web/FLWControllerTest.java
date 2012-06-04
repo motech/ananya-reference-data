@@ -44,9 +44,9 @@ public class FLWControllerTest {
         assertEquals(msisdn, captorValue.getMsisdn());
         assertEquals(name, captorValue.getName());
         assertEquals(designation, captorValue.getDesignation());
-        assertEquals(district, captorValue.getLocationRequest().getDistrict());
-        assertEquals(block, captorValue.getLocationRequest().getBlock());
-        assertEquals(panchayat, captorValue.getLocationRequest().getPanchayat());
+        assertEquals(district, captorValue.getLocation().getDistrict());
+        assertEquals(block, captorValue.getLocation().getBlock());
+        assertEquals(panchayat, captorValue.getLocation().getPanchayat());
     }
 
     @Test

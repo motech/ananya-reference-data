@@ -95,7 +95,7 @@ public class DataAPITest extends SpringIntegrationTest {
         jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
         jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw", new FLWRequest("9999888822", "name", "ASHA", new LocationRequest("district", "block", "panchayat")));
         
-        FLWResponse flwResponse = (FLWResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw?_method=PUT", new FLWRequest("9999888822", "new_name", "ANM", new LocationRequest("district", "block", "panchayat")));
+        FLWResponse flwResponse = (FLWResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw?_method=PUT", new FLWRequest("9999888822", "new name", "ANM", new LocationRequest("district", "block", "panchayat")));
 
         assertEquals("FLW updated successfully", flwResponse.getMessage());
     }
@@ -106,7 +106,7 @@ public class DataAPITest extends SpringIntegrationTest {
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient(LocationCreationResponse.class);
         jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
 
-        FLWResponse flwResponse = (FLWResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw?_method=PUT", new FLWRequest("9999888822", "new_name", "ANM", new LocationRequest("district", "block", "panchayat")));
+        FLWResponse flwResponse = (FLWResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw?_method=PUT", new FLWRequest("9999888822", "new name", "ANM", new LocationRequest("district", "block", "panchayat")));
 
         assertEquals("FLW created successfully", flwResponse.getMessage());
     }

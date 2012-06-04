@@ -29,7 +29,7 @@ public class FLWService {
     public FLWResponse add(FLWRequest flwRequest) {
         FLWResponse flwResponse = new FLWResponse();
 
-        LocationRequest locationRequest = flwRequest.getLocationRequest();
+        LocationRequest locationRequest = flwRequest.getLocation();
         Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
         ValidationResponse validationResponse = new FLWValidator().validateCreateRequest(flwRequest, location);
         if (!validationResponse.isValid())
@@ -45,7 +45,7 @@ public class FLWService {
     public FLWResponse update(FLWRequest flwRequest) {
         FLWResponse flwResponse = new FLWResponse();
 
-        LocationRequest locationRequest = flwRequest.getLocationRequest();
+        LocationRequest locationRequest = flwRequest.getLocation();
         Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
         ValidationResponse validationResponse = new FLWValidator().validateUpdateRequest(flwRequest, location);
         if (!validationResponse.isValid())
