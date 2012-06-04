@@ -7,10 +7,9 @@
     <artifactId>ananya-reference-data</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>ananya-reference-data-domain</module>
-        <module>ananya-reference-data-service</module>
         <module>ananya-reference-data-performance</module>
         <module>ananya-reference-data-web</module>
+        <module>ananya-reference-data-flw</module>
     </modules>
     <name>Ananya Reference-Data</name>
 
