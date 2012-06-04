@@ -109,7 +109,7 @@ public class FLWServiceTest {
     }
 
     @Test
-    public void shouldNotAddFLWIfDesignationIsInvalid() {
+    public void shouldAddFLWWithDesignationAsInvalidIfDesignationIsInvalid() {
         String msisdn = "9999888822";
         String name = "name";
         String designation = "Random";
@@ -121,8 +121,10 @@ public class FLWServiceTest {
 
         FLWResponse flwResponse = flwService.add(flwRequest);
 
-        assertEquals("Invalid designation", flwResponse.getMessage());
-        verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
+        assertEquals("FLW created successfully", flwResponse.getMessage());
+        ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
+        verify(allFrontLineWorkers).add(captor.capture());
+        assertEquals(Designation.INVALID.name(), captor.getValue().getDesignation());
     }
 
     @Test
@@ -165,10 +167,10 @@ public class FLWServiceTest {
     }
 
     @Test
-    public void shouldNotAddFLWIfInvalidMsisdnInvalidDesignationAndLocationIsNotAvailable() {
+    public void shouldNotAddFLWIfInvalidMsisdnAndLocationIsNotAvailable() {
         String msisdn = "99998888";
         String name = "name";
-        String designation = "Random";
+        String designation = "ASHA";
         String district = "~district";
         String block = "~block";
         String panchayat = "~panchayat";
@@ -178,7 +180,6 @@ public class FLWServiceTest {
         FLWResponse flwResponse = flwService.add(flwRequest);
 
         assertTrue(flwResponse.getMessage().contains("Invalid msisdn"));
-        assertTrue(flwResponse.getMessage().contains("Invalid designation"));
         assertTrue(flwResponse.getMessage().contains("Invalid location"));
         verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
     }
@@ -246,7 +247,7 @@ public class FLWServiceTest {
     }
 
     @Test
-    public void shouldNotUpdateIfNewDesignationIsNotValid() {
+    public void shouldUpdateDesignationAsInvalidIfNewDesignationIsNotValid() {
         String msisdn = "9999888822";
         String name = "name";
         String designation = "invalid_designation";
@@ -254,12 +255,17 @@ public class FLWServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
+        when(allFrontLineWorkers.getFor(Long.valueOf(msisdn))).thenReturn(new FrontLineWorker(Long.valueOf(msisdn), "oldName", Designation.ANM, new Location(district, block, panchayat)));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
         FLWResponse flwResponse = flwService.update(flwRequest);
 
-        verify(allFrontLineWorkers,never()).getFor(Long.valueOf(msisdn));
-        assertEquals("Invalid designation", flwResponse.getMessage());
+        ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
+        verify(allFrontLineWorkers).update(captor.capture());
+        FrontLineWorker value = captor.getValue();
+        assertEquals((Long)Long.parseLong(msisdn), value.getMsisdn());
+        assertEquals(Designation.INVALID.name(), value.getDesignation());
+        assertEquals("FLW updated successfully", flwResponse.getMessage());
     }
 
     @Test

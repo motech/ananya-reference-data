@@ -9,14 +9,19 @@ import org.motechproject.ananya.referencedata.request.FLWRequest;
 public class FLWMapper {
     public static FrontLineWorker mapFrom(FLWRequest flwRequest, Location location) {
         Long msisdn = StringUtils.isBlank(flwRequest.getMsisdn()) ? null : Long.parseLong(flwRequest.getMsisdn());
-        return new FrontLineWorker(msisdn, flwRequest.getName(), Designation.valueOf(flwRequest.getDesignation()), location);
+
+        return new FrontLineWorker(msisdn, flwRequest.getName(), getDesignation(flwRequest.getDesignation()), location);
     }
 
     public static FrontLineWorker mapFrom(FrontLineWorker existingFrontLineWorker, FLWRequest flwRequest, Location location) {
         existingFrontLineWorker.setName(flwRequest.getName());
-        existingFrontLineWorker.setDesignation(Designation.valueOf(flwRequest.getDesignation()));
+        existingFrontLineWorker.setDesignation(getDesignation(flwRequest.getDesignation()));
         existingFrontLineWorker.setLocation(location);
 
         return existingFrontLineWorker;
+    }
+
+    private static Designation getDesignation(String designation) {
+        return !Designation.contains(designation) ? Designation.INVALID : Designation.valueOf(designation);
     }
 }

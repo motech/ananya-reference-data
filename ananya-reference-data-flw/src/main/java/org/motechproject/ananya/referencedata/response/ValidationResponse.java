@@ -22,11 +22,6 @@ public class ValidationResponse {
         this.message.add("Invalid msisdn");
     }
 
-    public void forInvalidDesignation() {
-        isValid = false;
-        this.message.add("Invalid designation");
-    }
-
     public void forInvalidLocation() {
         isValid = false;
         this.message.add("Invalid location");

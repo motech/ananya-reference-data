@@ -69,13 +69,13 @@ public class DataAPITest extends SpringIntegrationTest {
     }
 
     @Test
-    public void shouldNotCreateNewFLWForInvalidDesignation() throws IOException {
+    public void shouldCreateNewFLWForInvalidDesignation() throws IOException {
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient(LocationCreationResponse.class);
         jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
         JsonHttpClient jsonHttpClient = new JsonHttpClient(FLWResponse.class);
-        FLWResponse flwResponse = (FLWResponse) jsonHttpClient.post("http://localhost:9979/reference-data/flw", new FLWRequest("9999888822", "name", "invalid_designation", new LocationRequest("district", "block", "panchayat")));
+        FLWResponse flwResponse = (FLWResponse) jsonHttpClient.post("http://localhost:9979/reference-data/flw", new FLWRequest("9999888822", "name", null, new LocationRequest("district", "block", "panchayat")));
 
-        assertEquals("Invalid designation", flwResponse.getMessage());
+        assertEquals("FLW created successfully", flwResponse.getMessage());
     }
 
     @Test
