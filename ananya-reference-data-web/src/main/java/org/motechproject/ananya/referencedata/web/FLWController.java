@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/flw")
-public class FLWController {
+public class FLWController extends BaseController {
     private FLWService flwService;
 
     @Autowired

@@ -1,14 +1,20 @@
 package org.motechproject.ananya.referencedata.web;
 
+import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.request.FLWRequest;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
+import org.motechproject.ananya.referencedata.response.ExceptionResponse;
 import org.motechproject.ananya.referencedata.service.FLWService;
+import org.springframework.mock.web.MockHttpServletResponse;
+
+import javax.servlet.http.HttpServletResponse;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -62,5 +68,17 @@ public class FLWControllerTest {
         flwController.update(flwRequest);
 
         verify(flwService).update(any(FLWRequest.class));
+    }
+
+    @Test
+    public void shouldReturnExceptionResponseAndSetStatusTo500() {
+        String errorMessage = "Foo error";
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ExceptionResponse exceptionResponse = new Gson().fromJson(flwController.handleException(new IllegalArgumentException(errorMessage), response), ExceptionResponse.class);
+
+        assertEquals(errorMessage, exceptionResponse.getMessage());
+        assertNotNull(exceptionResponse.getTrace());
+        assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, response.getStatus());
+        assertEquals("application/json", response.getHeader("Content-Type"));
     }
 }

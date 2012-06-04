@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/location")
-public class LocationController {
+public class LocationController extends BaseController{
 
     private LocationService locationService;
 

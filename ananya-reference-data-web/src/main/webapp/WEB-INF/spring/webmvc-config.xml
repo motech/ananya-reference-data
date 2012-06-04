@@ -40,15 +40,6 @@
         </bean>
     </mvc:interceptors>
 
-    <bean class="org.motechproject.ananya.referencedata.web.ExceptionResolver"
-          p:defaultErrorView="exceptionView">
-        <property name="exceptionMappings">
-            <props>
-                <prop key=".Exception">exceptionView</prop>
-            </props>
-        </property>
-    </bean>
-
     <bean id="messageAdapter" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
         <property name="messageConverters">
             <util:list>
@@ -63,19 +54,4 @@
     <bean class="org.springframework.ui.context.support.ResourceBundleThemeSource" id="themeSource"/>
     <bean class="org.springframework.web.servlet.theme.CookieThemeResolver" id="themeResolver" p:cookieName="theme"
           p:defaultThemeName="standard"/>
-    <bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
-        <property name="prefix" value="/"/>
-        <property name="suffix" value=".vm"/>
-        <property name="exposeSpringMacroHelpers" value="true"/>
-        <property name="toolboxConfigLocation" value="/WEB-INF/velocity/toolbox.xml"/>
-        <property name="contentType" value="text/html; charset=utf-8"/>
-    </bean>
-    <bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
-        <property name="resourceLoaderPath" value="/WEB-INF/velocity/views"/>
-    </bean>
-
-    <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
-        <property name="location" value="/WEB-INF/views.xml"/>
-    </bean>
-
 </beans>

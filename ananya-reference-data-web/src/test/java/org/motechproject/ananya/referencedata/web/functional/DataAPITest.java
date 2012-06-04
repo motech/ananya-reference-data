@@ -7,12 +7,14 @@ import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.request.FLWRequest;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
+import org.motechproject.ananya.referencedata.response.ExceptionResponse;
 import org.motechproject.ananya.referencedata.response.FLWResponse;
 import org.motechproject.ananya.referencedata.response.LocationCreationResponse;
 
 import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 public class DataAPITest extends SpringIntegrationTest {
 
@@ -109,5 +111,14 @@ public class DataAPITest extends SpringIntegrationTest {
         FLWResponse flwResponse = (FLWResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw?_method=PUT", new FLWRequest("9999888822", "new name", "ANM", new LocationRequest("district", "block", "panchayat")));
 
         assertEquals("FLW created successfully", flwResponse.getMessage());
+    }
+
+    @Test
+    public void shouldHandleExceptionAndSetErrorResponseStatus() throws IOException {
+        JsonHttpClient jsonHttpClient = new JsonHttpClient(ExceptionResponse.class);
+
+        ExceptionResponse exceptionResponse = (ExceptionResponse) jsonHttpClient.post("http://localhost:9979/reference-data/location", "\"foo\":\"bar\"");
+
+        assertNotNull(exceptionResponse);
     }
 }

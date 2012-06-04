@@ -17,10 +17,15 @@ public class JsonHttpClient {
 
     public Object post(final String uri, final Object req) throws IOException {
         final Gson gson = new Gson();
+        return post(uri, gson.toJson(req));
+    }
+
+    public Object post(final String uri, final String json) throws IOException {
+        final Gson gson = new Gson();
         HttpClient httpClient = new HttpClient();
         PostMethod postMethod = new PostMethod(uri) {
             {
-                setRequestEntity(new StringRequestEntity(gson.toJson(req), "application/json", null));
+                setRequestEntity(new StringRequestEntity(json, "application/json", null));
             }
         };
         httpClient.executeMethod(postMethod);
