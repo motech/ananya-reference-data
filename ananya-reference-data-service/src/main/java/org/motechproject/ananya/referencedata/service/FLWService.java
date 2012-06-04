@@ -30,10 +30,10 @@ public class FLWService {
 
         Location location = allLocations.getFor(flwRequest.getDistrict(), flwRequest.getBlock(), flwRequest.getPanchayat());
         ValidationResponse validationResponse = new FLWValidator().validateCreateRequest(flwRequest, location);
-        if(!validationResponse.isValid())
+        if (!validationResponse.isValid())
             return flwResponse.withValidationResponse(validationResponse);
 
-        if(existingFLW(flwRequest) != null)
+        if (existingFLW(flwRequest) != null)
             return flwResponse.withFLWExists();
 
         allFrontLineWorkers.add(FLWMapper.mapFrom(flwRequest, location));
@@ -45,13 +45,12 @@ public class FLWService {
 
         Location location = allLocations.getFor(flwRequest.getDistrict(), flwRequest.getBlock(), flwRequest.getPanchayat());
         ValidationResponse validationResponse = new FLWValidator().validateUpdateRequest(flwRequest, location);
-        if(!validationResponse.isValid())
+        if (!validationResponse.isValid())
             return flwResponse.withValidationResponse(validationResponse);
 
         FrontLineWorker frontLineWorkerInDB = existingFLW(flwRequest);
-        if(frontLineWorkerInDB == null) {
+        if (frontLineWorkerInDB == null)
             return add(flwRequest);
-        }
 
         allFrontLineWorkers.update(FLWMapper.mapFrom(frontLineWorkerInDB, flwRequest, location));
         return flwResponse.withUpdated();
