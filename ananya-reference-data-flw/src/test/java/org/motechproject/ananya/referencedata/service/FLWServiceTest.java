@@ -11,6 +11,7 @@ import org.motechproject.ananya.referencedata.domain.Designation;
 import org.motechproject.ananya.referencedata.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.repository.AllLocations;
 import org.motechproject.ananya.referencedata.request.FLWRequest;
+import org.motechproject.ananya.referencedata.request.LocationRequest;
 import org.motechproject.ananya.referencedata.response.FLWResponse;
 
 import static junit.framework.Assert.assertEquals;
@@ -44,7 +45,7 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
 
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
@@ -71,7 +72,7 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
         when(allFrontLineWorkers.getFor(Long.valueOf(msisdn))).thenReturn(new FrontLineWorker());
 
@@ -89,7 +90,7 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
         FLWResponse flwResponse = flwService.add(flwRequest);
@@ -98,7 +99,7 @@ public class FLWServiceTest {
         verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
 
         msisdn = "9A99888822";
-        flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
 
         flwResponse = flwService.add(flwRequest);
 
@@ -115,7 +116,7 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
         FLWResponse flwResponse = flwService.add(flwRequest);
@@ -132,7 +133,7 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
         FLWResponse flwResponse = flwService.add(flwRequest);
@@ -153,7 +154,7 @@ public class FLWServiceTest {
         String district = "~district";
         String block = "~block";
         String panchayat = "~panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
 
         when(allLocations.getFor(district, block, panchayat)).thenReturn(null);
 
@@ -171,7 +172,7 @@ public class FLWServiceTest {
         String district = "~district";
         String block = "~block";
         String panchayat = "~panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(null);
 
         FLWResponse flwResponse = flwService.add(flwRequest);
@@ -190,7 +191,7 @@ public class FLWServiceTest {
         String newDistrict = "district1";
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
-        FLWRequest flwRequest = new FLWRequest(msisdn, newName, newDesignation, newDistrict, newBlock, newPanchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
         when(allFrontLineWorkers.getFor(Long.valueOf(msisdn))).thenReturn(new FrontLineWorker(Long.valueOf(msisdn), "name", Designation.ANM, new Location("district", "block", "panchayat")));
 
@@ -218,7 +219,7 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allFrontLineWorkers.getFor(Long.valueOf(msisdn))).thenReturn(null);
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
         
@@ -235,7 +236,7 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
         FLWResponse flwResponse = flwService.update(flwRequest);
@@ -252,7 +253,7 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
         FLWResponse flwResponse = flwService.update(flwRequest);
@@ -269,7 +270,7 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
 
         FLWResponse flwResponse = flwService.update(flwRequest);
 
@@ -285,7 +286,7 @@ public class FLWServiceTest {
         String newDistrict = "district1";
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
-        FLWRequest flwRequest = new FLWRequest(msisdn, newName, newDesignation, newDistrict, newBlock, newPanchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, newName, newDesignation,  new LocationRequest(newDistrict, newBlock, newPanchayat));
 
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
 

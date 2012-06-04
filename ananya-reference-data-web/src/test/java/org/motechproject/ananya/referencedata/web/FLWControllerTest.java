@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.request.FLWRequest;
+import org.motechproject.ananya.referencedata.request.LocationRequest;
 import org.motechproject.ananya.referencedata.service.FLWService;
 
 import static org.junit.Assert.assertEquals;
@@ -32,7 +33,7 @@ public class FLWControllerTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
 
         flwController.create(flwRequest);
 
@@ -43,9 +44,9 @@ public class FLWControllerTest {
         assertEquals(msisdn, captorValue.getMsisdn());
         assertEquals(name, captorValue.getName());
         assertEquals(designation, captorValue.getDesignation());
-        assertEquals(district, captorValue.getDistrict());
-        assertEquals(block, captorValue.getBlock());
-        assertEquals(panchayat, captorValue.getPanchayat());
+        assertEquals(district, captorValue.getLocationRequest().getDistrict());
+        assertEquals(block, captorValue.getLocationRequest().getBlock());
+        assertEquals(panchayat, captorValue.getLocationRequest().getPanchayat());
     }
 
     @Test
@@ -56,7 +57,7 @@ public class FLWControllerTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, district, block, panchayat);
+        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
 
         flwController.update(flwRequest);
 

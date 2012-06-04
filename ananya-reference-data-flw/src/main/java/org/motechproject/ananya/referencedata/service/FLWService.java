@@ -7,6 +7,7 @@ import org.motechproject.ananya.referencedata.mapper.FLWMapper;
 import org.motechproject.ananya.referencedata.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.repository.AllLocations;
 import org.motechproject.ananya.referencedata.request.FLWRequest;
+import org.motechproject.ananya.referencedata.request.LocationRequest;
 import org.motechproject.ananya.referencedata.response.FLWResponse;
 import org.motechproject.ananya.referencedata.response.ValidationResponse;
 import org.motechproject.ananya.referencedata.validators.FLWValidator;
@@ -28,7 +29,8 @@ public class FLWService {
     public FLWResponse add(FLWRequest flwRequest) {
         FLWResponse flwResponse = new FLWResponse();
 
-        Location location = allLocations.getFor(flwRequest.getDistrict(), flwRequest.getBlock(), flwRequest.getPanchayat());
+        LocationRequest locationRequest = flwRequest.getLocationRequest();
+        Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
         ValidationResponse validationResponse = new FLWValidator().validateCreateRequest(flwRequest, location);
         if (!validationResponse.isValid())
             return flwResponse.withValidationResponse(validationResponse);
@@ -43,7 +45,8 @@ public class FLWService {
     public FLWResponse update(FLWRequest flwRequest) {
         FLWResponse flwResponse = new FLWResponse();
 
-        Location location = allLocations.getFor(flwRequest.getDistrict(), flwRequest.getBlock(), flwRequest.getPanchayat());
+        LocationRequest locationRequest = flwRequest.getLocationRequest();
+        Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
         ValidationResponse validationResponse = new FLWValidator().validateUpdateRequest(flwRequest, location);
         if (!validationResponse.isValid())
             return flwResponse.withValidationResponse(validationResponse);

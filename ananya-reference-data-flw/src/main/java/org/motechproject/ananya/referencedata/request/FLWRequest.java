@@ -4,20 +4,16 @@ public class FLWRequest {
     private String msisdn;
     private String name;
     private String designation;
-    private String district;
-    private String block;
-    private String panchayat;
+    private LocationRequest locationRequest;
     
     public FLWRequest(){
     }
 
-    public FLWRequest(String msisdn, String name, String designation, String district, String block, String panchayat) {
+    public FLWRequest(String msisdn, String name, String designation, LocationRequest locationRequest) {
         this.msisdn = msisdn;
         this.name = name;
         this.designation = designation;
-        this.district = district;
-        this.block = block;
-        this.panchayat = panchayat;
+        this.locationRequest = locationRequest;
     }
 
     public String getMsisdn() {
@@ -32,16 +28,8 @@ public class FLWRequest {
         return designation;
     }
 
-    public String getDistrict() {
-        return district;
-    }
-
-    public String getBlock() {
-        return block;
-    }
-
-    public String getPanchayat() {
-        return panchayat;
+    public LocationRequest getLocationRequest() {
+        return locationRequest;
     }
 
     public void setMsisdn(String msisdn) {
@@ -56,15 +44,7 @@ public class FLWRequest {
         this.designation = designation;
     }
 
-    public void setDistrict(String district) {
-        this.district = district;
-    }
-
-    public void setBlock(String block) {
-        this.block = block;
-    }
-
-    public void setPanchayat(String panchayat) {
-        this.panchayat = panchayat;
+    public void setLocationRequest(LocationRequest locationRequest) {
+        this.locationRequest = locationRequest;
     }
 }

@@ -132,7 +132,7 @@
         </dependency>
         <dependency>
             <groupId>org.motechproject.ananya.referencedata</groupId>
-            <artifactId>ananya-reference-data-service</artifactId>
+            <artifactId>ananya-reference-data-flw</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

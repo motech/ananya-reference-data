@@ -38,7 +38,7 @@ public class FLWServiceIT extends SpringIntegrationTest {
     @Test
     public void shouldAddNewFlw(){
         locationService.add(new LocationRequest("district", "block", "panchayat"));
-        flwService.add(new FLWRequest("9999888822", "name", "ASHA", "district", "block", "panchayat"));
+        flwService.add(new FLWRequest("9999888822", "name", "ASHA",  new LocationRequest("district", "block", "panchayat")));
 
         List<FrontLineWorker> frontLineWorkerList = allFrontLineWorkers.getAll();
 
@@ -48,8 +48,8 @@ public class FLWServiceIT extends SpringIntegrationTest {
     @Test
     public void shouldUpdateExistingFlw(){
         locationService.add(new LocationRequest("district", "block", "panchayat"));
-        flwService.add(new FLWRequest("9999888822", "name", "ASHA", "district", "block", "panchayat"));
-        flwService.update(new FLWRequest("9999888822", "newName", "ANM", "district", "block", "panchayat"));
+        flwService.add(new FLWRequest("9999888822", "name", "ASHA", new LocationRequest("district", "block", "panchayat")));
+        flwService.update(new FLWRequest("9999888822", "newName", "ANM", new LocationRequest("district", "block", "panchayat")));
 
         List<FrontLineWorker> frontLineWorkerList = allFrontLineWorkers.getAll();
 

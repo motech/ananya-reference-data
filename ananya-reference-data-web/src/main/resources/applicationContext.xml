@@ -13,7 +13,6 @@
 
     <context:component-scan base-package="org.motechproject.ananya.referencedata"/>
 
-    <import resource="classpath:applicationContext-domain.xml"/>
-    <import resource="classpath:applicationContext-services.xml"/>
+    <import resource="classpath:applicationContext-flw.xml"/>
 
 </beans>
