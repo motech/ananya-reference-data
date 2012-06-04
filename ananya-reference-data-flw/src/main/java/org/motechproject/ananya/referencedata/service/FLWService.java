@@ -61,6 +61,6 @@ public class FLWService {
 
     private FrontLineWorker existingFLW(FLWRequest flwRequest) {
         String msisdn = flwRequest.getMsisdn();
-        return StringUtils.isBlank(msisdn) ? null : allFrontLineWorkers.getFor(Long.valueOf(msisdn));
+        return StringUtils.isBlank(msisdn) ? null : allFrontLineWorkers.getFor(Long.valueOf(FLWMapper.formatMsisdn(msisdn)));
     }
 }
