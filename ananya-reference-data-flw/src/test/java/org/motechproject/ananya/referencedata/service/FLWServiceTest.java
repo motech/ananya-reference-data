@@ -79,7 +79,7 @@ public class FLWServiceTest {
 
         FLWResponse flwResponse = flwService.add(flwRequest);
 
-        assertEquals("FLW already exists", flwResponse.getMessage());
+        assertEquals("FLW already exists with the same MSISDN number", flwResponse.getMessage());
         verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
     }
 

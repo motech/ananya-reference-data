@@ -25,7 +25,7 @@ public class FLWResponse {
     }
 
     public FLWResponse withFLWExists() {
-        this.message = "FLW already exists";
+        this.message = "FLW already exists with the same MSISDN number";
         return this;
     }
 }
