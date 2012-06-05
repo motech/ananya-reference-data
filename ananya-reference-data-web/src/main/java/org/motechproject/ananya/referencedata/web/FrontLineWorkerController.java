@@ -1,7 +1,7 @@
 package org.motechproject.ananya.referencedata.web;
 
 import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
-import org.motechproject.ananya.referencedata.response.FLWResponse;
+import org.motechproject.ananya.referencedata.response.FrontLineWorkerResponse;
 import org.motechproject.ananya.referencedata.service.FrontLineWorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,14 +23,14 @@ public class FrontLineWorkerController extends BaseController {
     @RequestMapping(method = RequestMethod.POST)
     public
     @ResponseBody
-    FLWResponse create(@RequestBody FrontLineWorkerRequest frontLineWorkerRequest) {
+    FrontLineWorkerResponse create(@RequestBody FrontLineWorkerRequest frontLineWorkerRequest) {
         return frontLineWorkerService.add(frontLineWorkerRequest);
     }
 
     @RequestMapping(params = "_method=PUT")
     public
     @ResponseBody
-    FLWResponse update(@RequestBody FrontLineWorkerRequest frontLineWorkerRequest) {
+    FrontLineWorkerResponse update(@RequestBody FrontLineWorkerRequest frontLineWorkerRequest) {
         return frontLineWorkerService.update(frontLineWorkerRequest);
     }
 }

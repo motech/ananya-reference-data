@@ -8,7 +8,7 @@ import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
 import org.motechproject.ananya.referencedata.response.ExceptionResponse;
-import org.motechproject.ananya.referencedata.response.FLWResponse;
+import org.motechproject.ananya.referencedata.response.FrontLineWorkerResponse;
 import org.motechproject.ananya.referencedata.response.LocationCreationResponse;
 
 import java.io.IOException;
@@ -54,63 +54,63 @@ public class DataAPITest extends SpringIntegrationTest {
     public void shouldCreateNewFLW() throws IOException {
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient(LocationCreationResponse.class);
         jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
-        JsonHttpClient jsonHttpClientForFLW = new JsonHttpClient(FLWResponse.class);
-        FLWResponse flwResponse = (FLWResponse) jsonHttpClientForFLW.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999888822", "name", "ASHA", new LocationRequest("district", "block", "panchayat")));
+        JsonHttpClient jsonHttpClientForFLW = new JsonHttpClient(FrontLineWorkerResponse.class);
+        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientForFLW.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999888822", "name", "ASHA", new LocationRequest("district", "block", "panchayat")));
 
-        assertEquals("FLW created successfully", flwResponse.getMessage());
+        assertEquals("FLW created successfully", frontLineWorkerResponse.getMessage());
     }
 
     @Test
     public void shouldNotCreateNewFLWForInvalidMsisdn() throws IOException {
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient(LocationCreationResponse.class);
         jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
-        JsonHttpClient jsonHttpClient = new JsonHttpClient(FLWResponse.class);
-        FLWResponse flwResponse = (FLWResponse) jsonHttpClient.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999", "name", "ASHA", new LocationRequest("district", "block", "panchayat")));
+        JsonHttpClient jsonHttpClient = new JsonHttpClient(FrontLineWorkerResponse.class);
+        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClient.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999", "name", "ASHA", new LocationRequest("district", "block", "panchayat")));
 
-        assertEquals("Invalid msisdn", flwResponse.getMessage());
+        assertEquals("Invalid msisdn", frontLineWorkerResponse.getMessage());
     }
 
     @Test
     public void shouldCreateNewFLWForInvalidDesignation() throws IOException {
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient(LocationCreationResponse.class);
         jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
-        JsonHttpClient jsonHttpClient = new JsonHttpClient(FLWResponse.class);
-        FLWResponse flwResponse = (FLWResponse) jsonHttpClient.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999888822", "name", null, new LocationRequest("district", "block", "panchayat")));
+        JsonHttpClient jsonHttpClient = new JsonHttpClient(FrontLineWorkerResponse.class);
+        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClient.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999888822", "name", null, new LocationRequest("district", "block", "panchayat")));
 
-        assertEquals("FLW created successfully", flwResponse.getMessage());
+        assertEquals("FLW created successfully", frontLineWorkerResponse.getMessage());
     }
 
     @Test
     public void shouldNotCreateNewFLWForUnavailableLocation() throws IOException {
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient(LocationCreationResponse.class);
         jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
-        JsonHttpClient jsonHttpClient = new JsonHttpClient(FLWResponse.class);
-        FLWResponse flwResponse = (FLWResponse) jsonHttpClient.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999888822", "name", "ASHA", new LocationRequest("district", "block", "invalid_panchayat")));
+        JsonHttpClient jsonHttpClient = new JsonHttpClient(FrontLineWorkerResponse.class);
+        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClient.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999888822", "name", "ASHA", new LocationRequest("district", "block", "invalid_panchayat")));
 
-        assertEquals("Invalid location", flwResponse.getMessage());
+        assertEquals("Invalid location", frontLineWorkerResponse.getMessage());
     }
 
     @Test
     public void shouldUpdateAnExistingFLW() throws IOException {
-        JsonHttpClient jsonHttpClientFLW = new JsonHttpClient(FLWResponse.class);
+        JsonHttpClient jsonHttpClientFLW = new JsonHttpClient(FrontLineWorkerResponse.class);
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient(LocationCreationResponse.class);
         jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
         jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999888822", "name", "ASHA", new LocationRequest("district", "block", "panchayat")));
         
-        FLWResponse flwResponse = (FLWResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw?_method=PUT", new FrontLineWorkerRequest("9999888822", "new name", "ANM", new LocationRequest("district", "block", "panchayat")));
+        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw?_method=PUT", new FrontLineWorkerRequest("9999888822", "new name", "ANM", new LocationRequest("district", "block", "panchayat")));
 
-        assertEquals("FLW updated successfully", flwResponse.getMessage());
+        assertEquals("FLW updated successfully", frontLineWorkerResponse.getMessage());
     }
 
     @Test
     public void shouldAddFLWWhenFLWDoesNotExistForUpdate() throws IOException {
-        JsonHttpClient jsonHttpClientFLW = new JsonHttpClient(FLWResponse.class);
+        JsonHttpClient jsonHttpClientFLW = new JsonHttpClient(FrontLineWorkerResponse.class);
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient(LocationCreationResponse.class);
         jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"));
 
-        FLWResponse flwResponse = (FLWResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw?_method=PUT", new FrontLineWorkerRequest("9999888822", "new name", "ANM", new LocationRequest("district", "block", "panchayat")));
+        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw?_method=PUT", new FrontLineWorkerRequest("9999888822", "new name", "ANM", new LocationRequest("district", "block", "panchayat")));
 
-        assertEquals("FLW created successfully", flwResponse.getMessage());
+        assertEquals("FLW created successfully", frontLineWorkerResponse.getMessage());
     }
 
     @Test

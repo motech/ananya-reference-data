@@ -43,10 +43,10 @@ public class FrontLineWorkerImporter {
 
         for (FrontLineWorkerRequest frontLineWorkerRequest : frontLineWorkerRequests) {
             Location location = getLocationFor(frontLineWorkerRequest.getLocation(), locationList);
-            FLWValidationResponse flwFLWValidationResponse = frontLineWorkerValidator.validateWithBulkValidation(frontLineWorkerRequest, location, frontLineWorkerRequests);
-            if (flwFLWValidationResponse.isInValid()) {
+            FLWValidationResponse response = frontLineWorkerValidator.validateWithBulkValidation(frontLineWorkerRequest, location, frontLineWorkerRequests);
+            if (response.isInValid()) {
                 isValid = false;
-                errors.add(new Error(frontLineWorkerRequest.toCSV() + "," + flwFLWValidationResponse.getMessage()));
+                errors.add(new Error(frontLineWorkerRequest.toCSV() + "," + response.getMessage()));
                 continue;
             }
         }
