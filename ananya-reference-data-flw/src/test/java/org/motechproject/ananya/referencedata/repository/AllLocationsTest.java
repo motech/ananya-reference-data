@@ -7,6 +7,7 @@ import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.SpringIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.*;
@@ -70,6 +71,24 @@ public class AllLocationsTest extends SpringIntegrationTest {
 
         Location locationFromDB = allLocations.getFor("DistRict", "BLOCK", "panchayat");
         assertNotNull(locationFromDB);
+    }
+
+    @Test
+    public void shouldAddMultipleLocations() {
+        String district = "district";
+        String district1 = "district1";
+        String block = "block";
+        String panchayat = "panchayat";
+        Location location = new Location(district, block, panchayat);
+        Location location1 = new Location(district1, block, panchayat);
+        List<Location> locations = new ArrayList<Location>();
+        locations.add(location);
+        locations.add(location1);
+
+        allLocations.addAll(locations);
+
+        List<Location> locationsFromDb = allLocations.getAll();
+        assertEquals(2, locationsFromDb.size());
     }
 
     @Test

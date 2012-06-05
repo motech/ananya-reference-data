@@ -7,9 +7,9 @@ import org.motechproject.ananya.referencedata.SpringIntegrationTest;
 import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.repository.AllLocations;
-import org.motechproject.ananya.referencedata.request.FLWRequest;
+import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
-import org.motechproject.ananya.referencedata.service.FLWService;
+import org.motechproject.ananya.referencedata.service.FrontLineWorkerService;
 import org.motechproject.ananya.referencedata.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,10 +17,10 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 
-public class FLWServiceIT extends SpringIntegrationTest {
+public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
 
     @Autowired
-    private FLWService flwService;
+    private FrontLineWorkerService frontLineWorkerService;
     @Autowired
     private LocationService locationService;
     @Autowired
@@ -38,7 +38,7 @@ public class FLWServiceIT extends SpringIntegrationTest {
     @Test
     public void shouldAddNewFlw(){
         locationService.add(new LocationRequest("district", "block", "panchayat"));
-        flwService.add(new FLWRequest("9999888822", "name", "ASHA",  new LocationRequest("district", "block", "panchayat")));
+        frontLineWorkerService.add(new FrontLineWorkerRequest("9999888822", "name", "ASHA",  new LocationRequest("district", "block", "panchayat")));
 
         List<FrontLineWorker> frontLineWorkerList = allFrontLineWorkers.getAll();
 
@@ -48,8 +48,8 @@ public class FLWServiceIT extends SpringIntegrationTest {
     @Test
     public void shouldUpdateExistingFlw(){
         locationService.add(new LocationRequest("district", "block", "panchayat"));
-        flwService.add(new FLWRequest("9999888822", "name", "ASHA", new LocationRequest("district", "block", "panchayat")));
-        flwService.update(new FLWRequest("9999888822", "newName", "ANM", new LocationRequest("district", "block", "panchayat")));
+        frontLineWorkerService.add(new FrontLineWorkerRequest("9999888822", "name", "ASHA", new LocationRequest("district", "block", "panchayat")));
+        frontLineWorkerService.update(new FrontLineWorkerRequest("9999888822", "newName", "ANM", new LocationRequest("district", "block", "panchayat")));
 
         List<FrontLineWorker> frontLineWorkerList = allFrontLineWorkers.getAll();
 

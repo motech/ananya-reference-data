@@ -1,15 +1,17 @@
 package org.motechproject.ananya.referencedata.request;
 
-public class FLWRequest {
+import org.motechproject.importer.annotation.ColumnName;
+
+public class FrontLineWorkerRequest {
     private String msisdn;
     private String name;
     private String designation;
-    private LocationRequest location;
-    
-    public FLWRequest(){
+    private LocationRequest location = new LocationRequest();
+
+    public FrontLineWorkerRequest() {
     }
 
-    public FLWRequest(String msisdn, String name, String designation, LocationRequest location) {
+    public FrontLineWorkerRequest(String msisdn, String name, String designation, LocationRequest location) {
         this.msisdn = msisdn;
         this.name = name;
         this.designation = designation;
@@ -46,5 +48,24 @@ public class FLWRequest {
 
     public void setLocation(LocationRequest location) {
         this.location = location;
+    }
+
+    @ColumnName(name = "district")
+    public void setDistrict(String district) {
+        location.setDistrict(district);
+    }
+
+    @ColumnName(name = "block")
+    public void setBlock(String block) {
+        location.setBlock(block);
+    }
+
+    @ColumnName(name = "panchayat")
+    public void setPanchayat(String panchayat) {
+        location.setPanchayat(panchayat);
+    }
+
+    public String toCSV() {
+        return msisdn + "," + name + "," + designation + "," + location.getDistrict() + "," + location.getBlock() + "," + location.getPanchayat();
     }
 }

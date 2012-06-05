@@ -2,29 +2,29 @@ package org.motechproject.ananya.referencedata.response;
 
 import org.apache.commons.lang.StringUtils;
 
-public class FLWResponse {
+public class FrontLineWorkerResponse {
     private String message;
 
     public String getMessage() {
         return message;
     }
 
-    public FLWResponse withValidationResponse(ValidationResponse validationResponse) {
-        this.message = StringUtils.join(validationResponse.getMessage(), ',');
+    public FrontLineWorkerResponse withValidationResponse(FLWValidationResponse FLWValidationResponse) {
+        this.message = StringUtils.join(FLWValidationResponse.getMessage(), ',');
         return this;
     }
 
-    public FLWResponse withUpdated() {
+    public FrontLineWorkerResponse withUpdated() {
         this.message = "FLW updated successfully";
         return this;
     }
 
-    public FLWResponse withCreated() {
+    public FrontLineWorkerResponse withCreated() {
         this.message = "FLW created successfully";
         return this;
     }
 
-    public FLWResponse withFLWExists() {
+    public FrontLineWorkerResponse withFLWExists() {
         this.message = "FLW already exists with the same MSISDN number";
         return this;
     }

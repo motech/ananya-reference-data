@@ -3,7 +3,7 @@ package org.motechproject.ananya.referencedata.response;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ValidationResponse {
+public class FLWValidationResponse {
     private List<String> message = new ArrayList<String>();
     private boolean isValid = true;
 
@@ -43,5 +43,14 @@ public class ValidationResponse {
     @Override
     public String toString() {
         return message.toString();
+    }
+
+    public void forDuplicates() {
+        isValid = false;
+        this.message.add("Found duplicate FLW with the same MSISDN");
+    }
+
+    public boolean isInValid() {
+        return !isValid;
     }
 }

@@ -4,38 +4,43 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.motechproject.ananya.referencedata.domain.Designation;
 import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.domain.Location;
-import org.motechproject.ananya.referencedata.domain.Designation;
 import org.motechproject.ananya.referencedata.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.repository.AllLocations;
-import org.motechproject.ananya.referencedata.request.FLWRequest;
+import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
 import org.motechproject.ananya.referencedata.response.FLWResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-public class FLWServiceTest {
+public class FrontLineWorkerServiceTest {
 
     @Mock
     private AllLocations allLocations;
     @Mock
     private AllFrontLineWorkers allFrontLineWorkers;
+    @Captor
+    ArgumentCaptor<List<FrontLineWorker>> captor;
 
-    private FLWService flwService;
+    private FrontLineWorkerService frontLineWorkerService;
 
     @Before
     public void setUp() {
         initMocks(this);
-        flwService = new FLWService(allLocations, allFrontLineWorkers);
+        frontLineWorkerService = new FrontLineWorkerService(allLocations, allFrontLineWorkers);
     }
 
     @Test
@@ -46,11 +51,11 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
 
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FLWResponse flwResponse = flwService.add(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.add(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).add(captor.capture());
@@ -73,11 +78,11 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
         when(allFrontLineWorkers.getFor(Long.valueOf(msisdn))).thenReturn(new FrontLineWorker());
 
-        FLWResponse flwResponse = flwService.add(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.add(frontLineWorkerRequest);
 
         assertEquals("FLW already exists with the same MSISDN number", flwResponse.getMessage());
         verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
@@ -91,18 +96,18 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FLWResponse flwResponse = flwService.add(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.add(frontLineWorkerRequest);
 
         assertEquals("Invalid msisdn", flwResponse.getMessage());
         verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
 
         msisdn = "9A99888822";
-        flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
+        frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
 
-        flwResponse = flwService.add(flwRequest);
+        flwResponse = frontLineWorkerService.add(frontLineWorkerRequest);
 
         assertEquals("Invalid msisdn", flwResponse.getMessage());
         verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
@@ -117,10 +122,10 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FLWResponse flwResponse = flwService.add(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.add(frontLineWorkerRequest);
 
         assertEquals("Invalid name", flwResponse.getMessage());
         verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
@@ -134,11 +139,11 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
 
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FLWResponse flwResponse = flwService.add(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.add(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).add(captor.capture());
@@ -156,10 +161,10 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FLWResponse flwResponse = flwService.add(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.add(frontLineWorkerRequest);
 
         assertEquals("FLW created successfully", flwResponse.getMessage());
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
@@ -175,10 +180,10 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FLWResponse flwResponse = flwService.add(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.add(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).add(captor.capture());
@@ -196,10 +201,10 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FLWResponse flwResponse = flwService.add(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.add(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).add(captor.capture());
@@ -210,6 +215,30 @@ public class FLWServiceTest {
     }
 
     @Test
+    public void shouldAddFLWsInBulk() throws Exception {
+        String district = "district";
+        String block = "block";
+        String panchayat = "panchayat";
+        String msisdn1 = "12344545";
+        String msisdn2 = "12344546";
+        FrontLineWorkerRequest frontLineWorkerRequest1 = new FrontLineWorkerRequest(msisdn1, "name", "ASHA",  new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest2 = new FrontLineWorkerRequest(msisdn2, "name", "ASHA",  new LocationRequest(district, block, panchayat));
+        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
+        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
+
+        ArrayList<FrontLineWorkerRequest> frontLineWorkerRequests = new ArrayList<FrontLineWorkerRequest>();
+        frontLineWorkerRequests.add(frontLineWorkerRequest1);
+        frontLineWorkerRequests.add(frontLineWorkerRequest2);
+
+        frontLineWorkerService.addAllWithoutValidations(frontLineWorkerRequests);
+
+        verify(allFrontLineWorkers).addAll(captor.capture());
+        List<FrontLineWorker> frontLineWorkers = captor.getValue();
+        assertEquals(msisdn1, frontLineWorkers.get(0).getMsisdn().toString());
+        assertEquals(msisdn2, frontLineWorkers.get(1).getMsisdn().toString());
+    }
+
+    @Test
     public void shouldNotAddFLWIfLocationIsNotAvailable() {
         String msisdn = "919999888822";
         String name = "name";
@@ -217,11 +246,11 @@ public class FLWServiceTest {
         String district = "~district";
         String block = "~block";
         String panchayat = "~panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
 
         when(allLocations.getFor(district, block, panchayat)).thenReturn(null);
 
-        FLWResponse flwResponse = flwService.add(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.add(frontLineWorkerRequest);
 
         assertEquals("Invalid location", flwResponse.getMessage());
         verify(allFrontLineWorkers, never()).add(Matchers.<FrontLineWorker>any());
@@ -235,10 +264,10 @@ public class FLWServiceTest {
         String district = "~district";
         String block = "~block";
         String panchayat = "~panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(null);
 
-        FLWResponse flwResponse = flwService.add(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.add(frontLineWorkerRequest);
 
         assertTrue(flwResponse.getMessage().contains("Invalid msisdn"));
         assertTrue(flwResponse.getMessage().contains("Invalid location"));
@@ -254,11 +283,11 @@ public class FLWServiceTest {
         String newDistrict = "district1";
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
-        FLWRequest flwRequest = new FLWRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
         when(allFrontLineWorkers.getFor(Long.valueOf(prefixedMsisdn))).thenReturn(new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat")));
 
-        FLWResponse flwResponse = flwService.update(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.update(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).update(captor.capture());
@@ -283,11 +312,11 @@ public class FLWServiceTest {
         String newDistrict = "district1";
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
-        FLWRequest flwRequest = new FLWRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
         when(allFrontLineWorkers.getFor(Long.valueOf(prefixedMsisdn))).thenReturn(new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat")));
 
-        FLWResponse flwResponse = flwService.update(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.update(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers, never()).update(captor.capture());
@@ -302,11 +331,11 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
         when(allFrontLineWorkers.getFor(Long.valueOf(msisdn))).thenReturn(new FrontLineWorker(Long.valueOf(msisdn), "old name", Designation.ANM, new Location("district", "block", "panchayat")));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FLWResponse flwResponse = flwService.update(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.update(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).update(captor.capture());
@@ -325,11 +354,11 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allFrontLineWorkers.getFor(Long.valueOf(msisdn))).thenReturn(null);
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FLWResponse flwResponse = flwService.update(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.update(frontLineWorkerRequest);
 
         assertEquals("FLW created successfully", flwResponse.getMessage());
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
@@ -346,10 +375,10 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FLWResponse flwResponse = flwService.update(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.update(frontLineWorkerRequest);
 
         verify(allFrontLineWorkers,never()).getFor(Long.valueOf(msisdn));
         assertEquals("Invalid msisdn", flwResponse.getMessage());
@@ -363,11 +392,11 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
         when(allFrontLineWorkers.getFor(Long.valueOf(msisdn))).thenReturn(new FrontLineWorker(Long.valueOf(msisdn), "oldName", Designation.ANM, new Location(district, block, panchayat)));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FLWResponse flwResponse = flwService.update(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.update(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).update(captor.capture());
@@ -385,9 +414,9 @@ public class FLWServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation,  new LocationRequest(district, block, panchayat));
 
-        FLWResponse flwResponse = flwService.update(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.update(frontLineWorkerRequest);
 
         verify(allFrontLineWorkers,never()).getFor(Long.valueOf(msisdn));
         assertEquals("Invalid location", flwResponse.getMessage());
@@ -401,11 +430,11 @@ public class FLWServiceTest {
         String newDistrict = "district1";
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
-        FLWRequest flwRequest = new FLWRequest(msisdn, newName, newDesignation,  new LocationRequest(newDistrict, newBlock, newPanchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, newName, newDesignation,  new LocationRequest(newDistrict, newBlock, newPanchayat));
 
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
 
-        FLWResponse flwResponse = flwService.update(flwRequest);
+        FLWResponse flwResponse = frontLineWorkerService.update(frontLineWorkerRequest);
 
         verify(allFrontLineWorkers, never()).getFor(Matchers.<Long>any());
         verify(allFrontLineWorkers,never()).update(any(FrontLineWorker.class));

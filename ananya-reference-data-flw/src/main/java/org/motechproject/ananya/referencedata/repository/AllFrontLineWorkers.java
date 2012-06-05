@@ -36,4 +36,8 @@ public class AllFrontLineWorkers {
     public void update(FrontLineWorker frontLineWorker) {
         template.update(frontLineWorker);
     }
+
+    public void addAll(List<FrontLineWorker> frontLineWorkers) {
+        template.saveOrUpdateAll(frontLineWorkers);
+    }
 }

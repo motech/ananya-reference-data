@@ -10,8 +10,8 @@ public class LocationCreationResponse {
         return this;
     }
 
-    public LocationCreationResponse withValidationResponse(ValidationResponse validationResponse) {
-        this.message = StringUtils.join(validationResponse.getMessage(), ',');
+    public LocationCreationResponse withValidationResponse(FLWValidationResponse FLWValidationResponse) {
+        this.message = StringUtils.join(FLWValidationResponse.getMessage(), ',');
         return this;
     }
 

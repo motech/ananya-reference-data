@@ -30,7 +30,7 @@ public class LocationList {
         return currentLocation;
     }
 
-    private Location findFor(String district, String block, String village) {
+    public Location findFor(String district, String block, String village) {
         for (Location location : locations) {
             if (location.equals(new Location(district, block, village, 0, 0, 0)))
                 return location;

@@ -24,7 +24,6 @@ public class AllLocations {
         template.save(location);
     }
 
-
     public List<Location> getAll() {
         return template.loadAll(Location.class);
     }
@@ -38,5 +37,9 @@ public class AllLocations {
 
         List locationList = template.findByCriteria(criteria);
         return locationList.isEmpty() ? null : (Location) locationList.get(0);
+    }
+
+    public void addAll(List<Location> locations) {
+        template.saveOrUpdateAll(locations);
     }
 }

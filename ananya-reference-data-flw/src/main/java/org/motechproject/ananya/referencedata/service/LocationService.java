@@ -5,11 +5,14 @@ import org.motechproject.ananya.referencedata.domain.LocationList;
 import org.motechproject.ananya.referencedata.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.repository.AllLocations;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
+import org.motechproject.ananya.referencedata.response.FLWValidationResponse;
 import org.motechproject.ananya.referencedata.response.LocationCreationResponse;
-import org.motechproject.ananya.referencedata.response.ValidationResponse;
 import org.motechproject.ananya.referencedata.validators.LocationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class LocationService {
@@ -26,13 +29,25 @@ public class LocationService {
         Location location = LocationMapper.mapFrom(locationRequest);
         LocationList locationList = new LocationList(this.allLocations.getAll());
 
-        ValidationResponse validationResponse = new LocationValidator(locationList).validate(location);
-        if(validationResponse.isValid()) {
+        FLWValidationResponse FLWValidationResponse = new LocationValidator(locationList).validate(location);
+        if(FLWValidationResponse.isValid()) {
             location = locationList.updateLocationCode(location);
             this.allLocations.add(location);
             return response.withCreated();
         }
 
-        return response.withValidationResponse(validationResponse);
+        return response.withValidationResponse(FLWValidationResponse);
+    }
+
+    public List<Location> getAll() {
+        return allLocations.getAll();
+    }
+
+    public void addAllWithoutValidations(List<LocationRequest> locationRequests) {
+        List<Location> locations = new ArrayList<Location>();
+        for(LocationRequest request : locationRequests) {
+            locations.add(LocationMapper.mapFrom(request));
+        }
+        allLocations.addAll(locations);
     }
 }

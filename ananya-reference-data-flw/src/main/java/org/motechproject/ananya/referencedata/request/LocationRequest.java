@@ -39,4 +39,8 @@ public class LocationRequest implements Serializable {
     public void setPanchayat(String panchayat) {
         this.panchayat = panchayat;
     }
+
+    public String toCSV() {
+        return district + "," + block + "," + panchayat;
+    }
 }

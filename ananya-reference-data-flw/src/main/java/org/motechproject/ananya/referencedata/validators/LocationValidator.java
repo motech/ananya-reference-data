@@ -3,7 +3,7 @@ package org.motechproject.ananya.referencedata.validators;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.domain.LocationList;
-import org.motechproject.ananya.referencedata.response.ValidationResponse;
+import org.motechproject.ananya.referencedata.response.FLWValidationResponse;
 
 public class LocationValidator {
 
@@ -13,12 +13,12 @@ public class LocationValidator {
         this.locationList = locationList;
     }
 
-    public ValidationResponse validate(Location location) {
-        ValidationResponse response = new ValidationResponse();
+    public FLWValidationResponse validate(Location location) {
+        FLWValidationResponse responseFLW = new FLWValidationResponse();
         if(StringUtils.isEmpty(location.getDistrict()) || StringUtils.isEmpty(location.getBlock()) || StringUtils.isEmpty(location.getPanchayat()))
-            response.forBlankFieldsInLocation();
+            responseFLW.forBlankFieldsInLocation();
         if(locationList.isAlreadyPresent(location))
-            response.forDuplicateLocation();
-        return response;
+            responseFLW.forDuplicateLocation();
+        return responseFLW;
     }
 }

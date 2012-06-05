@@ -10,6 +10,7 @@
         <module>ananya-reference-data-performance</module>
         <module>ananya-reference-data-web</module>
         <module>ananya-reference-data-flw</module>
+        <module>ananya-reference-data-csv-importer</module>
     </modules>
     <name>Ananya Reference-Data</name>
 

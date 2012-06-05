@@ -5,10 +5,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.motechproject.ananya.referencedata.request.FLWRequest;
+import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
 import org.motechproject.ananya.referencedata.response.ExceptionResponse;
-import org.motechproject.ananya.referencedata.service.FLWService;
+import org.motechproject.ananya.referencedata.service.FrontLineWorkerService;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,16 +19,16 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class FLWControllerTest {
-    private FLWController flwController;
+public class FrontLineWorkerControllerTest {
+    private FrontLineWorkerController frontLineWorkerController;
 
     @Mock
-    private FLWService flwService;
+    private FrontLineWorkerService frontLineWorkerService;
 
     @Before
     public void setUp(){
         initMocks(this);
-        flwController = new FLWController(flwService);
+        frontLineWorkerController = new FrontLineWorkerController(frontLineWorkerService);
     }
 
     @Test
@@ -39,13 +39,13 @@ public class FLWControllerTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
 
-        flwController.create(flwRequest);
+        frontLineWorkerController.create(frontLineWorkerRequest);
 
-        ArgumentCaptor<FLWRequest> captor = ArgumentCaptor.forClass(FLWRequest.class);
-        verify(flwService).add(captor.capture());
-        FLWRequest captorValue = captor.getValue();
+        ArgumentCaptor<FrontLineWorkerRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerRequest.class);
+        verify(frontLineWorkerService).add(captor.capture());
+        FrontLineWorkerRequest captorValue = captor.getValue();
 
         assertEquals(msisdn, captorValue.getMsisdn());
         assertEquals(name, captorValue.getName());
@@ -63,18 +63,18 @@ public class FLWControllerTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FLWRequest flwRequest = new FLWRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
 
-        flwController.update(flwRequest);
+        frontLineWorkerController.update(frontLineWorkerRequest);
 
-        verify(flwService).update(any(FLWRequest.class));
+        verify(frontLineWorkerService).update(any(FrontLineWorkerRequest.class));
     }
 
     @Test
     public void shouldReturnExceptionResponseAndSetStatusTo500() {
         String errorMessage = "Foo error";
         MockHttpServletResponse response = new MockHttpServletResponse();
-        ExceptionResponse exceptionResponse = new Gson().fromJson(flwController.handleException(new IllegalArgumentException(errorMessage), response), ExceptionResponse.class);
+        ExceptionResponse exceptionResponse = new Gson().fromJson(frontLineWorkerController.handleException(new IllegalArgumentException(errorMessage), response), ExceptionResponse.class);
 
         assertEquals(errorMessage, exceptionResponse.getMessage());
         assertNotNull(exceptionResponse.getTrace());
