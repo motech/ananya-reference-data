@@ -32,9 +32,9 @@ public class AllLocations {
     public Location getFor(String district, String block, String panchayat) {
         DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
 
-        criteria.add(Restrictions.eq("district", district));
-        criteria.add(Restrictions.eq("block", block));
-        criteria.add(Restrictions.eq("panchayat", panchayat));
+        criteria.add(Restrictions.eq("district", district).ignoreCase());
+        criteria.add(Restrictions.eq("block", block).ignoreCase());
+        criteria.add(Restrictions.eq("panchayat", panchayat).ignoreCase());
 
         List locationList = template.findByCriteria(criteria);
         return locationList.isEmpty() ? null : (Location) locationList.get(0);

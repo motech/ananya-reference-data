@@ -1,5 +1,7 @@
 package org.motechproject.ananya.referencedata.domain;
 
+import liquibase.util.StringUtils;
+
 import javax.persistence.*;
 
 @Entity
@@ -35,9 +37,7 @@ public class Location {
     }
 
     public Location(String district, String block, String panchayat, Integer districtCode, Integer blockCode, Integer panchayatCode) {
-        this.district = district;
-        this.block = block;
-        this.panchayat = panchayat;
+        this(district, block, panchayat);
         this.districtCode = districtCode;
         this.blockCode = blockCode;
         this.panchayatCode = panchayatCode;
@@ -45,9 +45,9 @@ public class Location {
     }
 
     public Location(String district, String block, String panchayat) {
-        this.district = district;
-        this.block = block;
-        this.panchayat = panchayat;
+        this.district = StringUtils.trimToEmpty(district);
+        this.block = StringUtils.trimToEmpty(block);
+        this.panchayat = StringUtils.trimToEmpty(panchayat);
     }
 
     public String getDistrict() {
@@ -92,9 +92,9 @@ public class Location {
 
         Location location = (Location) o;
 
-        if (block != null ? !block.equals(location.block) : location.block != null) return false;
-        if (district != null ? !district.equals(location.district) : location.district != null) return false;
-        if (panchayat != null ? !panchayat.equals(location.panchayat) : location.panchayat != null) return false;
+        if (block != null ? !block.equalsIgnoreCase(location.block) : location.block != null) return false;
+        if (district != null ? !district.equalsIgnoreCase(location.district) : location.district != null) return false;
+        if (panchayat != null ? !panchayat.equalsIgnoreCase(location.panchayat) : location.panchayat != null) return false;
 
         return true;
     }

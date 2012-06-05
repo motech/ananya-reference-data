@@ -60,6 +60,19 @@ public class AllLocationsTest extends SpringIntegrationTest {
     }
 
     @Test
+    public void shouldReturnLocationWhenLocationForGivenLocationDetailsExistsIgnoringCase() {
+        String district = "district";
+        String block = "block";
+        String panchayat = "panchayat";
+        Location location = new Location(district, block, panchayat);
+
+        allLocations.add(location);
+
+        Location locationFromDB = allLocations.getFor("DistRict", "BLOCK", "panchayat");
+        assertNotNull(locationFromDB);
+    }
+
+    @Test
     public void shouldReturnNullWhenALocationDoesNotExistInDB(){
         String district = "district";
         String block = "block";
