@@ -71,8 +71,12 @@ public class FrontLineWorkerService {
         allFrontLineWorkers.addAll(frontLineWorkers);
     }
 
+    public FrontLineWorker getByMsisdn(String msisdn) {
+        return allFrontLineWorkers.getFor(Long.valueOf(FrontLineWorkerMapper.formatMsisdn(msisdn)));
+    }
+
     private FrontLineWorker existingFLW(FrontLineWorkerRequest frontLineWorkerRequest) {
         String msisdn = frontLineWorkerRequest.getMsisdn();
-        return StringUtils.isBlank(msisdn) ? null : allFrontLineWorkers.getFor(Long.valueOf(FrontLineWorkerMapper.formatMsisdn(msisdn)));
+        return StringUtils.isBlank(msisdn) ? null : getByMsisdn(msisdn);
     }
 }
