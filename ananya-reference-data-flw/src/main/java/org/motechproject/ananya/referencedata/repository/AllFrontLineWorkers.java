@@ -24,10 +24,19 @@ public class AllFrontLineWorkers {
         return template.loadAll(FrontLineWorker.class);
     }
 
-    public FrontLineWorker getFor(Long msisdn) {
+    public FrontLineWorker getByMsisdn(Long msisdn) {
         DetachedCriteria criteria = DetachedCriteria.forClass(FrontLineWorker.class);
 
         criteria.add(Restrictions.eq("msisdn", msisdn));
+
+        List frontLineWorkerList = template.findByCriteria(criteria);
+        return frontLineWorkerList.isEmpty() ? null : (FrontLineWorker) frontLineWorkerList.get(0);
+    }
+
+    public FrontLineWorker getById(Integer id) {
+        DetachedCriteria criteria = DetachedCriteria.forClass(FrontLineWorker.class);
+
+        criteria.add(Restrictions.eq("id", id));
 
         List frontLineWorkerList = template.findByCriteria(criteria);
         return frontLineWorkerList.isEmpty() ? null : (FrontLineWorker) frontLineWorkerList.get(0);

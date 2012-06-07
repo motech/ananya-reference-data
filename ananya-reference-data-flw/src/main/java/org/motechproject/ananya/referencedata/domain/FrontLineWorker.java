@@ -33,6 +33,10 @@ public class FrontLineWorker {
         this.location = location;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public Long getMsisdn() {
         return msisdn;
     }

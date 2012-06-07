@@ -20,7 +20,6 @@ public class SyncEventHandler {
     private Properties clientServicesProperties;
     private JsonHttpClient jsonHttpClient;
 
-    public static final String PARAMETER_MSISDN = "msisdn";
     public static final String KEY_FRONT_LINE_WORKER_CREATE_URL = "front.line.worker.create.url";
 
     @Autowired
@@ -32,8 +31,8 @@ public class SyncEventHandler {
 
     @MotechListener(subjects = {SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE})
     public void handleSyncFrontLineWorker(MotechEvent event) {
-        String msisdn = (String) event.getParameters().get(PARAMETER_MSISDN);
-        FrontLineWorker frontLineWorker = frontLineWorkerService.getByMsisdn(msisdn);
+        Integer flwId = (Integer) event.getParameters().get("0");
+        FrontLineWorker frontLineWorker = frontLineWorkerService.getById(flwId);
         String url = (String) clientServicesProperties.get(KEY_FRONT_LINE_WORKER_CREATE_URL);
         try {
             jsonHttpClient.post(url, FrontLineWorkerContractMapper.mapFrom(frontLineWorker));

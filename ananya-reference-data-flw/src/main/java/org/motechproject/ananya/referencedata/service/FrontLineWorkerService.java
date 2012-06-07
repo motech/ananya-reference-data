@@ -22,11 +22,13 @@ public class FrontLineWorkerService {
 
     private AllLocations allLocations;
     private AllFrontLineWorkers allFrontLineWorkers;
+    private SyncService syncService;
 
     @Autowired
-    public FrontLineWorkerService(AllLocations allLocations, AllFrontLineWorkers allFrontLineWorkers) {
+    public FrontLineWorkerService(AllLocations allLocations, AllFrontLineWorkers allFrontLineWorkers, SyncService syncService) {
         this.allLocations = allLocations;
         this.allFrontLineWorkers = allFrontLineWorkers;
+        this.syncService = syncService;
     }
 
     public FrontLineWorkerResponse add(FrontLineWorkerRequest frontLineWorkerRequest) {
@@ -41,7 +43,9 @@ public class FrontLineWorkerService {
         if (existingFLW(frontLineWorkerRequest) != null)
             return frontLineWorkerResponse.withFLWExists();
 
-        allFrontLineWorkers.add(FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location));
+        FrontLineWorker frontLineWorker = FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location);
+        allFrontLineWorkers.add(frontLineWorker);
+        syncService.syncFrontLineWorker(frontLineWorker.getId());
         return frontLineWorkerResponse.withCreated();
     }
 
@@ -58,7 +62,9 @@ public class FrontLineWorkerService {
         if (frontLineWorkerInDB == null)
             return add(frontLineWorkerRequest);
 
-        allFrontLineWorkers.update(FrontLineWorkerMapper.mapFrom(frontLineWorkerInDB, frontLineWorkerRequest, location));
+        FrontLineWorker frontLineWorker = FrontLineWorkerMapper.mapFrom(frontLineWorkerInDB, frontLineWorkerRequest, location);
+        allFrontLineWorkers.update(frontLineWorker);
+        syncService.syncFrontLineWorker(frontLineWorker.getId());
         return frontLineWorkerResponse.withUpdated();
     }
 
@@ -71,12 +77,12 @@ public class FrontLineWorkerService {
         allFrontLineWorkers.addAll(frontLineWorkers);
     }
 
-    public FrontLineWorker getByMsisdn(String msisdn) {
-        return allFrontLineWorkers.getFor(Long.valueOf(FrontLineWorkerMapper.formatMsisdn(msisdn)));
+    public FrontLineWorker getById(Integer id) {
+        return allFrontLineWorkers.getById(id);
     }
 
     private FrontLineWorker existingFLW(FrontLineWorkerRequest frontLineWorkerRequest) {
         String msisdn = frontLineWorkerRequest.getMsisdn();
-        return StringUtils.isBlank(msisdn) ? null : getByMsisdn(msisdn);
+        return StringUtils.isBlank(msisdn) ? null : allFrontLineWorkers.getByMsisdn(Long.valueOf(FrontLineWorkerMapper.formatMsisdn(msisdn)));
     }
 }

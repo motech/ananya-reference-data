@@ -20,7 +20,7 @@ public class SyncServiceTest {
 
     @Test
     public void shouldPublishFlwDataIntoQueue() {
-        int flwId = 1234;
+        Integer flwId = 12;
         new SyncService(eventContext).syncFrontLineWorker(flwId);
         verify(eventContext).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, flwId);
     }

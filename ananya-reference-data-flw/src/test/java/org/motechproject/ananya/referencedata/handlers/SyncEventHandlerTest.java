@@ -44,10 +44,11 @@ public class SyncEventHandlerTest {
     public void shouldInvokeClientServiceWithFrontLineWorkerData() throws IOException {
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         String msisdn = "1234";
-        parameters.put(SyncEventHandler.PARAMETER_MSISDN, msisdn);
+        Integer id = 12;
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, new Location("district1", "block1", "panchayat1"));
-        when(frontLineWorkerService.getByMsisdn(msisdn)).thenReturn(frontLineWorker);
+        when(frontLineWorkerService.getById(id)).thenReturn(frontLineWorker);
 
+        parameters.put("0", id);
         syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));
 
         ArgumentCaptor<FrontLineWorkerContract> captor = ArgumentCaptor.forClass(FrontLineWorkerContract.class);
