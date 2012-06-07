@@ -7,13 +7,15 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
+    <util:properties id="clientServicesProperties" location="classpath:/clientServices.properties"/>
+
     <context:property-placeholder location="classpath*:*.properties"/>
     <context:spring-configured/>
     <context:annotation-config/>
+
+    <import resource="classpath:applicationPlatformServerAPI.xml"/>
+
     <context:component-scan base-package="org.motechproject.ananya.referencedata"/>
 
     <import resource="classpath:applicationContext-hibernate.xml"/>
-    <import resource="classpath:applicationPlatformServerAPI.xml"/>
-
-    <util:properties id="clientServicesProperties" location="classpath:/clientServices.properties"/>
 </beans>
