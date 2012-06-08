@@ -106,5 +106,7 @@ public class LocationServiceTest {
         assertEquals(2, value.size());
         assertEquals(district1, value.get(0).getDistrict());
         assertEquals(district2, value.get(1).getDistrict());
+        assertEquals("S01D001B001V001", value.get(0).getLocationId());
+        assertEquals("S01D002B001V001", value.get(1).getLocationId());
     }
 }

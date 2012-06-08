@@ -13,6 +13,10 @@ public class LocationList {
         }
     }
 
+    public void add(Location location) {
+        locations.add(location);
+    }
+
     public boolean isAlreadyPresent(Location location) {
         return findFor(location.getDistrict(), location.getBlock(), location.getPanchayat()) != null;
     }

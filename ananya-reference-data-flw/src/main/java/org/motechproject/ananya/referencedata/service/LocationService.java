@@ -10,6 +10,7 @@ import org.motechproject.ananya.referencedata.response.LocationCreationResponse;
 import org.motechproject.ananya.referencedata.validators.LocationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,11 @@ public class LocationService {
         this.allLocations = allLocations;
     }
 
+    public List<Location> getAll() {
+        return allLocations.getAll();
+    }
+
+    @Transactional
     public LocationCreationResponse add(LocationRequest locationRequest) {
         LocationCreationResponse response = new LocationCreationResponse();
 
@@ -32,21 +38,23 @@ public class LocationService {
         FLWValidationResponse FLWValidationResponse = new LocationValidator(locationList).validate(location);
         if(FLWValidationResponse.isValid()) {
             location = locationList.updateLocationCode(location);
-            this.allLocations.add(location);
+            allLocations.add(location);
             return response.withCreated();
         }
 
         return response.withValidationResponse(FLWValidationResponse);
     }
 
-    public List<Location> getAll() {
-        return allLocations.getAll();
-    }
-
+    @Transactional
     public void addAllWithoutValidations(List<LocationRequest> locationRequests) {
+        LocationList locationList = new LocationList(allLocations.getAll());
         List<Location> locations = new ArrayList<Location>();
         for(LocationRequest request : locationRequests) {
-            locations.add(LocationMapper.mapFrom(request));
+            Location location = LocationMapper.mapFrom(request);
+            locationList.updateLocationCode(location);
+            locationList.add(location);
+
+            locations.add(location);
         }
         allLocations.addAll(locations);
     }
