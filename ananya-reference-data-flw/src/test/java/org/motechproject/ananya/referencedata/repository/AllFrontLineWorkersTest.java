@@ -3,10 +3,10 @@ package org.motechproject.ananya.referencedata.repository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
-import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.SpringIntegrationTest;
 import org.motechproject.ananya.referencedata.domain.Designation;
+import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
+import org.motechproject.ananya.referencedata.domain.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -18,17 +18,26 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
     @Autowired
     AllFrontLineWorkers allFrontLineWorkers;
+    private Location location;
 
     @Before
-    @After
     public void setUp() {
+        template.deleteAll(template.loadAll(FrontLineWorker.class));
+        template.deleteAll(template.loadAll(Location.class));
+        location = new Location("district", "block", "panchayat");
+        template.save(location);
+
+    }
+
+    @After
+    public void tearDown() {
         template.deleteAll(template.loadAll(FrontLineWorker.class));
         template.deleteAll(template.loadAll(Location.class));
     }
 
     @Test
     public void shouldAddFLWToDB() {
-        Location location = new Location("district", "block", "panchayat");
+        template.save(location);
         FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "name", Designation.AWW, location);
 
         allFrontLineWorkers.add(frontLineWorker);
@@ -39,7 +48,6 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
     @Test
     public void shouldGetFLWFromDBByTheGivenId() {
-        Location location = new Location("district", "block", "panchayat");
         long msisdn = 1234567890L;
         FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
 
@@ -52,15 +60,17 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
     @Test
     public void shouldUpdateFLWToDB() {
         long msisdn = 1234567890L;
-        FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, new Location("district", "block", "panchayat"));
-        allFrontLineWorkers.add(existingFrontLineWorker);
-
+        FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
         String newName = "new_name";
         Designation newDesignation = Designation.ANM;
         String newDistrict = "district1";
         existingFrontLineWorker.setName(newName);
+        Location newLocation = new Location(newDistrict, "block1", "panchayat1");
+        template.save(existingFrontLineWorker);
+        template.save(newLocation);
         existingFrontLineWorker.setDesignation(newDesignation);
-        existingFrontLineWorker.setLocation(new Location(newDistrict, "block1", "panchayat1"));
+        existingFrontLineWorker.setLocation(newLocation);
+
         allFrontLineWorkers.update(existingFrontLineWorker);
 
         FrontLineWorker frontLineWorkerFromDb = allFrontLineWorkers.getByMsisdn(msisdn);
@@ -71,10 +81,8 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
     @Test
     public void shouldGetAllFLWsFromDB() {
-        Location location1 = new Location("district", "block", "panchayat");
-        FrontLineWorker frontLineWorker1 = new FrontLineWorker(1234567890L, "name", Designation.AWW, location1);
-        Location location2 = new Location("district", "block", "panchayat");
-        FrontLineWorker frontLineWorker2 = new FrontLineWorker(1234567890L, "name", Designation.AWW, location2);
+        FrontLineWorker frontLineWorker1 = new FrontLineWorker(1234567890L, "name", Designation.AWW, location);
+        FrontLineWorker frontLineWorker2 = new FrontLineWorker(1234567890L, "name", Designation.AWW, location);
 
         allFrontLineWorkers.add(frontLineWorker1);
         allFrontLineWorkers.add(frontLineWorker2);
@@ -85,7 +93,6 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
     @Test
     public void shouldGetAnFLWForTheGivenMsisdn() {
-        Location location = new Location("district", "block", "panchayat");
         Long msisdn = 1234567890L;
         FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
         allFrontLineWorkers.add(frontLineWorker);
@@ -97,7 +104,6 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
     @Test
     public void shouldAddAllFLWs() {
-        Location location = new Location("district", "block", "panchayat");
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(new FrontLineWorker(1234567890L, "name1", Designation.AWW, location));
         frontLineWorkers.add(new FrontLineWorker(1234567800L, "name2", Designation.AWW, location));
