@@ -32,7 +32,6 @@ public class FrontLineWorkerService {
         this.syncService = syncService;
     }
 
-    @Transactional
     public FrontLineWorkerResponse add(FrontLineWorkerRequest frontLineWorkerRequest) {
         FrontLineWorkerResponse frontLineWorkerResponse = new FrontLineWorkerResponse();
 
@@ -51,7 +50,6 @@ public class FrontLineWorkerService {
         return frontLineWorkerResponse.withCreated();
     }
 
-    @Transactional
     public FrontLineWorkerResponse update(FrontLineWorkerRequest frontLineWorkerRequest) {
         FrontLineWorkerResponse frontLineWorkerResponse = new FrontLineWorkerResponse();
 
@@ -71,7 +69,6 @@ public class FrontLineWorkerService {
         return frontLineWorkerResponse.withUpdated();
     }
 
-    @Transactional
     public void addAllWithoutValidations(List<FrontLineWorkerRequest> frontLineWorkerRequests) {
         List<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         for(FrontLineWorkerRequest frontLineWorkerRequest : frontLineWorkerRequests) {

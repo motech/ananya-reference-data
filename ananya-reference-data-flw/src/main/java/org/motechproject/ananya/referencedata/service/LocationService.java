@@ -28,7 +28,6 @@ public class LocationService {
         return allLocations.getAll();
     }
 
-    @Transactional
     public LocationCreationResponse add(LocationRequest locationRequest) {
         LocationCreationResponse response = new LocationCreationResponse();
 
@@ -45,7 +44,6 @@ public class LocationService {
         return response.withValidationResponse(FLWValidationResponse);
     }
 
-    @Transactional
     public void addAllWithoutValidations(List<LocationRequest> locationRequests) {
         LocationList locationList = new LocationList(allLocations.getAll());
         List<Location> locations = new ArrayList<Location>();
@@ -53,7 +51,6 @@ public class LocationService {
             Location location = LocationMapper.mapFrom(request);
             locationList.updateLocationCode(location);
             locationList.add(location);
-
             locations.add(location);
         }
         allLocations.addAll(locations);
