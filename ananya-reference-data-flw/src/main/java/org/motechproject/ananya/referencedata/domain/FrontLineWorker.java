@@ -19,7 +19,7 @@ public class FrontLineWorker {
     @Column(name = "designation")
     private String designation;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
 
