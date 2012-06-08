@@ -5,8 +5,6 @@ import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.response.FLWValidationResponse;
 
-import java.util.List;
-
 public class FrontLineWorkerValidator {
     public FLWValidationResponse validateCreateRequest(FrontLineWorkerRequest frontLineWorkerRequest, Location location) {
         FLWValidationResponse FLWValidationResponse = new FLWValidationResponse();
@@ -33,26 +31,6 @@ public class FrontLineWorkerValidator {
         validateName(frontLineWorkerRequest, FLWValidationResponse);
 
         return FLWValidationResponse;
-    }
-
-    public FLWValidationResponse validateWithBulkValidation(FrontLineWorkerRequest frontLineWorkerRequest,
-                                                            Location location,
-                                                            List<FrontLineWorkerRequest> frontLineWorkerRequests) {
-        FLWValidationResponse FLWValidationResponse = validateCreateRequest(frontLineWorkerRequest, location);
-        if(hasDuplicates(frontLineWorkerRequest, frontLineWorkerRequests))
-            FLWValidationResponse.forDuplicates();
-        return FLWValidationResponse;
-    }
-
-    private boolean hasDuplicates(FrontLineWorkerRequest frontLineWorkerRequest, List<FrontLineWorkerRequest> frontLineWorkerRequests) {
-        int count = 0;
-        for (FrontLineWorkerRequest flwRequest : frontLineWorkerRequests) {
-            if (StringUtils.equals(StringUtils.trimToEmpty(frontLineWorkerRequest.getMsisdn()), StringUtils.trimToEmpty(flwRequest.getMsisdn())))
-                count++;
-            if(count == 2)
-                return true;
-        }
-        return false;
     }
 
     private void validateLocation(Location location, FLWValidationResponse FLWValidationResponse) {

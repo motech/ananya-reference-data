@@ -69,23 +69,6 @@ public class FrontLineWorkerImporterTest {
     }
 
     @Test
-    public void shouldFailValidationIfThereAreDuplicateFLWs() {
-        ArrayList<Object> frontLineWorkerRequests = new ArrayList<Object>();
-        ArrayList<Location> locations = new ArrayList<Location>();
-        locations.add(new Location("D1", "B1", "P1", 1, 1, 1));
-        when(locationService.getAll()).thenReturn(locations);
-        frontLineWorkerRequests.add(new FrontLineWorkerRequest("1234567890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1")));
-        frontLineWorkerRequests.add(new FrontLineWorkerRequest("1234567890", "anotherName", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1")));
-
-        ValidationResponse validationResponse = frontLineWorkerImporter.validate(frontLineWorkerRequests);
-
-        assertFalse(validationResponse.isValid());
-        assertEquals(3, validationResponse.getErrors().size());
-        assertEquals("1234567890,name,ANM,D1,B1,P1,[Found duplicate FLW with the same MSISDN]", validationResponse.getErrors().get(1).getMessage());
-        assertEquals("1234567890,anotherName,ANM,D1,B1,P1,[Found duplicate FLW with the same MSISDN]", validationResponse.getErrors().get(2).getMessage());
-    }
-
-    @Test
     public void shouldSaveFLW() {
         ArrayList<Object> frontLineWorkerRequests = new ArrayList<Object>();
         ArrayList<Location> locations = new ArrayList<Location>();

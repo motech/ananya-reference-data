@@ -43,7 +43,7 @@ public class FrontLineWorkerImporter {
         addHeader(errors);
         for (FrontLineWorkerRequest frontLineWorkerRequest : frontLineWorkerRequests) {
             Location location = getLocationFor(frontLineWorkerRequest.getLocation(), locationList);
-            FLWValidationResponse response = frontLineWorkerValidator.validateWithBulkValidation(frontLineWorkerRequest, location, frontLineWorkerRequests);
+            FLWValidationResponse response = frontLineWorkerValidator.validateCreateRequest(frontLineWorkerRequest, location);
             if (response.isInValid()) {
                 isValid = false;
             }

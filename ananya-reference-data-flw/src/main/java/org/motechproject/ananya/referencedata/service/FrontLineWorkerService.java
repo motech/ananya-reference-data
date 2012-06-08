@@ -8,12 +8,11 @@ import org.motechproject.ananya.referencedata.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.repository.AllLocations;
 import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
-import org.motechproject.ananya.referencedata.response.FrontLineWorkerResponse;
 import org.motechproject.ananya.referencedata.response.FLWValidationResponse;
+import org.motechproject.ananya.referencedata.response.FrontLineWorkerResponse;
 import org.motechproject.ananya.referencedata.validators.FrontLineWorkerValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
