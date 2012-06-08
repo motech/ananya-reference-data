@@ -34,12 +34,7 @@ public class AllFrontLineWorkers {
     }
 
     public FrontLineWorker getById(Integer id) {
-        DetachedCriteria criteria = DetachedCriteria.forClass(FrontLineWorker.class);
-
-        criteria.add(Restrictions.eq("id", id));
-
-        List frontLineWorkerList = template.findByCriteria(criteria);
-        return frontLineWorkerList.isEmpty() ? null : (FrontLineWorker) frontLineWorkerList.get(0);
+        return template.get(FrontLineWorker.class, id);
     }
 
     public void update(FrontLineWorker frontLineWorker) {
