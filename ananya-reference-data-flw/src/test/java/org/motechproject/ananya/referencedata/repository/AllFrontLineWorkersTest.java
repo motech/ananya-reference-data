@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
@@ -44,6 +45,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
         List<FrontLineWorker> frontLineWorkerList = template.loadAll(FrontLineWorker.class);
         assertEquals(1, frontLineWorkerList.size());
+        assertNotNull(frontLineWorkerList.get(0).getLastModified());
     }
 
     @Test
@@ -77,6 +79,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         assertEquals(newName, frontLineWorkerFromDb.getName());
         assertEquals(newDesignation.name(), frontLineWorkerFromDb.getDesignation());
         assertEquals(newDistrict, frontLineWorkerFromDb.getLocation().getDistrict());
+        assertNotNull(frontLineWorkerFromDb.getLastModified());
     }
 
     @Test

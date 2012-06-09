@@ -32,6 +32,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
         List<Location> locations = template.loadAll(Location.class);
         assertEquals(1, locations.size());
         assertTrue(location.equals(locations.get(0)));
+        assertNotNull(locations.get(0).getLastModified());
     }
 
     @Test

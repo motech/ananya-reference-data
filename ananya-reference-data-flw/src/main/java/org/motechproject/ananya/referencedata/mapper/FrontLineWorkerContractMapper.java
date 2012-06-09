@@ -6,6 +6,6 @@ import org.motechproject.ananya.referencedata.domain.FrontLineWorkerContract;
 public class FrontLineWorkerContractMapper {
 
     public static FrontLineWorkerContract mapFrom(FrontLineWorker frontLineWorker) {
-        return new FrontLineWorkerContract(frontLineWorker.getMsisdn().toString(), frontLineWorker.getName(), frontLineWorker.getDesignation(), LocationContractMapper.mapFrom(frontLineWorker.getLocation()));
+        return new FrontLineWorkerContract(frontLineWorker.getMsisdn().toString(), frontLineWorker.getName(), frontLineWorker.getDesignation(), frontLineWorker.getLastModified(), LocationContractMapper.mapFrom(frontLineWorker.getLocation()));
     }
 }

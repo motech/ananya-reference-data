@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.handlers;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +46,11 @@ public class SyncEventHandlerTest {
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         String msisdn = "1234";
         Integer id = 12;
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, new Location("district1", "block1", "panchayat1"));
+        Location location = new Location("district1", "block1", "panchayat1");
+        DateTime lastModified = DateTime.now();
+        location.setLastModified(lastModified);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);
+        frontLineWorker.setLastModified(lastModified);
         when(frontLineWorkerService.getById(id)).thenReturn(frontLineWorker);
 
         parameters.put("0", id);

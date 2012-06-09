@@ -7,6 +7,8 @@
 
 
                              http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+
     <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="annotatedClasses">
@@ -15,7 +17,9 @@
                 <value>org.motechproject.ananya.referencedata.domain.Location</value>
             </list>
         </property>
-
+        <property name="entityInterceptor">
+            <bean class="org.motechproject.ananya.referencedata.domain.AuditTrailInterceptor"/>
+        </property>
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">${hibernate.dialect}</prop>

@@ -1,17 +1,14 @@
 package org.motechproject.ananya.referencedata.domain;
 
 import liquibase.util.StringUtils;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "location")
-public class Location {
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+public class Location extends BaseEntity {
     @Column(name = "district")
     private String district;
 

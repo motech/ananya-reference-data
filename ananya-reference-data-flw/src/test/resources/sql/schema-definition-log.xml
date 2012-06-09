@@ -13,6 +13,7 @@
                 panchayat varchar(255),
                 district_code int,
                 block_code int,
+                last_modified timestamp,
                 panchayat_code int
             );
         </sql>
@@ -25,6 +26,7 @@
                 msisdn bigint,
                 name varchar(255),
                 designation varchar(30),
+                last_modified timestamp,
                 location_id integer REFERENCES reference_data.location(id)
             );
         </sql>

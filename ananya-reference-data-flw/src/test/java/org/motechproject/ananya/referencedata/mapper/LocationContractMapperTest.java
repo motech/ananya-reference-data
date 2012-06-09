@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.mapper;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.domain.LocationContract;
@@ -13,10 +14,14 @@ public class LocationContractMapperTest {
         String block = "block1";
         String district = "district1";
 
-        LocationContract locationContract = LocationContractMapper.mapFrom(new Location(district, block, panchayat));
+        Location location = new Location(district, block, panchayat);
+        DateTime lastModified = DateTime.now();
+        location.setLastModified(lastModified);
+        LocationContract locationContract = LocationContractMapper.mapFrom(location);
 
         assertEquals(district, locationContract.getDistrict());
         assertEquals(block, locationContract.getBlock());
         assertEquals(panchayat, locationContract.getPanchayat());
+        assertEquals(lastModified, locationContract.getLastModified());
     }
 }

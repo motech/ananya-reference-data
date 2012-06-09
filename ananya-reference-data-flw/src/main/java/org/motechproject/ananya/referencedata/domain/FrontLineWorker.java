@@ -1,14 +1,13 @@
 package org.motechproject.ananya.referencedata.domain;
 
+import org.joda.time.DateTime;
+
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "front_line_worker")
-public class FrontLineWorker {
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class FrontLineWorker extends BaseEntity {
 
     @Column(name = "msisdn")
     private Long msisdn;
@@ -31,10 +30,6 @@ public class FrontLineWorker {
         this.name = name;
         this.designation = designation.name();
         this.location = location;
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public Long getMsisdn() {
