@@ -53,11 +53,17 @@ public class LocationService {
         LocationList locationList = new LocationList(allLocations.getAll());
         List<Location> locations = new ArrayList<Location>();
         for(LocationRequest request : locationRequests) {
-            Location location = LocationMapper.mapFrom(request);
-            locationList.updateLocationCode(location);
-            locationList.add(location);
-            locations.add(location);
+            addAllLocations(locationList, locations, request);
         }
         allLocations.addAll(locations);
+    }
+
+    private void addAllLocations(LocationList locationList, List<Location> locations, LocationRequest request) {
+        Location location = LocationMapper.mapFrom(request);
+        if(locationList.isAlreadyPresent(location))
+            return;
+        location = locationList.updateLocationCode(location);
+        locationList.add(location);
+        locations.add(location);
     }
 }
