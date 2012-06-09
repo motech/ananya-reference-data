@@ -13,6 +13,7 @@ import org.motechproject.ananya.referencedata.response.FrontLineWorkerResponse;
 import org.motechproject.ananya.referencedata.validators.FrontLineWorkerValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,9 @@ public class FrontLineWorkerService {
     private AllFrontLineWorkers allFrontLineWorkers;
     private SyncService syncService;
 
+    public FrontLineWorkerService() {
+    }
+
     @Autowired
     public FrontLineWorkerService(AllLocations allLocations, AllFrontLineWorkers allFrontLineWorkers, SyncService syncService) {
         this.allLocations = allLocations;
@@ -31,6 +35,7 @@ public class FrontLineWorkerService {
         this.syncService = syncService;
     }
 
+    @Transactional
     public FrontLineWorkerResponse add(FrontLineWorkerRequest frontLineWorkerRequest) {
         FrontLineWorkerResponse frontLineWorkerResponse = new FrontLineWorkerResponse();
 
@@ -49,6 +54,7 @@ public class FrontLineWorkerService {
         return frontLineWorkerResponse.withCreated();
     }
 
+    @Transactional
     public FrontLineWorkerResponse update(FrontLineWorkerRequest frontLineWorkerRequest) {
         FrontLineWorkerResponse frontLineWorkerResponse = new FrontLineWorkerResponse();
 
@@ -68,6 +74,7 @@ public class FrontLineWorkerService {
         return frontLineWorkerResponse.withUpdated();
     }
 
+    @Transactional
     public void addAllWithoutValidations(List<FrontLineWorkerRequest> frontLineWorkerRequests) {
         List<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         for(FrontLineWorkerRequest frontLineWorkerRequest : frontLineWorkerRequests) {
@@ -77,6 +84,7 @@ public class FrontLineWorkerService {
         allFrontLineWorkers.addAll(frontLineWorkers);
     }
 
+    @Transactional
     public FrontLineWorker getById(Integer id) {
         return allFrontLineWorkers.getById(id);
     }

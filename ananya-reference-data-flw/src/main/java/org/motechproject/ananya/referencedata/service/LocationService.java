@@ -19,6 +19,9 @@ import java.util.List;
 public class LocationService {
     private AllLocations allLocations;
 
+    public LocationService() {
+    }
+
     @Autowired
     public LocationService(AllLocations allLocations) {
         this.allLocations = allLocations;
@@ -28,6 +31,7 @@ public class LocationService {
         return allLocations.getAll();
     }
 
+    @Transactional
     public LocationCreationResponse add(LocationRequest locationRequest) {
         LocationCreationResponse response = new LocationCreationResponse();
 
@@ -44,6 +48,7 @@ public class LocationService {
         return response.withValidationResponse(FLWValidationResponse);
     }
 
+    @Transactional
     public void addAllWithoutValidations(List<LocationRequest> locationRequests) {
         LocationList locationList = new LocationList(allLocations.getAll());
         List<Location> locations = new ArrayList<Location>();
