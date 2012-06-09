@@ -65,7 +65,7 @@ public class FrontLineWorkerImporterTest {
 
         assertFalse(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("1asdf67890,name,ANM,D1,B1,P1,[Invalid msisdn]", validationResponse.getErrors().get(1).getMessage());
+        assertEquals("\"1asdf67890\",\"name\",\"ANM\",\"D1\",\"B1\",\"P1\",\"[Invalid msisdn]\"", validationResponse.getErrors().get(1).getMessage());
     }
 
     @Test

@@ -56,7 +56,7 @@ public class LocationImporterTest {
 
         assertFalse(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("D1,B1,null,[Blank district, block or panchayat]", validationResponse.getErrors().get(1).getMessage());
+        assertEquals("\"D1\",\"B1\",\"null\",\"[Blank district, block or panchayat]\"", validationResponse.getErrors().get(1).getMessage());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class LocationImporterTest {
 
         assertFalse(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("D1,B1,P1,[Location already present]", validationResponse.getErrors().get(1).getMessage());
+        assertEquals("\"D1\",\"B1\",\"P1\",\"[Location already present]\"", validationResponse.getErrors().get(1).getMessage());
     }
 
     @Test

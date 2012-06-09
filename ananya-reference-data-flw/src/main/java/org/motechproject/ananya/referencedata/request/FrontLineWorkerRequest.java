@@ -66,6 +66,6 @@ public class FrontLineWorkerRequest {
     }
 
     public String toCSV() {
-        return msisdn + "," + name + "," + designation + "," + location.getDistrict() + "," + location.getBlock() + "," + location.getPanchayat();
+        return "\"" + msisdn + "\"" +  "," + "\"" +  name + "\"" +  "," + "\"" +  designation + "\"" +  "," + "\"" +  location.getDistrict() + "\"" +  "," + "\"" +  location.getBlock() + "\"" +  "," + "\"" +  location.getPanchayat() + "\"";
     }
 }
