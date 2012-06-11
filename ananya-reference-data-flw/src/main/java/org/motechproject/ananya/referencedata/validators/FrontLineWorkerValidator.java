@@ -43,13 +43,15 @@ public class FrontLineWorkerValidator {
 
     private void validateName(FrontLineWorkerRequest frontLineWorkerRequest, FLWValidationResponse FLWValidationResponse) {
         String name = frontLineWorkerRequest.getName();
-        if( StringUtils.isNotBlank(name) && !Pattern.matches("[a-zA-Z0-9\\s\\.]*", name)) {
+        if (StringUtils.isNotBlank(name) && !Pattern.matches("[a-zA-Z0-9\\s\\.]*", name)) {
             FLWValidationResponse.forInvalidName();
         }
     }
 
     private boolean anInvalidMsisdn(String msisdn) {
-        return StringUtils.length(msisdn) < 10 || !StringUtils.isNumeric(msisdn);
+        return StringUtils.length(msisdn) < 10 ||
+                !StringUtils.isNumeric(msisdn) ||
+                (StringUtils.length(msisdn) == 12 && !StringUtils.startsWith(msisdn, "91")) ||
+                (msisdn.length() > 10 && msisdn.length() != 12);
     }
-
 }
