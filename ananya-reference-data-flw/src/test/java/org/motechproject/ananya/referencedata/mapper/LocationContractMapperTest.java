@@ -22,6 +22,5 @@ public class LocationContractMapperTest {
         assertEquals(district, locationContract.getDistrict());
         assertEquals(block, locationContract.getBlock());
         assertEquals(panchayat, locationContract.getPanchayat());
-        assertEquals(lastModified, locationContract.getLastModified());
     }
 }

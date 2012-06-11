@@ -5,6 +5,6 @@ import org.motechproject.ananya.referencedata.domain.LocationContract;
 
 public class LocationContractMapper {
     public static LocationContract mapFrom(Location location) {
-        return new LocationContract(location.getDistrict(), location.getBlock(), location.getPanchayat(), location.getLastModified());
+        return new LocationContract(location.getDistrict(), location.getBlock(), location.getPanchayat());
     }
 }
