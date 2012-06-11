@@ -10,6 +10,7 @@ import org.motechproject.server.event.annotations.MotechListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -35,9 +36,16 @@ public class SyncEventHandler {
         FrontLineWorker frontLineWorker = frontLineWorkerService.getById(flwId);
         String url = (String) clientServicesProperties.get(KEY_FRONT_LINE_WORKER_CREATE_URL);
         try {
-            jsonHttpClient.post(url, FrontLineWorkerContractMapper.mapFrom(frontLineWorker));
+            JsonHttpClient.Response response = jsonHttpClient.post(url, FrontLineWorkerContractMapper.mapFrom(frontLineWorker));
+            checkForException(response);
         } catch (IOException e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+    private void checkForException(JsonHttpClient.Response response) {
+        if(HttpServletResponse.SC_INTERNAL_SERVER_ERROR == response.statusCode) {
+            throw new IllegalStateException("Remote error: " + response.body);
         }
     }
 }

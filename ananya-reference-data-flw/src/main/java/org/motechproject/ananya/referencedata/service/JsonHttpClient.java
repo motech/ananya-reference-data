@@ -11,17 +11,27 @@ import java.lang.reflect.Type;
 
 @Component
 public class JsonHttpClient {
-    public String post(final String uri, final Object req) throws IOException {
-        final Gson gson = new Gson();
-        return (String) post(uri, gson.toJson(req), null);
+    public static class Response {
+        public final int statusCode;
+        public final Object body;
+
+        public Response(int statusCode, Object body) {
+            this.body = body;
+            this.statusCode = statusCode;
+        }
     }
 
-    public Object post(final String uri, final Object req, Type responseClass) throws IOException {
+    public Response post(final String uri, final Object req) throws IOException {
+        final Gson gson = new Gson();
+        return post(uri, gson.toJson(req), null);
+    }
+
+    public Response post(final String uri, final Object req, Type responseClass) throws IOException {
         final Gson gson = new Gson();
         return post(uri, gson.toJson(req), responseClass);
     }
 
-    public Object post(final String uri, final String json, Type responseClass) throws IOException {
+    public Response post(final String uri, final String json, Type responseClass) throws IOException {
         final Gson gson = new Gson();
         HttpClient httpClient = new HttpClient();
         PostMethod postMethod = new PostMethod(uri) {
@@ -30,6 +40,8 @@ public class JsonHttpClient {
             }
         };
         httpClient.executeMethod(postMethod);
-        return responseClass != null ? gson.fromJson(postMethod.getResponseBodyAsString(), responseClass) : postMethod.getResponseBodyAsString();
+        
+        int statusCode = postMethod.getStatusCode();
+        return responseClass != null ? new Response(statusCode, gson.fromJson(postMethod.getResponseBodyAsString(), responseClass)) : new Response(statusCode, postMethod.getResponseBodyAsString());
     }
 }
