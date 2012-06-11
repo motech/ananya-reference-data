@@ -1,4 +1,5 @@
 <databaseChangeLog
+
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
@@ -39,6 +40,16 @@
     <changeSet context="setup" author="ThoughtWorks" id="4">
         <sql splitStatements="false">
             ALTER TABLE reference_data.location ADD last_modified timestamp;
+        </sql>
+    </changeSet>
+
+    <changeSet context="setup" author="ThoughtWorks" id="5">
+        <sql splitStatements="false">
+            CREATE TABLE reference_data.ananya_reference_data_property(
+                id serial primary key,
+                name varchar(40),
+                value varchar(40)
+            );
         </sql>
     </changeSet>
 </databaseChangeLog>
