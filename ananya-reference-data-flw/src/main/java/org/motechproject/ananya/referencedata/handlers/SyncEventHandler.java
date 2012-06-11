@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.handlers;
 
+import org.apache.log4j.Logger;
 import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.domain.SyncEventKeys;
 import org.motechproject.ananya.referencedata.mapper.FrontLineWorkerContractMapper;
@@ -23,6 +24,8 @@ public class SyncEventHandler {
 
     public static final String KEY_FRONT_LINE_WORKER_CREATE_URL = "front.line.worker.create.url";
 
+    Logger logger = Logger.getLogger(SyncEventHandler.class);
+
     @Autowired
     public SyncEventHandler(FrontLineWorkerService frontLineWorkerService, JsonHttpClient jsonHttpClient, Properties clientServicesProperties) {
         this.frontLineWorkerService = frontLineWorkerService;
@@ -36,9 +39,12 @@ public class SyncEventHandler {
         FrontLineWorker frontLineWorker = frontLineWorkerService.getById(flwId);
         String url = (String) clientServicesProperties.get(KEY_FRONT_LINE_WORKER_CREATE_URL);
         try {
+            logger.info("Sync for flwId: " + flwId);
             JsonHttpClient.Response response = jsonHttpClient.post(url, FrontLineWorkerContractMapper.mapFrom(frontLineWorker));
+            logger.info(String.format("Status Code: %s | Response Body: %s", response.statusCode, response.body));
             checkForException(response);
         } catch (IOException e) {
+            logger.error(e.getMessage(), e);
             throw new IllegalStateException(e);
         }
     }

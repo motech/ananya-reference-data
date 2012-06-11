@@ -11,6 +11,8 @@ import java.lang.reflect.Type;
 
 @Component
 public class JsonHttpClient {
+    private Gson gson;
+
     public static class Response {
         public final int statusCode;
         public final Object body;
@@ -21,18 +23,19 @@ public class JsonHttpClient {
         }
     }
 
+    public JsonHttpClient() {
+        this.gson = new Gson();
+    }
+
     public Response post(final String uri, final Object req) throws IOException {
-        final Gson gson = new Gson();
         return post(uri, gson.toJson(req), null);
     }
 
     public Response post(final String uri, final Object req, Type responseClass) throws IOException {
-        final Gson gson = new Gson();
         return post(uri, gson.toJson(req), responseClass);
     }
 
     public Response post(final String uri, final String json, Type responseClass) throws IOException {
-        final Gson gson = new Gson();
         HttpClient httpClient = new HttpClient();
         PostMethod postMethod = new PostMethod(uri) {
             {

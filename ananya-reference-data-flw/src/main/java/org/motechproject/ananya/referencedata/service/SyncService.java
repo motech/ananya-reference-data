@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.service;
 
+import org.apache.log4j.Logger;
 import org.motechproject.ananya.referencedata.domain.SyncEventKeys;
 import org.motechproject.context.EventContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ public class SyncService {
     private EventContext eventContext;
     private AnanyaReferenceDataPropertiesService propertiesService;
 
+    Logger logger = Logger.getLogger(SyncService.class);
+
     @Autowired
     public SyncService(@Qualifier("eventContext") EventContext eventContext, AnanyaReferenceDataPropertiesService propertiesService) {
         this.eventContext = eventContext;
@@ -19,6 +22,8 @@ public class SyncService {
 
     public void syncFrontLineWorker(Integer flwId) {
         if(propertiesService.isSyncOn()) {
+            logger.info("Raising event to sync for flwId: " + flwId);
+
             eventContext.send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, flwId);
         }
     }
