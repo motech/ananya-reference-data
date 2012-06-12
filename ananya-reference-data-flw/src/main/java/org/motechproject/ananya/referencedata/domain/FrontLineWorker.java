@@ -1,6 +1,9 @@
 package org.motechproject.ananya.referencedata.domain;
 
+import org.joda.time.DateTime;
+
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "front_line_worker")
@@ -15,12 +18,6 @@ public class FrontLineWorker extends BaseEntity {
     @Column(name = "designation")
     private String designation;
 
-    @Column(name = "is_valid")
-    private boolean isValid;
-
-    @Column(name = "source")
-    private Source source;
-
     @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
@@ -33,14 +30,6 @@ public class FrontLineWorker extends BaseEntity {
         this.name = name;
         this.designation = designation.name();
         this.location = location;
-    }
-
-    public boolean isValid() {
-        return isValid;
-    }
-
-    public Source getSource() {
-        return source;
     }
 
     public Long getMsisdn() {

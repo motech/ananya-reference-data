@@ -46,9 +46,9 @@
     <changeSet context="setup" author="ThoughtWorks" id="5">
         <sql splitStatements="false">
             CREATE TABLE reference_data.ananya_reference_data_property(
-            id serial primary key,
-            name varchar(40),
-            value varchar(40)
+                id serial primary key,
+                name varchar(40),
+                value varchar(40)
             );
         </sql>
     </changeSet>
