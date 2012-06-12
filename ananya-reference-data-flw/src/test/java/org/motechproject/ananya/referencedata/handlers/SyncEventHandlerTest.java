@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.domain.*;
@@ -19,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
@@ -36,12 +38,16 @@ public class SyncEventHandlerTest {
     private JsonHttpClient jsonHttpClient;
     @Autowired
     private Properties clientServicesProperties;
+    @Autowired
+    private Properties referenceDataProperties;
     private SyncEventHandler syncEventHandler;
+    @Captor
+    private ArgumentCaptor<Map<String,String>> headerCaptor;
 
     @Before
     public void setUp() {
         initMocks(this);
-        syncEventHandler = new SyncEventHandler(frontLineWorkerService, jsonHttpClient, clientServicesProperties);
+        syncEventHandler = new SyncEventHandler(frontLineWorkerService, jsonHttpClient, clientServicesProperties, referenceDataProperties);
     }
 
     @Test
@@ -55,15 +61,17 @@ public class SyncEventHandlerTest {
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);
         frontLineWorker.setLastModified(lastModified);
         when(frontLineWorkerService.getById(id)).thenReturn(frontLineWorker);
-        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_ACCEPTED, "{success}"));
+        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(),Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_ACCEPTED, "{success}"));
 
         parameters.put("0", id);
         syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));
 
         ArgumentCaptor<FrontLineWorkerContract> captor = ArgumentCaptor.forClass(FrontLineWorkerContract.class);
-        verify(jsonHttpClient).post(eq("https://localhost/ananya/flw"), captor.capture());
+        verify(jsonHttpClient).post(eq("https://localhost/ananya/flw"), captor.capture(), headerCaptor.capture());
         FrontLineWorkerContract value = captor.getValue();
         assertEquals(msisdn, value.getMsisdn());
+        Map<String,String> header = headerCaptor.getValue();
+        assertEquals("1234", header.get("APIKey"));
     }
 
     @Test
@@ -78,7 +86,7 @@ public class SyncEventHandlerTest {
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);
         frontLineWorker.setLastModified(lastModified);
         when(frontLineWorkerService.getById(id)).thenReturn(frontLineWorker);
-        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "ExceptionTrace"));
+        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(),Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "ExceptionTrace"));
 
         parameters.put("0", id);
         syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));

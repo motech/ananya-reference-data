@@ -13,6 +13,8 @@ import org.motechproject.ananya.referencedata.response.LocationCreationResponse;
 import org.motechproject.ananya.referencedata.service.JsonHttpClient;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -118,7 +120,8 @@ public class DataAPITest extends SpringIntegrationTest {
     public void shouldHandleExceptionAndSetErrorResponseStatus() throws IOException {
         JsonHttpClient jsonHttpClient = new JsonHttpClient();
 
-        ExceptionResponse exceptionResponse = (ExceptionResponse) jsonHttpClient.post("http://localhost:9979/reference-data/location", "\"foo\":\"bar\"", ExceptionResponse.class).body;
+        Map<String, String> headers = new HashMap<String, String>();
+        ExceptionResponse exceptionResponse = (ExceptionResponse) jsonHttpClient.post("http://localhost:9979/reference-data/location", "\"foo\":\"bar\"", ExceptionResponse.class, headers).body;
 
         assertNotNull(exceptionResponse);
     }

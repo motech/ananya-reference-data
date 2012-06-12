@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 @Component
@@ -20,17 +22,20 @@ public class SyncEventHandler {
 
     private FrontLineWorkerService frontLineWorkerService;
     private Properties clientServicesProperties;
+    private Properties referenceDataProperties;
     private JsonHttpClient jsonHttpClient;
 
     public static final String KEY_FRONT_LINE_WORKER_CREATE_URL = "front.line.worker.create.url";
+    public static final String ANANYA_API_KEY = "ananya.api.key";
 
     Logger logger = Logger.getLogger(SyncEventHandler.class);
 
     @Autowired
-    public SyncEventHandler(FrontLineWorkerService frontLineWorkerService, JsonHttpClient jsonHttpClient, Properties clientServicesProperties) {
+    public SyncEventHandler(FrontLineWorkerService frontLineWorkerService, JsonHttpClient jsonHttpClient, Properties clientServicesProperties, Properties referenceDataProperties) {
         this.frontLineWorkerService = frontLineWorkerService;
         this.jsonHttpClient = jsonHttpClient;
         this.clientServicesProperties = clientServicesProperties;
+        this.referenceDataProperties = referenceDataProperties;
     }
 
     @MotechListener(subjects = {SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE})
@@ -40,7 +45,9 @@ public class SyncEventHandler {
         String url = (String) clientServicesProperties.get(KEY_FRONT_LINE_WORKER_CREATE_URL);
         try {
             logger.info("Sync for flwId: " + flwId);
-            JsonHttpClient.Response response = jsonHttpClient.post(url, FrontLineWorkerContractMapper.mapFrom(frontLineWorker));
+            Map<String, String> requestHeaders = new HashMap<String, String>();
+            requestHeaders.put("APIKey", (String) referenceDataProperties.get(ANANYA_API_KEY));
+            JsonHttpClient.Response response = jsonHttpClient.post(url, FrontLineWorkerContractMapper.mapFrom(frontLineWorker), requestHeaders);
             logger.info(String.format("Status Code: %s | Response Body: %s", response.statusCode, response.body));
             checkForException(response);
         } catch (IOException e) {

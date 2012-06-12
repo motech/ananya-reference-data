@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Map;
 
 @Component
 public class JsonHttpClient {
@@ -29,18 +30,25 @@ public class JsonHttpClient {
     }
 
     public Response post(final String uri, final Object req) throws IOException {
-        return post(uri, gson.toJson(req), null);
+        return post(uri, gson.toJson(req), null, null);
+    }
+
+    public Response post(final String uri, final Object req, Map<String, String> headers) throws IOException {
+        return post(uri, gson.toJson(req), null, headers);
     }
 
     public Response post(final String uri, final Object req, Type responseClass) throws IOException {
-        return post(uri, gson.toJson(req), responseClass);
+        return post(uri, gson.toJson(req), responseClass, null);
     }
 
-    public Response post(final String uri, final String json, Type responseClass) throws IOException {
+    public Response post(final String uri, final String json, Type responseClass, final Map<String, String> headers) throws IOException {
         HttpClient httpClient = new HttpClient();
         PostMethod postMethod = new PostMethod(uri) {
             {
-                setRequestHeader("APIKey", "1234");
+                if(headers != null) {
+                    for(String key : headers.keySet())
+                        setRequestHeader(key, headers.get(key));
+                }
                 setRequestEntity(new StringRequestEntity(json, "application/json", null));
             }
         };

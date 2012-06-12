@@ -28,7 +28,7 @@ public class FrontLineWorkerContractMapperTest {
         assertEquals(msisdn.toString(), frontLineWorkerContract.getMsisdn());
         assertEquals(name, frontLineWorkerContract.getName());
         assertEquals(designation.name(), frontLineWorkerContract.getDesignation());
-        assertEquals(now, frontLineWorkerContract.getLastModified());
+        assertEquals(now.toDate(), frontLineWorkerContract.getLastModified());
 
         LocationContract locationContract = frontLineWorkerContract.getLocation();
         assertEquals(block, locationContract.getBlock());
