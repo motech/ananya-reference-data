@@ -46,10 +46,16 @@
     <changeSet context="setup" author="ThoughtWorks" id="5">
         <sql splitStatements="false">
             CREATE TABLE reference_data.ananya_reference_data_property(
-                id serial primary key,
-                name varchar(40),
-                value varchar(40)
+            id serial primary key,
+            name varchar(40),
+            value varchar(40)
             );
+        </sql>
+    </changeSet>
+
+    <changeSet context="setup" author="ThoughtWorks" id="6">
+        <sql splitStatements="false">
+            ALTER TABLE reference_data.front_line_worker ADD COLUMN is_valid boolean, ADD COLUMN source varchar(20);
         </sql>
     </changeSet>
 </databaseChangeLog>
