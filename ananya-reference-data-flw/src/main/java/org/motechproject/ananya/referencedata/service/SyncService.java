@@ -23,7 +23,6 @@ public class SyncService {
     public void syncFrontLineWorker(Integer flwId) {
         if(propertiesService.isSyncOn()) {
             logger.info("Raising event to sync for flwId: " + flwId);
-
             eventContext.send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, flwId);
         }
     }

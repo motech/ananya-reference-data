@@ -55,7 +55,7 @@
 
     <changeSet context="setup" author="ThoughtWorks" id="6">
         <sql splitStatements="false">
-            ALTER TABLE reference_data.front_line_worker ADD COLUMN is_valid boolean, ADD COLUMN source varchar(20);
+            INSERT INTO reference_data.ananya_reference_data_property(name,value) values('syncSwitch','on');
         </sql>
     </changeSet>
 </databaseChangeLog>
