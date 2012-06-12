@@ -1,6 +1,7 @@
 package org.motechproject.ananya.referencedata.service;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
@@ -24,7 +25,7 @@ public class JsonHttpClient {
     }
 
     public JsonHttpClient() {
-        this.gson = new Gson();
+        this.gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
     }
 
     public Response post(final String uri, final Object req) throws IOException {
@@ -39,6 +40,7 @@ public class JsonHttpClient {
         HttpClient httpClient = new HttpClient();
         PostMethod postMethod = new PostMethod(uri) {
             {
+                setRequestHeader("APIKey", "1234");
                 setRequestEntity(new StringRequestEntity(json, "application/json", null));
             }
         };

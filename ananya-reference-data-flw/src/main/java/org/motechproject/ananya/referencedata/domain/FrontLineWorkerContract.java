@@ -1,16 +1,16 @@
 package org.motechproject.ananya.referencedata.domain;
 
-import org.joda.time.DateTime;
+import java.util.Date;
 
 public class FrontLineWorkerContract {
 
     private String name;
     private String msisdn;
     private String designation;
-    private DateTime lastModified;
+    private Date lastModified;
     private LocationContract location;
 
-    public FrontLineWorkerContract(String msisdn, String name, String designation, DateTime lastModified, LocationContract location) {
+    public FrontLineWorkerContract(String msisdn, String name, String designation, Date lastModified, LocationContract location) {
         this.name = name;
         this.msisdn = msisdn;
         this.designation = designation;
@@ -34,7 +34,7 @@ public class FrontLineWorkerContract {
         return location;
     }
 
-    public DateTime getLastModified() {
+    public Date getLastModified() {
         return lastModified;
     }
 }
