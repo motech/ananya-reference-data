@@ -3,7 +3,7 @@ package org.motechproject.ananya.referencedata.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ananya_reference_data_property")
+@Table(name = "property")
 public class AnanyaReferenceDataProperty {
     @Id
     @Column(name = "id")

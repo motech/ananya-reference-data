@@ -7,7 +7,7 @@
 
     <changeSet context="setup" author="ThoughtWorks" id="1">
         <sql splitStatements="false">
-            CREATE TABLE reference_data.location(
+            CREATE TABLE ananya_reference_data.location(
                 id serial primary key,
                 district varchar(255),
                 block varchar(255),
@@ -21,31 +21,31 @@
 
     <changeSet context="setup" author="ThoughtWorks" id="2">
         <sql splitStatements="false">
-            CREATE TABLE reference_data.front_line_worker(
+            CREATE TABLE ananya_reference_data.front_line_worker(
                 id serial,
                 msisdn bigint,
                 name varchar(255),
                 designation varchar(30),
-                location_id integer REFERENCES reference_data.location(id)
+                location_id integer REFERENCES ananya_reference_data.location(id)
             );
         </sql>
     </changeSet>
 
     <changeSet context="setup" author="ThoughtWorks" id="3">
         <sql splitStatements="false">
-            ALTER TABLE reference_data.front_line_worker ADD last_modified timestamp;
+            ALTER TABLE ananya_reference_data.front_line_worker ADD last_modified timestamp;
         </sql>
     </changeSet>
 
     <changeSet context="setup" author="ThoughtWorks" id="4">
         <sql splitStatements="false">
-            ALTER TABLE reference_data.location ADD last_modified timestamp;
+            ALTER TABLE ananya_reference_data.location ADD last_modified timestamp;
         </sql>
     </changeSet>
 
     <changeSet context="setup" author="ThoughtWorks" id="5">
         <sql splitStatements="false">
-            CREATE TABLE reference_data.ananya_reference_data_property(
+            CREATE TABLE ananya_reference_data.property(
                 id serial primary key,
                 name varchar(40),
                 value varchar(40)
@@ -55,7 +55,7 @@
 
     <changeSet context="setup" author="ThoughtWorks" id="6">
         <sql splitStatements="false">
-            INSERT INTO reference_data.ananya_reference_data_property(name,value) values('syncSwitch','on');
+            INSERT INTO ananya_reference_data.property(name,value) values('syncSwitch','on');
         </sql>
     </changeSet>
 </databaseChangeLog>
