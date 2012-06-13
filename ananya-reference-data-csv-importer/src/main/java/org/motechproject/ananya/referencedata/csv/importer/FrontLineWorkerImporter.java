@@ -48,7 +48,7 @@ public class FrontLineWorkerImporter {
         logger.info("Started validating FLW csv records");
         for (FrontLineWorkerRequest frontLineWorkerRequest : frontLineWorkerRequests) {
             Location location = getLocationFor(frontLineWorkerRequest.getLocation(), locationList);
-            FLWValidationResponse response = frontLineWorkerValidator.validateCreateRequest(frontLineWorkerRequest, location);
+            FLWValidationResponse response = frontLineWorkerValidator.validate(frontLineWorkerRequest, location);
             if (response.isInValid()) {
                 isValid = false;
             }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -36,52 +37,33 @@ public class FrontLineWorkerService {
     }
 
     @Transactional
-    public FrontLineWorkerResponse add(FrontLineWorkerRequest frontLineWorkerRequest) {
+    public FrontLineWorkerResponse createOrUpdate(FrontLineWorkerRequest frontLineWorkerRequest) {
         FrontLineWorkerResponse frontLineWorkerResponse = new FrontLineWorkerResponse();
-
         LocationRequest locationRequest = frontLineWorkerRequest.getLocation();
         Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
-        FLWValidationResponse FLWValidationResponse = new FrontLineWorkerValidator().validateCreateRequest(frontLineWorkerRequest, location);
+        FLWValidationResponse FLWValidationResponse = new FrontLineWorkerValidator().validate(frontLineWorkerRequest, location);
+
         if (!FLWValidationResponse.isValid())
             return frontLineWorkerResponse.withValidationResponse(FLWValidationResponse);
 
-        if (existingFLW(frontLineWorkerRequest) != null)
-            return frontLineWorkerResponse.withFLWExists();
-
-        FrontLineWorker frontLineWorker = FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location);
-        allFrontLineWorkers.add(frontLineWorker);
+        FrontLineWorker frontLineWorker = constructFrontLineWorker(frontLineWorkerRequest, location);
+        allFrontLineWorkers.createOrUpdate(frontLineWorker);
         syncService.syncFrontLineWorker(frontLineWorker.getId());
-        return frontLineWorkerResponse.withCreated();
-    }
-
-    @Transactional
-    public FrontLineWorkerResponse update(FrontLineWorkerRequest frontLineWorkerRequest) {
-        FrontLineWorkerResponse frontLineWorkerResponse = new FrontLineWorkerResponse();
-
-        LocationRequest locationRequest = frontLineWorkerRequest.getLocation();
-        Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
-        FLWValidationResponse FLWValidationResponse = new FrontLineWorkerValidator().validateUpdateRequest(frontLineWorkerRequest, location);
-        if (!FLWValidationResponse.isValid())
-            return frontLineWorkerResponse.withValidationResponse(FLWValidationResponse);
-
-        FrontLineWorker frontLineWorkerInDB = existingFLW(frontLineWorkerRequest);
-        if (frontLineWorkerInDB == null)
-            return add(frontLineWorkerRequest);
-
-        FrontLineWorker frontLineWorker = FrontLineWorkerMapper.mapFrom(frontLineWorkerInDB, frontLineWorkerRequest, location);
-        allFrontLineWorkers.update(frontLineWorker);
-        syncService.syncFrontLineWorker(frontLineWorker.getId());
-        return frontLineWorkerResponse.withUpdated();
+        return frontLineWorkerResponse.withCreatedOrUpdated();
     }
 
     @Transactional
     public void addAllWithoutValidations(List<FrontLineWorkerRequest> frontLineWorkerRequests) {
         List<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
-        for(FrontLineWorkerRequest frontLineWorkerRequest : frontLineWorkerRequests) {
-            LocationRequest location = frontLineWorkerRequest.getLocation();
-            frontLineWorkers.add(FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, allLocations.getFor(location.getDistrict(), location.getBlock(), location.getPanchayat())));
+        for (FrontLineWorkerRequest frontLineWorkerRequest : frontLineWorkerRequests) {
+            LocationRequest locationRequest = frontLineWorkerRequest.getLocation();
+            Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
+
+            FrontLineWorker frontLineWorkerToBeSaved = constructFrontLineWorkerForBulkImport(frontLineWorkerRequest, location, frontLineWorkerRequests);
+
+            frontLineWorkers.add(frontLineWorkerToBeSaved);
         }
-        allFrontLineWorkers.addAll(frontLineWorkers);
+        allFrontLineWorkers.createOrUpdateAll(frontLineWorkers);
     }
 
     @Transactional
@@ -89,8 +71,39 @@ public class FrontLineWorkerService {
         return allFrontLineWorkers.getById(id);
     }
 
-    private FrontLineWorker existingFLW(FrontLineWorkerRequest frontLineWorkerRequest) {
+    private FrontLineWorker constructFrontLineWorker(FrontLineWorkerRequest frontLineWorkerRequest, Location location) {
+        List<FrontLineWorker> frontLineWorkers = existingFLW(frontLineWorkerRequest);
+        if (frontLineWorkers.size() != 1) {
+            return FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location);
+        }
+        return FrontLineWorkerMapper.mapFrom(frontLineWorkers.get(0), frontLineWorkerRequest, location);
+    }
+
+    private FrontLineWorker constructFrontLineWorkerForBulkImport(FrontLineWorkerRequest frontLineWorkerRequest, Location location, List<FrontLineWorkerRequest> frontLineWorkerRequests) {
+        List<FrontLineWorker> frontLineWorkersWithSameMsisdn = existingFLW(frontLineWorkerRequest);
+        FrontLineWorker frontLineWorkerToBeSaved;
+        if (frontLineWorkersWithSameMsisdn.size() != 1 || hasDuplicatesInCSV(frontLineWorkerRequest, frontLineWorkerRequests)) {
+            frontLineWorkerToBeSaved = FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location);
+        } else {
+            frontLineWorkerToBeSaved = FrontLineWorkerMapper.mapFrom(frontLineWorkersWithSameMsisdn.get(0), frontLineWorkerRequest, location);
+        }
+        return frontLineWorkerToBeSaved;
+    }
+
+    private boolean hasDuplicatesInCSV(FrontLineWorkerRequest frontLineWorkerRequest, List<FrontLineWorkerRequest> frontLineWorkerRequests) {
+        int count = 0;
+        for (FrontLineWorkerRequest request : frontLineWorkerRequests) {
+            if (request.getMsisdn().equals(frontLineWorkerRequest.getMsisdn()))
+                count++;
+            if (count == 2)
+                return true;
+        }
+        return false;
+    }
+
+
+    private List<FrontLineWorker> existingFLW(FrontLineWorkerRequest frontLineWorkerRequest) {
         String msisdn = frontLineWorkerRequest.getMsisdn();
-        return StringUtils.isBlank(msisdn) ? null : allFrontLineWorkers.getByMsisdn(Long.valueOf(FrontLineWorkerMapper.formatMsisdn(msisdn)));
+        return StringUtils.isBlank(msisdn) ? Collections.<FrontLineWorker>emptyList() : allFrontLineWorkers.getByMsisdn(Long.valueOf(FrontLineWorkerMapper.formatMsisdn(msisdn)));
     }
 }

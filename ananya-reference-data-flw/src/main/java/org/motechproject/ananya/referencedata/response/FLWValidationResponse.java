@@ -45,11 +45,6 @@ public class FLWValidationResponse {
         return message.toString();
     }
 
-    public void forDuplicates() {
-        isValid = false;
-        this.message.add("Found duplicate FLW with the same MSISDN");
-    }
-
     public boolean isInValid() {
         return !isValid;
     }

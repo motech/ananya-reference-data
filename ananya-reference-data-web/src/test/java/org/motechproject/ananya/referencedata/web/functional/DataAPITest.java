@@ -60,7 +60,7 @@ public class DataAPITest extends SpringIntegrationTest {
         JsonHttpClient jsonHttpClientForFLW = new JsonHttpClient();
         FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientForFLW.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999888822", "name", "ASHA", new LocationRequest("district", "block", "panchayat")), FrontLineWorkerResponse.class).body;
 
-        assertEquals("FLW created successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class DataAPITest extends SpringIntegrationTest {
         JsonHttpClient jsonHttpClient = new JsonHttpClient();
         FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClient.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999888822", "name", null, new LocationRequest("district", "block", "panchayat")), FrontLineWorkerResponse.class).body;
 
-        assertEquals("FLW created successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
     }
 
     @Test
@@ -100,9 +100,9 @@ public class DataAPITest extends SpringIntegrationTest {
         jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"), LocationCreationResponse.class);
         jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999888822", "name", "ASHA", new LocationRequest("district", "block", "panchayat")), FrontLineWorkerResponse.class);
         
-        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw?_method=PUT", new FrontLineWorkerRequest("9999888822", "new name", "ANM", new LocationRequest("district", "block", "panchayat")), FrontLineWorkerResponse.class).body;
+        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999888822", "new name", "ANM", new LocationRequest("district", "block", "panchayat")), FrontLineWorkerResponse.class).body;
 
-        assertEquals("FLW updated successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
     }
 
     @Test
@@ -111,9 +111,9 @@ public class DataAPITest extends SpringIntegrationTest {
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient();
         jsonHttpClientForLocation.post("http://localhost:9979/reference-data/location", new LocationRequest("district", "block", "panchayat"), LocationCreationResponse.class);
 
-        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw?_method=PUT", new FrontLineWorkerRequest("9999888822", "new name", "ANM", new LocationRequest("district", "block", "panchayat")), FrontLineWorkerResponse.class).body;
+        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientFLW.post("http://localhost:9979/reference-data/flw", new FrontLineWorkerRequest("9999888822", "new name", "ANM", new LocationRequest("district", "block", "panchayat")), FrontLineWorkerResponse.class).body;
 
-        assertEquals("FLW created successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
     }
 
     @Test

@@ -3,7 +3,6 @@ package org.motechproject.ananya.referencedata.web;
 import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
@@ -32,30 +31,6 @@ public class FrontLineWorkerControllerTest {
     }
 
     @Test
-    public void shouldCreateNewFLW() {
-        String msisdn = "9999888822";
-        String name = "name";
-        String designation = "ASHA";
-        String district = "district";
-        String block = "block";
-        String panchayat = "panchayat";
-        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
-
-        frontLineWorkerController.create(frontLineWorkerRequest);
-
-        ArgumentCaptor<FrontLineWorkerRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerRequest.class);
-        verify(frontLineWorkerService).add(captor.capture());
-        FrontLineWorkerRequest captorValue = captor.getValue();
-
-        assertEquals(msisdn, captorValue.getMsisdn());
-        assertEquals(name, captorValue.getName());
-        assertEquals(designation, captorValue.getDesignation());
-        assertEquals(district, captorValue.getLocation().getDistrict());
-        assertEquals(block, captorValue.getLocation().getBlock());
-        assertEquals(panchayat, captorValue.getLocation().getPanchayat());
-    }
-
-    @Test
     public void shouldUpdateAnExistingFLW() {
         String msisdn = "9999888822";
         String name = "name";
@@ -65,9 +40,9 @@ public class FrontLineWorkerControllerTest {
         String panchayat = "panchayat";
         FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
 
-        frontLineWorkerController.update(frontLineWorkerRequest);
+        frontLineWorkerController.createOrUpdate(frontLineWorkerRequest);
 
-        verify(frontLineWorkerService).update(any(FrontLineWorkerRequest.class));
+        verify(frontLineWorkerService).createOrUpdate(any(FrontLineWorkerRequest.class));
     }
 
     @Test

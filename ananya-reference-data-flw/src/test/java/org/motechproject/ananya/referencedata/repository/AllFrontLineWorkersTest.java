@@ -73,9 +73,32 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         existingFrontLineWorker.setDesignation(newDesignation);
         existingFrontLineWorker.setLocation(newLocation);
 
-        allFrontLineWorkers.update(existingFrontLineWorker);
+        allFrontLineWorkers.createOrUpdate(existingFrontLineWorker);
 
-        FrontLineWorker frontLineWorkerFromDb = allFrontLineWorkers.getByMsisdn(msisdn);
+        FrontLineWorker frontLineWorkerFromDb = allFrontLineWorkers.getByMsisdn(msisdn).get(0);
+        assertEquals(newName, frontLineWorkerFromDb.getName());
+        assertEquals(newDesignation.name(), frontLineWorkerFromDb.getDesignation());
+        assertEquals(newDistrict, frontLineWorkerFromDb.getLocation().getDistrict());
+        assertNotNull(frontLineWorkerFromDb.getLastModified());
+    }
+
+    @Test
+    public void shouldAddOrUpdateFLWToDB() {
+        long msisdn = 1234567890L;
+        FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
+        String newName = "new_name";
+        Designation newDesignation = Designation.ANM;
+        String newDistrict = "district1";
+        existingFrontLineWorker.setName(newName);
+        Location newLocation = new Location(newDistrict, "block1", "panchayat1");
+        template.save(newLocation);
+        existingFrontLineWorker.setDesignation(newDesignation);
+        existingFrontLineWorker.setLocation(newLocation);
+
+        allFrontLineWorkers.createOrUpdate(existingFrontLineWorker);
+
+        FrontLineWorker frontLineWorkerFromDb = allFrontLineWorkers.getByMsisdn(msisdn).get(0);
+        assertNotNull(existingFrontLineWorker.getId());
         assertEquals(newName, frontLineWorkerFromDb.getName());
         assertEquals(newDesignation.name(), frontLineWorkerFromDb.getDesignation());
         assertEquals(newDistrict, frontLineWorkerFromDb.getLocation().getDistrict());
@@ -100,9 +123,10 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
         allFrontLineWorkers.add(frontLineWorker);
 
-        FrontLineWorker frontLineWorkerFromDB = allFrontLineWorkers.getByMsisdn(msisdn);
+        List<FrontLineWorker> frontLineWorkerFromDB = allFrontLineWorkers.getByMsisdn(msisdn);
 
-        assertEquals("name", frontLineWorkerFromDB.getName());
+        assertEquals(1, frontLineWorkerFromDB.size());
+        assertEquals("name", frontLineWorkerFromDB.get(0).getName());
     }
 
     @Test
@@ -111,7 +135,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         frontLineWorkers.add(new FrontLineWorker(1234567890L, "name1", Designation.AWW, location));
         frontLineWorkers.add(new FrontLineWorker(1234567800L, "name2", Designation.AWW, location));
 
-        allFrontLineWorkers.addAll(frontLineWorkers);
+        allFrontLineWorkers.createOrUpdateAll(frontLineWorkers);
 
         List<FrontLineWorker> frontLineWorkerList = template.loadAll(FrontLineWorker.class);
         assertEquals(2, frontLineWorkerList.size());

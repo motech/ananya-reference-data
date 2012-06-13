@@ -15,36 +15,39 @@ public class FrontLineWorkerValidatorTest {
     public void shouldValidateMSISDNOfFrontLineWorker() {
         FrontLineWorkerValidator frontLineWorkerValidator = new FrontLineWorkerValidator();
 
-        FLWValidationResponse flwValidationResponse = frontLineWorkerValidator.validateCreateRequest(new FrontLineWorkerRequest("msisdn", "name", "ANM", new LocationRequest()), new Location());
+        FLWValidationResponse flwValidationResponse = frontLineWorkerValidator.validate(new FrontLineWorkerRequest("msisdn", "name", "ANM", new LocationRequest()), new Location());
         assertFalse(flwValidationResponse.isValid());
         assertEquals("[Invalid msisdn]", flwValidationResponse.getMessage().toString());
 
-        flwValidationResponse = frontLineWorkerValidator.validateCreateRequest(new FrontLineWorkerRequest("12345", "name", "ANM", new LocationRequest()), new Location());
+        flwValidationResponse = frontLineWorkerValidator.validate(new FrontLineWorkerRequest("12345", "name", "ANM", new LocationRequest()), new Location());
         assertFalse(flwValidationResponse.isValid());
         assertEquals("[Invalid msisdn]", flwValidationResponse.getMessage().toString());
 
-        flwValidationResponse = frontLineWorkerValidator.validateCreateRequest(new FrontLineWorkerRequest("123456789012", "name", "ANM", new LocationRequest()), new Location());
+        flwValidationResponse = frontLineWorkerValidator.validate(new FrontLineWorkerRequest("123456789012", "name", "ANM", new LocationRequest()), new Location());
         assertFalse(flwValidationResponse.isValid());
         assertEquals("[Invalid msisdn]", flwValidationResponse.getMessage().toString());
 
-        flwValidationResponse = frontLineWorkerValidator.validateCreateRequest(new FrontLineWorkerRequest("911234567890", "name", "ANM", new LocationRequest()), new Location());
+        flwValidationResponse = frontLineWorkerValidator.validate(new FrontLineWorkerRequest("911234567890", "name", "ANM", new LocationRequest()), new Location());
         assertTrue(flwValidationResponse.isValid());
 
-        flwValidationResponse = frontLineWorkerValidator.validateCreateRequest(new FrontLineWorkerRequest("1256789031", "name", "ANM", new LocationRequest()), new Location());
+        flwValidationResponse = frontLineWorkerValidator.validate(new FrontLineWorkerRequest("001234567890", "name", "ANM", new LocationRequest()), new Location());
+        assertTrue(flwValidationResponse.isValid());
+
+        flwValidationResponse = frontLineWorkerValidator.validate(new FrontLineWorkerRequest("1256789031", "name", "ANM", new LocationRequest()), new Location());
         assertTrue(flwValidationResponse.isValid());
     }
-    
+
     @Test
     public void shouldValidateNameOfFrontLineWorker() {
         FrontLineWorkerValidator frontLineWorkerValidator = new FrontLineWorkerValidator();
 
-        FLWValidationResponse flwValidationResponse = frontLineWorkerValidator.validateCreateRequest(new FrontLineWorkerRequest("1234567890", "Mr. Valid", "ANM", new LocationRequest()), new Location());
+        FLWValidationResponse flwValidationResponse = frontLineWorkerValidator.validate(new FrontLineWorkerRequest("1234567890", "Mr. Valid", "ANM", new LocationRequest()), new Location());
         assertTrue(flwValidationResponse.isValid());
 
-        flwValidationResponse = frontLineWorkerValidator.validateCreateRequest(new FrontLineWorkerRequest("1234567890", "Valid 1234", "ANM", new LocationRequest()), new Location());
+        flwValidationResponse = frontLineWorkerValidator.validate(new FrontLineWorkerRequest("1234567890", "Valid 1234", "ANM", new LocationRequest()), new Location());
         assertTrue(flwValidationResponse.isValid());
 
-        flwValidationResponse = frontLineWorkerValidator.validateCreateRequest(new FrontLineWorkerRequest("1234567890", "Invalid-Name", "ANM", new LocationRequest()), new Location());
+        flwValidationResponse = frontLineWorkerValidator.validate(new FrontLineWorkerRequest("1234567890", "Invalid-Name", "ANM", new LocationRequest()), new Location());
         assertFalse(flwValidationResponse.isValid());
         assertEquals("[Invalid name]", flwValidationResponse.getMessage().toString());
     }
@@ -53,7 +56,7 @@ public class FrontLineWorkerValidatorTest {
     public void shouldValidateLocationOfFrontLineWorker() {
         FrontLineWorkerValidator frontLineWorkerValidator = new FrontLineWorkerValidator();
 
-        FLWValidationResponse flwValidationResponse = frontLineWorkerValidator.validateCreateRequest(new FrontLineWorkerRequest("1234567890", "Valid. Name", "ANM", new LocationRequest()), null);
+        FLWValidationResponse flwValidationResponse = frontLineWorkerValidator.validate(new FrontLineWorkerRequest("1234567890", "Valid. Name", "ANM", new LocationRequest()), null);
 
         assertFalse(flwValidationResponse.isValid());
         assertEquals("[Invalid location]", flwValidationResponse.getMessage().toString());

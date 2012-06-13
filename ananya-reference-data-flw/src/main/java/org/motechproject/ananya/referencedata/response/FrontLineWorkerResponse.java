@@ -14,18 +14,8 @@ public class FrontLineWorkerResponse {
         return this;
     }
 
-    public FrontLineWorkerResponse withUpdated() {
-        this.message = "FLW updated successfully";
-        return this;
-    }
-
-    public FrontLineWorkerResponse withCreated() {
-        this.message = "FLW created successfully";
-        return this;
-    }
-
-    public FrontLineWorkerResponse withFLWExists() {
-        this.message = "FLW already exists with the same MSISDN number";
+    public FrontLineWorkerResponse withCreatedOrUpdated() {
+        this.message = "FLW created/updated successfully";
         return this;
     }
 }

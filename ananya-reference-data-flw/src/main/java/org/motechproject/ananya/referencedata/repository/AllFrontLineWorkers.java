@@ -24,24 +24,24 @@ public class AllFrontLineWorkers {
         return template.loadAll(FrontLineWorker.class);
     }
 
-    public FrontLineWorker getByMsisdn(Long msisdn) {
+    public List<FrontLineWorker> getByMsisdn(Long msisdn) {
         DetachedCriteria criteria = DetachedCriteria.forClass(FrontLineWorker.class);
 
         criteria.add(Restrictions.eq("msisdn", msisdn));
 
         List frontLineWorkerList = template.findByCriteria(criteria);
-        return frontLineWorkerList.isEmpty() ? null : (FrontLineWorker) frontLineWorkerList.get(0);
+        return frontLineWorkerList;
     }
 
     public FrontLineWorker getById(Integer id) {
         return template.get(FrontLineWorker.class, id);
     }
 
-    public void update(FrontLineWorker frontLineWorker) {
-        template.update(frontLineWorker);
+    public void createOrUpdate(FrontLineWorker frontLineWorker) {
+        template.saveOrUpdate(frontLineWorker);
     }
 
-    public void addAll(List<FrontLineWorker> frontLineWorkers) {
+    public void createOrUpdateAll(List<FrontLineWorker> frontLineWorkers) {
         template.saveOrUpdateAll(frontLineWorkers);
     }
 }
