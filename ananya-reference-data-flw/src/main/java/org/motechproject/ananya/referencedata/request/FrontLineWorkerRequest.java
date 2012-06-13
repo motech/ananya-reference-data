@@ -65,6 +65,23 @@ public class FrontLineWorkerRequest {
         location.setPanchayat(panchayat);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FrontLineWorkerRequest)) return false;
+
+        FrontLineWorkerRequest that = (FrontLineWorkerRequest) o;
+
+        if (msisdn != null ? !msisdn.equals(that.msisdn) : that.msisdn != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return msisdn != null ? msisdn.hashCode() : 0;
+    }
+
     public String toCSV() {
         return "\"" + msisdn + "\"" +  "," + "\"" +  name + "\"" +  "," + "\"" +  designation + "\"" +  "," + "\"" +  location.getDistrict() + "\"" +  "," + "\"" +  location.getBlock() + "\"" +  "," + "\"" +  location.getPanchayat() + "\"";
     }

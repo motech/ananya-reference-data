@@ -63,7 +63,7 @@ public class FrontLineWorkerServiceTest {
 
         frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
 
-        verify(syncService).syncFrontLineWorker(any(Integer.class));
+        verify(syncService).syncFrontLineWorker(any(Long.class));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class FrontLineWorkerServiceTest {
 
         frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
 
-        verify(syncService).syncFrontLineWorker(any(Integer.class));
+        verify(syncService).syncFrontLineWorker(any(Long.class));
     }
 
     @Test
@@ -382,9 +382,10 @@ public class FrontLineWorkerServiceTest {
 
     @Test
     public void shouldGetFrontLineWorkerById() {
-        int id = 12;
-        frontLineWorkerService.getById(id);
+        Long msisdn = 12L;
 
-        verify(allFrontLineWorkers).getById(id);
+        frontLineWorkerService.getAllByMsisdn(msisdn);
+
+        verify(allFrontLineWorkers).getByMsisdn(msisdn);
     }
 }

@@ -25,21 +25,21 @@ public class SyncServiceTest {
 
     @Test
     public void shouldPublishFlwDataIntoQueue() {
-        Integer flwId = 12;
+        Long msisdn = 12L;
         when(propertiesService.isSyncOn()).thenReturn(true);
 
-        syncService.syncFrontLineWorker(flwId);
+        syncService.syncFrontLineWorker(msisdn);
         
-        verify(eventContext).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, flwId);
+        verify(eventContext).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, msisdn);
     }
 
     @Test
     public void shouldNotPublishFlwDataIntoQueueIfSyncHasBeenTurnedOff() {
-        int flwId = 12;
+        Long msisdn = 12L;
         when(propertiesService.isSyncOn()).thenReturn(false);
 
-        syncService.syncFrontLineWorker(flwId);
+        syncService.syncFrontLineWorker(msisdn);
 
-        verify(eventContext, never()).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, flwId);
+        verify(eventContext, never()).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, msisdn);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -40,14 +41,18 @@ public class SyncEventHandler {
 
     @MotechListener(subjects = {SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE})
     public void handleSyncFrontLineWorker(MotechEvent event) {
-        Integer flwId = (Integer) event.getParameters().get("0");
-        FrontLineWorker frontLineWorker = frontLineWorkerService.getById(flwId);
+        Long msisdn = (Long) event.getParameters().get("0");
+        List<FrontLineWorker> frontLineWorkers = frontLineWorkerService.getAllByMsisdn(msisdn);
         String url = (String) clientServicesProperties.get(KEY_FRONT_LINE_WORKER_CREATE_URL);
+
+        if (frontLineWorkers.size() != 1 || frontLineWorkers.get(0).getMsisdn() == null)
+            return;
+
         try {
-            logger.info("Sync for flwId: " + flwId);
+            logger.info("Sync for msisdn: " + msisdn);
             Map<String, String> requestHeaders = new HashMap<String, String>();
             requestHeaders.put("APIKey", (String) referenceDataProperties.get(ANANYA_API_KEY));
-            JsonHttpClient.Response response = jsonHttpClient.post(url, FrontLineWorkerContractMapper.mapFrom(frontLineWorker), requestHeaders);
+            JsonHttpClient.Response response = jsonHttpClient.post(url, FrontLineWorkerContractMapper.mapFrom(frontLineWorkers.get(0)), requestHeaders);
             logger.info(String.format("Status Code: %s | Response Body: %s", response.statusCode, response.body));
             checkForException(response);
         } catch (IOException e) {
@@ -57,7 +62,7 @@ public class SyncEventHandler {
     }
 
     private void checkForException(JsonHttpClient.Response response) {
-        if(HttpServletResponse.SC_INTERNAL_SERVER_ERROR == response.statusCode) {
+        if (HttpServletResponse.SC_INTERNAL_SERVER_ERROR == response.statusCode) {
             throw new IllegalStateException("Remote error: " + response.body);
         }
     }

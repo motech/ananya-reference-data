@@ -19,14 +19,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -42,7 +43,7 @@ public class SyncEventHandlerTest {
     private Properties referenceDataProperties;
     private SyncEventHandler syncEventHandler;
     @Captor
-    private ArgumentCaptor<Map<String,String>> headerCaptor;
+    private ArgumentCaptor<Map<String, String>> headerCaptor;
 
     @Before
     public void setUp() {
@@ -54,24 +55,65 @@ public class SyncEventHandlerTest {
     public void shouldInvokeClientServiceWithFrontLineWorkerData() throws IOException {
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         String msisdn = "1234";
-        Integer id = 12;
         Location location = new Location("district1", "block1", "panchayat1");
         DateTime lastModified = DateTime.now();
         location.setLastModified(lastModified);
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);
         frontLineWorker.setLastModified(lastModified);
-        when(frontLineWorkerService.getById(id)).thenReturn(frontLineWorker);
-        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(),Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_ACCEPTED, "{success}"));
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
+        frontLineWorkers.add(frontLineWorker);
+        when(frontLineWorkerService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
+        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_ACCEPTED, "{success}"));
+        parameters.put("0", Long.parseLong(msisdn));
 
-        parameters.put("0", id);
         syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));
 
         ArgumentCaptor<FrontLineWorkerContract> captor = ArgumentCaptor.forClass(FrontLineWorkerContract.class);
         verify(jsonHttpClient).post(eq("https://localhost/ananya/flw"), captor.capture(), headerCaptor.capture());
         FrontLineWorkerContract value = captor.getValue();
         assertEquals(msisdn, value.getMsisdn());
-        Map<String,String> header = headerCaptor.getValue();
+        Map<String, String> header = headerCaptor.getValue();
         assertEquals("1234", header.get("APIKey"));
+    }
+
+    @Test
+    public void shouldNotInvokeClientServiceWithFrontLineWorkerDataIfMsisdnIsNull() throws IOException {
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        Location location = new Location("district1", "block1", "panchayat1");
+        DateTime lastModified = DateTime.now();
+        location.setLastModified(lastModified);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(null, "name1", Designation.ANM, location);
+        frontLineWorker.setLastModified(lastModified);
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
+        frontLineWorkers.add(frontLineWorker);
+        when(frontLineWorkerService.getAllByMsisdn(null)).thenReturn(frontLineWorkers);
+        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_ACCEPTED, "{success}"));
+        parameters.put("0", null);
+
+        syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));
+
+        verify(jsonHttpClient, never()).post(eq("https://localhost/ananya/flw"), any(), any(HashMap.class));
+    }
+
+    @Test
+    public void shouldNotInvokeClientServiceWithFrontLineWorkerDataIfThereAreMultipleFLWsWithTheSameMSISDN() throws IOException {
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        String msisdn = "1234";
+        Location location = new Location("district1", "block1", "panchayat1");
+        DateTime lastModified = DateTime.now();
+        location.setLastModified(lastModified);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);
+        frontLineWorker.setLastModified(lastModified);
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
+        frontLineWorkers.add(frontLineWorker);
+        frontLineWorkers.add(frontLineWorker);
+        when(frontLineWorkerService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
+        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_ACCEPTED, "{success}"));
+        parameters.put("0", Long.parseLong(msisdn));
+
+        syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));
+
+        verify(jsonHttpClient, never()).post(eq("https://localhost/ananya/flw"), any(), any(HashMap.class));
     }
 
     @Test
@@ -79,16 +121,17 @@ public class SyncEventHandlerTest {
     public void shouldCryWhenResponseStatusCodeIs500() throws IOException {
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         String msisdn = "1234";
-        Integer id = 12;
         Location location = new Location("district1", "block1", "panchayat1");
         DateTime lastModified = DateTime.now();
         location.setLastModified(lastModified);
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);
         frontLineWorker.setLastModified(lastModified);
-        when(frontLineWorkerService.getById(id)).thenReturn(frontLineWorker);
-        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(),Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "ExceptionTrace"));
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
+        frontLineWorkers.add(frontLineWorker);
+        when(frontLineWorkerService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
+        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "ExceptionTrace"));
+        parameters.put("0", Long.parseLong(msisdn));
 
-        parameters.put("0", id);
         syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));
     }
 }

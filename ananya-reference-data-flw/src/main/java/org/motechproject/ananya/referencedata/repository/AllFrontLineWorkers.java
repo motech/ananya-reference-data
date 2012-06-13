@@ -33,10 +33,6 @@ public class AllFrontLineWorkers {
         return frontLineWorkerList;
     }
 
-    public FrontLineWorker getById(Integer id) {
-        return template.get(FrontLineWorker.class, id);
-    }
-
     public void createOrUpdate(FrontLineWorker frontLineWorker) {
         template.saveOrUpdate(frontLineWorker);
     }

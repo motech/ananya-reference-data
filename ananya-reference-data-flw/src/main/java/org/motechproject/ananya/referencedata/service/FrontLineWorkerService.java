@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.domain.Location;
@@ -48,7 +49,7 @@ public class FrontLineWorkerService {
 
         FrontLineWorker frontLineWorker = constructFrontLineWorker(frontLineWorkerRequest, location);
         allFrontLineWorkers.createOrUpdate(frontLineWorker);
-        syncService.syncFrontLineWorker(frontLineWorker.getId());
+        syncService.syncFrontLineWorker(frontLineWorker.getMsisdn());
         return frontLineWorkerResponse.withCreatedOrUpdated();
     }
 
@@ -67,8 +68,8 @@ public class FrontLineWorkerService {
     }
 
     @Transactional
-    public FrontLineWorker getById(Integer id) {
-        return allFrontLineWorkers.getById(id);
+    public List<FrontLineWorker> getAllByMsisdn(Long msisdn) {
+        return allFrontLineWorkers.getByMsisdn(msisdn);
     }
 
     private FrontLineWorker constructFrontLineWorker(FrontLineWorkerRequest frontLineWorkerRequest, Location location) {
@@ -81,24 +82,15 @@ public class FrontLineWorkerService {
 
     private FrontLineWorker constructFrontLineWorkerForBulkImport(FrontLineWorkerRequest frontLineWorkerRequest, Location location, List<FrontLineWorkerRequest> frontLineWorkerRequests) {
         List<FrontLineWorker> frontLineWorkersWithSameMsisdn = existingFLW(frontLineWorkerRequest);
-        FrontLineWorker frontLineWorkerToBeSaved;
         if (frontLineWorkersWithSameMsisdn.size() != 1 || hasDuplicatesInCSV(frontLineWorkerRequest, frontLineWorkerRequests)) {
-            frontLineWorkerToBeSaved = FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location);
-        } else {
-            frontLineWorkerToBeSaved = FrontLineWorkerMapper.mapFrom(frontLineWorkersWithSameMsisdn.get(0), frontLineWorkerRequest, location);
+            return FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location);
         }
-        return frontLineWorkerToBeSaved;
+        return FrontLineWorkerMapper.mapFrom(frontLineWorkersWithSameMsisdn.get(0), frontLineWorkerRequest, location);
+
     }
 
     private boolean hasDuplicatesInCSV(FrontLineWorkerRequest frontLineWorkerRequest, List<FrontLineWorkerRequest> frontLineWorkerRequests) {
-        int count = 0;
-        for (FrontLineWorkerRequest request : frontLineWorkerRequests) {
-            if (request.getMsisdn().equals(frontLineWorkerRequest.getMsisdn()))
-                count++;
-            if (count == 2)
-                return true;
-        }
-        return false;
+        return CollectionUtils.cardinality(frontLineWorkerRequest, frontLineWorkerRequests) != 1;
     }
 
 

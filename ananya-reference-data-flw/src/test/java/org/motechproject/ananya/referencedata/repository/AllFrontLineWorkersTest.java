@@ -49,17 +49,6 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
     }
 
     @Test
-    public void shouldGetFLWFromDBByTheGivenId() {
-        long msisdn = 1234567890L;
-        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
-
-        allFrontLineWorkers.add(frontLineWorker);
-
-        FrontLineWorker frontLineWorkerFromDb = allFrontLineWorkers.getById(frontLineWorker.getId());
-        assertEquals((Long)msisdn, frontLineWorkerFromDb.getMsisdn());
-    }
-
-    @Test
     public void shouldUpdateFLWToDB() {
         long msisdn = 1234567890L;
         FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
