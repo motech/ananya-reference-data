@@ -9,14 +9,25 @@
 
     <util:properties id="activemqProperties" location="classpath:/activemq.properties"/>
     <util:properties id="apiKeys" location="classpath:/apiKeys.properties"/>
-    
+    <util:properties id="postgresProperties" location="classpath:postgres.properties"/>
+    <util:properties id="referencedataProperties" location="classpath:referencedata.properties"/>
+
     <context:property-placeholder location="classpath*:*.properties"/>
     <context:spring-configured/>
     <context:annotation-config/>
 
-    <import resource="classpath:applicationPlatformServerAPI.xml"/>
-
+    <import resource="classpath:applicationContext-Diagnostics.xml"/>
     <context:component-scan base-package="org.motechproject.ananya.referencedata"/>
 
     <import resource="classpath:applicationContext-flw.xml"/>
+
+    <bean id="configurationDiagnostic" class="org.motechproject.diagnostics.diagnostics.ConfigurationDiagnostic">
+        <constructor-arg>
+            <map>
+                <entry key="Activemq"><util:properties location="classpath:activemq.properties"/></entry>
+                <entry key="Postgres"><util:properties location="classpath:postgres.properties"/></entry>
+                <entry key="Application"><util:properties location="classpath:referencedata.properties"/></entry>
+            </map>
+        </constructor-arg>
+    </bean>
 </beans>
