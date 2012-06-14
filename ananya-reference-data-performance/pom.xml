@@ -10,17 +10,4 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ananya-reference-data-performance</artifactId>
     <name>Ananya Reference Data Performance</name>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.motechproject.ananya.referencedata</groupId>
-            <artifactId>ananya-reference-data-flw</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.motechproject</groupId>
-            <artifactId>motech-platform-server-api</artifactId>
-            <version>${motech.platform.version}</version>
-        </dependency>
-    </dependencies>
 </project>
