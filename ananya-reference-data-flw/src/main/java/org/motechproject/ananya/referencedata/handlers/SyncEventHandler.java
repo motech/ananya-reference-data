@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.handlers;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.domain.SyncEventKeys;
@@ -62,7 +63,7 @@ public class SyncEventHandler {
     }
 
     private void checkForException(JsonHttpClient.Response response) {
-        if (HttpServletResponse.SC_INTERNAL_SERVER_ERROR == response.statusCode) {
+        if (HttpServletResponse.SC_OK != response.statusCode || !StringUtils.containsIgnoreCase((String) response.body, "Created/Updated FLW record")) {
             throw new IllegalStateException("Remote error: " + response.body);
         }
     }

@@ -63,7 +63,7 @@ public class SyncEventHandlerTest {
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);
         when(frontLineWorkerService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
-        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_ACCEPTED, "{success}"));
+        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_OK, "{Created/Updated FLW record}"));
         parameters.put("0", Long.parseLong(msisdn));
 
         syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));
@@ -77,6 +77,44 @@ public class SyncEventHandlerTest {
     }
 
     @Test
+    @ExpectedException(IllegalStateException.class)
+    public void shouldInvokeClientServiceWithFrontLineWorkerDataAndThrowExceptionBasedOnTheResponse() throws IOException {
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        String msisdn = "1234";
+        Location location = new Location("district1", "block1", "panchayat1");
+        DateTime lastModified = DateTime.now();
+        location.setLastModified(lastModified);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);
+        frontLineWorker.setLastModified(lastModified);
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
+        frontLineWorkers.add(frontLineWorker);
+        when(frontLineWorkerService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
+        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "some"));
+        parameters.put("0", Long.parseLong(msisdn));
+
+        syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));
+    }
+
+    @Test
+    @ExpectedException(IllegalStateException.class)
+    public void shouldInvokeClientServiceWithFrontLineWorkerDataAndThrowExceptionBasedOnTheResponseMessage() throws IOException {
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        String msisdn = "1234";
+        Location location = new Location("district1", "block1", "panchayat1");
+        DateTime lastModified = DateTime.now();
+        location.setLastModified(lastModified);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);
+        frontLineWorker.setLastModified(lastModified);
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
+        frontLineWorkers.add(frontLineWorker);
+        when(frontLineWorkerService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
+        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_OK, "{[Invalid msisdn]}"));
+        parameters.put("0", Long.parseLong(msisdn));
+
+        syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));
+    }
+
+    @Test
     public void shouldNotInvokeClientServiceWithFrontLineWorkerDataIfMsisdnIsNull() throws IOException {
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         Location location = new Location("district1", "block1", "panchayat1");
@@ -87,7 +125,7 @@ public class SyncEventHandlerTest {
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);
         when(frontLineWorkerService.getAllByMsisdn(null)).thenReturn(frontLineWorkers);
-        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_ACCEPTED, "{success}"));
+        when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_OK, "{Created/Updated FLW record}"));
         parameters.put("0", null);
 
         syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));
