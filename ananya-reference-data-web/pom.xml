@@ -142,5 +142,9 @@
             <groupId>org.motechproject</groupId>
             <artifactId>motech-platform-server-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+        </dependency>
     </dependencies>
 </project>
