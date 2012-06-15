@@ -311,6 +311,11 @@
                 <artifactId>mail</artifactId>
                 <version>1.4</version>
             </dependency>
+            <dependency>
+                <groupId>org.motechproject</groupId>
+                <artifactId>motech-diagnostics</artifactId>
+                <version>0.10.5-SNAPSHOT</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

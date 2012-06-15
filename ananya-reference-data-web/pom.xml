@@ -130,9 +130,12 @@
             <artifactId>ananya-reference-data-flw</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.motechproject.ananya.referencedata</groupId>
+            <artifactId>ananya-reference-data-csv-importer</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.motechproject</groupId>
             <artifactId>motech-diagnostics</artifactId>
-            <version>0.10.5-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
