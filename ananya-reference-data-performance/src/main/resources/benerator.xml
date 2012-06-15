@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<setup xmlns="http://databene.org/benerator/0.7.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://databene.org/benerator/0.7.0 http://databene.org/benerator-0.7.0.xsd">
+    <generate name="locations" count="100">
+        <variable name="address" generator="org.databene.domain.address.AddressGenerator"/>
+
+        <attribute name="district" type="string" dataset="${address.state}"/>
+        <attribute name="block" type="string" dataset="${address.city.name}"/>
+        <attribute name="panchayat" type="string" dataset="${address.street}"/>
+
+        <consumer class="org.databene.platform.csv.CSVEntityExporter">
+            <property name="uri" value="src/main/resources/locations.csv"/>
+            <property name="encoding" value="UTF-8"/>
+            <property name="columns"  value="district,block,panchayat"/>
+        </consumer>
+    </generate>
+
+    <generate name="flws" count="100">
+        <attribute name="msisdn" type="long" min="9000000000" max="9999999999" distribution="random"/>
+
+        <variable name="person" generator="org.databene.domain.person.PersonGenerator"/>
+        <attribute name="name" type="string" dataset="${person.givenName}"/>
+
+        <attribute name="designation" type="string" pattern="(ANM|ASHA|ANGANWADI)" distribution="random" />
+
+        <variable name="locationsCSV" type="entity" source="locations.csv" distribution="random"/>
+        <attribute name="district" type="string" dataset="${locationsCSV.district}"/>
+        <attribute name="block" type="string" dataset="${locationsCSV.block}"/>
+        <attribute name="panchayat" type="string" dataset="${locationsCSV.panchayat}"/>
+
+        <consumer class="org.databene.platform.csv.CSVEntityExporter">
+            <property name="uri" value="src/main/resources/flws.csv"/>
+            <property name="encoding" value="UTF-8"/>
+            <property name="columns"  value="msisdn,name,designation,district,block,panchayat"/>
+        </consumer>
+    </generate>
+</setup>
