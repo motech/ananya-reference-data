@@ -25,7 +25,7 @@ public class HttpConnectionDiagnostic {
     @Diagnostic(name = "HttpConnection")
     public DiagnosticsResult performDiagnosis() {
         HttpURLConnection connection;
-        DiagnosticLog diagnosticLog = new DiagnosticLog("Ananya Connection");
+        DiagnosticLog diagnosticLog = new DiagnosticLog();
         diagnosticLog.add("Opening http session with ananya");
 
         if (properties == null) return null;
