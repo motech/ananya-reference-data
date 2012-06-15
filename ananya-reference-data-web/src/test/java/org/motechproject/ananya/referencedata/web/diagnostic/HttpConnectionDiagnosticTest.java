@@ -1,13 +1,19 @@
 package org.motechproject.ananya.referencedata.web.diagnostic;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.ClosedInputStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.diagnostics.response.DiagnosticsResult;
 import org.springframework.beans.factory.annotation.Qualifier;
+import sun.net.www.content.text.PlainTextInputStream;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringBufferInputStream;
 import java.net.HttpURLConnection;
 import java.util.Properties;
 
@@ -23,31 +29,31 @@ public class HttpConnectionDiagnosticTest {
     @Test
     public void shouldReturnSuccessResponseWhenHttpConnectionIsSuccessful() throws IOException {
         Properties properties = new Properties();
-        properties.put("ananya.bbc.url", "testurl.com");
+        properties.put("bbc.heartbeat.url", "testurl.com");
         HttpConnectionDiagnosticStub httpConnectionDiagnosticStub = new HttpConnectionDiagnosticStub(properties, connection);
 
         when(connection.getResponseCode()).thenReturn(HttpURLConnection.HTTP_OK);
-        when(connection.getResponseMessage()).thenReturn("Successful Connection");
 
         DiagnosticsResult diagnosticsResult = httpConnectionDiagnosticStub.performDiagnosis();
 
         assertTrue(diagnosticsResult.getStatus());
-        assertTrue(diagnosticsResult.getMessage().contains("Successful Connection"));
+        assertTrue(diagnosticsResult.getMessage().contains("Successful http connection to Ananya-BBC"));
     }
 
     @Test
     public void shouldReturnErrorMessageWhenConnectionFails() throws IOException {
         Properties properties = new Properties();
-        properties.put("ananya.bbc.url", "testurl.com");
+        properties.put("bbc.heartbeat.url", "testurl.com");
         HttpConnectionDiagnosticStub httpConnectionDiagnosticStub = new HttpConnectionDiagnosticStub(properties, connection);
 
         when(connection.getResponseCode()).thenReturn(HttpURLConnection.HTTP_BAD_REQUEST);
-        when(connection.getResponseMessage()).thenReturn("Error in Connection");
+        when(connection.getResponseMessage()).thenReturn("Forbidden");
+
 
         DiagnosticsResult diagnosticsResult = httpConnectionDiagnosticStub.performDiagnosis();
 
         assertFalse(diagnosticsResult.getStatus());
-        assertTrue(diagnosticsResult.getMessage().contains("Error in Connection"));
+        assertTrue(diagnosticsResult.getMessage().contains("Http connection to Ananya-BBC failed. Forbidden"));
     }
 
     @Test
@@ -59,7 +65,7 @@ public class HttpConnectionDiagnosticTest {
         DiagnosticsResult diagnosticsResult = httpConnectionDiagnosticStub.performDiagnosis();
 
         assertFalse(diagnosticsResult.getStatus());
-        assertTrue(diagnosticsResult.getMessage().contains("Property ananya.bbc.url does not exist."));
+        assertTrue(diagnosticsResult.getMessage().contains("Property bbc.heartbeat.url does not exist."));
     }
 
     @Test

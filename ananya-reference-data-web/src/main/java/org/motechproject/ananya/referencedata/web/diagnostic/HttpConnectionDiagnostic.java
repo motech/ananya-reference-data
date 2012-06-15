@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.web.diagnostic;
 
+import org.apache.commons.io.IOUtils;
 import org.motechproject.diagnostics.annotation.Diagnostic;
 import org.motechproject.diagnostics.diagnostics.DiagnosticLog;
 import org.motechproject.diagnostics.response.DiagnosticsResult;
@@ -26,34 +27,36 @@ public class HttpConnectionDiagnostic {
     public DiagnosticsResult performDiagnosis() {
         HttpURLConnection connection;
         DiagnosticLog diagnosticLog = new DiagnosticLog();
-        diagnosticLog.add("Opening http session with ananya");
+        diagnosticLog.add("Opening http connection to Ananya-BBC");
 
         if (properties == null) return null;
-        if (properties.getProperty("ananya.bbc.url") == null) {
-            diagnosticLog.add("Property ananya.bbc.url does not exist.");
+        if (properties.getProperty("bbc.heartbeat.url") == null) {
+            diagnosticLog.add("Property bbc.heartbeat.url does not exist.");
             return new DiagnosticsResult(false, diagnosticLog.toString());
         }
         boolean httpConnectionStatus = false;
+        String errorMessage = "Http connection to Ananya-BBC failed. ";
+
         try {
             connection = getConnection();
             connection.connect();
             int responseCode = connection.getResponseCode();
-            String responseMessage = connection.getResponseMessage();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 httpConnectionStatus = true;
-                diagnosticLog.add(responseMessage);
-            } else
-                diagnosticLog.add("Status: " + responseCode + "\nMessage :" + responseMessage);
+                diagnosticLog.add("Successful http connection to Ananya-BBC");
+            } else {
+                diagnosticLog.add("Status: " + responseCode + "\nMessage :" + errorMessage +connection.getResponseMessage());
+            }
 
         } catch (Exception e) {
-            diagnosticLog.add("Connection Failed. " + e.getMessage());
+            diagnosticLog.add(errorMessage + e.getMessage());
         }
         return new DiagnosticsResult(httpConnectionStatus, diagnosticLog.toString());
     }
 
     protected HttpURLConnection getConnection() throws IOException {
         HttpURLConnection connection;
-        URL url = new URL(properties.getProperty("ananya.bbc.url"));
+        URL url = new URL(properties.getProperty("bbc.heartbeat.url"));
         connection = (HttpURLConnection) url.openConnection();
         return connection;
     }

@@ -52,7 +52,7 @@
                         </systemProperty>
                     </systemProperties>
                     <webAppConfig>
-                        <contextPath>/reference-data</contextPath>
+                        <contextPath>/ananya-reference-data</contextPath>
                     </webAppConfig>
                     <stopKey>secret</stopKey>
                     <stopPort>6669</stopPort>
