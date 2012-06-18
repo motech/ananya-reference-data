@@ -3,12 +3,13 @@
 <setup xmlns="http://databene.org/benerator/0.7.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://databene.org/benerator/0.7.0 http://databene.org/benerator-0.7.0.xsd">
+
     <generate name="locations" count="100">
         <variable name="address" generator="org.databene.domain.address.AddressGenerator"/>
 
-        <attribute name="district" type="string" dataset="${address.state}"/>
-        <attribute name="block" type="string" dataset="${address.city.name}"/>
-        <attribute name="panchayat" type="string" dataset="${address.street}"/>
+        <attribute name="district" type="string" script="address.state"/>
+        <attribute name="block" type="string" script="address.city.name"/>
+        <attribute name="panchayat" type="string" script="address.street"/>
 
         <consumer class="org.databene.platform.csv.CSVEntityExporter">
             <property name="uri" value="src/main/resources/locations.csv"/>
