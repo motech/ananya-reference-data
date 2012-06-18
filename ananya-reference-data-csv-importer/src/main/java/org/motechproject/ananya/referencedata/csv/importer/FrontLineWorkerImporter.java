@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,8 +73,15 @@ public class FrontLineWorkerImporter {
     public void postData(List<Object> objects) throws IOException {
         logger.info("Started posting FLW data");
         List<FrontLineWorkerRequest> frontLineWorkerRequests = convertToFLWRequest(objects);
-        jsonHttpClient.post((String) clientServicesProperties.get(KEY_FRONT_LINE_WORKER_BULK_IMPORT_URL), frontLineWorkerRequests);
+        JsonHttpClient.Response response = jsonHttpClient.post((String) clientServicesProperties.get(KEY_FRONT_LINE_WORKER_BULK_IMPORT_URL), frontLineWorkerRequests);
+        checkForException(response);
         logger.info("Finished posting FLW data");
+    }
+
+    private void checkForException(JsonHttpClient.Response response) {
+        if (HttpServletResponse.SC_OK != response.statusCode) {
+            throw new IllegalStateException("Remote error: " + response.body);
+        }
     }
 
     private ValidationResponse constructValidationResponse(boolean isValid, List<Error> errors) {
