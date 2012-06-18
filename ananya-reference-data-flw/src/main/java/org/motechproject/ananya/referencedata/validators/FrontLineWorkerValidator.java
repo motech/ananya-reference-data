@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.response.FLWValidationResponse;
+import org.motechproject.common.domain.PhoneNumber;
 
 import java.util.regex.Pattern;
 
@@ -11,15 +12,17 @@ public class FrontLineWorkerValidator {
     public FLWValidationResponse validate(FrontLineWorkerRequest frontLineWorkerRequest, Location location) {
         FLWValidationResponse flwValidationResponse = new FLWValidationResponse();
 
-        String msisdn = frontLineWorkerRequest.getMsisdn();
-        if (!StringUtils.isBlank(msisdn) && anInvalidMsisdn(msisdn)) {
-            flwValidationResponse.forInvalidMsisdn();
-        }
-
+        validateMsisdn(flwValidationResponse, frontLineWorkerRequest.getMsisdn());
         validateLocation(location, flwValidationResponse);
         validateName(frontLineWorkerRequest, flwValidationResponse);
 
         return flwValidationResponse;
+    }
+
+    private void validateMsisdn(FLWValidationResponse flwValidationResponse, String msisdn) {
+        if (PhoneNumber.isNotValidWithBlanksAllowed(msisdn)) {
+            flwValidationResponse.forInvalidMsisdn();
+        }
     }
 
     private void validateLocation(Location location, FLWValidationResponse flwValidationResponse) {

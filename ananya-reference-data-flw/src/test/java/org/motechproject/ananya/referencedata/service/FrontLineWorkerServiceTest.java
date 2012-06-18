@@ -14,10 +14,12 @@ import org.motechproject.ananya.referencedata.repository.AllLocations;
 import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
 import org.motechproject.ananya.referencedata.response.FrontLineWorkerResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Matchers.any;
@@ -34,6 +36,9 @@ public class FrontLineWorkerServiceTest {
     private AllFrontLineWorkers allFrontLineWorkers;
     @Mock
     private SyncService syncService;
+    @Mock
+    private Properties clientServicesProperties;
+
 
     @Captor
     ArgumentCaptor<List<FrontLineWorker>> captor;
@@ -94,8 +99,8 @@ public class FrontLineWorkerServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        String msisdn1 = "12344545";
-        String msisdn2 = "12344546";
+        String msisdn1 = "911234454522";
+        String msisdn2 = "911234454623";
         FrontLineWorkerRequest frontLineWorkerRequest1 = new FrontLineWorkerRequest(msisdn1, "name", "ASHA", new LocationRequest(district, block, panchayat));
         FrontLineWorkerRequest frontLineWorkerRequest2 = new FrontLineWorkerRequest(msisdn2, "name", "ASHA", new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
@@ -118,7 +123,7 @@ public class FrontLineWorkerServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        String msisdn1 = "12344545";
+        String msisdn1 = "911234454545";
         FrontLineWorkerRequest frontLineWorkerRequest1 = new FrontLineWorkerRequest(msisdn1, "name", "ASHA", new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
         FrontLineWorker expectedFLW = new FrontLineWorker();

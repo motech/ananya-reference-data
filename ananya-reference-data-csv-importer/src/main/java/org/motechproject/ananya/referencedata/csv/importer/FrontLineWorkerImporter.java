@@ -6,6 +6,7 @@ import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
 import org.motechproject.ananya.referencedata.response.FLWValidationResponse;
 import org.motechproject.ananya.referencedata.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.service.JsonHttpClient;
 import org.motechproject.ananya.referencedata.service.LocationService;
 import org.motechproject.ananya.referencedata.validators.FrontLineWorkerValidator;
 import org.motechproject.importer.annotation.CSVImporter;
@@ -18,8 +19,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 @Component
 @CSVImporter(entity = "FrontLineWorker", bean = FrontLineWorkerRequest.class)
@@ -28,11 +31,17 @@ public class FrontLineWorkerImporter {
     private FrontLineWorkerService frontLineWorkerService;
     private LocationService locationService;
     private Logger logger = LoggerFactory.getLogger(FrontLineWorkerImporter.class);
+    private JsonHttpClient jsonHttpClient;
+    private Properties clientServicesProperties;
+
+    private final String KEY_FRONT_LINE_WORKER_BULK_IMPORT_URL = "front.line.worker.bulk.import.url";
 
     @Autowired
-    public FrontLineWorkerImporter(FrontLineWorkerService frontLineWorkerService, LocationService locationService) {
+    public FrontLineWorkerImporter(FrontLineWorkerService frontLineWorkerService, LocationService locationService, JsonHttpClient jsonHttpClient, Properties clientServicesProperties) {
         this.frontLineWorkerService = frontLineWorkerService;
         this.locationService = locationService;
+        this.jsonHttpClient = jsonHttpClient;
+        this.clientServicesProperties = clientServicesProperties;
     }
 
     @Validate
@@ -60,10 +69,10 @@ public class FrontLineWorkerImporter {
     }
 
     @Post
-    public void postData(List<Object> objects) {
+    public void postData(List<Object> objects) throws IOException {
         logger.info("Started posting FLW data");
         List<FrontLineWorkerRequest> frontLineWorkerRequests = convertToFLWRequest(objects);
-        frontLineWorkerService.addAllWithoutValidations(frontLineWorkerRequests);
+        jsonHttpClient.post((String) clientServicesProperties.get(KEY_FRONT_LINE_WORKER_BULK_IMPORT_URL), frontLineWorkerRequests);
         logger.info("Finished posting FLW data");
     }
 

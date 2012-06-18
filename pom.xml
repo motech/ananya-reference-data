@@ -291,6 +291,11 @@
                 <version>0.10.5-SNAPSHOT</version>
             </dependency>
             <dependency>
+                <groupId>org.motechproject</groupId>
+                <artifactId>motech-common</artifactId>
+                <version>0.10.5-SNAPSHOT</version>
+            </dependency>
+            <dependency>
                 <groupId>org.motechproject.ananya.referencedata</groupId>
                 <artifactId>ananya-reference-data-flw</artifactId>
                 <version>${project.version}</version>

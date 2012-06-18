@@ -3,14 +3,20 @@ package org.motechproject.ananya.referencedata.web;
 import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
+import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequestList;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
 import org.motechproject.ananya.referencedata.response.ExceptionResponse;
 import org.motechproject.ananya.referencedata.service.FrontLineWorkerService;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -23,9 +29,11 @@ public class FrontLineWorkerControllerTest {
 
     @Mock
     private FrontLineWorkerService frontLineWorkerService;
+    @Captor
+    private ArgumentCaptor<List<FrontLineWorkerRequest>> captor;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         initMocks(this);
         frontLineWorkerController = new FrontLineWorkerController(frontLineWorkerService);
     }
@@ -55,5 +63,15 @@ public class FrontLineWorkerControllerTest {
         assertNotNull(exceptionResponse.getTrace());
         assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, response.getStatus());
         assertEquals("application/json", response.getHeader("Content-Type"));
+    }
+
+    @Test
+    public void shouldCreateOrUpdateAllRowsForBulkImport() {
+        FrontLineWorkerRequestList frontLineWorkerRequests = new FrontLineWorkerRequestList();
+
+        frontLineWorkerController.createOrUpdateAll(frontLineWorkerRequests);
+
+        verify(frontLineWorkerService).addAllWithoutValidations(captor.capture());
+        assertEquals(frontLineWorkerRequests, captor.getValue());
     }
 }

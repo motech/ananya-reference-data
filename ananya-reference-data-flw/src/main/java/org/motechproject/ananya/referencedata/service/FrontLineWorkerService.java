@@ -97,6 +97,6 @@ public class FrontLineWorkerService {
 
     private List<FrontLineWorker> existingFLW(FrontLineWorkerRequest frontLineWorkerRequest) {
         String msisdn = frontLineWorkerRequest.getMsisdn();
-        return StringUtils.isBlank(msisdn) ? Collections.<FrontLineWorker>emptyList() : allFrontLineWorkers.getByMsisdn(Long.valueOf(FrontLineWorkerMapper.formatMsisdn(msisdn)));
+        return StringUtils.isBlank(msisdn) ? Collections.<FrontLineWorker>emptyList() : allFrontLineWorkers.getByMsisdn(FrontLineWorkerMapper.formatMsisdn(msisdn));
     }
 }

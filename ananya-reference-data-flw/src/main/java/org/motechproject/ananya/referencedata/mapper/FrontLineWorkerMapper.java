@@ -5,10 +5,11 @@ import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.domain.Designation;
 import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
+import org.motechproject.common.domain.PhoneNumber;
 
 public class FrontLineWorkerMapper {
     public static FrontLineWorker mapFrom(FrontLineWorkerRequest frontLineWorkerRequest, Location location) {
-        Long msisdn = StringUtils.isBlank(frontLineWorkerRequest.getMsisdn()) ? null : Long.parseLong(formatMsisdn(frontLineWorkerRequest.getMsisdn()));
+        Long msisdn = StringUtils.isBlank(frontLineWorkerRequest.getMsisdn()) ? null : formatMsisdn(frontLineWorkerRequest.getMsisdn());
 
         return new FrontLineWorker(msisdn, trim(frontLineWorkerRequest.getName()), getDesignation(frontLineWorkerRequest.getDesignation()), location);
     }
@@ -25,8 +26,8 @@ public class FrontLineWorkerMapper {
         return StringUtils.defaultIfEmpty(StringUtils.strip(name), StringUtils.EMPTY);
     }
 
-    public static String formatMsisdn(String msisdn) {
-        return msisdn.length() == 10 ? "91" + msisdn : msisdn;
+    public static Long formatMsisdn(String msisdn) {
+        return PhoneNumber.formatPhoneNumber(msisdn);
     }
 
     private static Designation getDesignation(String designation) {

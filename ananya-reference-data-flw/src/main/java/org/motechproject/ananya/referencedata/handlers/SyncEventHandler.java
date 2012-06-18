@@ -27,8 +27,8 @@ public class SyncEventHandler {
     private Properties referenceDataProperties;
     private JsonHttpClient jsonHttpClient;
 
-    public static final String KEY_FRONT_LINE_WORKER_CREATE_URL = "front.line.worker.create.url";
-    public static final String ANANYA_API_KEY = "ananya.api.key";
+    private final String KEY_FRONT_LINE_WORKER_CREATE_URL = "front.line.worker.create.url";
+    private final String ANANYA_API_KEY = "ananya.api.key";
 
     Logger logger = Logger.getLogger(SyncEventHandler.class);
 

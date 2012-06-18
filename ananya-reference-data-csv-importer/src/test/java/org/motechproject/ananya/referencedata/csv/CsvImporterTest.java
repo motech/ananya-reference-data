@@ -24,20 +24,6 @@ public class CsvImporterTest extends SpringIntegrationTest {
     }
 
     @Test
-    public void shouldImportFlwData() throws Exception {
-        Location location = new Location("D1", "B1", "P1", 9, 9, 9);
-        template.save(location);
-        URL flwData = this.getClass().getResource("/flwData.csv");
-        String[] arguments = {"FrontLineWorker", flwData.getPath()};
-
-        CsvImporter.main(arguments);
-
-        List<FrontLineWorker> frontLineWorkers = template.loadAll(FrontLineWorker.class);
-        assertEquals(1, frontLineWorkers.size());
-        assertEquals("919988776655", frontLineWorkers.get(0).getMsisdn().toString());
-    }
-
-    @Test
     public void shouldImportLocationData() throws Exception {
         URL locationData = this.getClass().getResource("/locationData.csv");
         String[] arguments = {"Location", locationData.getPath()};

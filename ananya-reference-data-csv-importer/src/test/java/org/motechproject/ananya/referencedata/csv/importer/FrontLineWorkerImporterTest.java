@@ -10,11 +10,14 @@ import org.motechproject.ananya.referencedata.domain.Location;
 import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.request.LocationRequest;
 import org.motechproject.ananya.referencedata.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.service.JsonHttpClient;
 import org.motechproject.ananya.referencedata.service.LocationService;
 import org.motechproject.importer.domain.ValidationResponse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.verify;
@@ -27,15 +30,19 @@ public class FrontLineWorkerImporterTest {
     private LocationService locationService;
     @Mock
     private FrontLineWorkerService frontLineWorkerService;
+    @Mock
+    private JsonHttpClient jsonHttpClient;
+    @Mock
+    private Properties clientServicesProperties;
+
     @Captor
     private ArgumentCaptor<List<FrontLineWorkerRequest>> captor;
-
     private FrontLineWorkerImporter frontLineWorkerImporter;
 
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerImporter = new FrontLineWorkerImporter(frontLineWorkerService, locationService);
+        frontLineWorkerImporter = new FrontLineWorkerImporter(frontLineWorkerService, locationService, jsonHttpClient, clientServicesProperties);
     }
 
     @Test
@@ -69,19 +76,18 @@ public class FrontLineWorkerImporterTest {
     }
 
     @Test
-    public void shouldSaveFLW() {
+    public void shouldSaveFLW() throws IOException {
         ArrayList<Object> frontLineWorkerRequests = new ArrayList<Object>();
         ArrayList<Location> locations = new ArrayList<Location>();
         locations.add(new Location("D1", "B1", "P1", 1, 1, 1));
-        when(locationService.getAll()).thenReturn(locations);
+        String bulkUrl = "http://localhost:9979/ananya-reference-data/flw/bulk_import";
         String msisdn = "1234567890";
         frontLineWorkerRequests.add(new FrontLineWorkerRequest(msisdn, "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1")));
+        when(clientServicesProperties.get("front.line.worker.bulk.import.url")).thenReturn(bulkUrl);
+        when(locationService.getAll()).thenReturn(locations);
 
         frontLineWorkerImporter.postData(frontLineWorkerRequests);
 
-        verify(frontLineWorkerService).addAllWithoutValidations(captor.capture());
-        List<FrontLineWorkerRequest> flwRequests = captor.getValue();
-        assertEquals(1, flwRequests.size());
-        assertEquals(msisdn, flwRequests.get(0).getMsisdn());
+        verify(jsonHttpClient).post(bulkUrl, frontLineWorkerRequests);
     }
 }
