@@ -37,6 +37,10 @@ public class FrontLineWorkerServiceTest {
 
     @Captor
     ArgumentCaptor<List<FrontLineWorker>> captor;
+
+    @Captor
+    ArgumentCaptor<List<FrontLineWorker>> anotherCaptor;
+
     private FrontLineWorkerService frontLineWorkerService;
 
     @Before
@@ -130,6 +134,9 @@ public class FrontLineWorkerServiceTest {
         List<FrontLineWorker> actualFLWs = captor.getValue();
         assertTrue(actualFLWs.contains(expectedFLW));
         assertEquals(1, actualFLWs.size());
+        verify(syncService).syncAllFrontLineWorkers(anotherCaptor.capture());
+        List<FrontLineWorker> actualFLWsForSync = anotherCaptor.getValue();
+        assertEquals(actualFLWsForSync , actualFLWs);
     }
 
     @Test

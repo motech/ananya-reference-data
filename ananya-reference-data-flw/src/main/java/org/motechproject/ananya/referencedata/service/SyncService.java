@@ -1,11 +1,14 @@
 package org.motechproject.ananya.referencedata.service;
 
 import org.apache.log4j.Logger;
+import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.domain.SyncEventKeys;
 import org.motechproject.context.EventContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class SyncService {
@@ -24,6 +27,15 @@ public class SyncService {
         if (propertiesService.isSyncOn()) {
             logger.info("Raising event to sync for msisdn: " + msisdn);
             eventContext.send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, msisdn);
+        }
+    }
+
+    public void syncAllFrontLineWorkers(List<FrontLineWorker> frontLineWorkers) {
+        if(propertiesService.isSyncOn()) {
+            for(FrontLineWorker frontLineWorker : frontLineWorkers) {
+                logger.info("Raising event to sync for msisdn: " + frontLineWorker.getMsisdn());
+                eventContext.send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, frontLineWorker.getMsisdn());
+            }
         }
     }
 }

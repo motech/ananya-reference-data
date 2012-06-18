@@ -65,6 +65,7 @@ public class FrontLineWorkerService {
             frontLineWorkers.add(frontLineWorkerToBeSaved);
         }
         allFrontLineWorkers.createOrUpdateAll(frontLineWorkers);
+        syncService.syncAllFrontLineWorkers(frontLineWorkers);
     }
 
     @Transactional
