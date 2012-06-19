@@ -69,7 +69,7 @@ public class SyncEventHandlerTest {
         syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));
 
         ArgumentCaptor<FrontLineWorkerContract> captor = ArgumentCaptor.forClass(FrontLineWorkerContract.class);
-        verify(jsonHttpClient).post(eq("https://localhost/ananya/flw"), captor.capture(), headerCaptor.capture());
+        verify(jsonHttpClient).post(eq("http://localhost:8080/ananya/flw"), captor.capture(), headerCaptor.capture());
         FrontLineWorkerContract value = captor.getValue();
         assertEquals(msisdn, value.getMsisdn());
         Map<String, String> header = headerCaptor.getValue();
@@ -130,7 +130,7 @@ public class SyncEventHandlerTest {
 
         syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));
 
-        verify(jsonHttpClient, never()).post(eq("https://localhost/ananya/flw"), any(), any(HashMap.class));
+        verify(jsonHttpClient, never()).post(eq("http://localhost:8080/ananya/flw"), any(), any(HashMap.class));
     }
 
     @Test
@@ -151,7 +151,7 @@ public class SyncEventHandlerTest {
 
         syncEventHandler.handleSyncFrontLineWorker(new MotechEvent(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, parameters));
 
-        verify(jsonHttpClient, never()).post(eq("https://localhost/ananya/flw"), any(), any(HashMap.class));
+        verify(jsonHttpClient, never()).post(eq("http://localhost:8080/ananya/flw"), any(), any(HashMap.class));
     }
 
     @Test
