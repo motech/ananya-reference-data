@@ -76,7 +76,6 @@ public class FrontLineWorkerService {
         allFrontLineWorkers.createOrUpdateAll(frontLineWorkers);
     }
 
-    @Transactional
     public List<FrontLineWorker> getAllByMsisdn(Long msisdn) {
         return allFrontLineWorkers.getByMsisdn(msisdn);
     }
