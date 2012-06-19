@@ -9,13 +9,13 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="annotatedClasses">
             <list>
-                <value>org.motechproject.ananya.referencedata.domain.AnanyaReferenceDataProperty</value>
-                <value>org.motechproject.ananya.referencedata.domain.FrontLineWorker</value>
-                <value>org.motechproject.ananya.referencedata.domain.Location</value>
+                <value>org.motechproject.ananya.referencedata.flw.domain.AnanyaReferenceDataProperty</value>
+                <value>org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker</value>
+                <value>org.motechproject.ananya.referencedata.flw.domain.Location</value>
             </list>
         </property>
         <property name="entityInterceptor">
-            <bean class="org.motechproject.ananya.referencedata.domain.AuditTrailInterceptor"/>
+            <bean class="org.motechproject.ananya.referencedata.flw.domain.AuditTrailInterceptor"/>
         </property>
         <property name="hibernateProperties">
             <props>

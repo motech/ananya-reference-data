@@ -6,16 +6,15 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
-import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequestList;
-import org.motechproject.ananya.referencedata.request.LocationRequest;
-import org.motechproject.ananya.referencedata.response.ExceptionResponse;
-import org.motechproject.ananya.referencedata.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest;
+import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequestList;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.flw.response.ExceptionResponse;
+import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;

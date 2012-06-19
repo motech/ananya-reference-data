@@ -6,8 +6,8 @@ import org.junit.Test;
 import org.motechproject.ananya.referencedata.csv.exception.FileReadException;
 import org.motechproject.ananya.referencedata.csv.exception.InvalidArgumentException;
 import org.motechproject.ananya.referencedata.csv.exception.WrongNumberArgsException;
-import org.motechproject.ananya.referencedata.domain.FrontLineWorker;
-import org.motechproject.ananya.referencedata.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
+import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.springframework.test.annotation.ExpectedException;
 
 import java.net.URL;

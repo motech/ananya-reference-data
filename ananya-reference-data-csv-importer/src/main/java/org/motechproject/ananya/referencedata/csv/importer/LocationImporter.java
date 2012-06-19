@@ -1,11 +1,11 @@
 package org.motechproject.ananya.referencedata.csv.importer;
 
-import org.motechproject.ananya.referencedata.domain.LocationList;
-import org.motechproject.ananya.referencedata.mapper.LocationMapper;
-import org.motechproject.ananya.referencedata.request.LocationRequest;
-import org.motechproject.ananya.referencedata.response.FLWValidationResponse;
-import org.motechproject.ananya.referencedata.service.LocationService;
-import org.motechproject.ananya.referencedata.validators.LocationValidator;
+import org.motechproject.ananya.referencedata.flw.domain.LocationList;
+import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
+import org.motechproject.ananya.referencedata.flw.service.LocationService;
+import org.motechproject.ananya.referencedata.flw.validators.LocationValidator;
 import org.motechproject.importer.annotation.CSVImporter;
 import org.motechproject.importer.annotation.Post;
 import org.motechproject.importer.annotation.Validate;

@@ -3,9 +3,9 @@ package org.motechproject.ananya.referencedata.web;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.motechproject.ananya.referencedata.request.LocationRequest;
-import org.motechproject.ananya.referencedata.response.LocationCreationResponse;
-import org.motechproject.ananya.referencedata.service.LocationService;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.flw.response.LocationCreationResponse;
+import org.motechproject.ananya.referencedata.flw.service.LocationService;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.when;

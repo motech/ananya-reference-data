@@ -1,6 +1,6 @@
 package org.motechproject.ananya.referencedata.web;
 
-import org.motechproject.ananya.referencedata.response.ExceptionResponse;
+import org.motechproject.ananya.referencedata.flw.response.ExceptionResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 

@@ -1,14 +1,14 @@
 package org.motechproject.ananya.referencedata.csv.importer;
 
-import org.motechproject.ananya.referencedata.domain.Location;
-import org.motechproject.ananya.referencedata.domain.LocationList;
-import org.motechproject.ananya.referencedata.request.FrontLineWorkerRequest;
-import org.motechproject.ananya.referencedata.request.LocationRequest;
-import org.motechproject.ananya.referencedata.response.FLWValidationResponse;
-import org.motechproject.ananya.referencedata.service.FrontLineWorkerService;
-import org.motechproject.ananya.referencedata.service.JsonHttpClient;
-import org.motechproject.ananya.referencedata.service.LocationService;
-import org.motechproject.ananya.referencedata.validators.FrontLineWorkerValidator;
+import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.LocationList;
+import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
+import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
+import org.motechproject.ananya.referencedata.flw.service.LocationService;
+import org.motechproject.ananya.referencedata.flw.validators.FrontLineWorkerValidator;
 import org.motechproject.importer.annotation.CSVImporter;
 import org.motechproject.importer.annotation.Post;
 import org.motechproject.importer.annotation.Validate;

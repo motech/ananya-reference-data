@@ -1,8 +1,8 @@
 package org.motechproject.ananya.referencedata.web;
 
-import org.motechproject.ananya.referencedata.request.LocationRequest;
-import org.motechproject.ananya.referencedata.response.LocationCreationResponse;
-import org.motechproject.ananya.referencedata.service.LocationService;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.flw.response.LocationCreationResponse;
+import org.motechproject.ananya.referencedata.flw.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
