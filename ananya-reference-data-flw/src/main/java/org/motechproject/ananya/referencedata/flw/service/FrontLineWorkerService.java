@@ -37,7 +37,6 @@ public class FrontLineWorkerService {
         this.syncService = syncService;
     }
 
-    @Transactional
     public FrontLineWorkerResponse createOrUpdate(FrontLineWorkerRequest frontLineWorkerRequest) {
         FrontLineWorkerResponse frontLineWorkerResponse = new FrontLineWorkerResponse();
         LocationRequest locationRequest = frontLineWorkerRequest.getLocation();
@@ -48,12 +47,11 @@ public class FrontLineWorkerService {
             return frontLineWorkerResponse.withValidationResponse(FLWValidationResponse);
 
         FrontLineWorker frontLineWorker = constructFrontLineWorker(frontLineWorkerRequest, location);
-        allFrontLineWorkers.createOrUpdate(frontLineWorker);
+        saveFLWToDB(frontLineWorker);
         syncService.syncFrontLineWorker(frontLineWorker.getMsisdn());
         return frontLineWorkerResponse.withCreatedOrUpdated();
     }
 
-    @Transactional
     public void addAllWithoutValidations(List<FrontLineWorkerRequest> frontLineWorkerRequests) {
         List<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         for (FrontLineWorkerRequest frontLineWorkerRequest : frontLineWorkerRequests) {
@@ -64,8 +62,18 @@ public class FrontLineWorkerService {
 
             frontLineWorkers.add(frontLineWorkerToBeSaved);
         }
-        allFrontLineWorkers.createOrUpdateAll(frontLineWorkers);
+        saveAllFLWToDB(frontLineWorkers);
         syncService.syncAllFrontLineWorkers(frontLineWorkers);
+    }
+
+    @Transactional
+    private void saveFLWToDB(FrontLineWorker frontLineWorker) {
+        allFrontLineWorkers.createOrUpdate(frontLineWorker);
+    }
+
+    @Transactional
+    private void saveAllFLWToDB(List<FrontLineWorker> frontLineWorkers) {
+        allFrontLineWorkers.createOrUpdateAll(frontLineWorkers);
     }
 
     @Transactional

@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.util.Map;
 @Component
 public class JsonHttpClient {
     private Gson gson;
+    private Logger logger = LoggerFactory.getLogger(JsonHttpClient.class);
 
     public static class Response {
         public final int statusCode;
@@ -42,6 +45,7 @@ public class JsonHttpClient {
     }
 
     public Response post(final String uri, final String json, Type responseClass, final Map<String, String> headers) throws IOException {
+        logger.info("Sending request : " + json + "to URI : " + uri);
         HttpClient httpClient = new HttpClient();
         PostMethod postMethod = new PostMethod(uri) {
             {
