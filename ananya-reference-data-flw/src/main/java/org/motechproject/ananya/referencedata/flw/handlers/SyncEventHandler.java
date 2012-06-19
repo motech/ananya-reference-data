@@ -47,7 +47,7 @@ public class SyncEventHandler {
         String url = (String) clientServicesProperties.get(KEY_FRONT_LINE_WORKER_CREATE_URL);
 
         if (frontLineWorkers.size() != 1 || frontLineWorkers.get(0).getMsisdn() == null) {
-            logger.info("Ignoring sync for flw with list size : " + frontLineWorkers.size() + " and msisdn : " + frontLineWorkers.get(0).getMsisdn());
+            logger.info("Ignoring sync for flw with list size : " + frontLineWorkers.size() + " and msisdn : " + msisdn);
             return;
         }
 
