@@ -31,4 +31,6 @@
             </map>
         </constructor-arg>
     </bean>
+
+    <bean id="schedule" class="org.motechproject.ananya.referencedata.web.scheduler.SyncScheduler" init-method="initiateSync"/>
 </beans>

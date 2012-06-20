@@ -27,7 +27,7 @@ public class FrontLineWorkerSyncEventHandler {
     }
 
     @MotechListener(subjects = SyncEventKeys.SCHEDULE_SYNC)
-    public void scheduleSync(MotechEvent motechEvent) {
+    public void scheduleFrontLineWorkerSync(MotechEvent motechEvent) {
         List<FrontLineWorker> allFLWsToBeSynced = frontLineWorkerService.getAllToBeSynced();
         for (FrontLineWorker frontLineWorker : allFLWsToBeSynced) {
             try {
