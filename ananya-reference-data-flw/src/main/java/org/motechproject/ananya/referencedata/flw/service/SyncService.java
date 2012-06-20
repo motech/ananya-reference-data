@@ -29,13 +29,4 @@ public class SyncService {
             eventContext.send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, msisdn);
         }
     }
-
-    public void syncAllFrontLineWorkers(List<FrontLineWorker> frontLineWorkers) {
-        if(propertiesService.isSyncOn()) {
-            for(FrontLineWorker frontLineWorker : frontLineWorkers) {
-                logger.info("Raising event to sync for msisdn: " + frontLineWorker.getMsisdn());
-                eventContext.send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, frontLineWorker.getMsisdn());
-            }
-        }
-    }
 }

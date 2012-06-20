@@ -10,17 +10,14 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
-import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
 import org.motechproject.ananya.referencedata.flw.service.LocationService;
 import org.motechproject.importer.domain.ValidationResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import static junit.framework.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -31,10 +28,6 @@ public class FrontLineWorkerImporterTest {
     private LocationService locationService;
     @Mock
     private FrontLineWorkerService frontLineWorkerService;
-    @Mock
-    private JsonHttpClient jsonHttpClient;
-    @Mock
-    private Properties clientServicesProperties;
     @Captor
     private ArgumentCaptor<List<FrontLineWorkerRequest>> captor;
     private FrontLineWorkerImporter frontLineWorkerImporter;
@@ -42,7 +35,7 @@ public class FrontLineWorkerImporterTest {
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerImporter = new FrontLineWorkerImporter(frontLineWorkerService, locationService, jsonHttpClient, clientServicesProperties);
+        frontLineWorkerImporter = new FrontLineWorkerImporter(frontLineWorkerService, locationService);
     }
 
     @Test
@@ -80,30 +73,15 @@ public class FrontLineWorkerImporterTest {
         ArrayList<Object> frontLineWorkerRequests = new ArrayList<Object>();
         ArrayList<Location> locations = new ArrayList<Location>();
         locations.add(new Location("D1", "B1", "P1", 1, 1, 1));
-        String bulkUrl = "http://localhost:9979/ananya-reference-data/flw/bulk_import";
         String msisdn = "1234567890";
-        frontLineWorkerRequests.add(new FrontLineWorkerRequest(msisdn, "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1")));
-        when(clientServicesProperties.get("front.line.worker.bulk.import.url")).thenReturn(bulkUrl);
+        FrontLineWorkerRequest expectedFLWRequest = new FrontLineWorkerRequest(msisdn, "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1"));
+        frontLineWorkerRequests.add(expectedFLWRequest);
         when(locationService.getAll()).thenReturn(locations);
-        when(jsonHttpClient.post(any(String.class), any())).thenReturn(new JsonHttpClient.Response(200, null));
 
         frontLineWorkerImporter.postData(frontLineWorkerRequests);
 
-        verify(jsonHttpClient).post(bulkUrl, frontLineWorkerRequests);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void shouldThrowExceptionIfTheReturnCodeIsAnythingOtherThan200() throws IOException {
-        ArrayList<Object> frontLineWorkerRequests = new ArrayList<Object>();
-        ArrayList<Location> locations = new ArrayList<Location>();
-        locations.add(new Location("D1", "B1", "P1", 1, 1, 1));
-        String bulkUrl = "http://localhost:9979/ananya-reference-data/flw/bulk_import";
-        String msisdn = "1234567890";
-        frontLineWorkerRequests.add(new FrontLineWorkerRequest(msisdn, "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1")));
-        when(clientServicesProperties.get("front.line.worker.bulk.import.url")).thenReturn(bulkUrl);
-        when(locationService.getAll()).thenReturn(locations);
-        when(jsonHttpClient.post(any(String.class), any())).thenReturn(new JsonHttpClient.Response(500, null));
-
-        frontLineWorkerImporter.postData(frontLineWorkerRequests);
+        verify(frontLineWorkerService).addAllWithoutValidations(captor.capture());
+        List<FrontLineWorkerRequest> actualFrontLineWorkerRequests = captor.getValue();
+        assertTrue(actualFrontLineWorkerRequests.contains(expectedFLWRequest));
     }
 }

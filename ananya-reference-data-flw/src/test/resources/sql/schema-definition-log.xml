@@ -58,4 +58,11 @@
             INSERT INTO ananya_reference_data.property(name,value) values('syncSwitch','on');
         </sql>
     </changeSet>
+
+    <changeSet context="setup" author="ThoughtWorks" id="7">
+        <sql splitStatements="false">
+            ALTER TABLE ananya_reference_data.front_line_worker ADD should_sync boolean;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

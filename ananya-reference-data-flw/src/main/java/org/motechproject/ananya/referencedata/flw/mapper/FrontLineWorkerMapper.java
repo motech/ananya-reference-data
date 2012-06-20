@@ -11,7 +11,7 @@ public class FrontLineWorkerMapper {
     public static FrontLineWorker mapFrom(FrontLineWorkerRequest frontLineWorkerRequest, Location location) {
         Long msisdn = StringUtils.isBlank(frontLineWorkerRequest.getMsisdn()) ? null : formatMsisdn(frontLineWorkerRequest.getMsisdn());
 
-        return new FrontLineWorker(msisdn, trim(frontLineWorkerRequest.getName()), getDesignation(frontLineWorkerRequest.getDesignation()), location);
+        return new FrontLineWorker(msisdn, trim(frontLineWorkerRequest.getName()), getDesignation(frontLineWorkerRequest.getDesignation()), location, false);
     }
 
     public static FrontLineWorker mapFrom(FrontLineWorker existingFrontLineWorker, FrontLineWorkerRequest frontLineWorkerRequest, Location location) {

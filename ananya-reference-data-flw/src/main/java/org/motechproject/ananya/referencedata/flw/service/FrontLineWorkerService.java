@@ -48,7 +48,6 @@ public class FrontLineWorkerService {
 
         FrontLineWorker frontLineWorker = constructFrontLineWorker(frontLineWorkerRequest, location);
         saveFLWToDB(frontLineWorker);
-        syncService.syncFrontLineWorker(frontLineWorker.getMsisdn());
         return frontLineWorkerResponse.withCreatedOrUpdated();
     }
 
@@ -63,7 +62,6 @@ public class FrontLineWorkerService {
             frontLineWorkers.add(frontLineWorkerToBeSaved);
         }
         saveAllFLWToDB(frontLineWorkers);
-        syncService.syncAllFrontLineWorkers(frontLineWorkers);
     }
 
     @Transactional
