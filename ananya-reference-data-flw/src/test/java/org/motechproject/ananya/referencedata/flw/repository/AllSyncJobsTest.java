@@ -26,7 +26,7 @@ public class AllSyncJobsTest {
     @Test
     public void shouldScheduleJobToAddFLWToQueue() {
         AllSyncJobs allSyncJobs = new AllSyncJobs(schedulerService, referenceDataProperteies);
-        when(referenceDataProperteies.get("cronExpression")).thenReturn("* * * * *");
+        when(referenceDataProperteies.get("scheduler.cron.expression")).thenReturn("* * * * * ?");
 
         allSyncJobs.addFrontLineWorkerSyncJob();
 
