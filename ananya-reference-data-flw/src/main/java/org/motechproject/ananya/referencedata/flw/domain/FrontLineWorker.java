@@ -20,17 +20,21 @@ public class FrontLineWorker extends BaseEntity {
     private Location location;
 
     @Column(name = "should_sync")
-    private boolean shouldSync;
+    private boolean shouldSync = false;
 
-    public FrontLineWorker(){
+    public FrontLineWorker() {
+    }
+
+    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location) {
+        this.msisdn = msisdn;
+        this.name = name;
+        this.designation = designation.name();
+        this.location = location;
     }
 
     public FrontLineWorker(Long msisdn, String name, Designation designation, Location location, boolean shouldSync) {
-        this.msisdn = msisdn;
-        this.name = name;
+        this(msisdn, name, designation, location);
         this.shouldSync = shouldSync;
-        this.designation = designation.name();
-        this.location = location;
     }
 
     public Long getMsisdn() {

@@ -33,6 +33,12 @@ public class AllFrontLineWorkers {
         return frontLineWorkerList;
     }
 
+    public List<FrontLineWorker> getAllToBeSynced() {
+        DetachedCriteria criteria = DetachedCriteria.forClass(FrontLineWorker.class);
+        criteria.add(Restrictions.eq("shouldSync", true));
+        return template.findByCriteria(criteria);
+    }
+
     public void createOrUpdate(FrontLineWorker frontLineWorker) {
         template.saveOrUpdate(frontLineWorker);
     }

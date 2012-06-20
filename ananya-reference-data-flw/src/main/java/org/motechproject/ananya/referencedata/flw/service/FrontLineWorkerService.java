@@ -26,15 +26,17 @@ public class FrontLineWorkerService {
     private AllLocations allLocations;
     private AllFrontLineWorkers allFrontLineWorkers;
     private SyncService syncService;
+    private AnanyaReferenceDataPropertiesService propertiesService;
 
     public FrontLineWorkerService() {
     }
 
     @Autowired
-    public FrontLineWorkerService(AllLocations allLocations, AllFrontLineWorkers allFrontLineWorkers, SyncService syncService) {
+    public FrontLineWorkerService(AllLocations allLocations, AllFrontLineWorkers allFrontLineWorkers, SyncService syncService, AnanyaReferenceDataPropertiesService propertiesService) {
         this.allLocations = allLocations;
         this.allFrontLineWorkers = allFrontLineWorkers;
         this.syncService = syncService;
+        this.propertiesService = propertiesService;
     }
 
     public FrontLineWorkerResponse createOrUpdate(FrontLineWorkerRequest frontLineWorkerRequest) {
@@ -43,25 +45,41 @@ public class FrontLineWorkerService {
         Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
         FLWValidationResponse FLWValidationResponse = new FrontLineWorkerValidator().validate(frontLineWorkerRequest, location);
 
-        if (!FLWValidationResponse.isValid())
+        if (!FLWValidationResponse.isValid()) {
             return frontLineWorkerResponse.withValidationResponse(FLWValidationResponse);
+        }
 
-        FrontLineWorker frontLineWorker = constructFrontLineWorker(frontLineWorkerRequest, location);
+        boolean shouldSync = propertiesService.isSyncOn();
+        FrontLineWorker frontLineWorker = constructFrontLineWorker(frontLineWorkerRequest, location, shouldSync);
         saveFLWToDB(frontLineWorker);
         return frontLineWorkerResponse.withCreatedOrUpdated();
     }
 
     public void addAllWithoutValidations(List<FrontLineWorkerRequest> frontLineWorkerRequests) {
         List<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
+        boolean shouldSync = propertiesService.isSyncOn();
         for (FrontLineWorkerRequest frontLineWorkerRequest : frontLineWorkerRequests) {
             LocationRequest locationRequest = frontLineWorkerRequest.getLocation();
             Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
 
-            FrontLineWorker frontLineWorkerToBeSaved = constructFrontLineWorkerForBulkImport(frontLineWorkerRequest, location, frontLineWorkerRequests);
+            FrontLineWorker frontLineWorkerToBeSaved = constructFrontLineWorkerForBulkImport(frontLineWorkerRequest, location, frontLineWorkerRequests, shouldSync);
 
             frontLineWorkers.add(frontLineWorkerToBeSaved);
         }
         saveAllFLWToDB(frontLineWorkers);
+    }
+
+    public List<FrontLineWorker> getAllToBeSynced() {
+        return allFrontLineWorkers.getAllToBeSynced();
+    }
+
+    public List<FrontLineWorker> getAllByMsisdn(Long msisdn) {
+        return allFrontLineWorkers.getByMsisdn(msisdn);
+    }
+
+    public void setSyncComplete(FrontLineWorker frontLineWorker) {
+        frontLineWorker.setShouldSync(false);
+        allFrontLineWorkers.createOrUpdate(frontLineWorker);
     }
 
     @Transactional
@@ -74,31 +92,27 @@ public class FrontLineWorkerService {
         allFrontLineWorkers.createOrUpdateAll(frontLineWorkers);
     }
 
-    public List<FrontLineWorker> getAllByMsisdn(Long msisdn) {
-        return allFrontLineWorkers.getByMsisdn(msisdn);
-    }
-
-    private FrontLineWorker constructFrontLineWorker(FrontLineWorkerRequest frontLineWorkerRequest, Location location) {
+    private FrontLineWorker constructFrontLineWorker(FrontLineWorkerRequest frontLineWorkerRequest, Location location, boolean shouldSync) {
         List<FrontLineWorker> frontLineWorkers = existingFLW(frontLineWorkerRequest);
         if (frontLineWorkers.size() != 1) {
-            return FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location);
+            return FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location, shouldSync);
         }
-        return FrontLineWorkerMapper.mapFrom(frontLineWorkers.get(0), frontLineWorkerRequest, location);
+        return FrontLineWorkerMapper.mapFrom(frontLineWorkers.get(0), frontLineWorkerRequest, location, shouldSync);
     }
 
-    private FrontLineWorker constructFrontLineWorkerForBulkImport(FrontLineWorkerRequest frontLineWorkerRequest, Location location, List<FrontLineWorkerRequest> frontLineWorkerRequests) {
+
+    private FrontLineWorker constructFrontLineWorkerForBulkImport(FrontLineWorkerRequest frontLineWorkerRequest, Location location, List<FrontLineWorkerRequest> frontLineWorkerRequests, boolean shouldSync) {
         List<FrontLineWorker> frontLineWorkersWithSameMsisdn = existingFLW(frontLineWorkerRequest);
         if (frontLineWorkersWithSameMsisdn.size() != 1 || hasDuplicatesInCSV(frontLineWorkerRequest, frontLineWorkerRequests)) {
-            return FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location);
+            return FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location, shouldSync);
         }
-        return FrontLineWorkerMapper.mapFrom(frontLineWorkersWithSameMsisdn.get(0), frontLineWorkerRequest, location);
+        return FrontLineWorkerMapper.mapFrom(frontLineWorkersWithSameMsisdn.get(0), frontLineWorkerRequest, location, shouldSync);
 
     }
 
     private boolean hasDuplicatesInCSV(FrontLineWorkerRequest frontLineWorkerRequest, List<FrontLineWorkerRequest> frontLineWorkerRequests) {
         return CollectionUtils.cardinality(frontLineWorkerRequest, frontLineWorkerRequests) != 1;
     }
-
 
     private List<FrontLineWorker> existingFLW(FrontLineWorkerRequest frontLineWorkerRequest) {
         String msisdn = frontLineWorkerRequest.getMsisdn();
