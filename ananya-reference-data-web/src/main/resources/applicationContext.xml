@@ -26,8 +26,9 @@
             <map>
                 <entry key="Activemq"><util:properties location="classpath:activemq.properties"/></entry>
                 <entry key="Postgres"><util:properties location="classpath:postgres.properties"/></entry>
-                <entry key="Application"><util:properties location="classpath:referencedata.properties"/></entry>
+                <entry key="ReferenceDataProperties"><util:properties location="classpath:referencedata.properties"/></entry>
                 <entry key="ClientServicesProperties"><util:properties location="classpath:clientServices.properties"/></entry>
+                <entry key="log4jProperties"><util:properties location="classpath:log4j.properties"/></entry>
             </map>
         </constructor-arg>
     </bean>
