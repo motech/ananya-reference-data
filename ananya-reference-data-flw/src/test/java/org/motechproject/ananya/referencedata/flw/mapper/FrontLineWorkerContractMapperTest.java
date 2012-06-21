@@ -21,7 +21,7 @@ public class FrontLineWorkerContractMapperTest {
         String name = "name1";
         Designation designation = Designation.ANM;
 
-        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, designation, location, false);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, designation, location);
         frontLineWorker.setLastModified(now);
         FrontLineWorkerContract frontLineWorkerContract = FrontLineWorkerContractMapper.mapFrom(frontLineWorker);
 

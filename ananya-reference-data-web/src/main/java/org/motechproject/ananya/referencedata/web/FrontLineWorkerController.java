@@ -1,6 +1,7 @@
 package org.motechproject.ananya.referencedata.web;
 
 import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest;
+import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequestList;
 import org.motechproject.ananya.referencedata.flw.response.FrontLineWorkerResponse;
 import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,12 @@ public class FrontLineWorkerController extends BaseController {
     @ResponseBody
     FrontLineWorkerResponse createOrUpdate(@RequestBody FrontLineWorkerRequest frontLineWorkerRequest) {
         return frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/bulk_import")
+    public
+    @ResponseBody
+    void createOrUpdateAll(@RequestBody FrontLineWorkerRequestList frontLineWorkerRequest) {
+        frontLineWorkerService.addAllWithoutValidations(frontLineWorkerRequest);
     }
 }

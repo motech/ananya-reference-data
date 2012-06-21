@@ -19,16 +19,12 @@ public class FrontLineWorker extends BaseEntity {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @Column(name = "should_sync")
-    private boolean shouldSync;
-
     public FrontLineWorker(){
     }
 
-    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location, boolean shouldSync) {
+    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location) {
         this.msisdn = msisdn;
         this.name = name;
-        this.shouldSync = shouldSync;
         this.designation = designation.name();
         this.location = location;
     }
@@ -49,10 +45,6 @@ public class FrontLineWorker extends BaseEntity {
         return location;
     }
 
-    public boolean getShouldSync() {
-        return shouldSync;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -63,9 +55,5 @@ public class FrontLineWorker extends BaseEntity {
 
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    public void setShouldSync(boolean shouldSync) {
-        this.shouldSync = shouldSync;
     }
 }
