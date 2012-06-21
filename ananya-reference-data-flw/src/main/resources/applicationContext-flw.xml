@@ -15,7 +15,6 @@
     <context:annotation-config/>
 
     <import resource="classpath:applicationPlatformServerAPI.xml"/>
-    <import resource="classpath:applicationPlatformScheduler.xml"/>
 
     <context:component-scan base-package="org.motechproject.ananya.referencedata"/>
 

@@ -32,7 +32,7 @@ public class FrontLineWorkerSyncEventHandlerTest {
         frontLineWorkers.add(frontLineWorker);
         when(frontLineWorkerService.getAllToBeSynced()).thenReturn(frontLineWorkers);
 
-        frontLineWorkerSyncEventHandler.scheduleFrontLineWorkerSync(null);
+        frontLineWorkerSyncEventHandler.scheduleSync(null);
 
         verify(syncService).syncFrontLineWorker(msisdn);
         verify(frontLineWorkerService).setSyncComplete(frontLineWorker);
