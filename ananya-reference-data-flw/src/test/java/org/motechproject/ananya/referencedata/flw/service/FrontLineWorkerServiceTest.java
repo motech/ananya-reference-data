@@ -35,17 +35,16 @@ public class FrontLineWorkerServiceTest {
     private SyncService syncService;
     @Mock
     private Properties clientServicesProperties;
-    @Mock
-    private AnanyaReferenceDataPropertiesService propertiesService;
 
     @Captor
     ArgumentCaptor<List<FrontLineWorker>> captor;
+
     private FrontLineWorkerService frontLineWorkerService;
 
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerService = new FrontLineWorkerService(allLocations, allFrontLineWorkers, syncService, propertiesService);
+        frontLineWorkerService = new FrontLineWorkerService(allLocations, allFrontLineWorkers, syncService);
     }
 
     @Test
@@ -59,7 +58,6 @@ public class FrontLineWorkerServiceTest {
         FrontLineWorkerRequest frontLineWorkerRequest2 = new FrontLineWorkerRequest(msisdn2, "name", "ASHA", new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
-        when(propertiesService.isSyncOn()).thenReturn(true);
 
         ArrayList<FrontLineWorkerRequest> frontLineWorkerRequests = new ArrayList<FrontLineWorkerRequest>();
         frontLineWorkerRequests.add(frontLineWorkerRequest1);
@@ -71,8 +69,6 @@ public class FrontLineWorkerServiceTest {
         List<FrontLineWorker> frontLineWorkers = captor.getValue();
         assertEquals(msisdn1, frontLineWorkers.get(0).getMsisdn().toString());
         assertEquals(msisdn2, frontLineWorkers.get(1).getMsisdn().toString());
-        assertTrue(frontLineWorkers.get(0).getShouldSync());
-        assertTrue(frontLineWorkers.get(1).getShouldSync());
     }
 
     @Test
@@ -128,7 +124,7 @@ public class FrontLineWorkerServiceTest {
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
         FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat"));
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat"), false);
         List<FrontLineWorker> frontLineWorkerList = new ArrayList<FrontLineWorker>();
         frontLineWorkerList.add(frontLineWorker);
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
@@ -160,7 +156,7 @@ public class FrontLineWorkerServiceTest {
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
         FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat"));
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat"), false);
         List<FrontLineWorker> frontLineWorkerList = new ArrayList<FrontLineWorker>();
         frontLineWorkerList.add(frontLineWorker);
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
@@ -182,7 +178,7 @@ public class FrontLineWorkerServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
-        FrontLineWorker frontLineWorker1 = new FrontLineWorker(Long.valueOf(msisdn), "old name", Designation.ANM, new Location("district", "block", "panchayat"));
+        FrontLineWorker frontLineWorker1 = new FrontLineWorker(Long.valueOf(msisdn), "old name", Designation.ANM, new Location("district", "block", "panchayat"), false);
         List<FrontLineWorker> frontLineWorkerList = new ArrayList<FrontLineWorker>();
         frontLineWorkerList.add(frontLineWorker1);
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(frontLineWorkerList);
@@ -210,7 +206,6 @@ public class FrontLineWorkerServiceTest {
         FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(null);
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
-        when(propertiesService.isSyncOn()).thenReturn(true);
 
         FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
 
@@ -219,7 +214,6 @@ public class FrontLineWorkerServiceTest {
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
         FrontLineWorker value = captor.getValue();
         assertEquals((Long) Long.parseLong(prefixedMsisdn), value.getMsisdn());
-        assertTrue(value.getShouldSync());
     }
 
     @Test
@@ -250,7 +244,7 @@ public class FrontLineWorkerServiceTest {
         FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(new ArrayList<FrontLineWorker>() {
             {
-                add(new FrontLineWorker(Long.valueOf(msisdn), "oldName", Designation.ANM, new Location(district, block, panchayat)));
+                add(new FrontLineWorker(Long.valueOf(msisdn), "oldName", Designation.ANM, new Location(district, block, panchayat), false));
             }
         });
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
@@ -314,8 +308,8 @@ public class FrontLineWorkerServiceTest {
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
         when(allFrontLineWorkers.getByMsisdn(Long.parseLong(prefixedMsisdn))).thenReturn(new ArrayList<FrontLineWorker>() {
             {
-                add(new FrontLineWorker(Long.parseLong(msisdn), newName, Designation.ASHA, new Location()));
-                add(new FrontLineWorker(Long.parseLong(msisdn), "someOtherName", Designation.ASHA, new Location()));
+                add(new FrontLineWorker(Long.parseLong(msisdn), newName, Designation.ASHA, new Location(), false));
+                add(new FrontLineWorker(Long.parseLong(msisdn), "someOtherName", Designation.ASHA, new Location(), false));
             }
         });
 
@@ -356,49 +350,4 @@ public class FrontLineWorkerServiceTest {
 
         verify(allFrontLineWorkers).getByMsisdn(msisdn);
     }
-
-    @Test
-    public void shouldGetAllFLWs() {
-        ArrayList<FrontLineWorker> expectedFLWs = new ArrayList<FrontLineWorker>();
-        when(allFrontLineWorkers.getAllToBeSynced()).thenReturn(expectedFLWs);
-
-        List<FrontLineWorker> actualFLWs = frontLineWorkerService.getAllToBeSynced();
-
-        assertEquals(expectedFLWs, actualFLWs);
-    }
-
-    @Test
-    public void shouldUpdateFLWSyncStatus() {
-        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "name", Designation.ANM, new Location());
-
-        frontLineWorkerService.setSyncComplete(frontLineWorker);
-
-        verify(allFrontLineWorkers).createOrUpdate(frontLineWorker);
-        assertFalse(frontLineWorker.getShouldSync());
-    }
-
-    @Test
-    public void shouldSwitchOffSyncBasedOnTheSyncPropertyForFLWCreateOrUpdate() {
-        String msisdn = "9999888822";
-        String prefixedMsisdn = "91" + msisdn;
-        String name = "name";
-        String designation = "ASHA";
-        String district = "district";
-        String block = "block";
-        String panchayat = "panchayat";
-        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
-        when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(null);
-        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
-        when(propertiesService.isSyncOn()).thenReturn(false);
-
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
-
-        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
-        ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
-        verify(allFrontLineWorkers).createOrUpdate(captor.capture());
-        FrontLineWorker value = captor.getValue();
-        assertEquals((Long) Long.parseLong(prefixedMsisdn), value.getMsisdn());
-        assertFalse(value.getShouldSync());
-    }
-
 }

@@ -8,16 +8,17 @@ import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest
 import org.motechproject.common.domain.PhoneNumber;
 
 public class FrontLineWorkerMapper {
-    public static FrontLineWorker mapFrom(FrontLineWorkerRequest frontLineWorkerRequest, Location location, boolean shouldSync) {
+    public static FrontLineWorker mapFrom(FrontLineWorkerRequest frontLineWorkerRequest, Location location) {
         Long msisdn = StringUtils.isBlank(frontLineWorkerRequest.getMsisdn()) ? null : formatMsisdn(frontLineWorkerRequest.getMsisdn());
-        return new FrontLineWorker(msisdn, trim(frontLineWorkerRequest.getName()), getDesignation(frontLineWorkerRequest.getDesignation()), location, shouldSync);
+
+        return new FrontLineWorker(msisdn, trim(frontLineWorkerRequest.getName()), getDesignation(frontLineWorkerRequest.getDesignation()), location, false);
     }
 
-    public static FrontLineWorker mapFrom(FrontLineWorker existingFrontLineWorker, FrontLineWorkerRequest frontLineWorkerRequest, Location location, boolean shouldSync) {
+    public static FrontLineWorker mapFrom(FrontLineWorker existingFrontLineWorker, FrontLineWorkerRequest frontLineWorkerRequest, Location location) {
         existingFrontLineWorker.setName(trim(frontLineWorkerRequest.getName()));
         existingFrontLineWorker.setDesignation(getDesignation(frontLineWorkerRequest.getDesignation()));
         existingFrontLineWorker.setLocation(location);
-        existingFrontLineWorker.setShouldSync(shouldSync);
+
         return existingFrontLineWorker;
     }
 

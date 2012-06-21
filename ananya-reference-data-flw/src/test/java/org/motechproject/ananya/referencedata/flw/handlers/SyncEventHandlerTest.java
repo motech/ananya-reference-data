@@ -58,7 +58,7 @@ public class SyncEventHandlerTest {
         Location location = new Location("district1", "block1", "panchayat1");
         DateTime lastModified = DateTime.now();
         location.setLastModified(lastModified);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location, false);
         frontLineWorker.setLastModified(lastModified);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);
@@ -84,7 +84,7 @@ public class SyncEventHandlerTest {
         Location location = new Location("district1", "block1", "panchayat1");
         DateTime lastModified = DateTime.now();
         location.setLastModified(lastModified);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location, false);
         frontLineWorker.setLastModified(lastModified);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);
@@ -103,7 +103,7 @@ public class SyncEventHandlerTest {
         Location location = new Location("district1", "block1", "panchayat1");
         DateTime lastModified = DateTime.now();
         location.setLastModified(lastModified);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location, false);
         frontLineWorker.setLastModified(lastModified);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);
@@ -120,7 +120,7 @@ public class SyncEventHandlerTest {
         Location location = new Location("district1", "block1", "panchayat1");
         DateTime lastModified = DateTime.now();
         location.setLastModified(lastModified);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(null, "name1", Designation.ANM, location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(null, "name1", Designation.ANM, location, false);
         frontLineWorker.setLastModified(lastModified);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);
@@ -140,7 +140,7 @@ public class SyncEventHandlerTest {
         Location location = new Location("district1", "block1", "panchayat1");
         DateTime lastModified = DateTime.now();
         location.setLastModified(lastModified);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location, false);
         frontLineWorker.setLastModified(lastModified);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);
@@ -162,7 +162,7 @@ public class SyncEventHandlerTest {
         Location location = new Location("district1", "block1", "panchayat1");
         DateTime lastModified = DateTime.now();
         location.setLastModified(lastModified);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location, false);
         frontLineWorker.setLastModified(lastModified);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);

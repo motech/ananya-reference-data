@@ -39,7 +39,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
     @Test
     public void shouldAddFLWToDB() {
         template.save(location);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "name", Designation.AWW, location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "name", Designation.AWW, location, false);
 
         allFrontLineWorkers.add(frontLineWorker);
 
@@ -51,7 +51,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
     @Test
     public void shouldUpdateFLWToDB() {
         long msisdn = 1234567890L;
-        FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
+        FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location, false);
         String newName = "new_name";
         Designation newDesignation = Designation.ANM;
         String newDistrict = "district1";
@@ -74,7 +74,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
     @Test
     public void shouldAddOrUpdateFLWToDB() {
         long msisdn = 1234567890L;
-        FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
+        FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location, false);
         String newName = "new_name";
         Designation newDesignation = Designation.ANM;
         String newDistrict = "district1";
@@ -96,8 +96,8 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
     @Test
     public void shouldGetAllFLWsFromDB() {
-        FrontLineWorker frontLineWorker1 = new FrontLineWorker(1234567890L, "name", Designation.AWW, location);
-        FrontLineWorker frontLineWorker2 = new FrontLineWorker(1234567890L, "name", Designation.AWW, location);
+        FrontLineWorker frontLineWorker1 = new FrontLineWorker(1234567890L, "name", Designation.AWW, location, false);
+        FrontLineWorker frontLineWorker2 = new FrontLineWorker(1234567890L, "name", Designation.AWW, location, false);
 
         allFrontLineWorkers.add(frontLineWorker1);
         allFrontLineWorkers.add(frontLineWorker2);
@@ -109,7 +109,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
     @Test
     public void shouldGetAnFLWForTheGivenMsisdn() {
         Long msisdn = 1234567890L;
-        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location, false);
         allFrontLineWorkers.add(frontLineWorker);
 
         List<FrontLineWorker> frontLineWorkerFromDB = allFrontLineWorkers.getByMsisdn(msisdn);
@@ -121,28 +121,12 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
     @Test
     public void shouldAddAllFLWs() {
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
-        frontLineWorkers.add(new FrontLineWorker(1234567890L, "name1", Designation.AWW, location));
-        frontLineWorkers.add(new FrontLineWorker(1234567800L, "name2", Designation.AWW, location));
+        frontLineWorkers.add(new FrontLineWorker(1234567890L, "name1", Designation.AWW, location, false));
+        frontLineWorkers.add(new FrontLineWorker(1234567800L, "name2", Designation.AWW, location, false));
 
         allFrontLineWorkers.createOrUpdateAll(frontLineWorkers);
 
         List<FrontLineWorker> frontLineWorkerList = template.loadAll(FrontLineWorker.class);
         assertEquals(2, frontLineWorkerList.size());
-    }
-
-    @Test
-    public void shouldGetAllFLWsToBeSynced() {
-        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
-        Long expectedMsisdn = 1234567800L;
-        frontLineWorkers.add(new FrontLineWorker(1234567890L, "name1", Designation.AWW, location));
-        FrontLineWorker frontLineWorker = new FrontLineWorker(expectedMsisdn, "name2", Designation.AWW, location);
-        frontLineWorker.setShouldSync(true);
-        frontLineWorkers.add(frontLineWorker);
-        template.saveOrUpdateAll(frontLineWorkers);
-
-        List<FrontLineWorker> allToBeSynced = allFrontLineWorkers.getAllToBeSynced();
-
-        assertEquals(1, allToBeSynced.size());
-        assertEquals(expectedMsisdn, allToBeSynced.get(0).getMsisdn());
     }
 }
