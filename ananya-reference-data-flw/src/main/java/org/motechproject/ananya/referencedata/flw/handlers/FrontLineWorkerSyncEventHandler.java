@@ -28,14 +28,17 @@ public class FrontLineWorkerSyncEventHandler {
 
     @MotechListener(subjects = SyncEventKeys.SCHEDULE_SYNC)
     public void scheduleFrontLineWorkerSync(MotechEvent motechEvent) {
+        logger.info("Started sync");
         List<FrontLineWorker> allFLWsToBeSynced = frontLineWorkerService.getAllToBeSynced();
         for (FrontLineWorker frontLineWorker : allFLWsToBeSynced) {
             try {
                 syncService.syncFrontLineWorker(frontLineWorker.getMsisdn());
                 frontLineWorkerService.setSyncComplete(frontLineWorker);
+                logger.info("Added FLW with msisdn : " + frontLineWorker.getMsisdn() + "to the queue.");
             } catch (Exception e) {
                 logger.error("Failed to add queue item for msisdn : " + frontLineWorker.getMsisdn() + "with exception " + ExceptionUtils.getFullStackTrace(e));
             }
         }
+        logger.info("Completed Sync");
     }
 }
