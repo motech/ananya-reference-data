@@ -13,9 +13,7 @@ import org.motechproject.ananya.referencedata.flw.response.LocationCreationRespo
 import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
@@ -63,26 +61,6 @@ public class DataAPITest extends SpringIntegrationTest {
         FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientForFLW.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerRequest("9999888822", "name", "ASHA", new LocationRequest("district", "block", "panchayat")), FrontLineWorkerResponse.class).body;
 
         assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
-    }
-
-    @Test
-    public void shouldCreateFLWOnBulkImport() throws IOException {
-        JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient();
-        jsonHttpClientForLocation.post("http://localhost:9979/ananya-reference-data/location", new LocationRequest("district", "block", "panchayat"), LocationCreationResponse.class);
-        JsonHttpClient jsonHttpClientForFLW = new JsonHttpClient();
-        List<FrontLineWorkerRequest> frontLineWorkerRequestList = new ArrayList<FrontLineWorkerRequest>();
-        String msisdn = "919999888822";
-        FrontLineWorkerRequest request1 = new FrontLineWorkerRequest(msisdn, "name", "ASHA", new LocationRequest("district", "block", "panchayat"));
-        FrontLineWorkerRequest request2 = new FrontLineWorkerRequest(msisdn, "name", "ASHA", new LocationRequest("district", "block", "panchayat"));
-        frontLineWorkerRequestList.add(request1);
-        frontLineWorkerRequestList.add(request2);
-        jsonHttpClientForFLW.post("http://localhost:9979/ananya-reference-data/flw/bulk_import", frontLineWorkerRequestList, FrontLineWorkerResponse.class);
-
-        List<FrontLineWorker> frontLineWorkers = template.loadAll(FrontLineWorker.class);
-
-        assertEquals(2, frontLineWorkers.size());
-        assertEquals(msisdn, frontLineWorkers.get(0).getMsisdn().toString());
-        assertEquals(msisdn, frontLineWorkers.get(1).getMsisdn().toString());
     }
 
     @Test

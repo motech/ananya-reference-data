@@ -5,6 +5,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.motechproject.ananya.referencedata.csv.CsvImporter;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 
+@Ignore
 public class FLWPerformanceTest extends SpringIntegrationTest {
 
     private static DetachedCriteria criteria;

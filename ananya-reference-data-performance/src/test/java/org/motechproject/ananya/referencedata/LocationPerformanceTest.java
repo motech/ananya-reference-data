@@ -10,7 +10,7 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 
 import java.net.URL;
 
-
+@Ignore
 public class LocationPerformanceTest extends SpringIntegrationTest {
 
     @Before
