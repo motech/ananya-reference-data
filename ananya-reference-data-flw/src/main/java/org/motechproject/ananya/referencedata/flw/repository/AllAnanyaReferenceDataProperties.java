@@ -31,4 +31,8 @@ public class AllAnanyaReferenceDataProperties {
 
         return forName == null ? StringUtils.EMPTY : forName.getValue();
     }
+
+    public List<AnanyaReferenceDataProperty> getAllProperties() {
+        return template.loadAll(AnanyaReferenceDataProperty.class);
+    }
 }

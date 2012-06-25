@@ -7,15 +7,18 @@ import org.motechproject.ananya.referencedata.SpringIntegrationTest;
 import org.motechproject.ananya.referencedata.flw.domain.AnanyaReferenceDataProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 import static junit.framework.Assert.assertEquals;
 
-public class AllAnanyaReferenceDataPropertiesTest extends SpringIntegrationTest{
+public class AllAnanyaReferenceDataPropertiesTest extends SpringIntegrationTest {
     @Autowired
     private AllAnanyaReferenceDataProperties allDbProperties;
 
     @Before
     public void setUp() {
         template.save(new AnanyaReferenceDataProperty("syncSwitch", "on"));
+        template.save(new AnanyaReferenceDataProperty("dummy", "dum"));
     }
 
     @After
@@ -26,5 +29,12 @@ public class AllAnanyaReferenceDataPropertiesTest extends SpringIntegrationTest{
     @Test
     public void shouldGetForSyncSwitch() {
         assertEquals("on", allDbProperties.getForSyncSwitch());
+    }
+
+    @Test
+    public void shouldLoadAllDbProperties() {
+        List<AnanyaReferenceDataProperty> allProperties = allDbProperties.getAllProperties();
+
+        assertEquals(2, allProperties.size());
     }
 }
