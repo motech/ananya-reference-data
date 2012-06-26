@@ -40,7 +40,6 @@ public class LocationService {
 
         FLWValidationResponse FLWValidationResponse = new LocationValidator(locationList).validate(location);
         if(FLWValidationResponse.isValid()) {
-            location = locationList.updateLocationCode(location);
             allLocations.add(location);
             return response.withCreated();
         }
@@ -62,7 +61,6 @@ public class LocationService {
         Location location = LocationMapper.mapFrom(request);
         if(locationList.isAlreadyPresent(location))
             return;
-        location = locationList.updateLocationCode(location);
         locationList.add(location);
         locations.add(location);
     }

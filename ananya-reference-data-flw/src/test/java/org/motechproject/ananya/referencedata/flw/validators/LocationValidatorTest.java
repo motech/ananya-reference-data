@@ -12,7 +12,7 @@ import static junit.framework.Assert.*;
 public class LocationValidatorTest {
     @Test
     public void shouldFailValidationIfFieldsAreBlank() {
-        Location location = new Location("", "B1", "P1", 123, 234, 456);
+        Location location = new Location("", "B1", "P1");
         LocationList locationList = new LocationList(new ArrayList<Location>());
         LocationValidator locationValidator = new LocationValidator(locationList);
 
@@ -26,7 +26,7 @@ public class LocationValidatorTest {
     public void shouldFailValidationIfLocationIsAlreadyPresent() {
         Location location = new Location("D1", "B1", "P1");
         ArrayList<Location> locations = new ArrayList<Location>();
-        locations.add(new Location("D1","B1","P1",123,34,23));
+        locations.add(new Location("D1","B1","P1"));
         LocationList locationList = new LocationList(locations);
         LocationValidator locationValidator = new LocationValidator(locationList);
 
@@ -38,7 +38,7 @@ public class LocationValidatorTest {
 
     @Test
     public void shouldPassValidationIfAllFieldsArePresent() {
-        Location location = new Location("D1", "B1", "P1", 123, 234, 456);
+        Location location = new Location("D1", "B1", "P1");
         LocationList locationList = new LocationList(new ArrayList<Location>());
         LocationValidator locationValidator = new LocationValidator(locationList);
 

@@ -16,27 +16,7 @@ public class Location extends BaseEntity {
     @Column(name = "panchayat")
     private String panchayat;
 
-    @Column(name = "district_code")
-    private Integer districtCode;
-
-    @Column(name = "block_code")
-    private Integer blockCode;
-
-    @Column(name = "panchayat_code")
-    private Integer panchayatCode;
-
-    @Transient
-    private String locationId;
-
     public Location() {
-    }
-
-    public Location(String district, String block, String panchayat, Integer districtCode, Integer blockCode, Integer panchayatCode) {
-        this(district, block, panchayat);
-        this.districtCode = districtCode;
-        this.blockCode = blockCode;
-        this.panchayatCode = panchayatCode;
-        updateLocationId();
     }
 
     public Location(String district, String block, String panchayat) {
@@ -55,29 +35,6 @@ public class Location extends BaseEntity {
 
     public String getPanchayat() {
         return panchayat;
-    }
-
-    public Integer getDistrictCode() {
-        return districtCode;
-    }
-
-    public Integer getBlockCode() {
-        return blockCode;
-    }
-
-    public Integer getPanchayatCode() {
-        return panchayatCode;
-    }
-
-    public String getLocationId() {
-        return locationId;
-    }
-
-    public void updateLocationCode(Integer districtCode, Integer blockCode, Integer panchayatCode) {
-        this.districtCode = districtCode;
-        this.blockCode = blockCode;
-        this.panchayatCode = panchayatCode;
-        updateLocationId();
     }
 
     @Override
@@ -111,11 +68,4 @@ public class Location extends BaseEntity {
                 '}';
     }
 
-    private void updateLocationId() {
-        locationId = "S01" + "D" + prependZeros(districtCode) + "B" + prependZeros(blockCode) + "V" + prependZeros(panchayatCode);
-    }
-
-    private String prependZeros(int code) {
-        return String.format("%03d", code);
-    }
 }

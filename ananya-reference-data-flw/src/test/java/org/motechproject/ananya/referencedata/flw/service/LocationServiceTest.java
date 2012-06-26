@@ -47,7 +47,7 @@ public class LocationServiceTest {
     @Test
     public void shouldInvalidateDuplicateLocationCreationRequests() {
         LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat");
-        when(allLocations.getAll()).thenReturn(new ArrayList<Location>(){
+        when(allLocations.getAll()).thenReturn(new ArrayList<Location>() {
             {
                 add(new Location("district", "block", "panchayat"));
             }
@@ -73,7 +73,6 @@ public class LocationServiceTest {
         assertEquals(district, location.getDistrict());
         assertEquals(block, location.getBlock());
         assertEquals(panchayat, location.getPanchayat());
-        assertEquals("S01D001B001V001", location.getLocationId());
         assertEquals("Location created successfully", locationCreationResponse.getMessage());
     }
 
@@ -106,7 +105,5 @@ public class LocationServiceTest {
         assertEquals(2, value.size());
         assertEquals(district1, value.get(0).getDistrict());
         assertEquals(district2, value.get(1).getDistrict());
-        assertEquals("S01D001B001V001", value.get(0).getLocationId());
-        assertEquals("S01D002B001V001", value.get(1).getLocationId());
     }
 }

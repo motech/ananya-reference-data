@@ -58,4 +58,12 @@
             INSERT INTO ananya_reference_data.property(name,value) values('syncSwitch','on');
         </sql>
     </changeSet>
+
+    <changeSet context="setup" author="ThoughtWorks" id="7">
+        <sql splitStatements="false">
+            ALTER TABLE  ananya_reference_data.location drop district_code;
+            ALTER TABLE  ananya_reference_data.location drop block_code;
+            ALTER TABLE  ananya_reference_data.location drop panchayat_code;
+        </sql>
+    </changeSet>
 </databaseChangeLog>
