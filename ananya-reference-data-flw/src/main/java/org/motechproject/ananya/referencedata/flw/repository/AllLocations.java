@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @Transactional
@@ -24,10 +25,6 @@ public class AllLocations {
         template.save(location);
     }
 
-    public List<Location> getAll() {
-        return template.loadAll(Location.class);
-    }
-
     public Location getFor(String district, String block, String panchayat) {
         DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
 
@@ -39,7 +36,7 @@ public class AllLocations {
         return locationList.isEmpty() ? null : (Location) locationList.get(0);
     }
 
-    public void addAll(List<Location> locations) {
+    public void addAll(Set<Location> locations) {
         template.saveOrUpdateAll(locations);
     }
 }

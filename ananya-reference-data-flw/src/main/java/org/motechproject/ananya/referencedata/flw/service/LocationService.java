@@ -1,7 +1,6 @@
 package org.motechproject.ananya.referencedata.flw.service;
 
 import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.domain.LocationList;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
@@ -12,23 +11,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class LocationService {
     private AllLocations allLocations;
+    private LocationValidator locationValidator;
 
     public LocationService() {
     }
 
     @Autowired
-    public LocationService(AllLocations allLocations) {
+    public LocationService(AllLocations allLocations, LocationValidator locationValidator) {
         this.allLocations = allLocations;
+        this.locationValidator = locationValidator;
     }
 
-    public List<Location> getAll() {
-        return allLocations.getAll();
+    public Location getFor(String district, String block, String panchayat) {
+        return allLocations.getFor(district, block, panchayat);
     }
 
     @Transactional
@@ -36,32 +38,24 @@ public class LocationService {
         LocationCreationResponse response = new LocationCreationResponse();
 
         Location location = LocationMapper.mapFrom(locationRequest);
-        LocationList locationList = new LocationList(this.allLocations.getAll());
-
-        FLWValidationResponse FLWValidationResponse = new LocationValidator(locationList).validate(location);
-        if(FLWValidationResponse.isValid()) {
+        FLWValidationResponse flwValidationResponse = locationValidator.validate(location);
+        if (flwValidationResponse.isValid()) {
             allLocations.add(location);
             return response.withCreated();
         }
-
-        return response.withValidationResponse(FLWValidationResponse);
+        return response.withValidationResponse(flwValidationResponse);
     }
 
     @Transactional
     public void addAllWithoutValidations(List<LocationRequest> locationRequests) {
-        LocationList locationList = new LocationList(allLocations.getAll());
-        List<Location> locations = new ArrayList<Location>();
-        for(LocationRequest request : locationRequests) {
-            addAllLocations(locationList, locations, request);
+        Set<Location> locations = new HashSet<Location>();
+        for (LocationRequest request : locationRequests) {
+            Location alreadyPresentLocation = allLocations.getFor(request.getDistrict(), request.getBlock(), request.getPanchayat());
+            Location location = LocationMapper.mapFrom(request);
+            if (alreadyPresentLocation == null) {
+                locations.add(location);
+            }
         }
         allLocations.addAll(locations);
-    }
-
-    private void addAllLocations(LocationList locationList, List<Location> locations, LocationRequest request) {
-        Location location = LocationMapper.mapFrom(request);
-        if(locationList.isAlreadyPresent(location))
-            return;
-        locationList.add(location);
-        locations.add(location);
     }
 }

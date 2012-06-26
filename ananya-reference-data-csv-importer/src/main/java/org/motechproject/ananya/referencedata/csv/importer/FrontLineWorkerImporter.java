@@ -1,7 +1,6 @@
 package org.motechproject.ananya.referencedata.csv.importer;
 
 import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.domain.LocationList;
 import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
@@ -39,14 +38,13 @@ public class FrontLineWorkerImporter {
     public ValidationResponse validate(List<FrontLineWorkerRequest> frontLineWorkerRequests) {
         boolean isValid = true;
         int recordCounter = 0;
-        LocationList locationList = new LocationList(locationService.getAll());
         List<Error> errors = new ArrayList<Error>();
 
         FrontLineWorkerValidator frontLineWorkerValidator = new FrontLineWorkerValidator();
         addHeader(errors);
         logger.info("Started validating FLW csv records");
         for (FrontLineWorkerRequest frontLineWorkerRequest : frontLineWorkerRequests) {
-            Location location = getLocationFor(frontLineWorkerRequest.getLocation(), locationList);
+            Location location = getLocationFor(frontLineWorkerRequest.getLocation());
             FLWValidationResponse response = frontLineWorkerValidator.validate(frontLineWorkerRequest, location);
             if (response.isInValid()) {
                 isValid = false;
@@ -72,8 +70,8 @@ public class FrontLineWorkerImporter {
         return validationResponse;
     }
 
-    private Location getLocationFor(LocationRequest locationRequest, LocationList locationList) {
-        return locationList.findFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
+    private Location getLocationFor(LocationRequest locationRequest) {
+        return locationService.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
     }
 
     private void addHeader(List<Error> errors) {

@@ -8,12 +8,15 @@ import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
 import org.motechproject.ananya.referencedata.flw.response.LocationCreationResponse;
+import org.motechproject.ananya.referencedata.flw.validators.LocationValidator;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -21,16 +24,17 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class LocationServiceTest {
     @Mock
     AllLocations allLocations;
-
+    @Mock
+    private LocationValidator locationValidator;
     @Captor
-    ArgumentCaptor<List<Location>> captor;
+    ArgumentCaptor<Set<Location>> captor;
 
     LocationService locationService;
 
     @Before
     public void setUp() {
         initMocks(this);
-        locationService = new LocationService(allLocations);
+        locationService = new LocationService(allLocations, locationValidator);
     }
 
     @Test
@@ -38,6 +42,9 @@ public class LocationServiceTest {
         String panchayat = "panchayat";
         String block = "block";
         LocationRequest locationRequest = new LocationRequest(null, block, panchayat);
+        FLWValidationResponse flwValidationResponse = new FLWValidationResponse();
+        flwValidationResponse.forBlankFieldsInLocation();
+        when(locationValidator.validate(new Location(null, "block", "panchayat"))).thenReturn(flwValidationResponse);
 
         LocationCreationResponse locationCreationResponse = locationService.add(locationRequest);
 
@@ -47,11 +54,9 @@ public class LocationServiceTest {
     @Test
     public void shouldInvalidateDuplicateLocationCreationRequests() {
         LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat");
-        when(allLocations.getAll()).thenReturn(new ArrayList<Location>() {
-            {
-                add(new Location("district", "block", "panchayat"));
-            }
-        });
+        FLWValidationResponse flwValidationResponse = new FLWValidationResponse();
+        flwValidationResponse.forDuplicateLocation();
+        when(locationValidator.validate(new Location("district", "block", "panchayat"))).thenReturn(flwValidationResponse);
 
         LocationCreationResponse locationCreationResponse = locationService.add(locationRequest);
 
@@ -64,6 +69,7 @@ public class LocationServiceTest {
         String block = "block";
         String district = "district";
         LocationRequest locationRequest = new LocationRequest(district, block, panchayat);
+        when(locationValidator.validate(new Location("district", "block", "panchayat"))).thenReturn(new FLWValidationResponse());
 
         LocationCreationResponse locationCreationResponse = locationService.add(locationRequest);
 
@@ -74,16 +80,6 @@ public class LocationServiceTest {
         assertEquals(block, location.getBlock());
         assertEquals(panchayat, location.getPanchayat());
         assertEquals("Location created successfully", locationCreationResponse.getMessage());
-    }
-
-    @Test
-    public void shouldGetAllLocations() {
-        ArrayList<Location> expectedLocations = new ArrayList<Location>();
-        when(allLocations.getAll()).thenReturn(expectedLocations);
-
-        List<Location> actualLocations = locationService.getAll();
-
-        assertEquals(expectedLocations, actualLocations);
     }
 
     @Test
@@ -101,9 +97,19 @@ public class LocationServiceTest {
         locationService.addAllWithoutValidations(locationRequests);
 
         verify(allLocations).addAll(captor.capture());
-        List<Location> value = captor.getValue();
+        Set<Location> value = captor.getValue();
         assertEquals(2, value.size());
-        assertEquals(district1, value.get(0).getDistrict());
-        assertEquals(district2, value.get(1).getDistrict());
+        assertTrue(value.contains(new Location(district1, block, panchayat)));
+        assertTrue(value.contains(new Location(district2, block, panchayat)));
+    }
+
+    @Test
+    public void shouldGetLocationForASpecificDistrictBlockAndPanchayat() {
+        Location location = new Location("district", "block", "panchayat");
+        when(allLocations.getFor("district", "block", "panchayat")).thenReturn(location);
+
+        Location actualLocation = locationService.getFor("district", "block", "panchayat");
+
+        assertEquals(location, actualLocation);
     }
 }

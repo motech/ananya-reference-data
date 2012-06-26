@@ -1,6 +1,5 @@
 package org.motechproject.ananya.referencedata.csv.importer;
 
-import org.motechproject.ananya.referencedata.flw.domain.LocationList;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
@@ -24,11 +23,13 @@ import java.util.List;
 public class LocationImporter {
 
     private LocationService locationService;
+    private LocationValidator locationValidator;
     private Logger logger = LoggerFactory.getLogger(LocationImporter.class);
 
     @Autowired
-    public LocationImporter(LocationService locationService) {
+    public LocationImporter(LocationService locationService, LocationValidator locationValidator) {
         this.locationService = locationService;
+        this.locationValidator = locationValidator;
     }
 
     @Validate
@@ -38,7 +39,6 @@ public class LocationImporter {
         List<Error> errors = new ArrayList<Error>();
 
         List<LocationRequest> locationRequests = convertToLocationRequest(objects);
-        LocationValidator locationValidator = new LocationValidator(new LocationList(locationService.getAll()));
 
         addHeader(errors);
         logger.info("Started validating location csv records");
