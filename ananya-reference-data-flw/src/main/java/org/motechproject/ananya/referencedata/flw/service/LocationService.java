@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.flw.service;
 
+import com.googlecode.ehcache.annotations.Cacheable;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
@@ -29,6 +30,7 @@ public class LocationService {
         this.locationValidator = locationValidator;
     }
 
+    @Cacheable(cacheName = "locationSearchCache")
     public Location getFor(String district, String block, String panchayat) {
         return allLocations.getFor(district, block, panchayat);
     }
