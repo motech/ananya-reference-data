@@ -10,6 +10,8 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 
 import java.net.URL;
 
+import static junit.framework.Assert.assertEquals;
+
 @Ignore
 public class LocationPerformanceTest extends SpringIntegrationTest {
 
@@ -22,31 +24,41 @@ public class LocationPerformanceTest extends SpringIntegrationTest {
     @Test
     public void shouldImportLocationDataFor100Records() throws Exception {
         URL locationData = this.getClass().getResource("/locations_100.csv");
-        loadLocationData(locationData, 100);
+        int locationCount = 100;
+        loadLocationData(locationData, locationCount);
+        assertEquals(locationCount, template.loadAll(Location.class).size());
     }
 
     @Test
     public void shouldImportLocationDataFor500Records() throws Exception {
         URL locationData = this.getClass().getResource("/locations_500.csv");
-        loadLocationData(locationData, 500);
+        int locationCount = 500;
+        loadLocationData(locationData, locationCount);
+        assertEquals(locationCount, template.loadAll(Location.class).size());
     }
 
     @Test
     public void shouldImportLocationDataFor1000Records() throws Exception {
         URL locationData = this.getClass().getResource("/locations_1000.csv");
-        loadLocationData(locationData, 1000);
+        int locationCount = 1000;
+        loadLocationData(locationData, locationCount);
+        assertEquals(locationCount, template.loadAll(Location.class).size());
     }
 
     @Test
     public void shouldImportLocationDataFor2500Records() throws Exception {
         URL locationData = this.getClass().getResource("/locations_2500.csv");
-        loadLocationData(locationData, 2500);
+        int locationCount = 2500;
+        loadLocationData(locationData, locationCount);
+        assertEquals(locationCount, template.loadAll(Location.class).size());
     }
 
     @Test
     public void shouldImportLocationDataFor5000Records() throws Exception {
         URL locationData = this.getClass().getResource("/locations_5000.csv");
-        loadLocationData(locationData, 5000);
+        int locationCount = 5000;
+        loadLocationData(locationData, locationCount);
+        assertEquals(locationCount, template.loadAll(Location.class).size());
     }
 
     public static void loadLocationData(URL locationData, int count) throws Exception {
