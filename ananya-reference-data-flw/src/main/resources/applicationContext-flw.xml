@@ -17,6 +17,7 @@
     <context:annotation-config/>
 
     <import resource="classpath:applicationPlatformServerAPI.xml"/>
+    <bean id="statsdAgent" class="org.motechproject.ananya.referencedata.flw.metrics.DummyStats"/>
 
     <context:component-scan base-package="org.motechproject.ananya.referencedata"/>
     <ehcache:annotation-driven cache-manager="ehCacheManager" />
