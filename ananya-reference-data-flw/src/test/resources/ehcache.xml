@@ -6,6 +6,6 @@
 
     <cache name="locationSearchCache" eternal="false"
            maxElementsInMemory="86400" overflowToDisk="false" diskPersistent="false"
-           timeToIdleSeconds="0" timeToLiveSeconds="3000"
+           timeToIdleSeconds="0" timeToLiveSeconds="0"
            memoryStoreEvictionPolicy="LRU" />
 </ehcache>
