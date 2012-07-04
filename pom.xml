@@ -19,7 +19,8 @@
         <slf4j.version>1.6.1</slf4j.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-security.version>3.0.5.RELEASE</spring-security.version>
-        <motech.platform.version>0.10.1</motech.platform.version>
+        <motech.contrib.version>0.10.6-SNAPSHOT</motech.contrib.version>
+        <motech.platform.version>0.10.2</motech.platform.version>
     </properties>
 
     <distributionManagement>
@@ -294,12 +295,12 @@
             <dependency>
                 <groupId>org.motechproject</groupId>
                 <artifactId>motech-bulk-export-import</artifactId>
-                <version>0.10.5-SNAPSHOT</version>
+                <version>${motech.contrib.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.motechproject</groupId>
                 <artifactId>motech-common</artifactId>
-                <version>0.10.5-SNAPSHOT</version>
+                <version>${motech.contrib.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.motechproject.ananya.referencedata</groupId>
@@ -330,7 +331,7 @@
             <dependency>
                 <groupId>org.motechproject</groupId>
                 <artifactId>motech-diagnostics</artifactId>
-                <version>0.10.5-SNAPSHOT</version>
+                <version>${motech.contrib.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.ehcache-spring-annotations</groupId>
