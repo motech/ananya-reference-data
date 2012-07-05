@@ -134,7 +134,7 @@
             <artifactId>ananya-reference-data-csv-importer</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.motechproject</groupId>
+            <groupId>org.motechproject.contrib-ananya</groupId>
             <artifactId>motech-diagnostics</artifactId>
         </dependency>
         <dependency>

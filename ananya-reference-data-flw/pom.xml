@@ -19,11 +19,11 @@
             <artifactId>motech-platform-server-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.motechproject</groupId>
+            <groupId>org.motechproject.contrib-ananya</groupId>
             <artifactId>motech-bulk-export-import</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.motechproject</groupId>
+            <groupId>org.motechproject.contrib-ananya</groupId>
             <artifactId>motech-common</artifactId>
         </dependency>
         <dependency>
