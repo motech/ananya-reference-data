@@ -54,7 +54,7 @@ public class FrontLineWorkerImporterTest {
 
         assertTrue(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("mssidn,name,desigantion,district,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
+        assertEquals("msisdn,name,desigantion,district,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
     }
 
     @Test

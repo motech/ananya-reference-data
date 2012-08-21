@@ -75,6 +75,6 @@ public class FrontLineWorkerImporter {
     }
 
     private void addHeader(List<Error> errors) {
-        errors.add(new Error("mssidn,name,desigantion,district,block,panchayat,error"));
+        errors.add(new Error("msisdn,name,desigantion,district,block,panchayat,error"));
     }
 }
