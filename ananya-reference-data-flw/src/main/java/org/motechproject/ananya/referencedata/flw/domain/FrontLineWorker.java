@@ -19,13 +19,13 @@ public class FrontLineWorker extends BaseEntity {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    public FrontLineWorker(){
+    public FrontLineWorker() {
     }
 
     public FrontLineWorker(Long msisdn, String name, Designation designation, Location location) {
         this.msisdn = msisdn;
         this.name = name;
-        this.designation = designation.name();
+        this.designation = designation == null ? null : designation.name();
         this.location = location;
     }
 
@@ -50,7 +50,7 @@ public class FrontLineWorker extends BaseEntity {
     }
 
     public void setDesignation(Designation designation) {
-        this.designation = designation.name();
+        this.designation = designation == null ? null : designation.name();
     }
 
     public void setLocation(Location location) {

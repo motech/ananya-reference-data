@@ -140,7 +140,7 @@ public class FrontLineWorkerServiceTest {
         assertEquals(1, actualFLWs.size());
         verify(syncService).syncAllFrontLineWorkers(anotherCaptor.capture());
         List<FrontLineWorker> actualFLWsForSync = anotherCaptor.getValue();
-        assertEquals(actualFLWsForSync , actualFLWs);
+        assertEquals(actualFLWsForSync, actualFLWs);
     }
 
     @Test
@@ -168,7 +168,7 @@ public class FrontLineWorkerServiceTest {
         String msisdn = "9999888822";
         String prefixedMsisdn = "91" + msisdn;
         String newName = "new name";
-        String newDesignation = "ASHA";
+        String newDesignation = "asHA ";
         String newDistrict = "district1";
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
@@ -188,7 +188,7 @@ public class FrontLineWorkerServiceTest {
 
         assertEquals((Long) Long.parseLong(prefixedMsisdn), value.getMsisdn());
         assertEquals(newName, value.getName());
-        assertEquals(newDesignation, value.getDesignation());
+        assertEquals(Designation.ASHA.name(), value.getDesignation());
         assertEquals(newDistrict, value.getLocation().getDistrict());
         assertEquals(newBlock, value.getLocation().getBlock());
         assertEquals(newPanchayat, value.getLocation().getPanchayat());
@@ -302,9 +302,9 @@ public class FrontLineWorkerServiceTest {
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
-        FrontLineWorker value = captor.getValue();
-        assertEquals((Long) Long.parseLong(msisdn), value.getMsisdn());
-        assertEquals(Designation.INVALID.name(), value.getDesignation());
+        FrontLineWorker flw = captor.getValue();
+        assertEquals((Long) Long.parseLong(msisdn), flw.getMsisdn());
+        assertNull(flw.getDesignation());
         assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
     }
 
