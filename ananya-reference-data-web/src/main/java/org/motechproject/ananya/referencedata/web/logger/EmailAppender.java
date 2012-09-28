@@ -6,6 +6,7 @@ import org.apache.log4j.PatternLayout;
 import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.net.SMTPAppender;
 import org.apache.log4j.spi.LoggingEvent;
+import org.motechproject.util.StringUtil;
 
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -39,7 +40,8 @@ public class EmailAppender extends SMTPAppender {
             if (i == 0) {
                 Layout subjectLayout = new PatternLayout(getSubject());
                 String subject = subjectLayout.format(logEvent);
-                subject = subject + getHostName() + getSubjectHash(logEvent);
+                subject = subject.replaceAll("\\{hostname\\}", getHostName());
+                subject = subject.replaceAll("\\{bodyhash\\}", getBodyHash(logEvent));
                 msg.setSubject(MimeUtility.encodeText(subject, "UTF-8", null));
             }
             buffer.append(layout.format(logEvent));
@@ -54,19 +56,23 @@ public class EmailAppender extends SMTPAppender {
 
     private String getHostName() {
         String hostname = System.getenv("HOSTNAME");
-        hostname = hostname == null ? "Unknown Host" : hostname;
-        return  hostname + " | ";
+        return hostname == null ? "Unknown Host" : hostname;
     }
 
-    private String getSubjectHash(LoggingEvent loggingEvent) {
+    private String getBodyHash(LoggingEvent loggingEvent) {
+        String body = getLogBody(loggingEvent);
+        return StringUtil.isNullOrEmpty(body) ? "" : DigestUtils.md5Hex(body);
+    }
+
+    private String getLogBody(LoggingEvent loggingEvent) {
         String[] strings = loggingEvent.getThrowableStrRep();
-        if (strings == null || strings.length == 0) return "";
+        if (strings == null || strings.length == 0) return loggingEvent.getRenderedMessage();
 
         StringBuffer sb = new StringBuffer();
         for (String str : strings) {
             sb.append(str);
         }
-        return DigestUtils.md5Hex(sb.toString());
+        return sb.toString();
     }
 
     private void sendEmail(MimeBodyPart mimeBodyPart) throws MessagingException {
