@@ -21,9 +21,8 @@ public class FrontLineWorkerController extends BaseController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public
     @ResponseBody
-    FrontLineWorkerResponse createOrUpdate(@RequestBody FrontLineWorkerRequest frontLineWorkerRequest) {
+    public FrontLineWorkerResponse createOrUpdate(@RequestBody FrontLineWorkerRequest frontLineWorkerRequest) {
         return frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
     }
 }

@@ -18,7 +18,7 @@ import static junit.framework.Assert.assertEquals;
 public class CsvImporterTest extends SpringIntegrationTest {
     @Before
     @After
-    public void setUp() {
+    public void setUpAndTearDown() {
         template.deleteAll(template.loadAll(FrontLineWorker.class));
         template.deleteAll(template.loadAll(Location.class));
     }

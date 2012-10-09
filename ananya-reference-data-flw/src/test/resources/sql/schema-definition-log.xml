@@ -66,4 +66,14 @@
             ALTER TABLE  ananya_reference_data.location drop panchayat_code;
         </sql>
     </changeSet>
+
+    <changeSet context="setup" author="ThoughtWorks" id="8">
+        <sql splitStatements="false">
+            ALTER TABLE ananya_reference_data.front_line_worker ADD COLUMN flw_id VARCHAR(36);
+            UPDATE ananya_reference_data.front_line_worker SET flw_id = ((SELECT uuid_generate_v4() WHERE id=id));
+            ALTER TABLE ananya_reference_data.front_line_worker ADD CONSTRAINT flw_id_unique UNIQUE(flw_id);
+            ALTER TABLE ananya_reference_data.front_line_worker ALTER flw_id SET NOT NULL;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

@@ -1,6 +1,7 @@
 package org.motechproject.ananya.referencedata.flw.domain;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Table(name = "front_line_worker")
@@ -19,6 +20,9 @@ public class FrontLineWorker extends BaseEntity {
     @JoinColumn(name = "location_id")
     private Location location;
 
+    @Column(name = "flw_id")
+    private String flwId;
+
     public FrontLineWorker() {
     }
 
@@ -27,6 +31,7 @@ public class FrontLineWorker extends BaseEntity {
         this.name = name;
         this.designation = designation == null ? null : designation.name();
         this.location = location;
+        this.flwId = UUID.randomUUID().toString();
     }
 
     public Long getMsisdn() {
@@ -55,5 +60,9 @@ public class FrontLineWorker extends BaseEntity {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public String getFlwId() {
+        return flwId;
     }
 }
