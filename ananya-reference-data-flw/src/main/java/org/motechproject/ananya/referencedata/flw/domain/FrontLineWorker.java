@@ -20,8 +20,8 @@ public class FrontLineWorker extends BaseEntity {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @Column(name = "flw_id")
-    private String flwId;
+    @Column(name = "flw_guid")
+    private String flwGuid;
 
     public FrontLineWorker() {
     }
@@ -31,7 +31,7 @@ public class FrontLineWorker extends BaseEntity {
         this.name = name;
         this.designation = designation == null ? null : designation.name();
         this.location = location;
-        this.flwId = UUID.randomUUID().toString();
+        this.flwGuid = UUID.randomUUID().toString();
     }
 
     public Long getMsisdn() {
@@ -62,7 +62,7 @@ public class FrontLineWorker extends BaseEntity {
         this.location = location;
     }
 
-    public String getFlwId() {
-        return flwId;
+    public String getFlwGuid() {
+        return flwGuid;
     }
 }
