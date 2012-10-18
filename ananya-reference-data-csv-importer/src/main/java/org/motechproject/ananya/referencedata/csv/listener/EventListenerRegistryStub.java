@@ -1,7 +1,7 @@
 package org.motechproject.ananya.referencedata.csv.listener;
 
-import org.motechproject.server.event.EventListener;
-import org.motechproject.server.event.EventListenerRegistry;
+import org.motechproject.event.EventListener;
+import org.motechproject.event.EventListenerRegistry;
 
 import java.util.HashSet;
 import java.util.List;

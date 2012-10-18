@@ -1,6 +1,5 @@
 package org.motechproject.ananya.referencedata.flw.service;
 
-import com.googlecode.ehcache.annotations.Cacheable;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
@@ -9,6 +8,7 @@ import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse
 import org.motechproject.ananya.referencedata.flw.response.LocationCreationResponse;
 import org.motechproject.ananya.referencedata.flw.validators.LocationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +30,7 @@ public class LocationService {
         this.locationValidator = locationValidator;
     }
 
-    @Cacheable(cacheName = "locationSearchCache")
+    @Cacheable(value = "locationSearchCache")
     public Location getFor(String district, String block, String panchayat) {
         return allLocations.getFor(district, block, panchayat);
     }

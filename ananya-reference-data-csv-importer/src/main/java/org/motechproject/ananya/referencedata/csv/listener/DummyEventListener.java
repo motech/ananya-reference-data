@@ -1,7 +1,7 @@
 package org.motechproject.ananya.referencedata.csv.listener;
 
-import org.motechproject.model.MotechEvent;
-import org.motechproject.server.event.EventListener;
+import org.motechproject.event.EventListener;
+import org.motechproject.event.MotechEvent;
 
 public class DummyEventListener implements EventListener {
 

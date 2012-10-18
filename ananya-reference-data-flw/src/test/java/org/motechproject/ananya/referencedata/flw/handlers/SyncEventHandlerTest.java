@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.flw.domain.*;
 import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
 import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
-import org.motechproject.model.MotechEvent;
+import org.motechproject.event.MotechEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.ExpectedException;
 import org.springframework.test.context.ContextConfiguration;

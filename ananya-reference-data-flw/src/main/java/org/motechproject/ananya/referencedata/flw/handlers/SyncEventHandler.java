@@ -7,8 +7,8 @@ import org.motechproject.ananya.referencedata.flw.domain.SyncEventKeys;
 import org.motechproject.ananya.referencedata.flw.mapper.FrontLineWorkerContractMapper;
 import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
 import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
-import org.motechproject.model.MotechEvent;
-import org.motechproject.server.event.annotations.MotechListener;
+import org.motechproject.event.MotechEvent;
+import org.motechproject.event.annotations.MotechListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

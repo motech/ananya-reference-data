@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
-import org.motechproject.common.domain.PhoneNumber;
+import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 
 import java.util.regex.Pattern;
 

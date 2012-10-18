@@ -7,7 +7,7 @@ import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.SyncEventKeys;
-import org.motechproject.context.EventContext;
+import org.motechproject.scheduler.context.EventContext;
 
 import java.util.ArrayList;
 

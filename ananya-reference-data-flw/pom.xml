@@ -23,10 +23,6 @@
             <artifactId>motech-bulk-export-import</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.motechproject.contrib-ananya</groupId>
-            <artifactId>motech-common</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
@@ -37,10 +33,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.ehcache-spring-annotations</groupId>
-            <artifactId>ehcache-spring-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
@@ -61,6 +53,10 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
         </dependency>
     </dependencies>
 

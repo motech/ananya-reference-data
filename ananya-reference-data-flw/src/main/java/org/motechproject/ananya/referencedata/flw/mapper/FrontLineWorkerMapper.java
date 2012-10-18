@@ -5,7 +5,7 @@ import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest;
-import org.motechproject.common.domain.PhoneNumber;
+import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 
 public class FrontLineWorkerMapper {
     public static FrontLineWorker mapFrom(FrontLineWorkerRequest frontLineWorkerRequest, Location location) {
