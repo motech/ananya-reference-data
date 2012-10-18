@@ -3,6 +3,9 @@ package org.motechproject.ananya.referencedata.web;
 import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest;
 import org.motechproject.ananya.referencedata.flw.response.FrontLineWorkerResponse;
 import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.web.validator.Errors;
+import org.motechproject.ananya.referencedata.web.validator.FrontLineWorkerWebRequestValidator;
+import org.motechproject.ananya.referencedata.web.validator.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +25,15 @@ public class FrontLineWorkerController extends BaseController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public FrontLineWorkerResponse createOrUpdate(@RequestBody FrontLineWorkerRequest frontLineWorkerRequest) {
-        return frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+    public FrontLineWorkerResponse updateVerifiedFlw(@RequestBody FrontLineWorkerRequest frontLineWorkerRequest) {
+        validateRequest(frontLineWorkerRequest);
+        return frontLineWorkerService.updateVerifiedFlw(frontLineWorkerRequest);
     }
+
+    private void validateRequest(FrontLineWorkerRequest frontLineWorkerRequest) {
+        Errors errors = new FrontLineWorkerWebRequestValidator().validateFrontLineWorkerRequest(frontLineWorkerRequest);
+        if(errors.hasErrors())
+            throw new ValidationException(errors.allMessages());
+    }
+
 }

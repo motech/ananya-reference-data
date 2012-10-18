@@ -69,7 +69,7 @@ public class FrontLineWorkerServiceTest {
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(prefixedMsisdn))).thenReturn(frontLineWorkerList);
 
-        frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+        frontLineWorkerService.updateVerifiedFlw(frontLineWorkerRequest);
 
         verify(syncService).syncFrontLineWorker(any(Long.class));
     }
@@ -88,7 +88,7 @@ public class FrontLineWorkerServiceTest {
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(prefixedMsisdn))).thenReturn(Collections.<FrontLineWorker>emptyList());
 
-        frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+        frontLineWorkerService.updateVerifiedFlw(frontLineWorkerRequest);
 
         verify(syncService).syncFrontLineWorker(any(Long.class));
     }
@@ -179,7 +179,7 @@ public class FrontLineWorkerServiceTest {
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(prefixedMsisdn))).thenReturn(frontLineWorkerList);
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.updateVerifiedFlw(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
@@ -211,7 +211,7 @@ public class FrontLineWorkerServiceTest {
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(prefixedMsisdn))).thenReturn(frontLineWorkerList);
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.updateVerifiedFlw(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers, never()).createOrUpdate(captor.capture());
@@ -233,7 +233,7 @@ public class FrontLineWorkerServiceTest {
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(frontLineWorkerList);
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.updateVerifiedFlw(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
@@ -256,7 +256,7 @@ public class FrontLineWorkerServiceTest {
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(null);
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.updateVerifiedFlw(frontLineWorkerRequest);
 
         assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
@@ -276,7 +276,7 @@ public class FrontLineWorkerServiceTest {
         FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.updateVerifiedFlw(frontLineWorkerRequest);
 
         verify(allFrontLineWorkers, never()).getByMsisdn(Long.valueOf(msisdn));
         assertEquals("Invalid msisdn", frontLineWorkerResponse.getMessage());
@@ -298,7 +298,7 @@ public class FrontLineWorkerServiceTest {
         });
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.updateVerifiedFlw(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
@@ -318,7 +318,7 @@ public class FrontLineWorkerServiceTest {
         String panchayat = "panchayat";
         FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.updateVerifiedFlw(frontLineWorkerRequest);
 
         verify(allFrontLineWorkers, never()).getByMsisdn(Long.valueOf(msisdn));
         assertEquals("Invalid location", frontLineWorkerResponse.getMessage());
@@ -335,7 +335,7 @@ public class FrontLineWorkerServiceTest {
         FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.updateVerifiedFlw(frontLineWorkerRequest);
 
         assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
@@ -362,7 +362,7 @@ public class FrontLineWorkerServiceTest {
             }
         });
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.updateVerifiedFlw(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
@@ -382,7 +382,7 @@ public class FrontLineWorkerServiceTest {
         FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.createOrUpdate(frontLineWorkerRequest);
+        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerService.updateVerifiedFlw(frontLineWorkerRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());

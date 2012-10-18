@@ -10,6 +10,7 @@ import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.ExceptionResponse;
 import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.web.validator.ValidationException;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletResponse;
@@ -45,9 +46,9 @@ public class FrontLineWorkerControllerTest {
         String panchayat = "panchayat";
         FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
 
-        frontLineWorkerController.createOrUpdate(frontLineWorkerRequest);
+        frontLineWorkerController.updateVerifiedFlw(frontLineWorkerRequest);
 
-        verify(frontLineWorkerService).createOrUpdate(any(FrontLineWorkerRequest.class));
+        verify(frontLineWorkerService).updateVerifiedFlw(any(FrontLineWorkerRequest.class));
     }
 
     @Test
@@ -60,5 +61,21 @@ public class FrontLineWorkerControllerTest {
         assertNotNull(exceptionResponse.getTrace());
         assertEquals(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, response.getStatus());
         assertEquals("application/json", response.getHeader("Content-Type"));
+    }
+
+    @Test(expected = ValidationException.class)
+    public void shouldReturnExceptionResponseAndSetStatusTo500IfValidationErrorOccurs(){
+        frontLineWorkerController.updateVerifiedFlw(new FrontLineWorkerRequest("guid",null,null));
+    }
+    
+    @Test
+    public void shouldUpdateVerificationStatusForInvalidFLW() {
+        String reason = "reason";
+        String guid = "abcd1234";
+        String verificationStatus = "INVALID";
+        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(guid, verificationStatus, reason);
+        frontLineWorkerController.updateVerifiedFlw(frontLineWorkerRequest);
+
+        verify(frontLineWorkerService).updateVerifiedFlw(frontLineWorkerRequest);
     }
 }

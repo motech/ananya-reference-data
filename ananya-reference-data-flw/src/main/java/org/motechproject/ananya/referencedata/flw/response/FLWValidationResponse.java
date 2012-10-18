@@ -32,6 +32,11 @@ public class FLWValidationResponse {
         this.message.add("Invalid name");
     }
 
+    public void forInvalidGuid() {
+        isValid = false;
+        this.message.add("GUID is not present in MoTeCH");
+    }
+
     public boolean isValid() {
         return isValid;
     }

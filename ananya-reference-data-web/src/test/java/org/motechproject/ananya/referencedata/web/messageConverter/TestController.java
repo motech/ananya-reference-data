@@ -1,6 +1,5 @@
 package org.motechproject.ananya.referencedata.web.messageConverter;
 
-import org.motechproject.ananya.referencedata.web.Beneficiary;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

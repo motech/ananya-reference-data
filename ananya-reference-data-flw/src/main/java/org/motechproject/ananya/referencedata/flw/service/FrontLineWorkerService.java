@@ -37,7 +37,7 @@ public class FrontLineWorkerService {
         this.syncService = syncService;
     }
 
-    public FrontLineWorkerResponse createOrUpdate(FrontLineWorkerRequest frontLineWorkerRequest) {
+    public FrontLineWorkerResponse updateVerifiedFlw(FrontLineWorkerRequest frontLineWorkerRequest) {
         FrontLineWorkerResponse frontLineWorkerResponse = new FrontLineWorkerResponse();
         LocationRequest locationRequest = frontLineWorkerRequest.getLocation();
         Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());

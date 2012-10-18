@@ -1,7 +1,6 @@
 package org.motechproject.ananya.referencedata.web.messageConverter;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.motechproject.ananya.referencedata.web.Beneficiary;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;

@@ -7,6 +7,9 @@ public class FrontLineWorkerRequest {
     private String name;
     private String designation;
     private LocationRequest location = new LocationRequest();
+    private String guid;
+    private String verificationStatus;
+    private String reason;
 
     public FrontLineWorkerRequest() {
     }
@@ -16,6 +19,12 @@ public class FrontLineWorkerRequest {
         this.name = name;
         this.designation = designation;
         this.location = location;
+    }
+
+    public FrontLineWorkerRequest(String guid, String verificationStatus, String reason) {
+        this.guid = guid;
+        this.verificationStatus = verificationStatus;
+        this.reason = reason;
     }
 
     public String getMsisdn() {
@@ -28,6 +37,19 @@ public class FrontLineWorkerRequest {
 
     public String getDesignation() {
         return designation;
+    }
+
+    public String getGuid() {
+        return guid;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+
+    public String getVerificationStatus() {
+        return verificationStatus;
     }
 
     public LocationRequest getLocation() {

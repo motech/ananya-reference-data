@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata.web;
+package org.motechproject.ananya.referencedata.web.messageConverter;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 

@@ -23,6 +23,12 @@ public class FrontLineWorker extends BaseEntity {
     @Column(name = "flw_guid")
     private String flwGuid;
 
+    @Column(name="verification_status")
+    private String verificationStatus;
+
+    @Column(name="reason")
+    private String reason;
+
     public FrontLineWorker() {
     }
 
@@ -64,5 +70,13 @@ public class FrontLineWorker extends BaseEntity {
 
     public String getFlwGuid() {
         return flwGuid;
+    }
+
+    public String getVerificationStatus() {
+        return verificationStatus;
+    }
+
+    public String getReason() {
+        return reason;
     }
 }
