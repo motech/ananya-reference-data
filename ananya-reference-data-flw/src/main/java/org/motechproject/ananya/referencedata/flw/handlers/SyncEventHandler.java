@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.SyncEventKeys;
 import org.motechproject.ananya.referencedata.flw.mapper.FrontLineWorkerContractMapper;
-import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerCsvService;
 import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.annotations.MotechListener;
@@ -22,7 +22,7 @@ import java.util.Properties;
 @Component
 public class SyncEventHandler {
 
-    private FrontLineWorkerService frontLineWorkerService;
+    private FrontLineWorkerCsvService frontLineWorkerCsvService;
     private Properties clientServicesProperties;
     private Properties referenceDataProperties;
     private JsonHttpClient jsonHttpClient;
@@ -33,8 +33,8 @@ public class SyncEventHandler {
     Logger logger = Logger.getLogger(SyncEventHandler.class);
 
     @Autowired
-    public SyncEventHandler(FrontLineWorkerService frontLineWorkerService, JsonHttpClient jsonHttpClient, Properties clientServicesProperties, Properties referenceDataProperties) {
-        this.frontLineWorkerService = frontLineWorkerService;
+    public SyncEventHandler(FrontLineWorkerCsvService frontLineWorkerCsvService, JsonHttpClient jsonHttpClient, Properties clientServicesProperties, Properties referenceDataProperties) {
+        this.frontLineWorkerCsvService = frontLineWorkerCsvService;
         this.jsonHttpClient = jsonHttpClient;
         this.clientServicesProperties = clientServicesProperties;
         this.referenceDataProperties = referenceDataProperties;
@@ -43,7 +43,7 @@ public class SyncEventHandler {
     @MotechListener(subjects = {SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE})
     public void handleSyncFrontLineWorker(MotechEvent event) {
         Long msisdn = (Long) event.getParameters().get("0");
-        List<FrontLineWorker> frontLineWorkers = frontLineWorkerService.getAllByMsisdn(msisdn);
+        List<FrontLineWorker> frontLineWorkers = frontLineWorkerCsvService.getAllByMsisdn(msisdn);
         String url = (String) clientServicesProperties.get(KEY_FRONT_LINE_WORKER_CREATE_URL);
 
         if (frontLineWorkers.size() != 1 || frontLineWorkers.get(0).getMsisdn() == null) {

@@ -81,4 +81,11 @@
         </sql>
     </changeSet>
 
+    <changeSet context="setup" author="ThoughtWorks" id="9">
+        <sql splitStatements="false">
+            ALTER TABLE ananya_reference_data.front_line_worker ADD COLUMN verification_status VARCHAR(30);
+            ALTER TABLE ananya_reference_data.front_line_worker ADD COLUMN reason VARCHAR(255);
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

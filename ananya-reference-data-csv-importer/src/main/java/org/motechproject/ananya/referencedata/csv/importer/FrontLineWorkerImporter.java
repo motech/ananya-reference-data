@@ -1,12 +1,12 @@
 package org.motechproject.ananya.referencedata.csv.importer;
 
 import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest;
+import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerCsvRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
-import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerCsvService;
 import org.motechproject.ananya.referencedata.flw.service.LocationService;
-import org.motechproject.ananya.referencedata.flw.validators.FrontLineWorkerValidator;
+import org.motechproject.ananya.referencedata.flw.validators.FrontLineWorkerCsvRequestValidator;
 import org.motechproject.importer.annotation.CSVImporter;
 import org.motechproject.importer.annotation.Post;
 import org.motechproject.importer.annotation.Validate;
@@ -21,45 +21,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@CSVImporter(entity = "FrontLineWorker", bean = FrontLineWorkerRequest.class)
+@CSVImporter(entity = "FrontLineWorker", bean = FrontLineWorkerCsvRequest.class)
 public class FrontLineWorkerImporter {
 
-    private FrontLineWorkerService frontLineWorkerService;
+    private FrontLineWorkerCsvService frontLineWorkerCsvService;
     private LocationService locationService;
     private Logger logger = LoggerFactory.getLogger(FrontLineWorkerImporter.class);
 
     @Autowired
-    public FrontLineWorkerImporter(FrontLineWorkerService frontLineWorkerService, LocationService locationService) {
-        this.frontLineWorkerService = frontLineWorkerService;
+    public FrontLineWorkerImporter(FrontLineWorkerCsvService frontLineWorkerCsvService, LocationService locationService) {
+        this.frontLineWorkerCsvService = frontLineWorkerCsvService;
         this.locationService = locationService;
     }
 
     @Validate
-    public ValidationResponse validate(List<FrontLineWorkerRequest> frontLineWorkerRequests) {
+    public ValidationResponse validate(List<FrontLineWorkerCsvRequest> frontLineWorkerCsvRequests) {
         boolean isValid = true;
         int recordCounter = 0;
         List<Error> errors = new ArrayList<Error>();
 
-        FrontLineWorkerValidator frontLineWorkerValidator = new FrontLineWorkerValidator();
+        FrontLineWorkerCsvRequestValidator frontLineWorkerValidator = new FrontLineWorkerCsvRequestValidator();
         addHeader(errors);
         logger.info("Started validating FLW csv records");
-        for (FrontLineWorkerRequest frontLineWorkerRequest : frontLineWorkerRequests) {
-            Location location = getLocationFor(frontLineWorkerRequest.getLocation());
-            FLWValidationResponse response = frontLineWorkerValidator.validate(frontLineWorkerRequest, location);
+        for (FrontLineWorkerCsvRequest frontLineWorkerCsvRequest : frontLineWorkerCsvRequests) {
+            Location location = getLocationFor(frontLineWorkerCsvRequest.getLocation());
+            FLWValidationResponse response = frontLineWorkerValidator.validate(frontLineWorkerCsvRequest, location);
             if (response.isInValid()) {
                 isValid = false;
             }
             logger.info("Validated FLW record number : " + recordCounter++ + "with validation status : " + isValid);
-            errors.add(new Error(frontLineWorkerRequest.toCSV() + "," + "\"" + response.getMessage() + "\""));
+            errors.add(new Error(frontLineWorkerCsvRequest.toCSV() + "," + "\"" + response.getMessage() + "\""));
         }
         logger.info("Completed validating FLW csv records");
         return constructValidationResponse(isValid, errors);
     }
 
     @Post
-    public void postData(List<FrontLineWorkerRequest> frontLineWorkerRequests) {
+    public void postData(List<FrontLineWorkerCsvRequest> frontLineWorkerCsvRequests) {
         logger.info("Started posting FLW data");
-        frontLineWorkerService.addAllWithoutValidations(frontLineWorkerRequests);
+        frontLineWorkerCsvService.addAllWithoutValidations(frontLineWorkerCsvRequests);
         logger.info("Finished posting FLW data");
     }
 

@@ -2,29 +2,20 @@ package org.motechproject.ananya.referencedata.flw.request;
 
 import org.motechproject.importer.annotation.ColumnName;
 
-public class FrontLineWorkerRequest {
+public class FrontLineWorkerCsvRequest {
     private String msisdn;
     private String name;
     private String designation;
     private LocationRequest location = new LocationRequest();
-    private String guid;
-    private String verificationStatus;
-    private String reason;
 
-    public FrontLineWorkerRequest() {
+    public FrontLineWorkerCsvRequest() {
     }
 
-    public FrontLineWorkerRequest(String msisdn, String name, String designation, LocationRequest location) {
+    public FrontLineWorkerCsvRequest(String msisdn, String name, String designation, LocationRequest location) {
         this.msisdn = msisdn;
         this.name = name;
         this.designation = designation;
         this.location = location;
-    }
-
-    public FrontLineWorkerRequest(String guid, String verificationStatus, String reason) {
-        this.guid = guid;
-        this.verificationStatus = verificationStatus;
-        this.reason = reason;
     }
 
     public String getMsisdn() {
@@ -37,19 +28,6 @@ public class FrontLineWorkerRequest {
 
     public String getDesignation() {
         return designation;
-    }
-
-    public String getGuid() {
-        return guid;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-
-    public String getVerificationStatus() {
-        return verificationStatus;
     }
 
     public LocationRequest getLocation() {
@@ -90,9 +68,9 @@ public class FrontLineWorkerRequest {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FrontLineWorkerRequest)) return false;
+        if (!(o instanceof FrontLineWorkerCsvRequest)) return false;
 
-        FrontLineWorkerRequest that = (FrontLineWorkerRequest) o;
+        FrontLineWorkerCsvRequest that = (FrontLineWorkerCsvRequest) o;
 
         if (msisdn != null ? !msisdn.equals(that.msisdn) : that.msisdn != null) return false;
 
@@ -107,4 +85,5 @@ public class FrontLineWorkerRequest {
     public String toCSV() {
         return "\"" + msisdn + "\"" +  "," + "\"" +  name + "\"" +  "," + "\"" +  designation + "\"" +  "," + "\"" +  location.getDistrict() + "\"" +  "," + "\"" +  location.getBlock() + "\"" +  "," + "\"" +  location.getPanchayat() + "\"";
     }
+
 }

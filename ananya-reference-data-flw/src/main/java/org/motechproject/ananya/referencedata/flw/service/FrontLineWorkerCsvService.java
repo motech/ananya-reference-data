@@ -7,11 +7,11 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.mapper.FrontLineWorkerMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest;
+import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerCsvRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
 import org.motechproject.ananya.referencedata.flw.response.FrontLineWorkerResponse;
-import org.motechproject.ananya.referencedata.flw.validators.FrontLineWorkerValidator;
+import org.motechproject.ananya.referencedata.flw.validators.FrontLineWorkerCsvRequestValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,44 +21,45 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-public class FrontLineWorkerService {
+public class FrontLineWorkerCsvService {
 
     private AllLocations allLocations;
     private AllFrontLineWorkers allFrontLineWorkers;
     private SyncService syncService;
 
-    public FrontLineWorkerService() {
+    public FrontLineWorkerCsvService() {
     }
 
     @Autowired
-    public FrontLineWorkerService(AllLocations allLocations, AllFrontLineWorkers allFrontLineWorkers, SyncService syncService) {
+    public FrontLineWorkerCsvService(AllLocations allLocations, AllFrontLineWorkers allFrontLineWorkers, SyncService syncService) {
         this.allLocations = allLocations;
         this.allFrontLineWorkers = allFrontLineWorkers;
         this.syncService = syncService;
     }
 
-    public FrontLineWorkerResponse updateVerifiedFlw(FrontLineWorkerRequest frontLineWorkerRequest) {
+    public FrontLineWorkerResponse createOrUpdate(FrontLineWorkerCsvRequest frontLineWorkerCsvRequest) {
         FrontLineWorkerResponse frontLineWorkerResponse = new FrontLineWorkerResponse();
-        LocationRequest locationRequest = frontLineWorkerRequest.getLocation();
+        LocationRequest locationRequest = frontLineWorkerCsvRequest.getLocation();
         Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
-        FLWValidationResponse FLWValidationResponse = new FrontLineWorkerValidator().validate(frontLineWorkerRequest, location);
+        FLWValidationResponse FLWValidationResponse = new FrontLineWorkerCsvRequestValidator().validate(frontLineWorkerCsvRequest, location);
 
         if (!FLWValidationResponse.isValid())
             return frontLineWorkerResponse.withValidationResponse(FLWValidationResponse);
 
-        FrontLineWorker frontLineWorker = constructFrontLineWorker(frontLineWorkerRequest, location);
+        FrontLineWorker frontLineWorker = constructFrontLineWorker(frontLineWorkerCsvRequest, location);
         saveFLWToDB(frontLineWorker);
         syncService.syncFrontLineWorker(frontLineWorker.getMsisdn());
         return frontLineWorkerResponse.withCreatedOrUpdated();
     }
 
-    public void addAllWithoutValidations(List<FrontLineWorkerRequest> frontLineWorkerRequests) {
+
+    public void addAllWithoutValidations(List<FrontLineWorkerCsvRequest> frontLineWorkerCsvRequests) {
         List<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
-        for (FrontLineWorkerRequest frontLineWorkerRequest : frontLineWorkerRequests) {
-            LocationRequest locationRequest = frontLineWorkerRequest.getLocation();
+        for (FrontLineWorkerCsvRequest frontLineWorkerCsvRequest : frontLineWorkerCsvRequests) {
+            LocationRequest locationRequest = frontLineWorkerCsvRequest.getLocation();
             Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
 
-            FrontLineWorker frontLineWorkerToBeSaved = constructFrontLineWorkerForBulkImport(frontLineWorkerRequest, location, frontLineWorkerRequests);
+            FrontLineWorker frontLineWorkerToBeSaved = constructFrontLineWorkerForBulkImport(frontLineWorkerCsvRequest, location, frontLineWorkerCsvRequests);
 
             frontLineWorkers.add(frontLineWorkerToBeSaved);
         }
@@ -80,15 +81,15 @@ public class FrontLineWorkerService {
         return allFrontLineWorkers.getByMsisdn(msisdn);
     }
 
-    private FrontLineWorker constructFrontLineWorker(FrontLineWorkerRequest frontLineWorkerRequest, Location location) {
-        List<FrontLineWorker> frontLineWorkers = existingFLW(frontLineWorkerRequest);
+    private FrontLineWorker constructFrontLineWorker(FrontLineWorkerCsvRequest frontLineWorkerCsvRequest, Location location) {
+        List<FrontLineWorker> frontLineWorkers = existingFLW(frontLineWorkerCsvRequest);
         if (frontLineWorkers.size() != 1) {
-            return FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location);
+            return FrontLineWorkerMapper.mapFrom(frontLineWorkerCsvRequest, location);
         }
-        return FrontLineWorkerMapper.mapFrom(frontLineWorkers.get(0), frontLineWorkerRequest, location);
+        return FrontLineWorkerMapper.mapFrom(frontLineWorkers.get(0), frontLineWorkerCsvRequest, location);
     }
 
-    private FrontLineWorker constructFrontLineWorkerForBulkImport(FrontLineWorkerRequest frontLineWorkerRequest, Location location, List<FrontLineWorkerRequest> frontLineWorkerRequests) {
+    private FrontLineWorker constructFrontLineWorkerForBulkImport(FrontLineWorkerCsvRequest frontLineWorkerRequest, Location location, List<FrontLineWorkerCsvRequest> frontLineWorkerRequests) {
         List<FrontLineWorker> frontLineWorkersWithSameMsisdn = existingFLW(frontLineWorkerRequest);
         if (frontLineWorkersWithSameMsisdn.size() != 1 || hasDuplicatesInCSV(frontLineWorkerRequest, frontLineWorkerRequests)) {
             return FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location);
@@ -97,13 +98,14 @@ public class FrontLineWorkerService {
 
     }
 
-    private boolean hasDuplicatesInCSV(FrontLineWorkerRequest frontLineWorkerRequest, List<FrontLineWorkerRequest> frontLineWorkerRequests) {
+    private boolean hasDuplicatesInCSV(FrontLineWorkerCsvRequest frontLineWorkerRequest, List<FrontLineWorkerCsvRequest> frontLineWorkerRequests) {
         return CollectionUtils.cardinality(frontLineWorkerRequest, frontLineWorkerRequests) != 1;
     }
 
 
-    private List<FrontLineWorker> existingFLW(FrontLineWorkerRequest frontLineWorkerRequest) {
+    private List<FrontLineWorker> existingFLW(FrontLineWorkerCsvRequest frontLineWorkerRequest) {
         String msisdn = frontLineWorkerRequest.getMsisdn();
         return StringUtils.isBlank(msisdn) ? Collections.<FrontLineWorker>emptyList() : allFrontLineWorkers.getByMsisdn(FrontLineWorkerMapper.formatMsisdn(msisdn));
     }
+
 }

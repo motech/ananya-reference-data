@@ -6,11 +6,10 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest;
-import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.ExceptionResponse;
-import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
-import org.motechproject.ananya.referencedata.web.validator.ValidationException;
+import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerCsvService;
+import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
+import org.motechproject.ananya.referencedata.web.request.FrontLineWorkerWebRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletResponse;
@@ -18,37 +17,20 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class FrontLineWorkerControllerTest {
     private FrontLineWorkerController frontLineWorkerController;
 
     @Mock
-    private FrontLineWorkerService frontLineWorkerService;
+    private FrontLineWorkerCsvService frontLineWorkerCsvService;
     @Captor
-    private ArgumentCaptor<List<FrontLineWorkerRequest>> captor;
+    private ArgumentCaptor<List<FrontLineWorkerWebRequest>> captor;
 
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerController = new FrontLineWorkerController(frontLineWorkerService);
-    }
-
-    @Test
-    public void shouldUpdateAnExistingFLW() {
-        String msisdn = "9999888822";
-        String name = "name";
-        String designation = "ASHA";
-        String district = "district";
-        String block = "block";
-        String panchayat = "panchayat";
-        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
-
-        frontLineWorkerController.updateVerifiedFlw(frontLineWorkerRequest);
-
-        verify(frontLineWorkerService).updateVerifiedFlw(any(FrontLineWorkerRequest.class));
+        frontLineWorkerController = new FrontLineWorkerController(frontLineWorkerCsvService);
     }
 
     @Test
@@ -65,7 +47,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test(expected = ValidationException.class)
     public void shouldReturnExceptionResponseAndSetStatusTo500IfValidationErrorOccurs(){
-        frontLineWorkerController.updateVerifiedFlw(new FrontLineWorkerRequest("guid",null,null));
+        frontLineWorkerController.updateVerifiedFlw(new FrontLineWorkerWebRequest("guid",null,null));
     }
     
     @Test
@@ -73,9 +55,9 @@ public class FrontLineWorkerControllerTest {
         String reason = "reason";
         String guid = "abcd1234";
         String verificationStatus = "INVALID";
-        FrontLineWorkerRequest frontLineWorkerRequest = new FrontLineWorkerRequest(guid, verificationStatus, reason);
-        frontLineWorkerController.updateVerifiedFlw(frontLineWorkerRequest);
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(guid, verificationStatus, reason);
+        frontLineWorkerController.updateVerifiedFlw(frontLineWorkerWebRequest);
 
-        verify(frontLineWorkerService).updateVerifiedFlw(frontLineWorkerRequest);
+//        verify(frontLineWorkerCsvService).updateVerifiedFlw(frontLineWorkerWebRequest);
     }
 }

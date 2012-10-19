@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata.web.validator;
+package org.motechproject.ananya.referencedata.flw.validators;
 
 public class ValidationException extends RuntimeException {
 

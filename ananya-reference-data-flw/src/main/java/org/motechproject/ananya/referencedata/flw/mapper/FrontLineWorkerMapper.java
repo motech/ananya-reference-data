@@ -4,19 +4,19 @@ import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerRequest;
+import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerCsvRequest;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 
 public class FrontLineWorkerMapper {
-    public static FrontLineWorker mapFrom(FrontLineWorkerRequest frontLineWorkerRequest, Location location) {
-        Long msisdn = StringUtils.isBlank(frontLineWorkerRequest.getMsisdn()) ? null : formatMsisdn(frontLineWorkerRequest.getMsisdn());
+    public static FrontLineWorker mapFrom(FrontLineWorkerCsvRequest frontLineWorkerCsvRequest, Location location) {
+        Long msisdn = StringUtils.isBlank(frontLineWorkerCsvRequest.getMsisdn()) ? null : formatMsisdn(frontLineWorkerCsvRequest.getMsisdn());
 
-        return new FrontLineWorker(msisdn, trim(frontLineWorkerRequest.getName()), Designation.getFor(frontLineWorkerRequest.getDesignation()), location);
+        return new FrontLineWorker(msisdn, trim(frontLineWorkerCsvRequest.getName()), Designation.getFor(frontLineWorkerCsvRequest.getDesignation()), location);
     }
 
-    public static FrontLineWorker mapFrom(FrontLineWorker existingFrontLineWorker, FrontLineWorkerRequest frontLineWorkerRequest, Location location) {
-        existingFrontLineWorker.setName(trim(frontLineWorkerRequest.getName()));
-        existingFrontLineWorker.setDesignation(Designation.getFor(frontLineWorkerRequest.getDesignation()));
+    public static FrontLineWorker mapFrom(FrontLineWorker existingFrontLineWorker, FrontLineWorkerCsvRequest frontLineWorkerCsvRequest, Location location) {
+        existingFrontLineWorker.setName(trim(frontLineWorkerCsvRequest.getName()));
+        existingFrontLineWorker.setDesignation(Designation.getFor(frontLineWorkerCsvRequest.getDesignation()));
         existingFrontLineWorker.setLocation(location);
 
         return existingFrontLineWorker;

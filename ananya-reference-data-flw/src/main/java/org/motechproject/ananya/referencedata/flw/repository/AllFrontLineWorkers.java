@@ -40,4 +40,8 @@ public class AllFrontLineWorkers {
     public void createOrUpdateAll(List<FrontLineWorker> frontLineWorkers) {
         template.saveOrUpdateAll(frontLineWorkers);
     }
+
+    public FrontLineWorker getByGuid(String guid) {
+        return null;  //To change body of created methods use File | Settings | File Templates.
+    }
 }

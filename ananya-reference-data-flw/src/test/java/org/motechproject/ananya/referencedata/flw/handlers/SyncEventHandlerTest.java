@@ -9,7 +9,7 @@ import org.mockito.Captor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.flw.domain.*;
-import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerCsvService;
 import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
 import org.motechproject.event.MotechEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @ContextConfiguration("classpath:applicationContext-flw.xml")
 public class SyncEventHandlerTest {
     @Mock
-    private FrontLineWorkerService frontLineWorkerService;
+    private FrontLineWorkerCsvService frontLineWorkerCsvService;
     @Mock
     private JsonHttpClient jsonHttpClient;
     @Autowired
@@ -48,7 +48,7 @@ public class SyncEventHandlerTest {
     @Before
     public void setUp() {
         initMocks(this);
-        syncEventHandler = new SyncEventHandler(frontLineWorkerService, jsonHttpClient, clientServicesProperties, referenceDataProperties);
+        syncEventHandler = new SyncEventHandler(frontLineWorkerCsvService, jsonHttpClient, clientServicesProperties, referenceDataProperties);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class SyncEventHandlerTest {
         frontLineWorker.setLastModified(lastModified);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);
-        when(frontLineWorkerService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
+        when(frontLineWorkerCsvService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
         when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_OK, "{Created/Updated FLW record}"));
         parameters.put("0", Long.parseLong(msisdn));
 
@@ -88,7 +88,7 @@ public class SyncEventHandlerTest {
         frontLineWorker.setLastModified(lastModified);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);
-        when(frontLineWorkerService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
+        when(frontLineWorkerCsvService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
         when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "some"));
         parameters.put("0", Long.parseLong(msisdn));
 
@@ -107,7 +107,7 @@ public class SyncEventHandlerTest {
         frontLineWorker.setLastModified(lastModified);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);
-        when(frontLineWorkerService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
+        when(frontLineWorkerCsvService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
         when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_OK, "{[Invalid msisdn]}"));
         parameters.put("0", Long.parseLong(msisdn));
 
@@ -124,7 +124,7 @@ public class SyncEventHandlerTest {
         frontLineWorker.setLastModified(lastModified);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);
-        when(frontLineWorkerService.getAllByMsisdn(null)).thenReturn(frontLineWorkers);
+        when(frontLineWorkerCsvService.getAllByMsisdn(null)).thenReturn(frontLineWorkers);
         when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_OK, "{Created/Updated FLW record}"));
         parameters.put("0", null);
 
@@ -145,7 +145,7 @@ public class SyncEventHandlerTest {
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);
         frontLineWorkers.add(frontLineWorker);
-        when(frontLineWorkerService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
+        when(frontLineWorkerCsvService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
         when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_ACCEPTED, "{success}"));
         parameters.put("0", Long.parseLong(msisdn));
 
@@ -166,7 +166,7 @@ public class SyncEventHandlerTest {
         frontLineWorker.setLastModified(lastModified);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker);
-        when(frontLineWorkerService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
+        when(frontLineWorkerCsvService.getAllByMsisdn(Long.parseLong(msisdn))).thenReturn(frontLineWorkers);
         when(jsonHttpClient.post(Matchers.<String>any(), Matchers.<Object>any(), Matchers.<Map<String, String>>any())).thenReturn(new JsonHttpClient.Response(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "ExceptionTrace"));
         parameters.put("0", Long.parseLong(msisdn));
 
