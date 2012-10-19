@@ -52,7 +52,6 @@ public class FrontLineWorkerCsvService {
         return frontLineWorkerResponse.withCreatedOrUpdated();
     }
 
-
     public void addAllWithoutValidations(List<FrontLineWorkerCsvRequest> frontLineWorkerCsvRequests) {
         List<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         for (FrontLineWorkerCsvRequest frontLineWorkerCsvRequest : frontLineWorkerCsvRequests) {
@@ -95,17 +94,14 @@ public class FrontLineWorkerCsvService {
             return FrontLineWorkerMapper.mapFrom(frontLineWorkerRequest, location);
         }
         return FrontLineWorkerMapper.mapFrom(frontLineWorkersWithSameMsisdn.get(0), frontLineWorkerRequest, location);
-
     }
 
     private boolean hasDuplicatesInCSV(FrontLineWorkerCsvRequest frontLineWorkerRequest, List<FrontLineWorkerCsvRequest> frontLineWorkerRequests) {
         return CollectionUtils.cardinality(frontLineWorkerRequest, frontLineWorkerRequests) != 1;
     }
 
-
     private List<FrontLineWorker> existingFLW(FrontLineWorkerCsvRequest frontLineWorkerRequest) {
         String msisdn = frontLineWorkerRequest.getMsisdn();
         return StringUtils.isBlank(msisdn) ? Collections.<FrontLineWorker>emptyList() : allFrontLineWorkers.getByMsisdn(FrontLineWorkerMapper.formatMsisdn(msisdn));
     }
-
 }

@@ -7,9 +7,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.flw.response.ExceptionResponse;
-import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerCsvService;
+import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
-import org.motechproject.ananya.referencedata.web.request.FrontLineWorkerWebRequest;
+import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerWebRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletResponse;
@@ -17,20 +17,21 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class FrontLineWorkerControllerTest {
     private FrontLineWorkerController frontLineWorkerController;
 
     @Mock
-    private FrontLineWorkerCsvService frontLineWorkerCsvService;
+    private FrontLineWorkerService frontLineWorkerService;
     @Captor
     private ArgumentCaptor<List<FrontLineWorkerWebRequest>> captor;
 
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerController = new FrontLineWorkerController(frontLineWorkerCsvService);
+        frontLineWorkerController = new FrontLineWorkerController(frontLineWorkerService);
     }
 
     @Test
@@ -56,8 +57,9 @@ public class FrontLineWorkerControllerTest {
         String guid = "abcd1234";
         String verificationStatus = "INVALID";
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(guid, verificationStatus, reason);
+
         frontLineWorkerController.updateVerifiedFlw(frontLineWorkerWebRequest);
 
-//        verify(frontLineWorkerCsvService).updateVerifiedFlw(frontLineWorkerWebRequest);
+        verify(frontLineWorkerService).updateVerifiedFlw(frontLineWorkerWebRequest);
     }
 }

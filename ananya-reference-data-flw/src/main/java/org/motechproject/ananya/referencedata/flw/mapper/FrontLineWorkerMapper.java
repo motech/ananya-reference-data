@@ -5,6 +5,7 @@ import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerCsvRequest;
+import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerWebRequest;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 
 public class FrontLineWorkerMapper {
@@ -28,5 +29,11 @@ public class FrontLineWorkerMapper {
 
     public static Long formatMsisdn(String msisdn) {
         return PhoneNumber.formatPhoneNumber(msisdn);
+    }
+
+    public static FrontLineWorker mapFrom(FrontLineWorkerWebRequest frontLineWorkerWebRequest, FrontLineWorker existingFrontLineWorker) {
+        existingFrontLineWorker.setVerificationStatus(frontLineWorkerWebRequest.getVerificationStatus());
+        existingFrontLineWorker.setReason(frontLineWorkerWebRequest.getReason());
+        return existingFrontLineWorker;
     }
 }

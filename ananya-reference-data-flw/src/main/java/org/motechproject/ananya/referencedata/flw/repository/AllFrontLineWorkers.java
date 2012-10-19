@@ -42,6 +42,15 @@ public class AllFrontLineWorkers {
     }
 
     public FrontLineWorker getByGuid(String guid) {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+        DetachedCriteria criteria = DetachedCriteria.forClass(FrontLineWorker.class);
+
+        criteria.add(Restrictions.eq("flwGuid", guid));
+
+        List frontLineWorkerList = template.findByCriteria(criteria);
+        return frontLineWorkerList.size() == 0 ? null : (FrontLineWorker) frontLineWorkerList.get(0);
+    }
+
+    public void update(FrontLineWorker frontLineWorker) {
+        template.update(frontLineWorker);
     }
 }

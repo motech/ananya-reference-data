@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
@@ -129,5 +130,43 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
         List<FrontLineWorker> frontLineWorkerList = template.loadAll(FrontLineWorker.class);
         assertEquals(2, frontLineWorkerList.size());
+    }
+
+    @Test
+    public void shouldGetFLWByGuid() {
+        String guid = "guid";
+        Long msisdn = 1234567890L;
+        String name = "name";
+        Designation anm = Designation.ANM;
+        allFrontLineWorkers.add(new FrontLineWorker(msisdn, name, anm, location, guid, null, null));
+
+        FrontLineWorker actualFrontLineWorker = allFrontLineWorkers.getByGuid(guid);
+
+        assertEquals(msisdn, actualFrontLineWorker.getMsisdn());
+        assertEquals(guid, actualFrontLineWorker.getFlwGuid());
+        assertEquals(name, actualFrontLineWorker.getName());
+    }
+
+    @Test
+    public void shouldReturnNullWhenFrontLineWorkerByGuidDoesNotExist() {
+        FrontLineWorker frontLineWorker = allFrontLineWorkers.getByGuid("abcd");
+        assertNull(frontLineWorker);
+    }
+
+    @Test
+    public void shouldUpdateFrontLineWorker() {
+        FrontLineWorker frontLineWorker = new FrontLineWorker(9988776655L, "name", Designation.ANM, location, "guid", null, null);
+        template.save(frontLineWorker);
+        frontLineWorker.setReason("random");
+        frontLineWorker.setVerificationStatus("INVALID");
+
+        allFrontLineWorkers.update(frontLineWorker);
+
+        FrontLineWorker frontLineWOrkerFromDb = allFrontLineWorkers.getByGuid("guid");
+        assertEquals(frontLineWorker.getId(), frontLineWOrkerFromDb.getId());
+        assertEquals(frontLineWorker.getFlwGuid(), frontLineWOrkerFromDb.getFlwGuid());
+        assertEquals(frontLineWorker.getName(), frontLineWOrkerFromDb.getName());
+        assertEquals(frontLineWorker.getVerificationStatus(), frontLineWOrkerFromDb.getVerificationStatus());
+        assertEquals(frontLineWorker.getReason(), frontLineWOrkerFromDb.getReason());
     }
 }

@@ -11,7 +11,7 @@ import org.motechproject.ananya.referencedata.flw.response.ExceptionResponse;
 import org.motechproject.ananya.referencedata.flw.response.FrontLineWorkerResponse;
 import org.motechproject.ananya.referencedata.flw.response.LocationCreationResponse;
 import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
-import org.motechproject.ananya.referencedata.web.request.FrontLineWorkerWebRequest;
+import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerWebRequest;
 
 import java.io.IOException;
 import java.util.HashMap;
