@@ -23,10 +23,10 @@ public class SyncService {
         this.propertiesService = propertiesService;
     }
 
-    public void syncFrontLineWorker(Long msisdn) {
+    public void syncFrontLineWorker(FrontLineWorker frontLineWorker) {
         if (propertiesService.isSyncOn()) {
-            logger.info("Raising event to sync for msisdn: " + msisdn);
-            eventContext.send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, msisdn);
+            logger.info("Raising event to sync for msisdn: " + frontLineWorker.getMsisdn());
+            eventContext.send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, frontLineWorker);
         }
     }
 
@@ -34,7 +34,7 @@ public class SyncService {
         if(propertiesService.isSyncOn()) {
             for(FrontLineWorker frontLineWorker : frontLineWorkers) {
                 logger.info("Raising event to sync for msisdn: " + frontLineWorker.getMsisdn());
-                eventContext.send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, frontLineWorker.getMsisdn());
+                eventContext.send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, frontLineWorker);
             }
         }
     }

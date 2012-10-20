@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.SyncEventKeys;
 import org.motechproject.ananya.referencedata.flw.mapper.FrontLineWorkerContractMapper;
-import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerCsvService;
 import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.annotations.MotechListener;
@@ -15,14 +14,12 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 @Component
 public class SyncEventHandler {
 
-    private FrontLineWorkerCsvService frontLineWorkerCsvService;
     private Properties clientServicesProperties;
     private Properties referenceDataProperties;
     private JsonHttpClient jsonHttpClient;
@@ -33,8 +30,7 @@ public class SyncEventHandler {
     Logger logger = Logger.getLogger(SyncEventHandler.class);
 
     @Autowired
-    public SyncEventHandler(FrontLineWorkerCsvService frontLineWorkerCsvService, JsonHttpClient jsonHttpClient, Properties clientServicesProperties, Properties referenceDataProperties) {
-        this.frontLineWorkerCsvService = frontLineWorkerCsvService;
+    public SyncEventHandler(JsonHttpClient jsonHttpClient, Properties clientServicesProperties, Properties referenceDataProperties) {
         this.jsonHttpClient = jsonHttpClient;
         this.clientServicesProperties = clientServicesProperties;
         this.referenceDataProperties = referenceDataProperties;
@@ -42,20 +38,19 @@ public class SyncEventHandler {
 
     @MotechListener(subjects = {SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE})
     public void handleSyncFrontLineWorker(MotechEvent event) {
-        Long msisdn = (Long) event.getParameters().get("0");
-        List<FrontLineWorker> frontLineWorkers = frontLineWorkerCsvService.getAllByMsisdn(msisdn);
+        FrontLineWorker frontLineWorker = (FrontLineWorker) event.getParameters().get("0");
         String url = (String) clientServicesProperties.get(KEY_FRONT_LINE_WORKER_CREATE_URL);
 
-        if (frontLineWorkers.size() != 1 || frontLineWorkers.get(0).getMsisdn() == null) {
-            logger.info("Ignoring sync for flw with list size : " + frontLineWorkers.size() + " and msisdn : " + msisdn);
+        if (frontLineWorker.getMsisdn() == null) {
+            logger.info("Ignoring sync for flw name:"+frontLineWorker.getName()+" since msisdn is null ");
             return;
         }
 
         try {
-            logger.info("Sync for msisdn: " + msisdn);
+            logger.info("Sync for msisdn: " + frontLineWorker.getMsisdn());
             Map<String, String> requestHeaders = new HashMap<String, String>();
             requestHeaders.put("APIKey", (String) referenceDataProperties.get(ANANYA_API_KEY));
-            JsonHttpClient.Response response = jsonHttpClient.post(url, FrontLineWorkerContractMapper.mapFrom(frontLineWorkers.get(0)), requestHeaders);
+            JsonHttpClient.Response response = jsonHttpClient.post(url, FrontLineWorkerContractMapper.mapFrom(frontLineWorker), requestHeaders);
             logger.info(String.format("Status Code: %s | Response Body: %s", response.statusCode, response.body));
             checkForException(response);
         } catch (IOException e) {

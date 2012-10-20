@@ -7,7 +7,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
+import org.motechproject.ananya.referencedata.flw.response.LocationValidationResponse;
 import org.motechproject.ananya.referencedata.flw.service.LocationService;
 import org.motechproject.ananya.referencedata.flw.validators.LocationValidator;
 import org.motechproject.importer.domain.ValidationResponse;
@@ -40,7 +40,7 @@ public class LocationImporterTest {
     public void shouldValidateLocationRequests() {
         ArrayList<Object> locationRequests = new ArrayList<Object>();
         locationRequests.add(new LocationRequest("D1", "B1", "P1"));
-        when(locationValidator.validate(new Location("D1","B1","P1"))).thenReturn(new FLWValidationResponse());
+        when(locationValidator.validate(new Location("D1","B1","P1"))).thenReturn(new LocationValidationResponse());
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
@@ -53,9 +53,9 @@ public class LocationImporterTest {
     public void shouldFailValidationIfLocationDoesNotHaveAllTheDetails() {
         ArrayList<Object> locationRequests = new ArrayList<Object>();
         locationRequests.add(new LocationRequest("D1", "B1", null));
-        FLWValidationResponse flwValidationResponse = new FLWValidationResponse();
-        flwValidationResponse.forBlankFieldsInLocation();
-        when(locationValidator.validate(new Location("D1", "B1", null))).thenReturn(flwValidationResponse);
+        LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
+        locationValidationResponse.forBlankFieldsInLocation();
+        when(locationValidator.validate(new Location("D1", "B1", null))).thenReturn(locationValidationResponse);
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
@@ -70,9 +70,9 @@ public class LocationImporterTest {
         ArrayList<Location> locations = new ArrayList<Location>();
         locations.add(new Location("D1", "B1", "P1"));
         locationRequests.add(new LocationRequest("D1", "B1", "P1"));
-        FLWValidationResponse flwValidationResponse = new FLWValidationResponse();
-        flwValidationResponse.forDuplicateLocation();
-        when(locationValidator.validate(new Location("D1", "B1", "P1"))).thenReturn(flwValidationResponse);
+        LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
+        locationValidationResponse.forDuplicateLocation();
+        when(locationValidator.validate(new Location("D1", "B1", "P1"))).thenReturn(locationValidationResponse);
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 

@@ -11,7 +11,7 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 
-public class AllAnanyaReferenceDataPropertiesTest extends SpringIntegrationTest {
+public class AllAnanyaReferenceDataPropertiesIT extends SpringIntegrationTest {
     @Autowired
     private AllAnanyaReferenceDataProperties allDbProperties;
 

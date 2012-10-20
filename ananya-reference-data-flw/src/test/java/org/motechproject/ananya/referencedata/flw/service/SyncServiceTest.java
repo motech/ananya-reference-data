@@ -10,6 +10,7 @@ import org.motechproject.ananya.referencedata.flw.domain.SyncEventKeys;
 import org.motechproject.scheduler.context.EventContext;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -30,38 +31,35 @@ public class SyncServiceTest {
 
     @Test
     public void shouldPublishFlwDataIntoQueue() {
-        Long msisdn = 12L;
         when(propertiesService.isSyncOn()).thenReturn(true);
 
-        syncService.syncFrontLineWorker(msisdn);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(12L, "Aragorn", Designation.ANM, null);
+        syncService.syncFrontLineWorker(frontLineWorker);
         
-        verify(eventContext).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, msisdn);
+        verify(eventContext).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, frontLineWorker);
     }
 
     @Test
     public void shouldNotPublishFlwDataIntoQueueIfSyncHasBeenTurnedOff() {
-        Long msisdn = 12L;
         when(propertiesService.isSyncOn()).thenReturn(false);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(12L, "Aragorn", Designation.ANM, null);
 
-        syncService.syncFrontLineWorker(msisdn);
+        syncService.syncFrontLineWorker(frontLineWorker);
 
-        verify(eventContext, never()).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, msisdn);
+        verify(eventContext, never()).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, frontLineWorker);
     }
 
     @Test
     public void shouldSyncAllFrontLineWorkers() {
-        Long msisdn1 = 1234567890L;
-        Long msisdn2 = 1234567891L;
         when(propertiesService.isSyncOn()).thenReturn(true);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         FrontLineWorker frontLineWorker1 = new FrontLineWorker(1234567890L, "name", Designation.ASHA, new Location());
         FrontLineWorker frontLineWorker2 = new FrontLineWorker(1234567891L, "name", Designation.ASHA, new Location());
-        frontLineWorkers.add(frontLineWorker1);
-        frontLineWorkers.add(frontLineWorker2);
+        frontLineWorkers.addAll(Arrays.asList(frontLineWorker1,frontLineWorker2));
 
         syncService.syncAllFrontLineWorkers(frontLineWorkers);
 
-        verify(eventContext).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, msisdn1);
-        verify(eventContext).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, msisdn2);
+        verify(eventContext).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, frontLineWorker1);
+        verify(eventContext).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, frontLineWorker2);
     }
 }

@@ -1,9 +1,9 @@
-package org.motechproject.ananya.referencedata.flw.service;
+package org.motechproject.ananya.referencedata.contactCenter.service;
 
+import org.motechproject.ananya.referencedata.contactCenter.mapper.FrontLineWorkerMapper;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
-import org.motechproject.ananya.referencedata.flw.mapper.FrontLineWorkerMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerWebRequest;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

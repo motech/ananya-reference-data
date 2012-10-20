@@ -2,7 +2,7 @@ package org.motechproject.ananya.referencedata.csv.importer;
 
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
+import org.motechproject.ananya.referencedata.flw.response.LocationValidationResponse;
 import org.motechproject.ananya.referencedata.flw.service.LocationService;
 import org.motechproject.ananya.referencedata.flw.validators.LocationValidator;
 import org.motechproject.importer.annotation.CSVImporter;
@@ -43,7 +43,7 @@ public class LocationImporter {
         addHeader(errors);
         logger.info("Started validating location csv records");
         for (LocationRequest locationRequest : locationRequests) {
-            FLWValidationResponse locationValidationResponse = locationValidator.validate(LocationMapper.mapFrom(locationRequest));
+            LocationValidationResponse locationValidationResponse = locationValidator.validate(LocationMapper.mapFrom(locationRequest));
             if (locationValidationResponse.isInValid()) {
                 isValid = false;
             }

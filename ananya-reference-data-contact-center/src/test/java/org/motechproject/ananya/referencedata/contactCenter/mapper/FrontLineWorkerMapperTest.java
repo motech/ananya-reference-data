@@ -1,10 +1,10 @@
-package org.motechproject.ananya.referencedata.flw.mapper;
+package org.motechproject.ananya.referencedata.contactCenter.mapper;
 
 import org.junit.Test;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerWebRequest;
 
 import static junit.framework.Assert.assertEquals;
 

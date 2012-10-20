@@ -5,11 +5,11 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportRequest;
+import org.motechproject.ananya.referencedata.csv.service.FrontLineWorkerImportService;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerCsvRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerCsvService;
 import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
 import org.motechproject.ananya.referencedata.flw.service.LocationService;
 import org.motechproject.importer.domain.ValidationResponse;
@@ -28,27 +28,27 @@ public class FrontLineWorkerImporterTest {
     @Mock
     private LocationService locationService;
     @Mock
-    private FrontLineWorkerCsvService frontLineWorkerCsvService;
+    private FrontLineWorkerImportService frontLineWorkerImportService;
     @Mock
     private JsonHttpClient jsonHttpClient;
     @Mock
     private Properties clientServicesProperties;
     @Captor
-    private ArgumentCaptor<List<FrontLineWorkerCsvRequest>> captor;
+    private ArgumentCaptor<List<FrontLineWorkerImportRequest>> captor;
     private FrontLineWorkerImporter frontLineWorkerImporter;
 
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerImporter = new FrontLineWorkerImporter(frontLineWorkerCsvService, locationService);
+        frontLineWorkerImporter = new FrontLineWorkerImporter(frontLineWorkerImportService, locationService);
     }
 
     @Test
     public void shouldValidateFLWRequests() {
-        ArrayList<FrontLineWorkerCsvRequest> frontLineWorkerWebRequests = new ArrayList<>();
+        ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         Location location = new Location("D1", "B1", "P1");
         when(locationService.getFor("D1", "B1", "P1")).thenReturn(location);
-        frontLineWorkerWebRequests.add(new FrontLineWorkerCsvRequest("1234567890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1")));
+        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1234567890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1")));
 
         ValidationResponse validationResponse = frontLineWorkerImporter.validate(frontLineWorkerWebRequests);
 
@@ -59,10 +59,10 @@ public class FrontLineWorkerImporterTest {
 
     @Test
     public void shouldFailValidationIfFLWDoesNotHaveAllTheDetails() {
-        ArrayList<FrontLineWorkerCsvRequest> frontLineWorkerWebRequests = new ArrayList<>();
+        ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         Location location = new Location("D1", "B1", "P1");
         when(locationService.getFor("D1", "B1", "P1")).thenReturn(location);
-        frontLineWorkerWebRequests.add(new FrontLineWorkerCsvRequest("1asdf67890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1")));
+        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1asdf67890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1")));
 
         ValidationResponse validationResponse = frontLineWorkerImporter.validate(frontLineWorkerWebRequests);
 
@@ -73,12 +73,12 @@ public class FrontLineWorkerImporterTest {
 
     @Test
     public void shouldSaveFLW() throws IOException {
-        ArrayList<FrontLineWorkerCsvRequest> frontLineWorkerWebRequests = new ArrayList<>();
+        ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         String msisdn = "1234567890";
-        frontLineWorkerWebRequests.add(new FrontLineWorkerCsvRequest(msisdn, "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1")));
+        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest(msisdn, "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1")));
 
         frontLineWorkerImporter.postData(frontLineWorkerWebRequests);
 
-        verify(frontLineWorkerCsvService).addAllWithoutValidations(frontLineWorkerWebRequests);
+        verify(frontLineWorkerImportService).addAllWithoutValidations(frontLineWorkerWebRequests);
     }
 }

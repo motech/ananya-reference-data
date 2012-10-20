@@ -6,7 +6,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
-import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
+import org.motechproject.ananya.referencedata.flw.response.LocationValidationResponse;
 
 import java.util.ArrayList;
 
@@ -25,10 +25,10 @@ public class LocationValidatorTest {
         when(allLocations.getFor("", "B1", "P1")).thenReturn(null);
         LocationValidator locationValidator = new LocationValidator(allLocations);
 
-        FLWValidationResponse FLWValidationResponse = locationValidator.validate(location);
+        LocationValidationResponse locationValidationResponse = locationValidator.validate(location);
 
-        assertFalse(FLWValidationResponse.isValid());
-        assertTrue(FLWValidationResponse.getMessage().contains("Blank district, block or panchayat"));
+        assertFalse(locationValidationResponse.isValid());
+        assertTrue(locationValidationResponse.getMessage().contains("Blank district, block or panchayat"));
     }
 
     @Test
@@ -39,10 +39,10 @@ public class LocationValidatorTest {
         when(allLocations.getFor("D1", "B1", "P1")).thenReturn(location);
         LocationValidator locationValidator = new LocationValidator(allLocations);
 
-        FLWValidationResponse FLWValidationResponse = locationValidator.validate(location);
+        LocationValidationResponse locationValidationResponse = locationValidator.validate(location);
 
-        assertFalse(FLWValidationResponse.isValid());
-        assertTrue(FLWValidationResponse.getMessage().contains("Location already present"));
+        assertFalse(locationValidationResponse.isValid());
+        assertTrue(locationValidationResponse.getMessage().contains("Location already present"));
     }
 
     @Test
@@ -51,9 +51,9 @@ public class LocationValidatorTest {
         when(allLocations.getFor("D1", "B1", "P1")).thenReturn(null);
         LocationValidator locationValidator = new LocationValidator(allLocations);
 
-        FLWValidationResponse FLWValidationResponse = locationValidator.validate(location);
+        LocationValidationResponse locationValidationResponse = locationValidator.validate(location);
 
-        assertTrue(FLWValidationResponse.isValid());
-        assertTrue(FLWValidationResponse.getMessage().isEmpty());
+        assertTrue(locationValidationResponse.isValid());
+        assertTrue(locationValidationResponse.getMessage().isEmpty());
     }
 }

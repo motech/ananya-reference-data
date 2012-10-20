@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata.flw.service;
+package org.motechproject.ananya.referencedata.contactCenter.service;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -6,11 +6,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerWebRequest;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 
 import static org.junit.Assert.assertEquals;

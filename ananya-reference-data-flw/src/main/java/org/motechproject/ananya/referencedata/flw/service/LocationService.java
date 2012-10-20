@@ -4,8 +4,8 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
 import org.motechproject.ananya.referencedata.flw.response.LocationCreationResponse;
+import org.motechproject.ananya.referencedata.flw.response.LocationValidationResponse;
 import org.motechproject.ananya.referencedata.flw.validators.LocationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -40,12 +40,12 @@ public class LocationService {
         LocationCreationResponse response = new LocationCreationResponse();
 
         Location location = LocationMapper.mapFrom(locationRequest);
-        FLWValidationResponse flwValidationResponse = locationValidator.validate(location);
-        if (flwValidationResponse.isValid()) {
+        LocationValidationResponse locationValidationResponse = locationValidator.validate(location);
+        if (locationValidationResponse.isValid()) {
             allLocations.add(location);
             return response.withCreated();
         }
-        return response.withValidationResponse(flwValidationResponse);
+        return response.withValidationResponse(locationValidationResponse);
     }
 
     @Transactional

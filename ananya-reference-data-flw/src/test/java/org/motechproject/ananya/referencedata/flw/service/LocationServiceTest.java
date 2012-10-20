@@ -8,8 +8,8 @@ import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
 import org.motechproject.ananya.referencedata.flw.response.LocationCreationResponse;
+import org.motechproject.ananya.referencedata.flw.response.LocationValidationResponse;
 import org.motechproject.ananya.referencedata.flw.validators.LocationValidator;
 
 import java.util.ArrayList;
@@ -42,9 +42,9 @@ public class LocationServiceTest {
         String panchayat = "panchayat";
         String block = "block";
         LocationRequest locationRequest = new LocationRequest(null, block, panchayat);
-        FLWValidationResponse flwValidationResponse = new FLWValidationResponse();
-        flwValidationResponse.forBlankFieldsInLocation();
-        when(locationValidator.validate(new Location(null, "block", "panchayat"))).thenReturn(flwValidationResponse);
+        LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
+        locationValidationResponse.forBlankFieldsInLocation();
+        when(locationValidator.validate(new Location(null, "block", "panchayat"))).thenReturn(locationValidationResponse);
 
         LocationCreationResponse locationCreationResponse = locationService.add(locationRequest);
 
@@ -54,9 +54,9 @@ public class LocationServiceTest {
     @Test
     public void shouldInvalidateDuplicateLocationCreationRequests() {
         LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat");
-        FLWValidationResponse flwValidationResponse = new FLWValidationResponse();
-        flwValidationResponse.forDuplicateLocation();
-        when(locationValidator.validate(new Location("district", "block", "panchayat"))).thenReturn(flwValidationResponse);
+        LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
+        locationValidationResponse.forDuplicateLocation();
+        when(locationValidator.validate(new Location("district", "block", "panchayat"))).thenReturn(locationValidationResponse);
 
         LocationCreationResponse locationCreationResponse = locationService.add(locationRequest);
 
@@ -69,7 +69,7 @@ public class LocationServiceTest {
         String block = "block";
         String district = "district";
         LocationRequest locationRequest = new LocationRequest(district, block, panchayat);
-        when(locationValidator.validate(new Location("district", "block", "panchayat"))).thenReturn(new FLWValidationResponse());
+        when(locationValidator.validate(new Location("district", "block", "panchayat"))).thenReturn(new LocationValidationResponse());
 
         LocationCreationResponse locationCreationResponse = locationService.add(locationRequest);
 

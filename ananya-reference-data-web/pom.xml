@@ -138,7 +138,8 @@
         </dependency>
         <dependency>
             <groupId>org.motechproject.ananya.referencedata</groupId>
-            <artifactId>ananya-reference-data-csv-importer</artifactId>
+            <artifactId>ananya-reference-data-contact-center</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.motechproject.contrib-ananya</groupId>

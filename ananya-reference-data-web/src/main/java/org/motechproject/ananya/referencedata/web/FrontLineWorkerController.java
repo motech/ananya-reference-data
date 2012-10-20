@@ -1,10 +1,10 @@
 package org.motechproject.ananya.referencedata.web;
 
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerWebRequest;
-import org.motechproject.ananya.referencedata.flw.response.FrontLineWorkerResponse;
-import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
+import org.motechproject.ananya.referencedata.contactCenter.response.FrontLineWorkerResponse;
+import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.contactCenter.validator.FrontLineWorkerWebRequestValidator;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
-import org.motechproject.ananya.referencedata.flw.validators.FrontLineWorkerWebRequestValidator;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

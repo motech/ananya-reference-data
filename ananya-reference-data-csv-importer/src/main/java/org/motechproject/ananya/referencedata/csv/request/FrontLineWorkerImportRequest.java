@@ -1,17 +1,18 @@
-package org.motechproject.ananya.referencedata.flw.request;
+package org.motechproject.ananya.referencedata.csv.request;
 
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.importer.annotation.ColumnName;
 
-public class FrontLineWorkerCsvRequest {
+public class FrontLineWorkerImportRequest {
     private String msisdn;
     private String name;
     private String designation;
     private LocationRequest location = new LocationRequest();
 
-    public FrontLineWorkerCsvRequest() {
+    public FrontLineWorkerImportRequest() {
     }
 
-    public FrontLineWorkerCsvRequest(String msisdn, String name, String designation, LocationRequest location) {
+    public FrontLineWorkerImportRequest(String msisdn, String name, String designation, LocationRequest location) {
         this.msisdn = msisdn;
         this.name = name;
         this.designation = designation;
@@ -68,9 +69,9 @@ public class FrontLineWorkerCsvRequest {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FrontLineWorkerCsvRequest)) return false;
+        if (!(o instanceof FrontLineWorkerImportRequest)) return false;
 
-        FrontLineWorkerCsvRequest that = (FrontLineWorkerCsvRequest) o;
+        FrontLineWorkerImportRequest that = (FrontLineWorkerImportRequest) o;
 
         if (msisdn != null ? !msisdn.equals(that.msisdn) : that.msisdn != null) return false;
 

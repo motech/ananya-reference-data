@@ -1,9 +1,8 @@
-package org.motechproject.ananya.referencedata.web.validators;
+package org.motechproject.ananya.referencedata.contactCenter.validator;
 
 import org.junit.Test;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerWebRequest;
-import org.motechproject.ananya.referencedata.flw.validators.FrontLineWorkerWebRequestValidator;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;

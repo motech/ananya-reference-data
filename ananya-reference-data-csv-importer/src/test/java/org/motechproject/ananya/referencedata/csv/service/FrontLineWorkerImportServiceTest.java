@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata.flw.service;
+package org.motechproject.ananya.referencedata.csv.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -6,19 +6,17 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportRequest;
+import org.motechproject.ananya.referencedata.csv.response.FrontLineWorkerImportResponse;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerCsvRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.response.FrontLineWorkerResponse;
+import org.motechproject.ananya.referencedata.flw.service.SyncService;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Matchers.any;
@@ -27,7 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-public class FrontLineWorkerCsvServiceTest {
+public class FrontLineWorkerImportServiceTest {
 
     @Mock
     private AllLocations allLocations;
@@ -45,16 +43,16 @@ public class FrontLineWorkerCsvServiceTest {
     @Captor
     ArgumentCaptor<List<FrontLineWorker>> anotherCaptor;
 
-    private FrontLineWorkerCsvService frontLineWorkerCsvService;
+    private FrontLineWorkerImportService frontLineWorkerImportService;
 
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerCsvService = new FrontLineWorkerCsvService(allLocations, allFrontLineWorkers, syncService);
+        frontLineWorkerImportService = new FrontLineWorkerImportService(allLocations, allFrontLineWorkers, syncService);
     }
 
     @Test
-    public void shouldInvokeSyncServiceToPushFlwChangesWhenFlwIsUpdated() {
+    public void shouldInvokeSyncServiceToPushFlwChangesWhenFlwIsUpdatedAndThereAreNoDuplicateMsisdn() {
         String msisdn = "9999888822";
         String prefixedMsisdn = "91" + msisdn;
         String newName = "new name";
@@ -62,20 +60,18 @@ public class FrontLineWorkerCsvServiceTest {
         String newDistrict = "district1";
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest = new FrontLineWorkerCsvRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat"));
-        List<FrontLineWorker> frontLineWorkerList = new ArrayList<FrontLineWorker>();
-        frontLineWorkerList.add(frontLineWorker);
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
-        when(allFrontLineWorkers.getByMsisdn(Long.valueOf(prefixedMsisdn))).thenReturn(frontLineWorkerList);
+        when(allFrontLineWorkers.getByMsisdn(Long.valueOf(prefixedMsisdn))).thenReturn(Arrays.asList(frontLineWorker));
 
-        frontLineWorkerCsvService.createOrUpdate(frontLineWorkerWebRequest);
+        frontLineWorkerImportService.createOrUpdate(frontLineWorkerImportRequest);
 
-        verify(syncService).syncFrontLineWorker(any(Long.class));
+        verifySync(frontLineWorkerImportRequest);
     }
 
     @Test
-    public void shouldInvokeSyncServiceToPushFlwChangesWhenFlwIsAdded() {
+    public void shouldInvokeSyncServiceToPushFlwChangesWhenFlwIsAddedAndThereAreNoDuplicateMsisdn() {
         String msisdn = "9999888822";
         String prefixedMsisdn = "91" + msisdn;
         String newName = "new name";
@@ -83,14 +79,33 @@ public class FrontLineWorkerCsvServiceTest {
         String newDistrict = "district1";
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest = new FrontLineWorkerCsvRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
 
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(prefixedMsisdn))).thenReturn(Collections.<FrontLineWorker>emptyList());
 
-        frontLineWorkerCsvService.createOrUpdate(frontLineWorkerWebRequest);
+        frontLineWorkerImportService.createOrUpdate(frontLineWorkerImportRequest);
 
-        verify(syncService).syncFrontLineWorker(any(Long.class));
+        verifySync(frontLineWorkerImportRequest);
+    }
+
+    @Test
+    public void shouldNotInvokeSyncServiceToPushFlwChangesWhenThereIsMoreThanONeFlwWithTheSameMsisdn() {
+        String msisdn = "9999888822";
+        String prefixedMsisdn = "91" + msisdn;
+        String newName = "new name";
+        String newDesignation = "ASHA";
+        String newDistrict = "district1";
+        String newBlock = "block1";
+        String newPanchayat = "panchayat1";
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
+
+        when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
+        when(allFrontLineWorkers.getByMsisdn(Long.valueOf(prefixedMsisdn))).thenReturn(Arrays.asList(new FrontLineWorker(),new FrontLineWorker()));
+
+        frontLineWorkerImportService.createOrUpdate(frontLineWorkerImportRequest);
+        verify(allFrontLineWorkers).createOrUpdate(any(FrontLineWorker.class));
+        verify(syncService,never()).syncFrontLineWorker(any(FrontLineWorker.class));
     }
 
     @Test
@@ -100,16 +115,16 @@ public class FrontLineWorkerCsvServiceTest {
         String panchayat = "panchayat";
         String msisdn1 = "911234454522";
         String msisdn2 = "911234454623";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest1 = new FrontLineWorkerCsvRequest(msisdn1, "name", "ASHA", new LocationRequest(district, block, panchayat));
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest2 = new FrontLineWorkerCsvRequest(msisdn2, "name", "ASHA", new LocationRequest(district, block, panchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest1 = new FrontLineWorkerImportRequest(msisdn1, "name", "ASHA", new LocationRequest(district, block, panchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest2 = new FrontLineWorkerImportRequest(msisdn2, "name", "ASHA", new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        ArrayList<FrontLineWorkerCsvRequest> frontLineWorkerWebRequests = new ArrayList<FrontLineWorkerCsvRequest>();
+        ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<FrontLineWorkerImportRequest>();
         frontLineWorkerWebRequests.add(frontLineWorkerWebRequest1);
         frontLineWorkerWebRequests.add(frontLineWorkerWebRequest2);
 
-        frontLineWorkerCsvService.addAllWithoutValidations(frontLineWorkerWebRequests);
+        frontLineWorkerImportService.addAllWithoutValidations(frontLineWorkerWebRequests);
 
         verify(allFrontLineWorkers).createOrUpdateAll(captor.capture());
         List<FrontLineWorker> frontLineWorkers = captor.getValue();
@@ -123,16 +138,16 @@ public class FrontLineWorkerCsvServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         String msisdn1 = "911234454545";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest1 = new FrontLineWorkerCsvRequest(msisdn1, "name", "ASHA", new LocationRequest(district, block, panchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest1 = new FrontLineWorkerImportRequest(msisdn1, "name", "ASHA", new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
         FrontLineWorker expectedFLW = new FrontLineWorker();
         List<FrontLineWorker> frontLineWorkers = new ArrayList<>();
         frontLineWorkers.add(expectedFLW);
         when(allFrontLineWorkers.getByMsisdn(Long.parseLong(msisdn1))).thenReturn(frontLineWorkers);
-        ArrayList<FrontLineWorkerCsvRequest> frontLineWorkerWebRequests = new ArrayList<>();
+        ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         frontLineWorkerWebRequests.add(frontLineWorkerWebRequest1);
 
-        frontLineWorkerCsvService.addAllWithoutValidations(frontLineWorkerWebRequests);
+        frontLineWorkerImportService.addAllWithoutValidations(frontLineWorkerWebRequests);
 
         verify(allFrontLineWorkers).createOrUpdateAll(captor.capture());
         List<FrontLineWorker> actualFLWs = captor.getValue();
@@ -149,14 +164,14 @@ public class FrontLineWorkerCsvServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         String msisdn = "12344545";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest1 = new FrontLineWorkerCsvRequest(msisdn, "name", "ASHA", new LocationRequest(district, block, panchayat));
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest2 = new FrontLineWorkerCsvRequest(msisdn, "name", "ASHA", new LocationRequest(district, block, panchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest1 = new FrontLineWorkerImportRequest(msisdn, "name", "ASHA", new LocationRequest(district, block, panchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest2 = new FrontLineWorkerImportRequest(msisdn, "name", "ASHA", new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
-        ArrayList<FrontLineWorkerCsvRequest> frontLineWorkerWebRequests = new ArrayList<>();
+        ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         frontLineWorkerWebRequests.add(frontLineWorkerWebRequest1);
         frontLineWorkerWebRequests.add(frontLineWorkerWebRequest2);
 
-        frontLineWorkerCsvService.addAllWithoutValidations(frontLineWorkerWebRequests);
+        frontLineWorkerImportService.addAllWithoutValidations(frontLineWorkerWebRequests);
 
         verify(allFrontLineWorkers).createOrUpdateAll(captor.capture());
         List<FrontLineWorker> actualFLWs = captor.getValue();
@@ -172,14 +187,14 @@ public class FrontLineWorkerCsvServiceTest {
         String newDistrict = "district1";
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest = new FrontLineWorkerCsvRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat"));
         List<FrontLineWorker> frontLineWorkerList = new ArrayList<>();
         frontLineWorkerList.add(frontLineWorker);
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(prefixedMsisdn))).thenReturn(frontLineWorkerList);
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerCsvService.createOrUpdate(frontLineWorkerWebRequest);
+        FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerWebRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
@@ -192,7 +207,7 @@ public class FrontLineWorkerCsvServiceTest {
         assertEquals(newDistrict, value.getLocation().getDistrict());
         assertEquals(newBlock, value.getLocation().getBlock());
         assertEquals(newPanchayat, value.getLocation().getPanchayat());
-        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", frontLineWorkerImportResponse.getMessage());
     }
 
     @Test
@@ -204,18 +219,18 @@ public class FrontLineWorkerCsvServiceTest {
         String newDistrict = "district1";
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest = new FrontLineWorkerCsvRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat"));
         List<FrontLineWorker> frontLineWorkerList = new ArrayList<>();
         frontLineWorkerList.add(frontLineWorker);
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(prefixedMsisdn))).thenReturn(frontLineWorkerList);
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerCsvService.createOrUpdate(frontLineWorkerWebRequest);
+        FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerWebRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers, never()).createOrUpdate(captor.capture());
-        assertEquals("Invalid name", frontLineWorkerResponse.getMessage());
+        assertEquals("Invalid name", frontLineWorkerImportResponse.getMessage());
     }
 
     @Test
@@ -226,21 +241,21 @@ public class FrontLineWorkerCsvServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest = new FrontLineWorkerCsvRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
         FrontLineWorker frontLineWorker1 = new FrontLineWorker(Long.valueOf(msisdn), "old name", Designation.ANM, new Location("district", "block", "panchayat"));
         List<FrontLineWorker> frontLineWorkerList = new ArrayList<FrontLineWorker>();
         frontLineWorkerList.add(frontLineWorker1);
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(frontLineWorkerList);
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerCsvService.createOrUpdate(frontLineWorkerWebRequest);
+        FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerWebRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
         FrontLineWorker frontLineWorker = captor.getValue();
 
         assertEquals(StringUtils.EMPTY, frontLineWorker.getName());
-        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", frontLineWorkerImportResponse.getMessage());
     }
 
     @Test
@@ -252,13 +267,13 @@ public class FrontLineWorkerCsvServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest = new FrontLineWorkerCsvRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(null);
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerCsvService.createOrUpdate(frontLineWorkerWebRequest);
+        FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerWebRequest);
 
-        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", frontLineWorkerImportResponse.getMessage());
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
         FrontLineWorker value = captor.getValue();
@@ -273,13 +288,13 @@ public class FrontLineWorkerCsvServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest = new FrontLineWorkerCsvRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerCsvService.createOrUpdate(frontLineWorkerWebRequest);
+        FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerWebRequest);
 
         verify(allFrontLineWorkers, never()).getByMsisdn(Long.valueOf(msisdn));
-        assertEquals("Invalid msisdn", frontLineWorkerResponse.getMessage());
+        assertEquals("Invalid msisdn", frontLineWorkerImportResponse.getMessage());
     }
 
     @Test
@@ -290,7 +305,7 @@ public class FrontLineWorkerCsvServiceTest {
         final String district = "district";
         final String block = "block";
         final String panchayat = "panchayat";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest = new FrontLineWorkerCsvRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(new ArrayList<FrontLineWorker>() {
             {
                 add(new FrontLineWorker(Long.valueOf(msisdn), "oldName", Designation.ANM, new Location(district, block, panchayat)));
@@ -298,14 +313,14 @@ public class FrontLineWorkerCsvServiceTest {
         });
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerCsvService.createOrUpdate(frontLineWorkerWebRequest);
+        FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerWebRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
         FrontLineWorker flw = captor.getValue();
         assertEquals((Long) Long.parseLong(msisdn), flw.getMsisdn());
         assertNull(flw.getDesignation());
-        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", frontLineWorkerImportResponse.getMessage());
     }
 
     @Test
@@ -316,12 +331,12 @@ public class FrontLineWorkerCsvServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest = new FrontLineWorkerCsvRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerCsvService.createOrUpdate(frontLineWorkerWebRequest);
+        FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerWebRequest);
 
         verify(allFrontLineWorkers, never()).getByMsisdn(Long.valueOf(msisdn));
-        assertEquals("Invalid location", frontLineWorkerResponse.getMessage());
+        assertEquals("Invalid location", frontLineWorkerImportResponse.getMessage());
     }
 
     @Test
@@ -332,12 +347,12 @@ public class FrontLineWorkerCsvServiceTest {
         String newDistrict = "district1";
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest = new FrontLineWorkerCsvRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerCsvService.createOrUpdate(frontLineWorkerWebRequest);
+        FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerWebRequest);
 
-        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", frontLineWorkerImportResponse.getMessage());
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
         FrontLineWorker value = captor.getValue();
@@ -353,7 +368,7 @@ public class FrontLineWorkerCsvServiceTest {
         String newDistrict = "district1";
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest = new FrontLineWorkerCsvRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
         when(allFrontLineWorkers.getByMsisdn(Long.parseLong(prefixedMsisdn))).thenReturn(new ArrayList<FrontLineWorker>() {
             {
@@ -362,13 +377,13 @@ public class FrontLineWorkerCsvServiceTest {
             }
         });
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerCsvService.createOrUpdate(frontLineWorkerWebRequest);
+        FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerWebRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
         FrontLineWorker value = captor.getValue();
         assertEquals(prefixedMsisdn, value.getMsisdn().toString());
-        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", frontLineWorkerImportResponse.getMessage());
     }
 
     @Test
@@ -379,24 +394,35 @@ public class FrontLineWorkerCsvServiceTest {
         String newDistrict = "district1";
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
-        FrontLineWorkerCsvRequest frontLineWorkerWebRequest = new FrontLineWorkerCsvRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
+        FrontLineWorkerImportRequest frontLineWorkerWebRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat));
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat));
 
-        FrontLineWorkerResponse frontLineWorkerResponse = frontLineWorkerCsvService.createOrUpdate(frontLineWorkerWebRequest);
+        FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerWebRequest);
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
         FrontLineWorker value = captor.getValue();
         assertNull(value.getMsisdn());
-        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", frontLineWorkerImportResponse.getMessage());
     }
 
     @Test
     public void shouldGetFrontLineWorkerById() {
         Long msisdn = 12L;
 
-        frontLineWorkerCsvService.getAllByMsisdn(msisdn);
+        frontLineWorkerImportService.getAllByMsisdn(msisdn);
 
         verify(allFrontLineWorkers).getByMsisdn(msisdn);
+    }
+
+    private void verifySync(FrontLineWorkerImportRequest frontLineWorkerImportRequest) {
+        ArgumentCaptor<FrontLineWorker> frontLineWorkerArgumentCaptor = ArgumentCaptor.forClass(FrontLineWorker.class);
+        verify(syncService).syncFrontLineWorker(frontLineWorkerArgumentCaptor.capture());
+        FrontLineWorker frontLineWorkerThatWasSynced = frontLineWorkerArgumentCaptor.getValue();
+        assertEquals(frontLineWorkerImportRequest.getName(), frontLineWorkerThatWasSynced.getName());
+        assertEquals(frontLineWorkerImportRequest.getDesignation(), frontLineWorkerThatWasSynced.getDesignation());
+        assertEquals(frontLineWorkerImportRequest.getLocation().getDistrict(), frontLineWorkerThatWasSynced.getLocation().getDistrict());
+        assertEquals(frontLineWorkerImportRequest.getLocation().getBlock(), frontLineWorkerThatWasSynced.getLocation().getBlock());
+        assertEquals(frontLineWorkerImportRequest.getLocation().getPanchayat(), frontLineWorkerThatWasSynced.getLocation().getPanchayat());
     }
 }

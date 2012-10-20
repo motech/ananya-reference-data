@@ -1,7 +1,8 @@
-package org.motechproject.ananya.referencedata.flw.validators;
+package org.motechproject.ananya.referencedata.contactCenter.validator;
 
 import org.apache.commons.lang.StringUtils;
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerWebRequest;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
+import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
 public class FrontLineWorkerWebRequestValidator {
 

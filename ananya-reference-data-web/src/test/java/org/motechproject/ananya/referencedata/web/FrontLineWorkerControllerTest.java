@@ -6,10 +6,10 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
+import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWorkerService;
 import org.motechproject.ananya.referencedata.flw.response.ExceptionResponse;
-import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerWebRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletResponse;

@@ -4,14 +4,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.ExceptionResponse;
-import org.motechproject.ananya.referencedata.flw.response.FrontLineWorkerResponse;
 import org.motechproject.ananya.referencedata.flw.response.LocationCreationResponse;
 import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
-import org.motechproject.ananya.referencedata.flw.request.FrontLineWorkerWebRequest;
+import org.motechproject.ananya.referencedata.contactCenter.response.FrontLineWorkerResponse;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -61,9 +61,9 @@ public class DataAPITest extends SpringIntegrationTest {
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient();
         jsonHttpClientForLocation.post("http://localhost:9979/ananya-reference-data/location", new LocationRequest("district", "block", "panchayat"), LocationCreationResponse.class);
         JsonHttpClient jsonHttpClientForFLW = new JsonHttpClient();
-        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientForFLW.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerWebRequest("guid", "INVALID","Timepass"), FrontLineWorkerResponse.class).body;
+        FrontLineWorkerResponse FrontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientForFLW.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerWebRequest("guid", "INVALID","Timepass"), FrontLineWorkerResponse.class).body;
 
-        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", FrontLineWorkerResponse.getMessage());
     }
 
     @Test
@@ -71,9 +71,9 @@ public class DataAPITest extends SpringIntegrationTest {
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient();
         jsonHttpClientForLocation.post("http://localhost:9979/ananya-reference-data/location", new LocationRequest("district", "block", "panchayat"), LocationCreationResponse.class);
         JsonHttpClient jsonHttpClient = new JsonHttpClient();
-        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClient.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerWebRequest("guid", "INVALID","Timepass"), FrontLineWorkerResponse.class).body;
+        FrontLineWorkerResponse FrontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClient.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerWebRequest("guid", "INVALID","Timepass"), FrontLineWorkerResponse.class).body;
 
-        assertEquals("Invalid msisdn", frontLineWorkerResponse.getMessage());
+        assertEquals("Invalid msisdn", FrontLineWorkerResponse.getMessage());
     }
 
     @Test
@@ -81,9 +81,9 @@ public class DataAPITest extends SpringIntegrationTest {
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient();
         jsonHttpClientForLocation.post("http://localhost:9979/ananya-reference-data/location", new LocationRequest("district", "block", "panchayat"), LocationCreationResponse.class);
         JsonHttpClient jsonHttpClient = new JsonHttpClient();
-        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClient.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerWebRequest("guid", "INVALID","Timepass"), FrontLineWorkerResponse.class).body;
+        FrontLineWorkerResponse FrontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClient.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerWebRequest("guid", "INVALID","Timepass"), FrontLineWorkerResponse.class).body;
 
-        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", FrontLineWorkerResponse.getMessage());
     }
 
     @Test
@@ -91,9 +91,9 @@ public class DataAPITest extends SpringIntegrationTest {
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient();
         jsonHttpClientForLocation.post("http://localhost:9979/ananya-reference-data/location", new LocationRequest("district", "block", "panchayat"), LocationCreationResponse.class);
         JsonHttpClient jsonHttpClient = new JsonHttpClient();
-        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClient.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerWebRequest("guid", "INVALID","Timepass"), FrontLineWorkerResponse.class).body;
+        FrontLineWorkerResponse FrontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClient.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerWebRequest("guid", "INVALID","Timepass"), FrontLineWorkerResponse.class).body;
 
-        assertEquals("Invalid location", frontLineWorkerResponse.getMessage());
+        assertEquals("Invalid location", FrontLineWorkerResponse.getMessage());
     }
 
     @Test
@@ -103,9 +103,9 @@ public class DataAPITest extends SpringIntegrationTest {
         jsonHttpClientForLocation.post("http://localhost:9979/ananya-reference-data/location", new LocationRequest("district", "block", "panchayat"), LocationCreationResponse.class);
         jsonHttpClientFLW.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerWebRequest("guid", "INVALID","Timepass"), FrontLineWorkerResponse.class);
         
-        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientFLW.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerWebRequest("guid", "INVALID","Timepass"), FrontLineWorkerResponse.class).body;
+        FrontLineWorkerResponse FrontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientFLW.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerWebRequest("guid", "INVALID","Timepass"), FrontLineWorkerResponse.class).body;
 
-        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", FrontLineWorkerResponse.getMessage());
     }
 
     @Test
@@ -114,9 +114,9 @@ public class DataAPITest extends SpringIntegrationTest {
         JsonHttpClient jsonHttpClientForLocation = new JsonHttpClient();
         jsonHttpClientForLocation.post("http://localhost:9979/ananya-reference-data/location", new LocationRequest("district", "block", "panchayat"), LocationCreationResponse.class);
 
-        FrontLineWorkerResponse frontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientFLW.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerWebRequest("guid", "INVALID","Timepass"), FrontLineWorkerResponse.class).body;
+        FrontLineWorkerResponse FrontLineWorkerResponse = (FrontLineWorkerResponse) jsonHttpClientFLW.post("http://localhost:9979/ananya-reference-data/flw", new FrontLineWorkerWebRequest("guid", "INVALID","Timepass"), FrontLineWorkerResponse.class).body;
 
-        assertEquals("FLW created/updated successfully", frontLineWorkerResponse.getMessage());
+        assertEquals("FLW created/updated successfully", FrontLineWorkerResponse.getMessage());
     }
 
     @Test

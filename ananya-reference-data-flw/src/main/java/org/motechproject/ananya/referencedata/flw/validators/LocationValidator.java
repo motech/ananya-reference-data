@@ -3,7 +3,7 @@ package org.motechproject.ananya.referencedata.flw.validators;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
-import org.motechproject.ananya.referencedata.flw.response.FLWValidationResponse;
+import org.motechproject.ananya.referencedata.flw.response.LocationValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,13 +17,13 @@ public class LocationValidator {
         this.allLocations = allLocations;
     }
 
-    public FLWValidationResponse validate(Location location) {
-        FLWValidationResponse responseFLW = new FLWValidationResponse();
+    public LocationValidationResponse validate(Location location) {
+        LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
         if (StringUtils.isEmpty(location.getDistrict()) || StringUtils.isEmpty(location.getBlock()) || StringUtils.isEmpty(location.getPanchayat()))
-            responseFLW.forBlankFieldsInLocation();
+            locationValidationResponse.forBlankFieldsInLocation();
         Location alreadyPresentLocation = allLocations.getFor(location.getDistrict(), location.getBlock(), location.getPanchayat());
         if (alreadyPresentLocation != null)
-            responseFLW.forDuplicateLocation();
-        return responseFLW;
+            locationValidationResponse.forDuplicateLocation();
+        return locationValidationResponse;
     }
 }

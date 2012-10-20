@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata.flw.request;
+package org.motechproject.ananya.referencedata.contactCenter.request;
 
 public class FrontLineWorkerWebRequest {
     private String guid;
