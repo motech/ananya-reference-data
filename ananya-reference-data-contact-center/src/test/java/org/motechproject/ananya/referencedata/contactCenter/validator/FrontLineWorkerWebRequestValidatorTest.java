@@ -15,14 +15,14 @@ public class FrontLineWorkerWebRequestValidatorTest {
         Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest(null, null, null));
 
         assertEquals(3, errors.getCount());
-        assertTrue(errors.hasMessage("Guid field is blank"));
+        assertTrue(errors.hasMessage("FLW-Id field is blank"));
         assertTrue(errors.hasMessage("Verification-Status field has invalid/blank value"));
         assertTrue(errors.hasMessage("Reason field is blank"));
     }
 
     @Test
     public void shouldThrowErrorForInvalidStatus() {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("guid", "wooster", "bertie");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", "wooster", "bertie");
         Errors errors = FrontLineWorkerWebRequestValidator.validate(frontLineWorkerWebRequest);
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("Verification-Status field has invalid/blank value"));
@@ -30,7 +30,7 @@ public class FrontLineWorkerWebRequestValidatorTest {
 
     @Test
     public void shouldValidateAValidRequest() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("guid", VerificationStatus.INVALID.name(), "reason"));
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", VerificationStatus.INVALID.name(), "reason"));
         assertEquals(0, errors.getCount());
     }
 }

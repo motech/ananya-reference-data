@@ -41,10 +41,10 @@ public class AllFrontLineWorkers {
         template.saveOrUpdateAll(frontLineWorkers);
     }
 
-    public FrontLineWorker getByGuid(String guid) {
+    public FrontLineWorker getByFlwId(String flwId) {
         DetachedCriteria criteria = DetachedCriteria.forClass(FrontLineWorker.class);
 
-        criteria.add(Restrictions.eq("flwGuid", guid));
+        criteria.add(Restrictions.eq("flwId", flwId));
 
         List frontLineWorkerList = template.findByCriteria(criteria);
         return frontLineWorkerList.size() == 0 ? null : (FrontLineWorker) frontLineWorkerList.get(0);

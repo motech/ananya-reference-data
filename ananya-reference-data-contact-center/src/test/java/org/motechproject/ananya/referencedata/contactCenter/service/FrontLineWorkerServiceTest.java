@@ -35,30 +35,30 @@ public class FrontLineWorkerServiceTest {
     @Test
     public void shouldValidateGivenFLWIfExistsInDatabase() {
         expectedException.expect(ValidationException.class);
-        expectedException.expectMessage("GUID is not present in MoTeCH");
+        expectedException.expectMessage("FLW-Id is not present in MoTeCH");
 
-        String guid = "11223344";
-        when(allFrontLineWorkers.getByGuid(guid)).thenReturn(null);
+        String flwId = "11223344";
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
 
-        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(guid, VerificationStatus.INVALID.name(), "reason"));
+        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId, VerificationStatus.INVALID.name(), "reason"));
     }
 
     @Test
     public void shouldUpdateExistingFrontLineWorker() {
-        String guid = "11223344";
+        String flwId = "11223344";
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
         String reason = "reason";
-        FrontLineWorker frontLineWorker = new FrontLineWorker(9988776655L, "", Designation.ANM, new Location(), guid, verificationStatus, reason);
-        when(allFrontLineWorkers.getByGuid(guid)).thenReturn(frontLineWorker);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(9988776655L, "", Designation.ANM, new Location(), flwId, verificationStatus, reason);
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
 
-        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(guid, verificationStatus.name(), reason));
+        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId, verificationStatus.name(), reason));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).update(captor.capture());
         FrontLineWorker actualFrontLineWorker = captor.getValue();
         assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
         assertEquals(reason, actualFrontLineWorker.getReason());
-        assertEquals(frontLineWorker.getFlwGuid(), actualFrontLineWorker.getFlwGuid());
+        assertEquals(frontLineWorker.getFlwid(), actualFrontLineWorker.getFlwid());
         assertEquals(frontLineWorker.getMsisdn(), actualFrontLineWorker.getMsisdn());
     }
 }

@@ -9,7 +9,6 @@ import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWor
 import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWorkerService;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
-import org.motechproject.ananya.referencedata.web.controller.FrontLineWorkerController;
 import org.motechproject.ananya.referencedata.web.utils.TestUtils;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.server.MvcResult;
@@ -40,7 +39,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldUpdateTheStatusForAValidFLWRequestXml() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("guid", VerificationStatus.INVALID.name(), "Invalid User");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", VerificationStatus.INVALID.name(), "Invalid User");
 
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
 
@@ -52,7 +51,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldReturnValidationErrorForAnInvalidFLWRequestXml() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("guid", null, "Invalid User");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", null, "Invalid User");
 
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.failure("Verification-Status field has invalid/blank value"), status().isBadRequest());
         verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
@@ -60,7 +59,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldUpdateTheStatusForAValidFLWRequestJson() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("guid", VerificationStatus.INVALID.name(), "Invalid User");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", VerificationStatus.INVALID.name(), "Invalid User");
 
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
 
@@ -72,9 +71,9 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldReturnValidationErrorForAnInvalidFLWRequestJson() throws Exception {
-        String guid = "guid";
+        String flwId = "flwId";
         String reason = "Invalid User";
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(guid, null, reason);
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, null, reason);
 
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.failure("Verification-Status field has invalid/blank value"), status().isBadRequest());
         verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));

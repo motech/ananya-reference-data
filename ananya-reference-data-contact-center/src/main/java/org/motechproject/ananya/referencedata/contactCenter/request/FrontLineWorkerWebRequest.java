@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class FrontLineWorkerWebRequest {
     @JsonProperty(value = "id")
     @XmlElement(name = "id")
-    private String guid;
+    private String flwId;
 
     @XmlElement(name = "verification-status")
     @JsonProperty(value = "verification-status")
@@ -22,14 +22,14 @@ public class FrontLineWorkerWebRequest {
     public FrontLineWorkerWebRequest() {
     }
 
-    public FrontLineWorkerWebRequest(String guid, String verificationStatus, String reason) {
-        this.guid = guid;
+    public FrontLineWorkerWebRequest(String flwId, String verificationStatus, String reason) {
+        this.flwId = flwId;
         this.verificationStatus = verificationStatus;
         this.reason = reason;
     }
 
-    public String getGuid() {
-        return guid;
+    public String getFlwId() {
+        return flwId;
     }
 
     public String getReason() {
@@ -47,7 +47,7 @@ public class FrontLineWorkerWebRequest {
 
         FrontLineWorkerWebRequest that = (FrontLineWorkerWebRequest) o;
 
-        if (guid != null ? !guid.equals(that.guid) : that.guid != null) return false;
+        if (flwId != null ? !flwId.equals(that.flwId) : that.flwId != null) return false;
         if (reason != null ? !reason.equals(that.reason) : that.reason != null) return false;
         if (verificationStatus != null ? !verificationStatus.equals(that.verificationStatus) : that.verificationStatus != null)
             return false;
@@ -57,7 +57,7 @@ public class FrontLineWorkerWebRequest {
 
     @Override
     public int hashCode() {
-        int result = guid != null ? guid.hashCode() : 0;
+        int result = flwId != null ? flwId.hashCode() : 0;
         result = 31 * result + (verificationStatus != null ? verificationStatus.hashCode() : 0);
         result = 31 * result + (reason != null ? reason.hashCode() : 0);
         return result;

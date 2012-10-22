@@ -33,16 +33,16 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
 
     @Test
     public void shouldUpdateAnExistingFlw() {
-        String guid = UUID.randomUUID().toString();
+        String flwId = UUID.randomUUID().toString();
         Location location = new Location("d", "b", "p");
-        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "Shahrukh", Designation.ANM, location, guid, VerificationStatus.INVALID, "reason");
+        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "Shahrukh", Designation.ANM, location, flwId, VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(guid, VerificationStatus.OTHERS.name(), "Out of town");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.OTHERS.name(), "Out of town");
 
         frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
 
-        FrontLineWorker updatedFrontLineWorker = allFrontLineWorkers.getByGuid(guid);
+        FrontLineWorker updatedFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
         assertEquals(frontLineWorkerWebRequest.getVerificationStatus(), updatedFrontLineWorker.getVerificationStatus());
         assertEquals(frontLineWorkerWebRequest.getReason(), updatedFrontLineWorker.getReason());
         assertEquals(frontLineWorker.getName(), updatedFrontLineWorker.getName());
@@ -52,15 +52,15 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
     }
 
     @Test
-    public void shouldInvalidateAnFlwWhenGuidDoesNotExist() {
+    public void shouldInvalidateAnFlwWhenFLwIdDoesNotExist() {
         expectedException.expect(ValidationException.class);
-        expectedException.expectMessage("GUID is not present in MoTeCH");
+        expectedException.expectMessage("FLW-Id is not present in MoTeCH");
 
         Location location = new Location("d", "b", "p");
         FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "Shahrukh", Designation.ANM, location, UUID.randomUUID().toString(), VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("newGuid", VerificationStatus.OTHERS.name(), "Out of town");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("newFlwId", VerificationStatus.OTHERS.name(), "Out of town");
 
         frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
     }

@@ -88,4 +88,10 @@
         </sql>
     </changeSet>
 
+    <changeSet context="setup" author="ThoughtWorks" id="10">
+        <sql splitStatements="false">
+            ALTER TABLE ananya_reference_data.front_line_worker RENAME COLUMN flw_guid TO flw_id
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

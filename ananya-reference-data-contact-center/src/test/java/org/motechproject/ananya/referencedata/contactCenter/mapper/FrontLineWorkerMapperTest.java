@@ -7,6 +7,8 @@ import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 
+import java.util.UUID;
+
 import static junit.framework.Assert.assertEquals;
 
 public class FrontLineWorkerMapperTest {
@@ -19,11 +21,11 @@ public class FrontLineWorkerMapperTest {
         Designation anm = Designation.ANM;
         Location location = new Location();
         String verificationStatus = VerificationStatus.INVALID.name();
-        String guid = "guid";
-        FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, name, anm, location, guid, VerificationStatus.OTHERS, null);
-        FrontLineWorker newFrontLineWorker = FrontLineWorkerMapper.mapFrom(new FrontLineWorkerWebRequest(guid, verificationStatus, reason), existingFrontLineWorker);
+        String flwId = UUID.randomUUID().toString();
+        FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, name, anm, location, flwId, VerificationStatus.OTHERS, null);
+        FrontLineWorker newFrontLineWorker = FrontLineWorkerMapper.mapFrom(new FrontLineWorkerWebRequest(flwId, verificationStatus, reason), existingFrontLineWorker);
 
-        assertEquals(guid, newFrontLineWorker.getFlwGuid());
+        assertEquals(flwId, newFrontLineWorker.getFlwid());
         assertEquals(msisdn, newFrontLineWorker.getMsisdn());
         assertEquals(verificationStatus, newFrontLineWorker.getVerificationStatus());
         assertEquals(reason, newFrontLineWorker.getReason());

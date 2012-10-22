@@ -47,7 +47,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         List<FrontLineWorker> frontLineWorkerList = template.loadAll(FrontLineWorker.class);
         assertEquals(1, frontLineWorkerList.size());
         assertNotNull(frontLineWorkerList.get(0).getLastModified());
-        assertNotNull(frontLineWorkerList.get(0).getFlwGuid());
+        assertNotNull(frontLineWorkerList.get(0).getFlwid());
     }
 
     @Test
@@ -133,38 +133,38 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
     }
 
     @Test
-    public void shouldGetFLWByGuid() {
-        String guid = "guid";
+    public void shouldGetFLWByFlwId() {
+        String flwId = "flwId";
         Long msisdn = 1234567890L;
         String name = "name";
         Designation anm = Designation.ANM;
-        allFrontLineWorkers.add(new FrontLineWorker(msisdn, name, anm, location, guid, VerificationStatus.INVALID, null));
+        allFrontLineWorkers.add(new FrontLineWorker(msisdn, name, anm, location, flwId, VerificationStatus.INVALID, null));
 
-        FrontLineWorker actualFrontLineWorker = allFrontLineWorkers.getByGuid(guid);
+        FrontLineWorker actualFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
 
         assertEquals(msisdn, actualFrontLineWorker.getMsisdn());
-        assertEquals(guid, actualFrontLineWorker.getFlwGuid());
+        assertEquals(flwId, actualFrontLineWorker.getFlwid());
         assertEquals(name, actualFrontLineWorker.getName());
     }
 
     @Test
-    public void shouldReturnNullWhenFrontLineWorkerByGuidDoesNotExist() {
-        FrontLineWorker frontLineWorker = allFrontLineWorkers.getByGuid("abcd");
+    public void shouldReturnNullWhenFrontLineWorkerByFlwIdDoesNotExist() {
+        FrontLineWorker frontLineWorker = allFrontLineWorkers.getByFlwId("abcd");
         assertNull(frontLineWorker);
     }
 
     @Test
     public void shouldUpdateFrontLineWorker() {
-        FrontLineWorker frontLineWorker = new FrontLineWorker(9988776655L, "name", Designation.ANM, location, "guid", VerificationStatus.OTHERS, null);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(9988776655L, "name", Designation.ANM, location, "flwId", VerificationStatus.OTHERS, null);
         template.save(frontLineWorker);
         frontLineWorker.setReason("random");
         frontLineWorker.setVerificationStatus(VerificationStatus.INVALID);
 
         allFrontLineWorkers.update(frontLineWorker);
 
-        FrontLineWorker frontLineWOrkerFromDb = allFrontLineWorkers.getByGuid("guid");
+        FrontLineWorker frontLineWOrkerFromDb = allFrontLineWorkers.getByFlwId("flwId");
         assertEquals(frontLineWorker.getId(), frontLineWOrkerFromDb.getId());
-        assertEquals(frontLineWorker.getFlwGuid(), frontLineWOrkerFromDb.getFlwGuid());
+        assertEquals(frontLineWorker.getFlwid(), frontLineWOrkerFromDb.getFlwid());
         assertEquals(frontLineWorker.getName(), frontLineWOrkerFromDb.getName());
         assertEquals(frontLineWorker.getVerificationStatus(), frontLineWOrkerFromDb.getVerificationStatus());
         assertEquals(frontLineWorker.getReason(), frontLineWOrkerFromDb.getReason());

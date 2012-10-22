@@ -18,9 +18,9 @@ public class FrontLineWorkerService {
     }
 
     public void updateVerifiedFlw(FrontLineWorkerWebRequest frontLineWorkerWebRequest) {
-        FrontLineWorker existingFrontLineWorker = allFrontLineWorkers.getByGuid(frontLineWorkerWebRequest.getGuid());
+        FrontLineWorker existingFrontLineWorker = allFrontLineWorkers.getByFlwId(frontLineWorkerWebRequest.getFlwId());
         if(existingFrontLineWorker == null)
-            throw new ValidationException("GUID is not present in MoTeCH");
+            throw new ValidationException("FLW-Id is not present in MoTeCH");
         allFrontLineWorkers.update(FrontLineWorkerMapper.mapFrom(frontLineWorkerWebRequest, existingFrontLineWorker));
     }
 }

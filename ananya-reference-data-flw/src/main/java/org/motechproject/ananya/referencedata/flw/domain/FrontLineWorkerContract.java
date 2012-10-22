@@ -9,15 +9,15 @@ public class FrontLineWorkerContract {
     private String designation;
     private Date lastModified;
     private LocationContract location;
-    private String flwGuid;
+    private String flwId;
 
-    public FrontLineWorkerContract(String msisdn, String name, String designation, Date lastModified, LocationContract location, String flwGuid) {
+    public FrontLineWorkerContract(String msisdn, String name, String designation, Date lastModified, LocationContract location, String flwId) {
         this.name = name;
         this.msisdn = msisdn;
         this.designation = designation;
         this.lastModified = lastModified;
         this.location = location;
-        this.flwGuid = flwGuid;
+        this.flwId = flwId;
     }
 
     public String getName() {
@@ -40,7 +40,7 @@ public class FrontLineWorkerContract {
         return lastModified;
     }
 
-    public String getFlwGuid() {
-        return flwGuid;
+    public String getFlwId() {
+        return flwId;
     }
 }

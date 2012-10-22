@@ -9,8 +9,8 @@ public class FrontLineWorkerWebRequestValidator {
 
     public static Errors validate(FrontLineWorkerWebRequest frontLineWorkerWebRequest){
         Errors errors = new Errors();
-        if(StringUtils.isEmpty(frontLineWorkerWebRequest.getGuid()))
-            errors.add("Guid field is blank");
+        if(StringUtils.isEmpty(frontLineWorkerWebRequest.getFlwId()))
+            errors.add("FLW-Id field is blank");
 
         if(StringUtils.isEmpty(frontLineWorkerWebRequest.getVerificationStatus()) || !VerificationStatus.isValid(frontLineWorkerWebRequest.getVerificationStatus()))
             errors.add("Verification-Status field has invalid/blank value");

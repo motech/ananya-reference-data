@@ -15,7 +15,7 @@ public class FrontLineWorkerTest {
 
         FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, Designation.ANM, location);
 
-        assertNotNull(frontLineWorker.getFlwGuid());
+        assertNotNull(frontLineWorker.getFlwid());
         assertEquals(msisdn, (long) frontLineWorker.getMsisdn());
         assertEquals(name, frontLineWorker.getName());
         assertEquals(Designation.ANM.name(), frontLineWorker.getDesignation());
