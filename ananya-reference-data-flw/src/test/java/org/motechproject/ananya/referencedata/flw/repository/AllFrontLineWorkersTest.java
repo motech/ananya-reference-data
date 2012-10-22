@@ -7,6 +7,7 @@ import org.motechproject.ananya.referencedata.SpringIntegrationTest;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         template.deleteAll(template.loadAll(Location.class));
         location = new Location("district", "block", "panchayat");
         template.save(location);
-
     }
 
     @After
@@ -138,7 +138,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         Long msisdn = 1234567890L;
         String name = "name";
         Designation anm = Designation.ANM;
-        allFrontLineWorkers.add(new FrontLineWorker(msisdn, name, anm, location, guid, null, null));
+        allFrontLineWorkers.add(new FrontLineWorker(msisdn, name, anm, location, guid, VerificationStatus.INVALID, null));
 
         FrontLineWorker actualFrontLineWorker = allFrontLineWorkers.getByGuid(guid);
 
@@ -155,10 +155,10 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
     @Test
     public void shouldUpdateFrontLineWorker() {
-        FrontLineWorker frontLineWorker = new FrontLineWorker(9988776655L, "name", Designation.ANM, location, "guid", null, null);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(9988776655L, "name", Designation.ANM, location, "guid", VerificationStatus.OTHERS, null);
         template.save(frontLineWorker);
         frontLineWorker.setReason("random");
-        frontLineWorker.setVerificationStatus("INVALID");
+        frontLineWorker.setVerificationStatus(VerificationStatus.INVALID);
 
         allFrontLineWorkers.update(frontLineWorker);
 

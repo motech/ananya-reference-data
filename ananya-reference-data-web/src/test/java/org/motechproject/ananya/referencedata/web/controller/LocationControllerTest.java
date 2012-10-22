@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata.web;
+package org.motechproject.ananya.referencedata.web.controller;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -32,13 +32,13 @@ public class FrontLineWorker extends BaseEntity {
     public FrontLineWorker() {
     }
 
-    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location, String flwGuid, String verificationStatus, String reason) {
+    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location, String flwGuid, VerificationStatus verificationStatus, String reason) {
         this.msisdn = msisdn;
         this.name = name;
         this.designation = designation == null ? null : designation.name();
         this.location = location;
         this.flwGuid = flwGuid;
-        this.verificationStatus = verificationStatus;
+        this.verificationStatus = verificationStatus.name();
         this.reason = reason;
     }
 
@@ -90,8 +90,8 @@ public class FrontLineWorker extends BaseEntity {
         this.location = location;
     }
 
-    public void setVerificationStatus(String verificationStatus) {
-        this.verificationStatus = verificationStatus;
+    public void setVerificationStatus(VerificationStatus verificationStatus) {
+        this.verificationStatus = verificationStatus.name();
     }
 
     public void setReason(String reason) {

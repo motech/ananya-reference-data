@@ -10,6 +10,7 @@ import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWor
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 
@@ -25,7 +26,6 @@ public class FrontLineWorkerServiceTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-
     @Before
     public void setUp() {
         initMocks(this);
@@ -40,24 +40,23 @@ public class FrontLineWorkerServiceTest {
         String guid = "11223344";
         when(allFrontLineWorkers.getByGuid(guid)).thenReturn(null);
 
-        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(guid, "INVALID", "reason"));
+        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(guid, VerificationStatus.INVALID.name(), "reason"));
     }
 
     @Test
     public void shouldUpdateExistingFrontLineWorker() {
         String guid = "11223344";
-        String verificationStatus = "INVALID";
+        VerificationStatus verificationStatus = VerificationStatus.INVALID;
         String reason = "reason";
         FrontLineWorker frontLineWorker = new FrontLineWorker(9988776655L, "", Designation.ANM, new Location(), guid, verificationStatus, reason);
-
         when(allFrontLineWorkers.getByGuid(guid)).thenReturn(frontLineWorker);
 
-        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(guid, verificationStatus, reason));
+        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(guid, verificationStatus.name(), reason));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).update(captor.capture());
         FrontLineWorker actualFrontLineWorker = captor.getValue();
-        assertEquals(verificationStatus, actualFrontLineWorker.getVerificationStatus());
+        assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
         assertEquals(reason, actualFrontLineWorker.getReason());
         assertEquals(frontLineWorker.getFlwGuid(), actualFrontLineWorker.getFlwGuid());
         assertEquals(frontLineWorker.getMsisdn(), actualFrontLineWorker.getMsisdn());

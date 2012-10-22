@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata.web;
+package org.motechproject.ananya.referencedata.web.controller;
 
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.LocationCreationResponse;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/location")
-public class LocationController extends BaseController{
+public class LocationController extends BaseController {
 
     private LocationService locationService;
 

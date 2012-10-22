@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata.web.messageConverter;
+package org.motechproject.ananya.referencedata.web.utils;
 
 import org.springframework.test.web.server.MockMvc;
 import org.springframework.test.web.server.setup.MockMvcBuilders;

@@ -1,0 +1,36 @@
+package org.motechproject.ananya.referencedata.web.controller;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
+import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletResponse;
+
+public abstract class BaseController {
+    private Logger logger = LoggerFactory.getLogger(BaseController.class);
+
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    public BaseResponse handleException(final Exception exception, HttpServletResponse response) {
+        response.setContentType("application/json; application/xml");
+        if (exception instanceof ValidationException)
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        else
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        logger.error(getExceptionString(exception));
+        return BaseResponse.failure(exception.getMessage());
+    }
+
+    private String getExceptionString(Exception ex) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(ExceptionUtils.getMessage(ex));
+        sb.append(ExceptionUtils.getStackTrace(ex));
+        sb.append(ExceptionUtils.getRootCauseMessage(ex));
+        sb.append(ExceptionUtils.getRootCauseStackTrace(ex));
+        return sb.toString();
+    }
+}
