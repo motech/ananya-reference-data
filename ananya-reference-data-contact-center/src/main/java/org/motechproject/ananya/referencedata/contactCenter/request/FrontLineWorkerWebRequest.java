@@ -11,8 +11,8 @@ public class FrontLineWorkerWebRequest {
     @XmlElement(name = "id")
     private String flwId;
 
-    @XmlElement(name = "verification-status")
-    @JsonProperty(value = "verification-status")
+    @XmlElement
+    @JsonProperty
     protected String verificationStatus;
 
     @XmlElement
