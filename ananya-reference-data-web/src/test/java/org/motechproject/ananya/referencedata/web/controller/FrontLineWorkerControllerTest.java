@@ -53,7 +53,7 @@ public class FrontLineWorkerControllerTest {
     public void shouldReturnValidationErrorForAnInvalidFLWRequestXml() throws Exception {
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", null, "Invalid User");
 
-        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.failure("Verification-Status field has invalid/blank value"), status().isBadRequest());
+        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field has invalid/blank value"), status().isBadRequest());
         verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
     }
 
@@ -75,7 +75,7 @@ public class FrontLineWorkerControllerTest {
         String reason = "Invalid User";
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, null, reason);
 
-        postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.failure("Verification-Status field has invalid/blank value"), status().isBadRequest());
+        postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field has invalid/blank value"), status().isBadRequest());
         verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
     }
 

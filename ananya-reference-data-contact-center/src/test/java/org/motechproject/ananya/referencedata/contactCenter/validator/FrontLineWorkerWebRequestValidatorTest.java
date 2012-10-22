@@ -15,9 +15,9 @@ public class FrontLineWorkerWebRequestValidatorTest {
         Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest(null, null, null));
 
         assertEquals(3, errors.getCount());
-        assertTrue(errors.hasMessage("FLW-Id field is blank"));
-        assertTrue(errors.hasMessage("Verification-Status field has invalid/blank value"));
-        assertTrue(errors.hasMessage("Reason field is blank"));
+        assertTrue(errors.hasMessage("id field is blank"));
+        assertTrue(errors.hasMessage("verificationStatus field has invalid/blank value"));
+        assertTrue(errors.hasMessage("reason field is blank"));
     }
 
     @Test
@@ -25,7 +25,7 @@ public class FrontLineWorkerWebRequestValidatorTest {
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", "wooster", "bertie");
         Errors errors = FrontLineWorkerWebRequestValidator.validate(frontLineWorkerWebRequest);
         assertEquals(1, errors.getCount());
-        assertTrue(errors.hasMessage("Verification-Status field has invalid/blank value"));
+        assertTrue(errors.hasMessage("verificationStatus field has invalid/blank value"));
     }
 
     @Test
