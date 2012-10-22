@@ -25,7 +25,7 @@ public class FrontLineWorkerMapperTest {
         FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, name, anm, location, flwId, VerificationStatus.OTHERS, null);
         FrontLineWorker newFrontLineWorker = FrontLineWorkerMapper.mapFrom(new FrontLineWorkerWebRequest(flwId, verificationStatus, reason), existingFrontLineWorker);
 
-        assertEquals(flwId, newFrontLineWorker.getFlwid());
+        assertEquals(flwId, newFrontLineWorker.getFlwId());
         assertEquals(msisdn, newFrontLineWorker.getMsisdn());
         assertEquals(verificationStatus, newFrontLineWorker.getVerificationStatus());
         assertEquals(reason, newFrontLineWorker.getReason());

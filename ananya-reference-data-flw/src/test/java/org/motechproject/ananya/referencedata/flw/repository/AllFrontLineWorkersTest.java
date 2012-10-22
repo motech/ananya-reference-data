@@ -47,7 +47,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         List<FrontLineWorker> frontLineWorkerList = template.loadAll(FrontLineWorker.class);
         assertEquals(1, frontLineWorkerList.size());
         assertNotNull(frontLineWorkerList.get(0).getLastModified());
-        assertNotNull(frontLineWorkerList.get(0).getFlwid());
+        assertNotNull(frontLineWorkerList.get(0).getFlwId());
     }
 
     @Test
@@ -143,7 +143,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         FrontLineWorker actualFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
 
         assertEquals(msisdn, actualFrontLineWorker.getMsisdn());
-        assertEquals(flwId, actualFrontLineWorker.getFlwid());
+        assertEquals(flwId, actualFrontLineWorker.getFlwId());
         assertEquals(name, actualFrontLineWorker.getName());
     }
 
@@ -164,7 +164,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
         FrontLineWorker frontLineWOrkerFromDb = allFrontLineWorkers.getByFlwId("flwId");
         assertEquals(frontLineWorker.getId(), frontLineWOrkerFromDb.getId());
-        assertEquals(frontLineWorker.getFlwid(), frontLineWOrkerFromDb.getFlwid());
+        assertEquals(frontLineWorker.getFlwId(), frontLineWOrkerFromDb.getFlwId());
         assertEquals(frontLineWorker.getName(), frontLineWOrkerFromDb.getName());
         assertEquals(frontLineWorker.getVerificationStatus(), frontLineWOrkerFromDb.getVerificationStatus());
         assertEquals(frontLineWorker.getReason(), frontLineWOrkerFromDb.getReason());

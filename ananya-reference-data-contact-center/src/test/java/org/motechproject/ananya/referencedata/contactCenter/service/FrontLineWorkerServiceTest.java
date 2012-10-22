@@ -58,7 +58,7 @@ public class FrontLineWorkerServiceTest {
         FrontLineWorker actualFrontLineWorker = captor.getValue();
         assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
         assertEquals(reason, actualFrontLineWorker.getReason());
-        assertEquals(frontLineWorker.getFlwid(), actualFrontLineWorker.getFlwid());
+        assertEquals(frontLineWorker.getFlwId(), actualFrontLineWorker.getFlwId());
         assertEquals(frontLineWorker.getMsisdn(), actualFrontLineWorker.getMsisdn());
     }
 }
