@@ -7,7 +7,7 @@ import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 public class FrontLineWorkerMapper {
 
     public static FrontLineWorker mapFrom(FrontLineWorkerWebRequest frontLineWorkerWebRequest, FrontLineWorker existingFrontLineWorker) {
-        existingFrontLineWorker.setVerificationStatus(VerificationStatus.valueOf(frontLineWorkerWebRequest.getVerificationStatus()));
+        existingFrontLineWorker.setVerificationStatus(VerificationStatus.from(frontLineWorkerWebRequest.getVerificationStatus()));
         existingFrontLineWorker.setReason(frontLineWorkerWebRequest.getReason());
         return existingFrontLineWorker;
     }

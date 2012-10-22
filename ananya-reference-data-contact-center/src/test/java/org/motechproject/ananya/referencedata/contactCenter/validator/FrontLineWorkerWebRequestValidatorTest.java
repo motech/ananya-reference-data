@@ -29,6 +29,17 @@ public class FrontLineWorkerWebRequestValidatorTest {
     }
 
     @Test
+    public void shouldAllowCaseInsensitiveVerificationStatus() {
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", "invaliD", "reason"));
+        assertEquals(0, errors.getCount());
+    }
+    @Test
+    public void shouldAllowVerificationStatusWithSpaces() {
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", "  InvaliD ", "reason"));
+        assertEquals(0, errors.getCount());
+    }
+
+    @Test
     public void shouldValidateAValidRequest() {
         Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", VerificationStatus.INVALID.name(), "reason"));
         assertEquals(0, errors.getCount());
