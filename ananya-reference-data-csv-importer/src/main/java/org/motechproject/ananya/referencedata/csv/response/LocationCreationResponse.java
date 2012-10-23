@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata.flw.response;
+package org.motechproject.ananya.referencedata.csv.response;
 
 import org.apache.commons.lang.StringUtils;
 

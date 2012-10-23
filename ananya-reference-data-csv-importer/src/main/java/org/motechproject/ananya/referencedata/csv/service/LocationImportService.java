@@ -1,12 +1,12 @@
-package org.motechproject.ananya.referencedata.flw.service;
+package org.motechproject.ananya.referencedata.csv.service;
 
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.response.LocationCreationResponse;
-import org.motechproject.ananya.referencedata.flw.response.LocationValidationResponse;
-import org.motechproject.ananya.referencedata.flw.validators.LocationValidator;
+import org.motechproject.ananya.referencedata.csv.response.LocationCreationResponse;
+import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
+import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -17,17 +17,17 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class LocationService {
+public class LocationImportService {
     private AllLocations allLocations;
-    private LocationValidator locationValidator;
+    private LocationImportValidator locationImportValidator;
 
-    public LocationService() {
+    public LocationImportService() {
     }
 
     @Autowired
-    public LocationService(AllLocations allLocations, LocationValidator locationValidator) {
+    public LocationImportService(AllLocations allLocations, LocationImportValidator locationImportValidator) {
         this.allLocations = allLocations;
-        this.locationValidator = locationValidator;
+        this.locationImportValidator = locationImportValidator;
     }
 
     @Cacheable(value = "locationSearchCache")
@@ -40,7 +40,7 @@ public class LocationService {
         LocationCreationResponse response = new LocationCreationResponse();
 
         Location location = LocationMapper.mapFrom(locationRequest);
-        LocationValidationResponse locationValidationResponse = locationValidator.validate(location);
+        LocationValidationResponse locationValidationResponse = locationImportValidator.validate(location);
         if (locationValidationResponse.isValid()) {
             allLocations.add(location);
             return response.withCreated();

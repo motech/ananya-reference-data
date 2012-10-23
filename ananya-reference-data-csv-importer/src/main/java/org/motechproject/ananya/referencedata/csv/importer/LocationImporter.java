@@ -2,9 +2,9 @@ package org.motechproject.ananya.referencedata.csv.importer;
 
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.response.LocationValidationResponse;
-import org.motechproject.ananya.referencedata.flw.service.LocationService;
-import org.motechproject.ananya.referencedata.flw.validators.LocationValidator;
+import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
+import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
+import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
 import org.motechproject.importer.annotation.CSVImporter;
 import org.motechproject.importer.annotation.Post;
 import org.motechproject.importer.annotation.Validate;
@@ -22,14 +22,14 @@ import java.util.List;
 @Component
 public class LocationImporter {
 
-    private LocationService locationService;
-    private LocationValidator locationValidator;
+    private LocationImportService locationImportService;
+    private LocationImportValidator locationImportValidator;
     private Logger logger = LoggerFactory.getLogger(LocationImporter.class);
 
     @Autowired
-    public LocationImporter(LocationService locationService, LocationValidator locationValidator) {
-        this.locationService = locationService;
-        this.locationValidator = locationValidator;
+    public LocationImporter(LocationImportService locationImportService, LocationImportValidator locationImportValidator) {
+        this.locationImportService = locationImportService;
+        this.locationImportValidator = locationImportValidator;
     }
 
     @Validate
@@ -43,7 +43,7 @@ public class LocationImporter {
         addHeader(errors);
         logger.info("Started validating location csv records");
         for (LocationRequest locationRequest : locationRequests) {
-            LocationValidationResponse locationValidationResponse = locationValidator.validate(LocationMapper.mapFrom(locationRequest));
+            LocationValidationResponse locationValidationResponse = locationImportValidator.validate(LocationMapper.mapFrom(locationRequest));
             if (locationValidationResponse.isInValid()) {
                 isValid = false;
             }
@@ -58,7 +58,7 @@ public class LocationImporter {
     public void postData(List<Object> objects) {
         logger.info("Started posting location data");
         List<LocationRequest> locationRequests = convertToLocationRequest(objects);
-        locationService.addAllWithoutValidations(locationRequests);
+        locationImportService.addAllWithoutValidations(locationRequests);
         logger.info("Finished posting location data");
     }
 

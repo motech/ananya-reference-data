@@ -1,12 +1,13 @@
-package org.motechproject.ananya.referencedata.flw.validators;
+package org.motechproject.ananya.referencedata.csv.validator;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
-import org.motechproject.ananya.referencedata.flw.response.LocationValidationResponse;
 
 import java.util.ArrayList;
 
@@ -15,17 +16,22 @@ import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class LocationValidatorTest {
+public class LocationImportValidatorTest {
     @Mock
     AllLocations allLocations;
+    private LocationImportValidator locationImportValidator;
+    
+    @Before
+    public void setUp() {
+        locationImportValidator = new LocationImportValidator(allLocations);
+    }
 
     @Test
     public void shouldFailValidationIfFieldsAreBlank() {
         Location location = new Location("", "B1", "P1");
         when(allLocations.getFor("", "B1", "P1")).thenReturn(null);
-        LocationValidator locationValidator = new LocationValidator(allLocations);
 
-        LocationValidationResponse locationValidationResponse = locationValidator.validate(location);
+        LocationValidationResponse locationValidationResponse = locationImportValidator.validate(location);
 
         assertFalse(locationValidationResponse.isValid());
         assertTrue(locationValidationResponse.getMessage().contains("Blank district, block or panchayat"));
@@ -37,9 +43,8 @@ public class LocationValidatorTest {
         ArrayList<Location> locations = new ArrayList<Location>();
         locations.add(new Location("D1","B1","P1"));
         when(allLocations.getFor("D1", "B1", "P1")).thenReturn(location);
-        LocationValidator locationValidator = new LocationValidator(allLocations);
 
-        LocationValidationResponse locationValidationResponse = locationValidator.validate(location);
+        LocationValidationResponse locationValidationResponse = locationImportValidator.validate(location);
 
         assertFalse(locationValidationResponse.isValid());
         assertTrue(locationValidationResponse.getMessage().contains("Location already present"));
@@ -49,9 +54,8 @@ public class LocationValidatorTest {
     public void shouldPassValidationIfAllFieldsArePresent() {
         Location location = new Location("D1", "B1", "P1");
         when(allLocations.getFor("D1", "B1", "P1")).thenReturn(null);
-        LocationValidator locationValidator = new LocationValidator(allLocations);
 
-        LocationValidationResponse locationValidationResponse = locationValidator.validate(location);
+        LocationValidationResponse locationValidationResponse = locationImportValidator.validate(location);
 
         assertTrue(locationValidationResponse.isValid());
         assertTrue(locationValidationResponse.getMessage().isEmpty());

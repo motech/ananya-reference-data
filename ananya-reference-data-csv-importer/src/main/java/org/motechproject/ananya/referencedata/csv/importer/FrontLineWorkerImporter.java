@@ -6,7 +6,7 @@ import org.motechproject.ananya.referencedata.csv.service.FrontLineWorkerImportS
 import org.motechproject.ananya.referencedata.csv.validator.FrontLineWorkerImportRequestValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.service.LocationService;
+import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
 import org.motechproject.importer.annotation.CSVImporter;
 import org.motechproject.importer.annotation.Post;
 import org.motechproject.importer.annotation.Validate;
@@ -25,13 +25,13 @@ import java.util.List;
 public class FrontLineWorkerImporter {
 
     private FrontLineWorkerImportService frontLineWorkerImportService;
-    private LocationService locationService;
+    private LocationImportService locationImportService;
     private Logger logger = LoggerFactory.getLogger(FrontLineWorkerImporter.class);
 
     @Autowired
-    public FrontLineWorkerImporter(FrontLineWorkerImportService frontLineWorkerImportService, LocationService locationService) {
+    public FrontLineWorkerImporter(FrontLineWorkerImportService frontLineWorkerImportService, LocationImportService locationImportService) {
         this.frontLineWorkerImportService = frontLineWorkerImportService;
-        this.locationService = locationService;
+        this.locationImportService = locationImportService;
     }
 
     @Validate
@@ -71,7 +71,7 @@ public class FrontLineWorkerImporter {
     }
 
     private Location getLocationFor(LocationRequest locationRequest) {
-        return locationService.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
+        return locationImportService.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
     }
 
     private void addHeader(List<Error> errors) {

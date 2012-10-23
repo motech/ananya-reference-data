@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata.flw.response;
+package org.motechproject.ananya.referencedata.csv.response;
 
 import java.util.ArrayList;
 import java.util.List;

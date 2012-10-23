@@ -20,4 +20,8 @@ public enum VerificationStatus {
         return true;
 
     }
+
+    public static boolean isSuccess(String verificationStatus) {
+        return isValid(verificationStatus) && SUCCESS.equals(from(verificationStatus));
+    }
 }

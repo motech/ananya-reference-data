@@ -1,16 +1,16 @@
-package org.motechproject.ananya.referencedata.flw.service;
+package org.motechproject.ananya.referencedata.csv.service;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.motechproject.ananya.referencedata.csv.response.LocationCreationResponse;
+import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
+import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.response.LocationCreationResponse;
-import org.motechproject.ananya.referencedata.flw.response.LocationValidationResponse;
-import org.motechproject.ananya.referencedata.flw.validators.LocationValidator;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -21,20 +21,20 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class LocationServiceTest {
+public class LocationImportServiceTest {
     @Mock
     AllLocations allLocations;
     @Mock
-    private LocationValidator locationValidator;
+    private LocationImportValidator locationValidator;
     @Captor
     ArgumentCaptor<Set<Location>> captor;
 
-    LocationService locationService;
+    LocationImportService locationImportService;
 
     @Before
     public void setUp() {
         initMocks(this);
-        locationService = new LocationService(allLocations, locationValidator);
+        locationImportService = new LocationImportService(allLocations, locationValidator);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class LocationServiceTest {
         locationValidationResponse.forBlankFieldsInLocation();
         when(locationValidator.validate(new Location(null, "block", "panchayat"))).thenReturn(locationValidationResponse);
 
-        LocationCreationResponse locationCreationResponse = locationService.add(locationRequest);
+        LocationCreationResponse locationCreationResponse = locationImportService.add(locationRequest);
 
         assertEquals("Blank district, block or panchayat", locationCreationResponse.getMessage());
     }
@@ -58,7 +58,7 @@ public class LocationServiceTest {
         locationValidationResponse.forDuplicateLocation();
         when(locationValidator.validate(new Location("district", "block", "panchayat"))).thenReturn(locationValidationResponse);
 
-        LocationCreationResponse locationCreationResponse = locationService.add(locationRequest);
+        LocationCreationResponse locationCreationResponse = locationImportService.add(locationRequest);
 
         assertEquals("Location already present", locationCreationResponse.getMessage());
     }
@@ -71,7 +71,7 @@ public class LocationServiceTest {
         LocationRequest locationRequest = new LocationRequest(district, block, panchayat);
         when(locationValidator.validate(new Location("district", "block", "panchayat"))).thenReturn(new LocationValidationResponse());
 
-        LocationCreationResponse locationCreationResponse = locationService.add(locationRequest);
+        LocationCreationResponse locationCreationResponse = locationImportService.add(locationRequest);
 
         ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
         verify(allLocations).add(captor.capture());
@@ -94,7 +94,7 @@ public class LocationServiceTest {
         locationRequests.add(locationRequest1);
         locationRequests.add(locationRequest2);
 
-        locationService.addAllWithoutValidations(locationRequests);
+        locationImportService.addAllWithoutValidations(locationRequests);
 
         verify(allLocations).addAll(captor.capture());
         Set<Location> value = captor.getValue();
@@ -108,7 +108,7 @@ public class LocationServiceTest {
         Location location = new Location("district", "block", "panchayat");
         when(allLocations.getFor("district", "block", "panchayat")).thenReturn(location);
 
-        Location actualLocation = locationService.getFor("district", "block", "panchayat");
+        Location actualLocation = locationImportService.getFor("district", "block", "panchayat");
 
         assertEquals(location, actualLocation);
     }

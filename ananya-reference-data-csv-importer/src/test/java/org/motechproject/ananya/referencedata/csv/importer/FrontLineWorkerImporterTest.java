@@ -11,7 +11,7 @@ import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
-import org.motechproject.ananya.referencedata.flw.service.LocationService;
+import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
 import org.motechproject.importer.domain.ValidationResponse;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class FrontLineWorkerImporterTest {
     @Mock
-    private LocationService locationService;
+    private LocationImportService locationImportService;
     @Mock
     private FrontLineWorkerImportService frontLineWorkerImportService;
     @Mock
@@ -40,14 +40,14 @@ public class FrontLineWorkerImporterTest {
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerImporter = new FrontLineWorkerImporter(frontLineWorkerImportService, locationService);
+        frontLineWorkerImporter = new FrontLineWorkerImporter(frontLineWorkerImportService, locationImportService);
     }
 
     @Test
     public void shouldValidateFLWRequests() {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         Location location = new Location("D1", "B1", "P1");
-        when(locationService.getFor("D1", "B1", "P1")).thenReturn(location);
+        when(locationImportService.getFor("D1", "B1", "P1")).thenReturn(location);
         frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1234567890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1")));
 
         ValidationResponse validationResponse = frontLineWorkerImporter.validate(frontLineWorkerWebRequests);
@@ -61,7 +61,7 @@ public class FrontLineWorkerImporterTest {
     public void shouldFailValidationIfFLWDoesNotHaveAllTheDetails() {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         Location location = new Location("D1", "B1", "P1");
-        when(locationService.getFor("D1", "B1", "P1")).thenReturn(location);
+        when(locationImportService.getFor("D1", "B1", "P1")).thenReturn(location);
         frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1asdf67890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1")));
 
         ValidationResponse validationResponse = frontLineWorkerImporter.validate(frontLineWorkerWebRequests);

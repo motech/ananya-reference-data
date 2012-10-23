@@ -7,15 +7,20 @@ public enum Designation {
     ANM,
     AWW;
 
-    public static boolean contains(String designation) {
-        for (Designation value : Designation.values()) {
-            if (value.name().equalsIgnoreCase(StringUtils.trimToEmpty(designation)))
-                return true;
+    private static Designation from(String string) {
+        return Designation.valueOf(StringUtils.trimToEmpty(string).toUpperCase());
+    }
+
+    public static boolean isValid(String designation) {
+        try {
+            from(designation);
+        } catch (Exception e) {
+            return false;
         }
-        return false;
+        return true;
     }
 
     public static Designation getFor(String designation) {
-        return Designation.contains(designation) ? Designation.valueOf(designation.trim().toUpperCase()) : null;
+        return isValid(designation) ? from(designation) : null;
     }
 }

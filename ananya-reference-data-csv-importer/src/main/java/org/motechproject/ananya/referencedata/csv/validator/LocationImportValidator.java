@@ -1,19 +1,19 @@
-package org.motechproject.ananya.referencedata.flw.validators;
+package org.motechproject.ananya.referencedata.csv.validator;
 
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
-import org.motechproject.ananya.referencedata.flw.response.LocationValidationResponse;
+import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LocationValidator {
+public class LocationImportValidator {
 
     private AllLocations allLocations;
 
     @Autowired
-    public LocationValidator(AllLocations allLocations) {
+    public LocationImportValidator(AllLocations allLocations) {
         this.allLocations = allLocations;
     }
 

@@ -10,8 +10,10 @@ import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,7 +34,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void shouldUpdateAnExistingFlw() {
+    public void shouldUpdateAnExistingFlwDuringUnsuccessfulRegistration() {
         String flwId = UUID.randomUUID().toString();
         Location location = new Location("d", "b", "p");
         FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "Shahrukh", Designation.ANM, location, flwId, VerificationStatus.INVALID, "reason");
@@ -49,6 +51,31 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
         assertEquals(frontLineWorker.getMsisdn(), updatedFrontLineWorker.getMsisdn());
         assertEquals(frontLineWorker.getDesignation(), updatedFrontLineWorker.getDesignation());
         assertEquals(frontLineWorker.getLocation(), updatedFrontLineWorker.getLocation());
+    }
+
+    @Test
+    public void shouldUpdateAnExistingFlwDuringSuccessfulRegistration() {
+        String flwId = UUID.randomUUID().toString();
+        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "Shahrukh", null, null, flwId, VerificationStatus.INVALID, "reason");
+        String name = "New Name";
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat");
+        Location location = LocationMapper.mapFrom(locationRequest);
+        allLocations.add(location);
+        allFrontLineWorkers.add(frontLineWorker);
+        template.flush();
+        String designation = Designation.ANM.name();
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), name, designation, locationRequest);
+
+        frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
+
+        FrontLineWorker updatedFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
+        assertEquals(frontLineWorker.getFlwId(), updatedFrontLineWorker.getFlwId());
+        assertEquals(frontLineWorker.getMsisdn(), updatedFrontLineWorker.getMsisdn());
+        assertEquals(VerificationStatus.SUCCESS.name(), updatedFrontLineWorker.getVerificationStatus());
+        assertEquals(name, updatedFrontLineWorker.getName());
+        assertEquals(designation, updatedFrontLineWorker.getDesignation());
+        assertEquals(location, updatedFrontLineWorker.getLocation());
+        assertEquals(null, updatedFrontLineWorker.getReason());
     }
 
     @Test

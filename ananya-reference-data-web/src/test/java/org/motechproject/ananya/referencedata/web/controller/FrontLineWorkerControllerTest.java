@@ -7,7 +7,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
 import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
 import org.motechproject.ananya.referencedata.web.utils.TestUtils;
 import org.springframework.http.MediaType;
@@ -70,12 +72,60 @@ public class FrontLineWorkerControllerTest {
     }
 
     @Test
-    public void shouldReturnValidationErrorForAnInvalidFLWRequestJson() throws Exception {
+     public void shouldReturnValidationErrorForAnInvalidFLWRequestJson() throws Exception {
         String flwId = "flwId";
         String reason = "Invalid User";
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, null, reason);
 
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field has invalid/blank value"), status().isBadRequest());
+        verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
+    }
+
+    @Test
+    public void shouldUpdateTheStatusForAValidSuccessfulFLWRequestJson() throws Exception {
+        String flwId = "flwId";
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
+
+        postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
+
+        ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
+        verify(frontLineWorkerService).updateVerifiedFlw(captor.capture());
+        FrontLineWorkerWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
+        assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
+    }
+
+    @Test
+    public void shouldReturnValidationErrorForAnInvalidSuccessfulFLWRequestJson() throws Exception {
+        String flwId = "flwId";
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), new LocationRequest());
+        BaseResponse expectedResponse = BaseResponse.failure("name field is blank,district field is blank,block field is blank,panchayat field is blank");
+
+        postFlwRequestJson(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest());
+
+        verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
+    }
+
+    @Test
+    public void shouldUpdateTheStatusForAValidSuccessfulFLWRequestXml() throws Exception {
+        String flwId = "flwId";
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
+
+        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
+
+        ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
+        verify(frontLineWorkerService).updateVerifiedFlw(captor.capture());
+        FrontLineWorkerWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
+        assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
+    }
+
+    @Test
+    public void shouldReturnValidationErrorForAnInvalidSuccessfulFLWRequestXml() throws Exception {
+        String flwId = "flwId";
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), new LocationRequest());
+        BaseResponse expectedResponse = BaseResponse.failure("name field is blank,district field is blank,block field is blank,panchayat field is blank");
+
+        postFLWRequestXml(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest());
+
         verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
     }
 
