@@ -142,6 +142,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.motechproject.ananya.referencedata</groupId>
+            <artifactId>ananya-reference-data-csv-importer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.motechproject.contrib-ananya</groupId>
             <artifactId>motech-diagnostics</artifactId>
         </dependency>
