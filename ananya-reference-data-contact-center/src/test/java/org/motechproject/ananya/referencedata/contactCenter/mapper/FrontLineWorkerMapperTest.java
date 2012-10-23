@@ -25,7 +25,7 @@ public class FrontLineWorkerMapperTest {
         String verificationStatus = VerificationStatus.INVALID.name();
         String flwId = UUID.randomUUID().toString();
         FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, name, anm, location, flwId, VerificationStatus.OTHERS, null);
-        FrontLineWorker newFrontLineWorker = FrontLineWorkerMapper.mapFrom(new FrontLineWorkerWebRequest(flwId, verificationStatus, reason), existingFrontLineWorker);
+        FrontLineWorker newFrontLineWorker = FrontLineWorkerMapper.mapUnsuccessfulRegistration(new FrontLineWorkerWebRequest(flwId, verificationStatus, reason), existingFrontLineWorker);
 
         assertEquals(flwId, newFrontLineWorker.getFlwId());
         assertEquals(msisdn, newFrontLineWorker.getMsisdn());
@@ -46,7 +46,7 @@ public class FrontLineWorkerMapperTest {
         FrontLineWorker expectedFrontLineWorker = new FrontLineWorker(msisdn, name, designation, expectedLocation, flwId, VerificationStatus.SUCCESS, null);
         FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "Tom&Jerry", null, null, flwId, VerificationStatus.OTHERS, "oldreason");
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, verificationStatus, name, designation.name(), location);
-        FrontLineWorker actualFrontLineWorker = FrontLineWorkerMapper.mapFrom(frontLineWorkerWebRequest, existingFrontLineWorker);
+        FrontLineWorker actualFrontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(frontLineWorkerWebRequest, existingFrontLineWorker, expectedLocation);
 
         assertEquals(expectedFrontLineWorker,actualFrontLineWorker);
     }
