@@ -13,21 +13,10 @@
         <context:include-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
     </context:component-scan>
     <mvc:annotation-driven>
-    <mvc:message-converters>
-        <bean class="org.motechproject.ananya.referencedata.web.messageConverter.CustomJaxb2RootElementHttpMessageConverter">
-        <property name="marshallerProperties">
-            <map>
-                <entry key="jaxb.fragment">
-                    <value type="boolean">true</value>
-                </entry>
-                <entry key="jaxb.formatted.output">
-                    <value type="boolean">true</value>
-                </entry>
-            </map>
-        </property>
-        </bean>
-    </mvc:message-converters>
-</mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.motechproject.web.message.converters.CustomJaxb2RootElementHttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 
     <!--
         DO NOT remove the following line.
