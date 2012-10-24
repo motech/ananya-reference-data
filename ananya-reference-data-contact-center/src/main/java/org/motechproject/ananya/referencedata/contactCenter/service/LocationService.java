@@ -16,13 +16,13 @@ public class LocationService {
         this.allLocations = allLocations;
     }
 
-    public Location getLocation(LocationRequest request) {
+    private Location getExistingLocation(LocationRequest request) {
         return allLocations.getFor(request.getDistrict(), request.getBlock(), request.getPanchayat());
     }
 
     public Location handleLocation(LocationRequest request) {
-        Location location = getLocation(request);
-        if(location !=null) {
+        Location location = getExistingLocation(request);
+        if (location == null) {
             location = LocationMapper.mapFrom(request);
             allLocations.add(location);
         }

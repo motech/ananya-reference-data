@@ -19,13 +19,25 @@ public class LocationServiceIT extends SpringIntegrationTest {
     private LocationService locationService;
 
     @Test
-    public void shouldGetAnExistingLocation() {
-        LocationRequest request = new LocationRequest("district", "block", "panchayat", null);
+    public void shouldHandleSavingOfNewLocationWhichDoesNotExist() {
+        Location locationInDb = new Location("d", "b", "p", "VALID");
+        allLocations.add(locationInDb);
+
+        Location location = locationService.handleLocation(new LocationRequest("district", "block", "panchayat"));
+
+        assertEquals(2, template.loadAll(Location.class).size());
+        assertEquals("NOT VERIFIED", location.getStatus());
+    }
+
+    @Test
+    public void shouldReturnAnExistingLocation() {
+        LocationRequest request = new LocationRequest("district", "block", "panchayat");
         Location location = LocationMapper.mapFrom(request);
         allLocations.add(location);
 
-        Location existingLocation = locationService.getLocation(request);
+        Location existingLocation = locationService.handleLocation(request);
 
+        assertEquals(1, template.loadAll(Location.class).size());
         assertNotNull(existingLocation);
         assertEquals(location, existingLocation);
     }

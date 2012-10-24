@@ -25,6 +25,12 @@ public class LocationRequest {
     public LocationRequest() {
     }
 
+    public LocationRequest(String district, String block, String panchayat) {
+        this.district = district;
+        this.block = block;
+        this.panchayat = panchayat;
+    }
+
     public LocationRequest(String district, String block, String panchayat, String status) {
         this.district = district;
         this.block = block;

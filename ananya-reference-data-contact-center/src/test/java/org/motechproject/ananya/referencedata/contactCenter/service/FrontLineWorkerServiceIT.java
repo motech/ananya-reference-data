@@ -91,4 +91,26 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
 
         frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
     }
+
+    @Test
+    public void shouldAddNewLocationCorrespondingToFLWAndSaveToDb() {
+        String name = "name";
+        Designation designation = Designation.ANM;
+        String flwId = "flwId";
+        String district = "district";
+        String block = "block";
+        String panchayat = "panchayat";
+        Location location = new Location("d", "b", "p", "VALID");
+        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, name, designation, location, flwId, VerificationStatus.OTHERS, "Random reason");
+        allLocations.add(location);
+        allFrontLineWorkers.add(frontLineWorker);
+
+        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), name, designation.name(), new LocationRequest(district, block, panchayat)));
+
+        FrontLineWorker updatedFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
+        assertEquals(district, updatedFrontLineWorker.getLocation().getDistrict());
+        assertEquals(block, updatedFrontLineWorker.getLocation().getBlock());
+        assertEquals(panchayat,updatedFrontLineWorker.getLocation().getPanchayat());
+        assertEquals("NOT VERIFIED", updatedFrontLineWorker.getLocation().getStatus());
+    }
 }

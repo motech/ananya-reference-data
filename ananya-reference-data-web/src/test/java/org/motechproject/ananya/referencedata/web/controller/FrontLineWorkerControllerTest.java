@@ -84,7 +84,7 @@ public class FrontLineWorkerControllerTest {
     @Test
     public void shouldUpdateTheStatusForAValidSuccessfulFLWRequestJson() throws Exception {
         String flwId = "flwId";
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat", null));
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
 
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
 
@@ -108,7 +108,7 @@ public class FrontLineWorkerControllerTest {
     @Test
     public void shouldUpdateTheStatusForAValidSuccessfulFLWRequestXml() throws Exception {
         String flwId = "flwId";
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat", null));
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
 
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
 

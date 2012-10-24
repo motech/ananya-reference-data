@@ -48,7 +48,8 @@ public class FrontLineWorkerServiceTest {
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
 
         frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId, VerificationStatus.INVALID.name(), "reason"));
-        verify(locationService,never()).getLocation(any(LocationRequest.class));
+
+        verify(locationService,never()).handleLocation(any(LocationRequest.class));
     }
 
     @Test
@@ -68,8 +69,7 @@ public class FrontLineWorkerServiceTest {
         assertEquals(reason, actualFrontLineWorker.getReason());
         assertEquals(frontLineWorker.getFlwId(), actualFrontLineWorker.getFlwId());
         assertEquals(frontLineWorker.getMsisdn(), actualFrontLineWorker.getMsisdn());
-        verify(locationService,never()).getLocation(any(LocationRequest.class));
-
+        verify(locationService,never()).handleLocation(any(LocationRequest.class));
     }
 
     @Test
@@ -79,9 +79,10 @@ public class FrontLineWorkerServiceTest {
         FrontLineWorker frontLineWorker = new FrontLineWorker(9988776655L, "", Designation.ANM, new Location(), flwId, verificationStatus, null);
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
 
-        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy", null);
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy");
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
         when(locationService.handleLocation(locationRequest)).thenReturn(existingLocation);
+
         frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId, verificationStatus.name(),"name",Designation.ANM.name(), locationRequest));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
