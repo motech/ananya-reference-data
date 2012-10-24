@@ -13,11 +13,13 @@ public class LocationMapperTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
+        String status = "Verified" ;
 
-        Location location = LocationMapper.mapFrom(new LocationRequest(district, block, panchayat));
+        Location location = LocationMapper.mapFrom(new LocationRequest(district, block, panchayat, status));
 
         assertEquals(district, location.getDistrict());
         assertEquals(block, location.getBlock());
         assertEquals(panchayat, location.getPanchayat());
+        assertEquals(status, location.getStatus());
     }
 }

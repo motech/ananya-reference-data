@@ -8,13 +8,13 @@
     <changeSet context="setup" author="ThoughtWorks" id="1">
         <sql splitStatements="false">
             CREATE TABLE ananya_reference_data.location(
-                id serial primary key,
-                district varchar(255),
-                block varchar(255),
-                panchayat varchar(255),
-                district_code int,
-                block_code int,
-                panchayat_code int
+            id serial primary key,
+            district varchar(255),
+            block varchar(255),
+            panchayat varchar(255),
+            district_code int,
+            block_code int,
+            panchayat_code int
             );
         </sql>
     </changeSet>
@@ -22,11 +22,11 @@
     <changeSet context="setup" author="ThoughtWorks" id="2">
         <sql splitStatements="false">
             CREATE TABLE ananya_reference_data.front_line_worker(
-                id serial,
-                msisdn bigint,
-                name varchar(255),
-                designation varchar(30),
-                location_id integer REFERENCES ananya_reference_data.location(id)
+            id serial,
+            msisdn bigint,
+            name varchar(255),
+            designation varchar(30),
+            location_id integer REFERENCES ananya_reference_data.location(id)
             );
         </sql>
     </changeSet>
@@ -46,9 +46,9 @@
     <changeSet context="setup" author="ThoughtWorks" id="5">
         <sql splitStatements="false">
             CREATE TABLE ananya_reference_data.property(
-                id serial primary key,
-                name varchar(40),
-                value varchar(40)
+            id serial primary key,
+            name varchar(40),
+            value varchar(40)
             );
         </sql>
     </changeSet>
@@ -61,9 +61,9 @@
 
     <changeSet context="setup" author="ThoughtWorks" id="7">
         <sql splitStatements="false">
-            ALTER TABLE  ananya_reference_data.location drop district_code;
-            ALTER TABLE  ananya_reference_data.location drop block_code;
-            ALTER TABLE  ananya_reference_data.location drop panchayat_code;
+            ALTER TABLE ananya_reference_data.location drop district_code;
+            ALTER TABLE ananya_reference_data.location drop block_code;
+            ALTER TABLE ananya_reference_data.location drop panchayat_code;
         </sql>
     </changeSet>
 
@@ -91,6 +91,13 @@
     <changeSet context="setup" author="ThoughtWorks" id="10">
         <sql splitStatements="false">
             ALTER TABLE ananya_reference_data.front_line_worker RENAME COLUMN flw_guid TO flw_id
+        </sql>
+    </changeSet>
+
+    <changeSet context="setup" author="ThoughtWorks" id="11">
+        <sql splitStatements="false">
+            ALTER TABLE ananya_reference_data.location ADD COLUMN status VARCHAR(36);
+            UPDATE ananya_reference_data.location SET status = 'VERIFIED';
         </sql>
     </changeSet>
 

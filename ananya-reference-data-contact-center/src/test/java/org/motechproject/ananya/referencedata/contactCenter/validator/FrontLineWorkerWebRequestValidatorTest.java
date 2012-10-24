@@ -51,7 +51,7 @@ public class FrontLineWorkerWebRequestValidatorTest {
     @Test
     public void shouldValidateASuccessfulFLWRequest() {
         Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", VerificationStatus.SUCCESS.name(),
-                "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat")));
+                "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat", null)));
 
         assertEquals(0, errors.getCount());
     }

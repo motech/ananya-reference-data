@@ -11,7 +11,7 @@ public class LocationWebRequestValidatorTest {
 
     @Test
     public void shouldReturnErrorForAnInvalidLocationRequest() {
-        Errors errors = LocationWebRequestValidator.validate(new LocationRequest(null, null, null));
+        Errors errors = LocationWebRequestValidator.validate(new LocationRequest(null, null, null, null));
 
         assertEquals(3, errors.getCount());
         assertTrue(errors.hasMessage("district field is blank"));
@@ -29,7 +29,7 @@ public class LocationWebRequestValidatorTest {
 
     @Test
     public void shouldNotContainErrorsForAValidLocationRequest() {
-        Errors errors = LocationWebRequestValidator.validate(new LocationRequest("district", "block", "panchayat"));
+        Errors errors = LocationWebRequestValidator.validate(new LocationRequest("district", "block", "panchayat", null));
 
         assertEquals(0, errors.getCount());
     }

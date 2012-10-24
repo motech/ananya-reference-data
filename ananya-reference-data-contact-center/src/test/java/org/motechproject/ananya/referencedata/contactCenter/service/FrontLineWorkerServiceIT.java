@@ -36,7 +36,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
     @Test
     public void shouldUpdateAnExistingFlwDuringUnsuccessfulRegistration() {
         String flwId = UUID.randomUUID().toString();
-        Location location = new Location("d", "b", "p");
+        Location location = new Location("d", "b", "p", "VERIFIED");
         FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "Shahrukh", Designation.ANM, location, flwId, VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
@@ -58,7 +58,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
         String flwId = UUID.randomUUID().toString();
         FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "Shahrukh", null, null, flwId, VerificationStatus.INVALID, "reason");
         String name = "New Name";
-        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", null);
         Location location = LocationMapper.mapFrom(locationRequest);
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
@@ -83,7 +83,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
         expectedException.expect(ValidationException.class);
         expectedException.expectMessage("FLW-Id is not present in MoTeCH");
 
-        Location location = new Location("d", "b", "p");
+        Location location = new Location("d", "b", "p", "VERIFIED");
         FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "Shahrukh", Designation.ANM, location, UUID.randomUUID().toString(), VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);

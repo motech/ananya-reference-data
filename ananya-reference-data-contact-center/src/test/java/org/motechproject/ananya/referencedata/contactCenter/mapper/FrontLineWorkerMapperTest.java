@@ -40,7 +40,7 @@ public class FrontLineWorkerMapperTest {
         Designation designation = Designation.ANM;
         String verificationStatus = VerificationStatus.SUCCESS.name();
         String flwId = UUID.randomUUID().toString();
-        LocationRequest location = new LocationRequest("d", "b", "p");
+        LocationRequest location = new LocationRequest("d", "b", "p", null);
         Location expectedLocation = LocationMapper.mapFrom(location);
 
         FrontLineWorker expectedFrontLineWorker = new FrontLineWorker(msisdn, name, designation, expectedLocation, flwId, VerificationStatus.SUCCESS, null);

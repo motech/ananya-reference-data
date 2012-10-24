@@ -26,7 +26,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
 
     @Test
     public void shouldAddLocationToDB() {
-        Location location = new Location("district", "block", "panchayat");
+        Location location = new Location("district", "block", "panchayat", "NOT VERIFIED");
 
         allLocations.add(location);
 
@@ -42,7 +42,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat);
+        Location location = new Location(district, block, panchayat, "NOT VERIFIED");
 
         allLocations.add(location);
 
@@ -55,7 +55,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat);
+        Location location = new Location(district, block, panchayat, "NOT VERIFIED");
 
         allLocations.add(location);
 
@@ -69,8 +69,8 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String district1 = "district1";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat);
-        Location location1 = new Location(district1, block, panchayat);
+        Location location = new Location(district, block, panchayat, "NOT VERIFIED");
+        Location location1 = new Location(district1, block, panchayat, "VERIFIED");
         Set<Location> locations = new HashSet<Location>();
         locations.add(location);
         locations.add(location1);

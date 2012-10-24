@@ -16,13 +16,17 @@ public class Location extends BaseEntity {
     @Column(name = "panchayat")
     private String panchayat;
 
+    @Column(name = "status")
+    private String status;
+
     public Location() {
     }
 
-    public Location(String district, String block, String panchayat) {
+    public Location(String district, String block, String panchayat, String status) {
         this.district = StringUtils.trimToEmpty(district);
         this.block = StringUtils.trimToEmpty(block);
         this.panchayat = StringUtils.trimToEmpty(panchayat);
+        this.status = status;
     }
 
     public String getDistrict() {
@@ -37,16 +41,21 @@ public class Location extends BaseEntity {
         return panchayat;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Location)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         Location location = (Location) o;
 
         if (block != null ? !block.equalsIgnoreCase(location.block) : location.block != null) return false;
         if (district != null ? !district.equalsIgnoreCase(location.district) : location.district != null) return false;
         if (panchayat != null ? !panchayat.equalsIgnoreCase(location.panchayat) : location.panchayat != null) return false;
+        if (status != null ? !status.equalsIgnoreCase(location.status) : location.status != null) return false;
 
         return true;
     }
@@ -56,6 +65,7 @@ public class Location extends BaseEntity {
         int result = district != null ? district.hashCode() : 0;
         result = 31 * result + (block != null ? block.hashCode() : 0);
         result = 31 * result + (panchayat != null ? panchayat.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
         return result;
     }
 
@@ -67,5 +77,4 @@ public class Location extends BaseEntity {
                 ", panchayat=\"" + panchayat + '"' +
                 '}';
     }
-
 }

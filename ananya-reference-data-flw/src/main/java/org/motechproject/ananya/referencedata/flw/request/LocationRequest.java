@@ -1,11 +1,9 @@
 package org.motechproject.ananya.referencedata.flw.request;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
 @XmlRootElement(name = "location")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -20,13 +18,18 @@ public class LocationRequest {
     @JsonProperty
     private String panchayat;
 
+    @JsonIgnore
+    @XmlTransient
+    private String status = "NOT VERIFIED";
+
     public LocationRequest() {
     }
 
-    public LocationRequest(String district, String block, String panchayat) {
+    public LocationRequest(String district, String block, String panchayat, String status) {
         this.district = district;
         this.block = block;
         this.panchayat = panchayat;
+        this.status = status;
     }
 
     public String getDistrict() {
@@ -41,6 +44,10 @@ public class LocationRequest {
         return panchayat;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     public void setDistrict(String district) {
         this.district = district;
     }
@@ -51,6 +58,10 @@ public class LocationRequest {
 
     public void setPanchayat(String panchayat) {
         this.panchayat = panchayat;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String toCSV() {

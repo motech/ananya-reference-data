@@ -20,7 +20,7 @@ public class LocationServiceIT extends SpringIntegrationTest {
 
     @Test
     public void shouldGetAnExistingLocation() {
-        LocationRequest request = new LocationRequest("district", "block", "panchayat");
+        LocationRequest request = new LocationRequest("district", "block", "panchayat", null);
         Location location = LocationMapper.mapFrom(request);
         allLocations.add(location);
 

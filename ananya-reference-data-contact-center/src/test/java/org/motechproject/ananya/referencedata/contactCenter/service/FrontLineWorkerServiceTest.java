@@ -79,9 +79,9 @@ public class FrontLineWorkerServiceTest {
         FrontLineWorker frontLineWorker = new FrontLineWorker(9988776655L, "", Designation.ANM, new Location(), flwId, verificationStatus, null);
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
 
-        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy", null);
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
-        when(locationService.getLocation(locationRequest)).thenReturn(existingLocation);
+        when(locationService.handleLocation(locationRequest)).thenReturn(existingLocation);
         frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId, verificationStatus.name(),"name",Designation.ANM.name(), locationRequest));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);

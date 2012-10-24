@@ -27,7 +27,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
     public void setUp() {
         template.deleteAll(template.loadAll(FrontLineWorker.class));
         template.deleteAll(template.loadAll(Location.class));
-        location = new Location("district", "block", "panchayat");
+        location = new Location("district", "block", "panchayat", "NOT VERIFIED");
         template.save(location);
     }
 
@@ -58,7 +58,8 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         Designation newDesignation = Designation.ANM;
         String newDistrict = "district1";
         existingFrontLineWorker.setName(newName);
-        Location newLocation = new Location(newDistrict, "block1", "panchayat1");
+        String status = "VERIFIED";
+        Location newLocation = new Location(newDistrict, "block1", "panchayat1", status);
         template.save(existingFrontLineWorker);
         template.save(newLocation);
         existingFrontLineWorker.setDesignation(newDesignation);
@@ -70,6 +71,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         assertEquals(newName, frontLineWorkerFromDb.getName());
         assertEquals(newDesignation.name(), frontLineWorkerFromDb.getDesignation());
         assertEquals(newDistrict, frontLineWorkerFromDb.getLocation().getDistrict());
+        assertEquals(status, frontLineWorkerFromDb.getLocation().getStatus());
         assertNotNull(frontLineWorkerFromDb.getLastModified());
     }
 
@@ -81,7 +83,8 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         Designation newDesignation = Designation.ANM;
         String newDistrict = "district1";
         existingFrontLineWorker.setName(newName);
-        Location newLocation = new Location(newDistrict, "block1", "panchayat1");
+        String status = "VERIFIED";
+        Location newLocation = new Location(newDistrict, "block1", "panchayat1", status);
         template.save(newLocation);
         existingFrontLineWorker.setDesignation(newDesignation);
         existingFrontLineWorker.setLocation(newLocation);
@@ -93,6 +96,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         assertEquals(newName, frontLineWorkerFromDb.getName());
         assertEquals(newDesignation.name(), frontLineWorkerFromDb.getDesignation());
         assertEquals(newDistrict, frontLineWorkerFromDb.getLocation().getDistrict());
+        assertEquals(status, frontLineWorkerFromDb.getLocation().getStatus());
         assertNotNull(frontLineWorkerFromDb.getLastModified());
     }
 

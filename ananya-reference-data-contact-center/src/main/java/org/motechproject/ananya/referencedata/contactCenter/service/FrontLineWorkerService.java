@@ -28,7 +28,7 @@ public class FrontLineWorkerService {
 
         FrontLineWorker frontLineWorker;
         if (VerificationStatus.isSuccess(frontLineWorkerWebRequest.getVerificationStatus())) {
-            Location location = locationService.getLocation(frontLineWorkerWebRequest.getLocation());
+            Location location = locationService.handleLocation(frontLineWorkerWebRequest.getLocation());
             frontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(frontLineWorkerWebRequest, existingFrontLineWorker, location);
         } else
             frontLineWorker = FrontLineWorkerMapper.mapUnsuccessfulRegistration(frontLineWorkerWebRequest, existingFrontLineWorker);

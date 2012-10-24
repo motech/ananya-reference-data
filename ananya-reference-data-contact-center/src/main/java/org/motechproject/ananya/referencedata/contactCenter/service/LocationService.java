@@ -1,6 +1,7 @@
 package org.motechproject.ananya.referencedata.contactCenter.service;
 
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,5 +18,14 @@ public class LocationService {
 
     public Location getLocation(LocationRequest request) {
         return allLocations.getFor(request.getDistrict(), request.getBlock(), request.getPanchayat());
+    }
+
+    public Location handleLocation(LocationRequest request) {
+        Location location = getLocation(request);
+        if(location !=null) {
+            location = LocationMapper.mapFrom(request);
+            allLocations.add(location);
+        }
+        return location;
     }
 }

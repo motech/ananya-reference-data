@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.motechproject.ananya.referencedata.flw.domain.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class FrontLineWorkerContractMapperTest {
     @Test
@@ -14,7 +13,8 @@ public class FrontLineWorkerContractMapperTest {
         String block = "block1";
         String panchayat = "panchayat1";
         DateTime now = DateTime.now();
-        Location location = new Location(district, block, panchayat);
+        String status = "VERIFIED";
+        Location location = new Location(district, block, panchayat, status);
         location.setLastModified(now);
 
         Long msisdn = 1234567890L;
@@ -34,7 +34,6 @@ public class FrontLineWorkerContractMapperTest {
         assertEquals(block, locationContract.getBlock());
         assertEquals(district, locationContract.getDistrict());
         assertEquals(panchayat, locationContract.getPanchayat());
-
         assertEquals(frontLineWorker.getFlwId(), frontLineWorkerContract.getFlwId());
     }
 }
