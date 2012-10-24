@@ -16,9 +16,9 @@ public class LocationWebRequestValidator {
 
         if (StringUtils.isEmpty(locationRequest.getDistrict()))
             errors.add("district field is blank");
-        if (StringUtils.isEmpty(locationRequest.getDistrict()))
+        if (StringUtils.isEmpty(locationRequest.getBlock()))
             errors.add("block field is blank");
-        if (StringUtils.isEmpty(locationRequest.getDistrict()))
+        if (StringUtils.isEmpty(locationRequest.getPanchayat()))
             errors.add("panchayat field is blank");
         return errors;
     }
