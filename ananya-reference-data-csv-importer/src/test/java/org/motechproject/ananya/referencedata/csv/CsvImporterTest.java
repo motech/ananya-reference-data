@@ -39,7 +39,7 @@ public class CsvImporterTest extends SpringIntegrationTest {
 
     @Test
     public void shouldImportFlwData() throws Exception {
-        Location location = new Location("D1", "B1", "P1", "VERIFIED");
+        Location location = new Location("D1", "B1", "P1", "VALID");
         template.save(location);
         URL flwData = this.getClass().getResource("/flwData.csv");
         String[] arguments = {"FrontLineWorker", flwData.getPath()};
@@ -54,7 +54,7 @@ public class CsvImporterTest extends SpringIntegrationTest {
     @Test
     @ExpectedException(InvalidArgumentException.class)
     public void shouldFailForRandomEntityNames() throws Exception {
-        Location location = new Location("D1", "B1", "P1", "VERIFIED");
+        Location location = new Location("D1", "B1", "P1", "VALID");
         template.save(location);
         URL flwData = this.getClass().getResource("/flwData.csv");
         String[] arguments = {"RandomEntityName", flwData.getPath()};
@@ -65,7 +65,7 @@ public class CsvImporterTest extends SpringIntegrationTest {
     @Test
     @ExpectedException(WrongNumberArgsException.class)
     public void shouldFailForWrongNumberOfArguments() throws Exception {
-        Location location = new Location("D1", "B1", "P1", "VERIFIED");
+        Location location = new Location("D1", "B1", "P1", "VALID");
         template.save(location);
         URL flwData = this.getClass().getResource("/flwData.csv");
         String[] arguments = {"FrontLineWorker", flwData.getPath(), "unwanted-argument"};
@@ -76,7 +76,7 @@ public class CsvImporterTest extends SpringIntegrationTest {
     @Test
     @ExpectedException(FileReadException.class)
     public void shouldFailForInvalidImportFile() throws Exception {
-        Location location = new Location("D1", "B1", "P1", "VERIFIED");
+        Location location = new Location("D1", "B1", "P1", "VALID");
         template.save(location);
         String[] arguments = {"FrontLineWorker", "random-file-path.csv"};
 

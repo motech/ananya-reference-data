@@ -70,7 +70,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String block = "block";
         String panchayat = "panchayat";
         Location location = new Location(district, block, panchayat, "NOT VERIFIED");
-        Location location1 = new Location(district1, block, panchayat, "VERIFIED");
+        Location location1 = new Location(district1, block, panchayat, "VALID");
         Set<Location> locations = new HashSet<Location>();
         locations.add(location);
         locations.add(location1);

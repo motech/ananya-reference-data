@@ -13,7 +13,7 @@ public class FrontLineWorkerContractMapperTest {
         String block = "block1";
         String panchayat = "panchayat1";
         DateTime now = DateTime.now();
-        String status = "VERIFIED";
+        String status = "VALID";
         Location location = new Location(district, block, panchayat, status);
         location.setLastModified(now);
 

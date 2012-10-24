@@ -97,7 +97,8 @@
     <changeSet context="setup" author="ThoughtWorks" id="11">
         <sql splitStatements="false">
             ALTER TABLE ananya_reference_data.location ADD COLUMN status VARCHAR(36);
-            UPDATE ananya_reference_data.location SET status = 'VERIFIED';
+            UPDATE ananya_reference_data.location SET status = 'VALID';
+            ALTER TABLE ananya_reference_data.location ALTER status SET NOT NULL;
         </sql>
     </changeSet>
 

@@ -58,7 +58,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         Designation newDesignation = Designation.ANM;
         String newDistrict = "district1";
         existingFrontLineWorker.setName(newName);
-        String status = "VERIFIED";
+        String status = "VALID";
         Location newLocation = new Location(newDistrict, "block1", "panchayat1", status);
         template.save(existingFrontLineWorker);
         template.save(newLocation);
@@ -83,7 +83,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         Designation newDesignation = Designation.ANM;
         String newDistrict = "district1";
         existingFrontLineWorker.setName(newName);
-        String status = "VERIFIED";
+        String status = "VALID";
         Location newLocation = new Location(newDistrict, "block1", "panchayat1", status);
         template.save(newLocation);
         existingFrontLineWorker.setDesignation(newDesignation);

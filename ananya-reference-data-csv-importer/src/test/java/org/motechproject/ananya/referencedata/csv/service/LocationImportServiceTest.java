@@ -41,10 +41,10 @@ public class LocationImportServiceTest {
     public void shouldValidateLocationRequests() {
         String panchayat = "panchayat";
         String block = "block";
-        LocationRequest locationRequest = new LocationRequest(null, block, panchayat, "VERIFIED");
+        LocationRequest locationRequest = new LocationRequest(null, block, panchayat, "VALID");
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
         locationValidationResponse.forBlankFieldsInLocation();
-        when(locationValidator.validate(new Location(null, "block", "panchayat", "VERIFIED"))).thenReturn(locationValidationResponse);
+        when(locationValidator.validate(new Location(null, "block", "panchayat", "VALID"))).thenReturn(locationValidationResponse);
 
         LocationCreationResponse locationCreationResponse = locationImportService.add(locationRequest);
 
@@ -53,10 +53,10 @@ public class LocationImportServiceTest {
 
     @Test
     public void shouldInvalidateDuplicateLocationCreationRequests() {
-        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "VERIFIED");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "VALID");
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
         locationValidationResponse.forDuplicateLocation();
-        when(locationValidator.validate(new Location("district", "block", "panchayat", "VERIFIED"))).thenReturn(locationValidationResponse);
+        when(locationValidator.validate(new Location("district", "block", "panchayat", "VALID"))).thenReturn(locationValidationResponse);
 
         LocationCreationResponse locationCreationResponse = locationImportService.add(locationRequest);
 
@@ -68,8 +68,8 @@ public class LocationImportServiceTest {
         String panchayat = "panchayat";
         String block = "block";
         String district = "district";
-        LocationRequest locationRequest = new LocationRequest(district, block, panchayat, "VERIFIED");
-        when(locationValidator.validate(new Location("district", "block", "panchayat", "VERIFIED"))).thenReturn(new LocationValidationResponse());
+        LocationRequest locationRequest = new LocationRequest(district, block, panchayat, "VALID");
+        when(locationValidator.validate(new Location("district", "block", "panchayat", "VALID"))).thenReturn(new LocationValidationResponse());
 
         LocationCreationResponse locationCreationResponse = locationImportService.add(locationRequest);
 

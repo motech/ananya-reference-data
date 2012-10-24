@@ -39,8 +39,8 @@ public class LocationImporterTest {
     @Test
     public void shouldValidateLocationRequests() {
         ArrayList<Object> locationRequests = new ArrayList<Object>();
-        locationRequests.add(new LocationRequest("D1", "B1", "P1", "VERIFIED"));
-        when(locationImportValidator.validate(new Location("D1","B1","P1", "VERIFIED"))).thenReturn(new LocationValidationResponse());
+        locationRequests.add(new LocationRequest("D1", "B1", "P1", "VALID"));
+        when(locationImportValidator.validate(new Location("D1","B1","P1", "VALID"))).thenReturn(new LocationValidationResponse());
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
@@ -52,10 +52,10 @@ public class LocationImporterTest {
     @Test
     public void shouldFailValidationIfLocationDoesNotHaveAllTheDetails() {
         ArrayList<Object> locationRequests = new ArrayList<Object>();
-        locationRequests.add(new LocationRequest("D1", "B1", null, "VERIFIED"));
+        locationRequests.add(new LocationRequest("D1", "B1", null, "VALID"));
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
         locationValidationResponse.forBlankFieldsInLocation();
-        when(locationImportValidator.validate(new Location("D1", "B1", null, "VERIFIED"))).thenReturn(locationValidationResponse);
+        when(locationImportValidator.validate(new Location("D1", "B1", null, "VALID"))).thenReturn(locationValidationResponse);
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
@@ -68,11 +68,11 @@ public class LocationImporterTest {
     public void shouldFailValidationIfThereAreDuplicateLocations() {
         ArrayList<Object> locationRequests = new ArrayList<Object>();
         ArrayList<Location> locations = new ArrayList<Location>();
-        locations.add(new Location("D1", "B1", "P1", "VERIFIED"));
-        locationRequests.add(new LocationRequest("D1", "B1", "P1", "VERIFIED"));
+        locations.add(new Location("D1", "B1", "P1", "VALID"));
+        locationRequests.add(new LocationRequest("D1", "B1", "P1", "VALID"));
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
         locationValidationResponse.forDuplicateLocation();
-        when(locationImportValidator.validate(new Location("D1", "B1", "P1", "VERIFIED"))).thenReturn(locationValidationResponse);
+        when(locationImportValidator.validate(new Location("D1", "B1", "P1", "VALID"))).thenReturn(locationValidationResponse);
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
@@ -84,7 +84,7 @@ public class LocationImporterTest {
     @Test
     public void shouldSaveLocation() {
         ArrayList<Object> locationRequests = new ArrayList<Object>();
-        locationRequests.add(new LocationRequest("D1", "B1", "P1", "VERIFIED"));
+        locationRequests.add(new LocationRequest("D1", "B1", "P1", "VALID"));
 
         locationImporter.postData(locationRequests);
 
@@ -94,6 +94,6 @@ public class LocationImporterTest {
         assertEquals("D1", locationRequestsToSave.get(0).getDistrict());
         assertEquals("B1", locationRequestsToSave.get(0).getBlock());
         assertEquals("P1", locationRequestsToSave.get(0).getPanchayat());
-        assertEquals("VERIFIED", locationRequestsToSave.get(0).getStatus());
+        assertEquals("VALID", locationRequestsToSave.get(0).getStatus());
     }
 }
