@@ -11,7 +11,7 @@ import java.io.StringWriter;
 @XmlRootElement(name = "response")
 public class BaseResponse {
 
-    private static final String ERROR = "ERROR";
+    private static final String FAILED = "FAILED";
     private static final String SUCCESS = "SUCCESS";
 
     @JsonProperty
@@ -38,7 +38,7 @@ public class BaseResponse {
     }
 
     public static BaseResponse failure(String description) {
-        return new BaseResponse(ERROR, description);
+        return new BaseResponse(FAILED, description);
     }
 
     @Override

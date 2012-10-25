@@ -9,43 +9,43 @@ import org.motechproject.ananya.referencedata.flw.validators.Errors;
 public class FrontLineWorkerWebRequestValidator {
 
     public static Errors validate(FrontLineWorkerWebRequest frontLineWorkerWebRequest) {
-        if (VerificationStatus.isSuccess(frontLineWorkerWebRequest.getVerificationStatus()))
-            return validateSuccessfulRegistrationRequest(frontLineWorkerWebRequest);
-        return validateUnsuccessfulRegistrationRequest(frontLineWorkerWebRequest);
-
+        Errors errors = new Errors();
+        validateFlwId(frontLineWorkerWebRequest.getFlwId(), errors);
+        String verificationStatus = frontLineWorkerWebRequest.getVerificationStatus();
+        validateVerificationStatus(verificationStatus, errors);
+        if (errors.hasNoErrors()) {
+            if (VerificationStatus.isSuccess(verificationStatus))
+                validateSuccessfulRegistrationRequest(frontLineWorkerWebRequest, errors);
+            else
+                validateUnsuccessfulRegistrationRequest(frontLineWorkerWebRequest, errors);
+        }
+        return errors;
     }
 
-    private static Errors validateUnsuccessfulRegistrationRequest(FrontLineWorkerWebRequest frontLineWorkerWebRequest) {
-        Errors errors = new Errors();
-        if (StringUtils.isEmpty(frontLineWorkerWebRequest.getFlwId()))
+    private static void validateFlwId(String flwId, Errors errors) {
+        if (StringUtils.isEmpty(flwId))
             errors.add("id field is blank");
+    }
 
-        String verificationStatus = frontLineWorkerWebRequest.getVerificationStatus();
+    private static void validateVerificationStatus(String verificationStatus, Errors errors) {
         if (StringUtils.isEmpty(verificationStatus) || !VerificationStatus.isValid(verificationStatus))
             errors.add("verificationStatus field has invalid/blank value");
-
-        if (StringUtils.isEmpty(frontLineWorkerWebRequest.getReason()))
-            errors.add("reason field is blank");
-        return errors;
     }
 
-    private static Errors validateSuccessfulRegistrationRequest(FrontLineWorkerWebRequest frontLineWorkerWebRequest) {
-        Errors errors = new Errors();
-        if (StringUtils.isEmpty(frontLineWorkerWebRequest.getFlwId()))
-            errors.add("id field is blank");
+    private static void validateUnsuccessfulRegistrationRequest(FrontLineWorkerWebRequest frontLineWorkerWebRequest, Errors errors) {
+        if (StringUtils.isEmpty(frontLineWorkerWebRequest.getReason()))
+            errors.add("reason field is blank");
+    }
 
-        if (StringUtils.isEmpty(frontLineWorkerWebRequest.getVerificationStatus()) || !VerificationStatus.isValid(frontLineWorkerWebRequest.getVerificationStatus()))
-            errors.add("verificationStatus field has invalid/blank value");
-
+    private static void validateSuccessfulRegistrationRequest(FrontLineWorkerWebRequest frontLineWorkerWebRequest, Errors errors) {
+        String designation = frontLineWorkerWebRequest.getDesignation();
         if (StringUtils.isEmpty(frontLineWorkerWebRequest.getName()))
             errors.add("name field is blank");
-
-        String designation = frontLineWorkerWebRequest.getDesignation();
         if (StringUtils.isEmpty(designation) || !Designation.isValid(designation))
             errors.add("designation field has invalid/blank value");
+        if (StringUtils.isNotEmpty(frontLineWorkerWebRequest.getReason()))
+            errors.add("Reason field should not be a part of the request");
 
         errors.addAll(LocationWebRequestValidator.validate(frontLineWorkerWebRequest.getLocation()));
-
-        return errors;
     }
 }

@@ -26,12 +26,11 @@ public class FrontLineWorkerService {
         if (existingFrontLineWorker == null)
             throw new ValidationException("FLW with given [id] is not present in MoTeCH");
 
-        FrontLineWorker frontLineWorker;
+        FrontLineWorker frontLineWorker = FrontLineWorkerMapper.mapFrom(frontLineWorkerWebRequest, existingFrontLineWorker);
         if (VerificationStatus.isSuccess(frontLineWorkerWebRequest.getVerificationStatus())) {
             Location location = locationService.handleLocation(frontLineWorkerWebRequest.getLocation());
-            frontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(frontLineWorkerWebRequest, existingFrontLineWorker, location);
-        } else
-            frontLineWorker = FrontLineWorkerMapper.mapUnsuccessfulRegistration(frontLineWorkerWebRequest, existingFrontLineWorker);
+            frontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(existingFrontLineWorker, location);
+        }
         allFrontLineWorkers.update(frontLineWorker);
     }
 }

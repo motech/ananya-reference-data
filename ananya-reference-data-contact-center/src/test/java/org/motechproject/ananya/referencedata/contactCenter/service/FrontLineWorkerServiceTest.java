@@ -42,7 +42,7 @@ public class FrontLineWorkerServiceTest {
     @Test
     public void shouldValidateGivenFLWIfExistsInDatabase() {
         expectedException.expect(ValidationException.class);
-        expectedException.expectMessage("FLW-Id is not present in MoTeCH");
+        expectedException.expectMessage("FLW with given [id] is not present in MoTeCH");
 
         String flwId = "11223344";
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
@@ -92,5 +92,6 @@ public class FrontLineWorkerServiceTest {
         assertEquals(frontLineWorker.getFlwId(), actualFrontLineWorker.getFlwId());
         assertEquals(existingLocation,actualFrontLineWorker.getLocation());
         assertEquals(frontLineWorker.getMsisdn(), actualFrontLineWorker.getMsisdn());
+        assertEquals(null, actualFrontLineWorker.getReason());
     }
 }
