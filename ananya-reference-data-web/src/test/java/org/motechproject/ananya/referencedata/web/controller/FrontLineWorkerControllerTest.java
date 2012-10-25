@@ -41,7 +41,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldUpdateTheStatusForAValidFLWRequestXml() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", VerificationStatus.INVALID.name(), "Invalid User");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", "911234567890", VerificationStatus.INVALID.name(), "Invalid User");
 
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
 
@@ -53,7 +53,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldReturnValidationErrorForAnInvalidFLWRequestXml() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", null, "Invalid User");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", "911234567890", null, "Invalid User");
 
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field has invalid/blank value"), status().isBadRequest());
         verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
@@ -61,7 +61,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldUpdateTheStatusForAValidFLWRequestJson() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", VerificationStatus.INVALID.name(), "Invalid User");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", "911234567890", VerificationStatus.INVALID.name(), "Invalid User");
 
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
 
@@ -75,7 +75,7 @@ public class FrontLineWorkerControllerTest {
      public void shouldReturnValidationErrorForAnInvalidFLWRequestJson() throws Exception {
         String flwId = "flwId";
         String reason = "Invalid User";
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, null, reason);
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", null, reason);
 
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field has invalid/blank value"), status().isBadRequest());
         verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
@@ -84,7 +84,7 @@ public class FrontLineWorkerControllerTest {
     @Test
     public void shouldUpdateTheStatusForAValidSuccessfulFLWRequestJson() throws Exception {
         String flwId = "flwId";
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
 
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
 
@@ -97,7 +97,7 @@ public class FrontLineWorkerControllerTest {
     @Test
     public void shouldReturnValidationErrorForAnInvalidSuccessfulFLWRequestJson() throws Exception {
         String flwId = "flwId";
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), new LocationRequest());
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), new LocationRequest());
         BaseResponse expectedResponse = BaseResponse.failure("name field is blank,district field is blank,block field is blank,panchayat field is blank");
 
         postFlwRequestJson(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest());
@@ -108,7 +108,7 @@ public class FrontLineWorkerControllerTest {
     @Test
     public void shouldUpdateTheStatusForAValidSuccessfulFLWRequestXml() throws Exception {
         String flwId = "flwId";
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
 
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
 
@@ -121,7 +121,7 @@ public class FrontLineWorkerControllerTest {
     @Test
     public void shouldReturnValidationErrorForAnInvalidSuccessfulFLWRequestXml() throws Exception {
         String flwId = "flwId";
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), new LocationRequest());
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), new LocationRequest());
         BaseResponse expectedResponse = BaseResponse.failure("name field is blank,district field is blank,block field is blank,panchayat field is blank");
 
         postFLWRequestXml(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest());

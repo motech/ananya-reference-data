@@ -14,16 +14,17 @@ public class FrontLineWorkerWebRequestValidatorTest {
 
     @Test
     public void shouldInvalidateMissingIdAndVerificationStatusAndNotOtherFields() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest(null, null, null));
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest(null, null, null, null));
 
-        assertEquals(2, errors.getCount());
+        assertEquals(3, errors.getCount());
         assertTrue(errors.hasMessage("id field is blank"));
+        assertTrue(errors.hasMessage("msisdn field has invalid/blank value"));
         assertTrue(errors.hasMessage("verificationStatus field has invalid/blank value"));
     }
 
     @Test
     public void shouldInvalidateMissingFieldsInUnsuccessfulRequest() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("guid", "others", null));
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("guid", "9234567890", "others", null));
 
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("reason field is blank"));
@@ -31,38 +32,39 @@ public class FrontLineWorkerWebRequestValidatorTest {
 
     @Test
     public void shouldThrowErrorForInvalidStatus() {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", "wooster", "bertie");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", "923456789", "wooster", "bertie");
 
         Errors errors = FrontLineWorkerWebRequestValidator.validate(frontLineWorkerWebRequest);
 
-        assertEquals(1, errors.getCount());
+        assertEquals(2, errors.getCount());
+        assertTrue(errors.hasMessage("msisdn field has invalid/blank value"));
         assertTrue(errors.hasMessage("verificationStatus field has invalid/blank value"));
     }
 
     @Test
     public void shouldAllowCaseInsensitiveVerificationStatus() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", "invaliD", "reason"));
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", "9234567890", "invaliD", "reason"));
 
         assertEquals(0, errors.getCount());
     }
 
     @Test
     public void shouldAllowVerificationStatusWithSpaces() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", "  InvaliD ", "reason"));
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", "9234567890", "  InvaliD ", "reason"));
 
         assertEquals(0, errors.getCount());
     }
 
     @Test
     public void shouldValidateAValidRequest() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", VerificationStatus.INVALID.name(), "reason"));
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", "9234567890", VerificationStatus.INVALID.name(), "reason"));
 
         assertEquals(0, errors.getCount());
     }
 
     @Test
     public void shouldValidateASuccessfulFLWRequest() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", VerificationStatus.SUCCESS.name(),
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", "9234567890", VerificationStatus.SUCCESS.name(),
                 "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat", null)));
 
         assertEquals(0, errors.getCount());
@@ -70,7 +72,7 @@ public class FrontLineWorkerWebRequestValidatorTest {
 
     @Test
     public void shouldThrowErrorIfAFaultySuccessfulFLWWithIdIsPosted() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("guid", VerificationStatus.SUCCESS.name(), null, null, null));
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("guid", "9234567890", VerificationStatus.SUCCESS.name(), null, null, null));
 
         assertEquals(3, errors.getCount());
         assertTrue(errors.hasMessage("name field is blank"));

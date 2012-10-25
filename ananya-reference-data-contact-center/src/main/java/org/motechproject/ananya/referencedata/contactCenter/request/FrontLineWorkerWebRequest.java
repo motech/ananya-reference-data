@@ -14,6 +14,10 @@ public class FrontLineWorkerWebRequest {
 
     @XmlElement
     @JsonProperty
+    protected String msisdn;
+
+    @XmlElement
+    @JsonProperty
     protected String verificationStatus;
 
     @XmlElement
@@ -35,14 +39,16 @@ public class FrontLineWorkerWebRequest {
     public FrontLineWorkerWebRequest() {
     }
 
-    public FrontLineWorkerWebRequest(String flwId, String verificationStatus, String reason) {
+    public FrontLineWorkerWebRequest(String flwId, String msisdn, String verificationStatus, String reason) {
         this.flwId = flwId;
+        this.msisdn = msisdn;
         this.verificationStatus = verificationStatus;
         this.reason = reason;
     }
 
-    public FrontLineWorkerWebRequest(String flwId, String verificationStatus, String name, String designation, LocationRequest location) {
+    public FrontLineWorkerWebRequest(String flwId, String msisdn, String verificationStatus, String name, String designation, LocationRequest location) {
         this.flwId = flwId;
+        this.msisdn = msisdn;
         this.verificationStatus = verificationStatus;
         this.name = name;
         this.designation = designation;
@@ -51,6 +57,10 @@ public class FrontLineWorkerWebRequest {
 
     public String getFlwId() {
         return flwId;
+    }
+
+    public String getMsisdn() {
+        return msisdn;
     }
 
     public String getReason() {
@@ -83,6 +93,7 @@ public class FrontLineWorkerWebRequest {
         if (designation != null ? !designation.equals(that.designation) : that.designation != null) return false;
         if (flwId != null ? !flwId.equals(that.flwId) : that.flwId != null) return false;
         if (location != null ? !location.equals(that.location) : that.location != null) return false;
+        if (msisdn != null ? !msisdn.equals(that.msisdn) : that.msisdn != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (reason != null ? !reason.equals(that.reason) : that.reason != null) return false;
         if (verificationStatus != null ? !verificationStatus.equals(that.verificationStatus) : that.verificationStatus != null)
@@ -94,6 +105,7 @@ public class FrontLineWorkerWebRequest {
     @Override
     public int hashCode() {
         int result = flwId != null ? flwId.hashCode() : 0;
+        result = 31 * result + (msisdn != null ? msisdn.hashCode() : 0);
         result = 31 * result + (verificationStatus != null ? verificationStatus.hashCode() : 0);
         result = 31 * result + (reason != null ? reason.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);

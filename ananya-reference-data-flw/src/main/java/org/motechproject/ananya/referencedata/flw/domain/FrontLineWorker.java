@@ -23,10 +23,10 @@ public class FrontLineWorker extends BaseEntity {
     @Column(name = "flw_id")
     private String flwId;
 
-    @Column(name="verification_status")
+    @Column(name = "verification_status")
     private String verificationStatus;
 
-    @Column(name="reason")
+    @Column(name = "reason")
     private String reason;
 
     public FrontLineWorker() {
@@ -82,6 +82,14 @@ public class FrontLineWorker extends BaseEntity {
         return reason;
     }
 
+    public void setMsisdn(Long msisdn) {
+        this.msisdn = msisdn;
+    }
+
+    public void setVerificationStatus(VerificationStatus verificationStatus) {
+        this.verificationStatus = verificationStatus.name();
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -92,10 +100,6 @@ public class FrontLineWorker extends BaseEntity {
 
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    public void setVerificationStatus(VerificationStatus verificationStatus) {
-        this.verificationStatus = verificationStatus.name();
     }
 
     public void setReason(String reason) {

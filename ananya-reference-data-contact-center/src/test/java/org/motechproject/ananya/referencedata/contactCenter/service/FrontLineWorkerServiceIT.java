@@ -14,7 +14,6 @@ import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
@@ -36,11 +35,12 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
     @Test
     public void shouldUpdateAnExistingFlwDuringUnsuccessfulRegistration() {
         String flwId = UUID.randomUUID().toString();
+        String msisdn = "1234567890";
         Location location = new Location("d", "b", "p", "VALID");
-        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "Shahrukh", Designation.ANM, location, flwId, VerificationStatus.INVALID, "reason");
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), null, null, location, flwId, VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.OTHERS.name(), "Out of town");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, msisdn, VerificationStatus.OTHERS.name(), "Out of town");
 
         frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
 
@@ -56,12 +56,13 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
     @Test
     public void shouldCreateANewFlwIfFLWDoesNotExistDuringRegistration() {
         String flwId = UUID.randomUUID().toString();
+        String msisdn = "1234567890";
 
         Location location = new Location("d", "b", "p", "VALID");
-        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "name", Designation.ANM, location, UUID.randomUUID().toString(), VerificationStatus.INVALID, "reason");
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "name", Designation.ANM, location, UUID.randomUUID().toString(), VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.OTHERS.name(), "Out of town");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, msisdn, VerificationStatus.OTHERS.name(), "Out of town");
 
         frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
 
@@ -71,15 +72,16 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
     @Test
     public void shouldUpdateAnExistingFlwDuringSuccessfulRegistration() {
         String flwId = UUID.randomUUID().toString();
-        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "Shahrukh", null, null, flwId, VerificationStatus.INVALID, "reason");
+        String msisdn = "1234567890";
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "Shahrukh", null, null, flwId, VerificationStatus.INVALID, "reason");
         String name = "New Name";
-        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", null);
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat");
         Location location = LocationMapper.mapFrom(locationRequest);
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
         template.flush();
         String designation = Designation.ANM.name();
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), name, designation, locationRequest);
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, msisdn, VerificationStatus.SUCCESS.name(), name, designation, locationRequest);
 
         frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
 
@@ -94,33 +96,20 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
     }
 
     @Test
-    public void shouldInvalidateAnFlwWhenFLwIdDoesNotExist() {
-        expectedException.expect(ValidationException.class);
-        expectedException.expectMessage("FLW-Id is not present in MoTeCH");
-
-        Location location = new Location("d", "b", "p", "VALID");
-        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "Shahrukh", Designation.ANM, location, UUID.randomUUID().toString(), VerificationStatus.INVALID, "reason");
-        allLocations.add(location);
-        allFrontLineWorkers.add(frontLineWorker);
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("newFlwId", VerificationStatus.OTHERS.name(), "Out of town");
-
-        frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
-    }
-
-    @Test
     public void shouldAddNewLocationCorrespondingToFLWAndSaveToDb() {
         String name = "name";
+        String msisdn = "1234567890";
         Designation designation = Designation.ANM;
         String flwId = "flwId";
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
         Location location = new Location("d", "b", "p", "VALID");
-        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, name, designation, location, flwId, VerificationStatus.OTHERS, "Random reason");
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), name, designation, location, flwId, VerificationStatus.OTHERS, "Random reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
 
-        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId, VerificationStatus.SUCCESS.name(), name, designation.name(), new LocationRequest(district, block, panchayat)));
+        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId, msisdn, VerificationStatus.SUCCESS.name(), name, designation.name(), new LocationRequest(district, block, panchayat)));
 
         FrontLineWorker updatedFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
         assertEquals(district, updatedFrontLineWorker.getLocation().getDistrict());

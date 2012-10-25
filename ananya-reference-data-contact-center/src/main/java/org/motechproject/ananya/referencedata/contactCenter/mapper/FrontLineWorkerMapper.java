@@ -14,6 +14,7 @@ public class FrontLineWorkerMapper {
     }
 
     public static FrontLineWorker mapFrom(FrontLineWorkerWebRequest frontLineWorkerWebRequest, FrontLineWorker existingFrontLineWorker) {
+        existingFrontLineWorker.setMsisdn(Long.parseLong(frontLineWorkerWebRequest.getMsisdn()));
         existingFrontLineWorker.setVerificationStatus(VerificationStatus.from(frontLineWorkerWebRequest.getVerificationStatus()));
         existingFrontLineWorker.setReason(frontLineWorkerWebRequest.getReason());
         existingFrontLineWorker.setName(frontLineWorkerWebRequest.getName());
