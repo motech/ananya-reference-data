@@ -20,7 +20,8 @@ public class FrontLineWorkerWebRequestValidator {
         if (StringUtils.isEmpty(frontLineWorkerWebRequest.getFlwId()))
             errors.add("id field is blank");
 
-        if (StringUtils.isEmpty(frontLineWorkerWebRequest.getVerificationStatus()) || !VerificationStatus.isValid(frontLineWorkerWebRequest.getVerificationStatus()))
+        String verificationStatus = frontLineWorkerWebRequest.getVerificationStatus();
+        if (StringUtils.isEmpty(verificationStatus) || !VerificationStatus.isValid(verificationStatus))
             errors.add("verificationStatus field has invalid/blank value");
 
         if (StringUtils.isEmpty(frontLineWorkerWebRequest.getReason()))

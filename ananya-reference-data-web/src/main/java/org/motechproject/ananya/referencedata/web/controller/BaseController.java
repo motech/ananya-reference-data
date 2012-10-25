@@ -13,15 +13,19 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class BaseController {
     private Logger logger = LoggerFactory.getLogger(BaseController.class);
 
+
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public BaseResponse handleException(final Exception exception, HttpServletResponse response) {
         response.setContentType("application/json; application/xml");
         if (exception instanceof ValidationException)
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        else
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        logger.error(getExceptionString(exception));
+            if (exception instanceof ValidationException) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                logger.warn(getExceptionString(exception));
+            } else {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                logger.error(getExceptionString(exception));
+            }
         return BaseResponse.failure(exception.getMessage());
     }
 

@@ -24,7 +24,7 @@ public class FrontLineWorkerService {
     public void updateVerifiedFlw(FrontLineWorkerWebRequest frontLineWorkerWebRequest) {
         FrontLineWorker existingFrontLineWorker = allFrontLineWorkers.getByFlwId(frontLineWorkerWebRequest.getFlwId());
         if (existingFrontLineWorker == null)
-            throw new ValidationException("FLW-Id is not present in MoTeCH");
+            throw new ValidationException("FLW with given [id] is not present in MoTeCH");
 
         FrontLineWorker frontLineWorker;
         if (VerificationStatus.isSuccess(frontLineWorkerWebRequest.getVerificationStatus())) {
