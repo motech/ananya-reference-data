@@ -16,6 +16,8 @@ import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 
+import java.util.UUID;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -31,6 +33,8 @@ public class FrontLineWorkerServiceTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
+    private UUID flwId = UUID.randomUUID();
+
     @Before
     public void setUp() {
         initMocks(this);
@@ -39,7 +43,6 @@ public class FrontLineWorkerServiceTest {
 
     @Test
     public void shouldUpdateExistingFrontLineWorkerForUnsuccessfulRegistration() {
-        String flwId = "11223344";
         String msisdn = "9988776655";
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
         String reason = "reason";
@@ -60,7 +63,6 @@ public class FrontLineWorkerServiceTest {
 
     @Test
     public void shouldUpdateExistingFrontLineWorkerForSuccessfulRegistration() {
-        String flwId = "11223344";
         String msisdn = "9988776655";
         VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, null);
@@ -84,11 +86,10 @@ public class FrontLineWorkerServiceTest {
 
     @Test
     public void shouldCreateNewFLWIfFLWDoesNotExist() {
-        String flwId = "11223344";
         String msisdn = "1122334455";
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
         String reason = "reason";
-        when(allFrontLineWorkers.getByFlwId(anyString())).thenReturn(null);
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
 
         frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId, msisdn, verificationStatus.name(), reason));
 
@@ -104,7 +105,6 @@ public class FrontLineWorkerServiceTest {
 
     @Test
     public void shouldThrowExceptionIfRequestHasDifferentMsisdn() {
-        String flwId = "11223344";
         Long existingMsisdn = 9988776655L;
         String newMsisdn = "1122334455";
         VerificationStatus verificationStatus = VerificationStatus.INVALID;

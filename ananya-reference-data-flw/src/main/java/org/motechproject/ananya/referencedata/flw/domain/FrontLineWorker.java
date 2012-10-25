@@ -1,5 +1,7 @@
 package org.motechproject.ananya.referencedata.flw.domain;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.UUID;
 
@@ -21,7 +23,8 @@ public class FrontLineWorker extends BaseEntity {
     private Location location;
 
     @Column(name = "flw_id")
-    private String flwId;
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
+    private UUID flwId;
 
     @Column(name = "verification_status")
     private String verificationStatus;
@@ -32,7 +35,7 @@ public class FrontLineWorker extends BaseEntity {
     public FrontLineWorker() {
     }
 
-    public FrontLineWorker(String flwId) {
+    public FrontLineWorker(UUID flwId) {
         this.flwId = flwId;
     }
 
@@ -41,15 +44,15 @@ public class FrontLineWorker extends BaseEntity {
         this.name = name;
         this.designation = designation == null ? null : designation.name();
         this.location = location;
-        this.flwId = UUID.randomUUID().toString();
+        this.flwId = UUID.randomUUID();
     }
 
-    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location, String flwId, VerificationStatus verificationStatus, String reason) {
+    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location, UUID flwId, VerificationStatus verificationStatus, String reason) {
+        this.flwId = flwId;
         this.msisdn = msisdn;
         this.name = name;
         this.designation = designation == null ? null : designation.name();
         this.location = location;
-        this.flwId = flwId;
         this.verificationStatus = verificationStatus.name();
         this.reason = reason;
     }
@@ -70,7 +73,7 @@ public class FrontLineWorker extends BaseEntity {
         return location;
     }
 
-    public String getFlwId() {
+    public UUID getFlwId() {
         return flwId;
     }
 

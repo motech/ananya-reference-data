@@ -23,7 +23,7 @@ public class FrontLineWorkerMapperTest {
         Designation anm = Designation.ANM;
         Location location = new Location();
         String verificationStatus = VerificationStatus.INVALID.name();
-        String flwId = UUID.randomUUID().toString();
+        UUID flwId = UUID.randomUUID();
         FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, name, anm, location, flwId, VerificationStatus.OTHER, null);
         FrontLineWorker newFrontLineWorker = FrontLineWorkerMapper.mapFrom(new FrontLineWorkerWebRequest(flwId, msisdn.toString(), verificationStatus, reason), existingFrontLineWorker);
 
@@ -38,7 +38,7 @@ public class FrontLineWorkerMapperTest {
         Long msisdn = 12345678980L;
         String name = "name";
         Designation designation = Designation.ANM;
-        String flwId = UUID.randomUUID().toString();
+        UUID flwId = UUID.randomUUID();
         LocationRequest location = new LocationRequest("d", "b", "p", null);
         Location expectedLocation = LocationMapper.mapFrom(location);
 

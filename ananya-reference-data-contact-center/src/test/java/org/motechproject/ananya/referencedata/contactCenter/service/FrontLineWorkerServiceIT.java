@@ -34,7 +34,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
 
     @Test
     public void shouldUpdateAnExistingFlwDuringUnsuccessfulRegistration() {
-        String flwId = UUID.randomUUID().toString();
+        UUID flwId = UUID.randomUUID();
         String msisdn = "1234567890";
         Location location = new Location("d", "b", "p", "VALID");
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), null, null, location, flwId, VerificationStatus.INVALID, "reason");
@@ -55,11 +55,11 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
 
     @Test
     public void shouldCreateANewFlwIfFLWDoesNotExistDuringRegistration() {
-        String flwId = UUID.randomUUID().toString();
+        UUID flwId = UUID.randomUUID();
         String msisdn = "1234567890";
 
         Location location = new Location("d", "b", "p", "VALID");
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "name", Designation.ANM, location, UUID.randomUUID().toString(), VerificationStatus.INVALID, "reason");
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "name", Designation.ANM, location, UUID.randomUUID(), VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, msisdn, VerificationStatus.OTHER.name(), "Out of town");
@@ -71,7 +71,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
 
     @Test
     public void shouldUpdateAnExistingFlwDuringSuccessfulRegistration() {
-        String flwId = UUID.randomUUID().toString();
+        UUID flwId = UUID.randomUUID();
         String msisdn = "1234567890";
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "Shahrukh", null, null, flwId, VerificationStatus.INVALID, "reason");
         String name = "New Name";
@@ -100,7 +100,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
         String name = "name";
         String msisdn = "1234567890";
         Designation designation = Designation.ANM;
-        String flwId = "flwId";
+        UUID flwId = UUID.randomUUID();
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";

@@ -7,10 +7,14 @@ import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
+import java.util.UUID;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
 public class FrontLineWorkerWebRequestValidatorTest {
+
+    private UUID flwId = UUID.randomUUID();
 
     @Test
     public void shouldInvalidateMissingIdAndVerificationStatusAndNotOtherFields() {
@@ -24,7 +28,7 @@ public class FrontLineWorkerWebRequestValidatorTest {
 
     @Test
     public void shouldInvalidateMissingFieldsInUnsuccessfulRequest() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("guid", "9234567890", VerificationStatus.OTHER.name(), null));
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest(flwId, "9234567890", VerificationStatus.OTHER.name(), null));
 
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("reason field is blank"));
@@ -32,7 +36,7 @@ public class FrontLineWorkerWebRequestValidatorTest {
 
     @Test
     public void shouldThrowErrorForInvalidStatus() {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest("flwId", "923456789", "wooster", "bertie");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "923456789", "wooster", "bertie");
 
         Errors errors = FrontLineWorkerWebRequestValidator.validate(frontLineWorkerWebRequest);
 
@@ -43,14 +47,14 @@ public class FrontLineWorkerWebRequestValidatorTest {
 
     @Test
     public void shouldValidateAValidRequest() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", "9234567890", VerificationStatus.INVALID.name(), "reason"));
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest(flwId, "9234567890", VerificationStatus.INVALID.name(), "reason"));
 
         assertEquals(0, errors.getCount());
     }
 
     @Test
     public void shouldValidateASuccessfulFLWRequest() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", "9234567890", VerificationStatus.SUCCESS.name(),
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest(flwId, "9234567890", VerificationStatus.SUCCESS.name(),
                 "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat", null)));
 
         assertEquals(0, errors.getCount());
@@ -58,7 +62,7 @@ public class FrontLineWorkerWebRequestValidatorTest {
 
     @Test
     public void shouldThrowErrorIfAFaultySuccessfulFLWWithIdIsPosted() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("guid", "9234567890", VerificationStatus.SUCCESS.name(), null, null, null));
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest(flwId, "9234567890", VerificationStatus.SUCCESS.name(), null, null, null));
 
         assertEquals(3, errors.getCount());
         assertTrue(errors.hasMessage("name field is blank"));

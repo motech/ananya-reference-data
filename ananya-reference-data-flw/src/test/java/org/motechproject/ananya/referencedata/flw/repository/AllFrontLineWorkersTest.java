@@ -12,12 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
-public class AllFrontLineWorkersTest extends SpringIntegrationTest{
+public class AllFrontLineWorkersTest extends SpringIntegrationTest {
 
     @Autowired
     AllFrontLineWorkers allFrontLineWorkers;
@@ -138,7 +137,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
     @Test
     public void shouldGetFLWByFlwId() {
-        String flwId = "flwId";
+        UUID flwId = UUID.randomUUID();
         Long msisdn = 1234567890L;
         String name = "name";
         Designation anm = Designation.ANM;
@@ -153,7 +152,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
 
     @Test
     public void shouldReturnNullWhenFrontLineWorkerByFlwIdDoesNotExist() {
-        FrontLineWorker frontLineWorker = allFrontLineWorkers.getByFlwId("abcd");
+        FrontLineWorker frontLineWorker = allFrontLineWorkers.getByFlwId(UUID.randomUUID());
         assertNull(frontLineWorker);
     }
 }

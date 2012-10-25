@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 @Transactional
@@ -41,7 +42,7 @@ public class AllFrontLineWorkers {
         template.saveOrUpdateAll(frontLineWorkers);
     }
 
-    public FrontLineWorker getByFlwId(String flwId) {
+    public FrontLineWorker getByFlwId(UUID flwId) {
         DetachedCriteria criteria = DetachedCriteria.forClass(FrontLineWorker.class);
 
         criteria.add(Restrictions.eq("flwId", flwId));

@@ -7,6 +7,8 @@ import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
+import java.util.UUID;
+
 public class FrontLineWorkerWebRequestValidator {
 
     public static Errors validate(FrontLineWorkerWebRequest frontLineWorkerWebRequest) {
@@ -30,8 +32,8 @@ public class FrontLineWorkerWebRequestValidator {
         }
     }
 
-    private static void validateFlwId(String flwId, Errors errors) {
-        if (StringUtils.isEmpty(flwId))
+    private static void validateFlwId(UUID flwId, Errors errors) {
+        if (flwId == null)
             errors.add("id field is blank");
     }
 

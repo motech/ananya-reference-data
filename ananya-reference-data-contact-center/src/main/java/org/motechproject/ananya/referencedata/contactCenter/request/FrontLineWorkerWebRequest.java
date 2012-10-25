@@ -5,12 +5,13 @@ import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.UUID;
 
 @XmlRootElement(name = "flw")
 public class FrontLineWorkerWebRequest {
     @JsonProperty(value = "id")
     @XmlElement(name = "id")
-    private String flwId;
+    private UUID flwId;
 
     @XmlElement
     @JsonProperty
@@ -39,14 +40,14 @@ public class FrontLineWorkerWebRequest {
     public FrontLineWorkerWebRequest() {
     }
 
-    public FrontLineWorkerWebRequest(String flwId, String msisdn, String verificationStatus, String reason) {
+    public FrontLineWorkerWebRequest(UUID flwId, String msisdn, String verificationStatus, String reason) {
         this.flwId = flwId;
         this.msisdn = msisdn;
         this.verificationStatus = verificationStatus;
         this.reason = reason;
     }
 
-    public FrontLineWorkerWebRequest(String flwId, String msisdn, String verificationStatus, String name, String designation, LocationRequest location) {
+    public FrontLineWorkerWebRequest(UUID flwId, String msisdn, String verificationStatus, String name, String designation, LocationRequest location) {
         this.flwId = flwId;
         this.msisdn = msisdn;
         this.verificationStatus = verificationStatus;
@@ -55,7 +56,7 @@ public class FrontLineWorkerWebRequest {
         this.location = location;
     }
 
-    public String getFlwId() {
+    public UUID getFlwId() {
         return flwId;
     }
 

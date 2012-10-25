@@ -102,4 +102,10 @@
         </sql>
     </changeSet>
 
+    <changeSet context="setup" author="ThoughtWorks" id="12">
+        <sql splitStatements="false">
+            ALTER TABLE ananya_reference_data.front_line_worker ALTER COLUMN flw_id TYPE uuid USING flw_id::uuid;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
