@@ -5,7 +5,7 @@ import org.apache.commons.lang.StringUtils;
 public enum VerificationStatus {
     SUCCESS,
     INVALID,
-    OTHERS;
+    OTHER;
 
     public static VerificationStatus from(String string) {
         return VerificationStatus.valueOf(StringUtils.trimToEmpty(string).toUpperCase());

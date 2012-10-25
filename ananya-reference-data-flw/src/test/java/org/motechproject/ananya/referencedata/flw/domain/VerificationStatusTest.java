@@ -11,7 +11,7 @@ public class VerificationStatusTest {
     public void shouldValidateVerificationStatus() {
         assertTrue(VerificationStatus.isValid("SUCCESS"));
         assertTrue(VerificationStatus.isValid("INVALID  "));
-        assertTrue(VerificationStatus.isValid("OthERS"));
+        assertTrue(VerificationStatus.isValid("OthER"));
         assertFalse(VerificationStatus.isValid("Purple"));
     }
 

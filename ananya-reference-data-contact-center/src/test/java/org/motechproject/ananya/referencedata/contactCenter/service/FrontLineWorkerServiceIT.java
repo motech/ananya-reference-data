@@ -40,7 +40,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), null, null, location, flwId, VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, msisdn, VerificationStatus.OTHERS.name(), "Out of town");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, msisdn, VerificationStatus.OTHER.name(), "Out of town");
 
         frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
 
@@ -62,7 +62,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "name", Designation.ANM, location, UUID.randomUUID().toString(), VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, msisdn, VerificationStatus.OTHERS.name(), "Out of town");
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, msisdn, VerificationStatus.OTHER.name(), "Out of town");
 
         frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
 
@@ -105,7 +105,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
         String block = "block";
         String panchayat = "panchayat";
         Location location = new Location("d", "b", "p", "VALID");
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), name, designation, location, flwId, VerificationStatus.OTHERS, "Random reason");
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), name, designation, location, flwId, VerificationStatus.OTHER, "Random reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
 

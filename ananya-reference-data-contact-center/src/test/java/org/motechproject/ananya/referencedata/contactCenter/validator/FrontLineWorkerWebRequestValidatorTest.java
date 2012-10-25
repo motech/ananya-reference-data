@@ -24,7 +24,7 @@ public class FrontLineWorkerWebRequestValidatorTest {
 
     @Test
     public void shouldInvalidateMissingFieldsInUnsuccessfulRequest() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("guid", "9234567890", "others", null));
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("guid", "9234567890", VerificationStatus.OTHER.name(), null));
 
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("reason field is blank"));
@@ -39,20 +39,6 @@ public class FrontLineWorkerWebRequestValidatorTest {
         assertEquals(2, errors.getCount());
         assertTrue(errors.hasMessage("msisdn field has invalid/blank value"));
         assertTrue(errors.hasMessage("verificationStatus field has invalid/blank value"));
-    }
-
-    @Test
-    public void shouldAllowCaseInsensitiveVerificationStatus() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", "9234567890", "invaliD", "reason"));
-
-        assertEquals(0, errors.getCount());
-    }
-
-    @Test
-    public void shouldAllowVerificationStatusWithSpaces() {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest("flwId", "9234567890", "  InvaliD ", "reason"));
-
-        assertEquals(0, errors.getCount());
     }
 
     @Test
