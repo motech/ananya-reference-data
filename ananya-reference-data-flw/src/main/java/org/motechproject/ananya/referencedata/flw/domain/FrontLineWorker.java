@@ -32,14 +32,8 @@ public class FrontLineWorker extends BaseEntity {
     public FrontLineWorker() {
     }
 
-    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location, String flwId, VerificationStatus verificationStatus, String reason) {
-        this.msisdn = msisdn;
-        this.name = name;
-        this.designation = designation == null ? null : designation.name();
-        this.location = location;
+    public FrontLineWorker(String flwId) {
         this.flwId = flwId;
-        this.verificationStatus = verificationStatus.name();
-        this.reason = reason;
     }
 
     public FrontLineWorker(Long msisdn, String name, Designation designation, Location location) {
@@ -48,6 +42,16 @@ public class FrontLineWorker extends BaseEntity {
         this.designation = designation == null ? null : designation.name();
         this.location = location;
         this.flwId = UUID.randomUUID().toString();
+    }
+
+    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location, String flwId, VerificationStatus verificationStatus, String reason) {
+        this.msisdn = msisdn;
+        this.name = name;
+        this.designation = designation == null ? null : designation.name();
+        this.location = location;
+        this.flwId = flwId;
+        this.verificationStatus = verificationStatus.name();
+        this.reason = reason;
     }
 
     public Long getMsisdn() {

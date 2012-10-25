@@ -54,6 +54,21 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
     }
 
     @Test
+    public void shouldCreateANewFlwIfFLWDoesNotExistDuringRegistration() {
+        String flwId = UUID.randomUUID().toString();
+
+        Location location = new Location("d", "b", "p", "VALID");
+        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "name", Designation.ANM, location, UUID.randomUUID().toString(), VerificationStatus.INVALID, "reason");
+        allLocations.add(location);
+        allFrontLineWorkers.add(frontLineWorker);
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, VerificationStatus.OTHERS.name(), "Out of town");
+
+        frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
+
+        assertEquals(2, template.loadAll(FrontLineWorker.class).size());
+    }
+
+    @Test
     public void shouldUpdateAnExistingFlwDuringSuccessfulRegistration() {
         String flwId = UUID.randomUUID().toString();
         FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "Shahrukh", null, null, flwId, VerificationStatus.INVALID, "reason");

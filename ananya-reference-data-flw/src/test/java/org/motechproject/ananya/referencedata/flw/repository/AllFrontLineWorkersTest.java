@@ -156,21 +156,4 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         FrontLineWorker frontLineWorker = allFrontLineWorkers.getByFlwId("abcd");
         assertNull(frontLineWorker);
     }
-
-    @Test
-    public void shouldUpdateFrontLineWorker() {
-        FrontLineWorker frontLineWorker = new FrontLineWorker(9988776655L, "name", Designation.ANM, location, "flwId", VerificationStatus.OTHERS, null);
-        template.save(frontLineWorker);
-        frontLineWorker.setReason("random");
-        frontLineWorker.setVerificationStatus(VerificationStatus.INVALID);
-
-        allFrontLineWorkers.update(frontLineWorker);
-
-        FrontLineWorker frontLineWOrkerFromDb = allFrontLineWorkers.getByFlwId("flwId");
-        assertEquals(frontLineWorker.getId(), frontLineWOrkerFromDb.getId());
-        assertEquals(frontLineWorker.getFlwId(), frontLineWOrkerFromDb.getFlwId());
-        assertEquals(frontLineWorker.getName(), frontLineWOrkerFromDb.getName());
-        assertEquals(frontLineWorker.getVerificationStatus(), frontLineWOrkerFromDb.getVerificationStatus());
-        assertEquals(frontLineWorker.getReason(), frontLineWOrkerFromDb.getReason());
-    }
 }

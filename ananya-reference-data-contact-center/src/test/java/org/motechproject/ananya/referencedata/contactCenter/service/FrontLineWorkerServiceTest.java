@@ -14,13 +14,10 @@ import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class FrontLineWorkerServiceTest {
@@ -40,19 +37,6 @@ public class FrontLineWorkerServiceTest {
     }
 
     @Test
-    public void shouldValidateGivenFLWIfExistsInDatabase() {
-        expectedException.expect(ValidationException.class);
-        expectedException.expectMessage("FLW with given [id] is not present in MoTeCH");
-
-        String flwId = "11223344";
-        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
-
-        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId, VerificationStatus.INVALID.name(), "reason"));
-
-        verify(locationService,never()).handleLocation(any(LocationRequest.class));
-    }
-
-    @Test
     public void shouldUpdateExistingFrontLineWorkerForUnsuccessfulRegistration() {
         String flwId = "11223344";
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
@@ -63,7 +47,7 @@ public class FrontLineWorkerServiceTest {
         frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId, verificationStatus.name(), reason));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
-        verify(allFrontLineWorkers).update(captor.capture());
+        verify(allFrontLineWorkers).createOrUpdate(captor.capture());
         FrontLineWorker actualFrontLineWorker = captor.getValue();
         assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
         assertEquals(reason, actualFrontLineWorker.getReason());
@@ -86,7 +70,7 @@ public class FrontLineWorkerServiceTest {
         frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId, verificationStatus.name(),"name",Designation.ANM.name(), locationRequest));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
-        verify(allFrontLineWorkers).update(captor.capture());
+        verify(allFrontLineWorkers).createOrUpdate(captor.capture());
         FrontLineWorker actualFrontLineWorker = captor.getValue();
         assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
         assertEquals(frontLineWorker.getFlwId(), actualFrontLineWorker.getFlwId());
