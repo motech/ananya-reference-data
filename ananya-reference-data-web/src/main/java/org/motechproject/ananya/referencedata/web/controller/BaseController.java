@@ -2,6 +2,7 @@ package org.motechproject.ananya.referencedata.web.controller;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
+import org.motechproject.ananya.referencedata.flw.validators.CSVRequestValidationException;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public abstract class BaseController {
     private Logger logger = LoggerFactory.getLogger(BaseController.class);
@@ -27,6 +29,15 @@ public abstract class BaseController {
             logger.error(getExceptionString(exception));
         }
         return BaseResponse.failure(exception.getMessage());
+    }
+
+    @ExceptionHandler(CSVRequestValidationException.class)
+    @ResponseBody
+    public void handleCsvException(final Exception exception, HttpServletResponse response) throws IOException {
+        response.setContentType("text/plain");
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.getOutputStream().write(getExceptionString(exception).getBytes());
+        logger.error(getExceptionString(exception));
     }
 
     private String getExceptionString(Exception ex) {

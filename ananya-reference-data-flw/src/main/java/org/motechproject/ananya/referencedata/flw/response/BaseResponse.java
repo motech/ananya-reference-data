@@ -71,14 +71,4 @@ public class BaseResponse {
         }
         return stringWriter.toString();
     }
-
-//    public String toXml() throws JAXBException {
-//        JAXBContext context = JAXBContext.newInstance(BaseResponse.class);
-//        Marshaller m = context.createMarshaller();
-//        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-//        m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-//        StringWriter writer = new StringWriter();
-//        m.marshal(this, writer);
-//        return writer.toString();
-//    }
 }

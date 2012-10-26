@@ -19,10 +19,6 @@ public class LocationService {
         this.allLocations = allLocations;
     }
 
-    private Location getExistingLocation(LocationRequest request) {
-        return allLocations.getFor(request.getDistrict(), request.getBlock(), request.getPanchayat());
-    }
-
     public Location handleLocation(LocationRequest request) {
         Location location = getExistingLocation(request);
         if (location == null) {
@@ -34,6 +30,10 @@ public class LocationService {
 
     public List<Location> getAllValidLocations() {
         return allLocations.getAllForStatus(LocationStatus.VERIFIED);
+    }
+
+    private Location getExistingLocation(LocationRequest request) {
+        return allLocations.getFor(request.getDistrict(), request.getBlock(), request.getPanchayat());
     }
 
 }

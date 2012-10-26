@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.web.controller;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -10,11 +11,16 @@ import org.motechproject.ananya.referencedata.web.response.LocationResponse;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
 import org.motechproject.ananya.referencedata.web.validator.ValidationResponse;
 import org.motechproject.ananya.referencedata.web.validator.WebRequestValidator;
+import org.springframework.http.MediaType;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.motechproject.ananya.referencedata.web.utils.MVCTestUtils.mockMvc;
+import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LocationControllerTest {
@@ -25,10 +31,14 @@ public class LocationControllerTest {
     @Mock
     private WebRequestValidator webRequestValidator;
 
+    @Before
+    public void setUp() {
+        locationController = new LocationController(locationService, webRequestValidator);
+    }
+
     @Test
     public void shouldGetLocationMasterCsv() throws Exception {
         final Location validLocation = new Location("d1", "b1", "p1", "valid");
-        locationController = new LocationController(locationService, webRequestValidator);
         String channel = "contact_center";
         when(webRequestValidator.validateChannel(channel)).thenReturn(new ValidationResponse());
         when(locationService.getAllValidLocations()).thenReturn(new ArrayList<Location>() {{
@@ -42,5 +52,18 @@ public class LocationControllerTest {
         assertEquals(validLocation.getBlock(), locationResponse.getBlock());
         assertEquals(validLocation.getDistrict(), locationResponse.getDistrict());
         assertEquals(validLocation.getPanchayat(), locationResponse.getPanchayat());
+    }
+
+    @Test
+    public void shouldValidateChannel() throws Exception {
+        String channel = "blah";
+        ValidationResponse validationResponse = new ValidationResponse();
+        validationResponse.addError("some error");
+        when(webRequestValidator.validateChannel(channel)).thenReturn(validationResponse);
+
+        mockMvc(locationController)
+                .perform(get("/alllocations").param("channel", channel).accept(new MediaType("text", "csv", Charset.defaultCharset())))
+                .andExpect(status().isBadRequest())
+                .andReturn();
     }
 }

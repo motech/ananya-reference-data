@@ -36,7 +36,7 @@ public class LocationServiceTest {
         Location expectedLocation = new Location();
         when(allLocations.getFor(district, block, panchayat)).thenReturn(expectedLocation);
 
-        Location actualLocation = locationService.getLocation(request);
+        Location actualLocation = locationService.handleLocation(request);
 
         assertEquals(expectedLocation, actualLocation);
     }

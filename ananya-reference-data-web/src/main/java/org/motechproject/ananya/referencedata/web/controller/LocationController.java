@@ -2,10 +2,10 @@ package org.motechproject.ananya.referencedata.web.controller;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
-import org.motechproject.ananya.referencedata.web.response.LocationResponse;
 import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
+import org.motechproject.ananya.referencedata.flw.validators.CSVRequestValidationException;
+import org.motechproject.ananya.referencedata.web.response.LocationResponse;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
 import org.motechproject.ananya.referencedata.web.validator.ValidationResponse;
 import org.motechproject.ananya.referencedata.web.validator.WebRequestValidator;
@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-public class LocationController {
+public class LocationController extends BaseController {
 
     private LocationService locationService;
     private WebRequestValidator webRequestValidator;
@@ -43,7 +43,7 @@ public class LocationController {
 
     private void raiseExceptionIfThereAreErrors(ValidationResponse validationResponse) {
         if (validationResponse.hasErrors()) {
-            throw new ValidationException(validationResponse.getErrorMessage());
+            throw new CSVRequestValidationException(validationResponse.getErrorMessage());
         }
     }
 
