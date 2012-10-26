@@ -1,11 +1,14 @@
 package org.motechproject.ananya.referencedata.contactCenter.service;
 
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class LocationService {
@@ -28,4 +31,9 @@ public class LocationService {
         }
         return location;
     }
+
+    public List<Location> getAllValidLocations() {
+        return allLocations.getAllForStatus(LocationStatus.VERIFIED);
+    }
+
 }

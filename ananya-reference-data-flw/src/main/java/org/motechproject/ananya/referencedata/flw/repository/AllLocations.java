@@ -4,6 +4,7 @@ package org.motechproject.ananya.referencedata.flw.repository;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,5 +39,11 @@ public class AllLocations {
 
     public void addAll(Set<Location> locations) {
         template.saveOrUpdateAll(locations);
+    }
+
+    public List<Location> getAllForStatus(LocationStatus status) {
+        DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
+        criteria.add(Restrictions.eq("status", status.name()).ignoreCase());
+        return template.findByCriteria(criteria);
     }
 }

@@ -15,6 +15,7 @@
     <mvc:annotation-driven>
         <mvc:message-converters>
             <bean class="org.motechproject.web.message.converters.CustomJaxb2RootElementHttpMessageConverter"/>
+            <bean class="org.motechproject.web.message.converters.CSVHttpMessageConverter"/>
         </mvc:message-converters>
     </mvc:annotation-driven>
 

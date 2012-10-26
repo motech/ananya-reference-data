@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.motechproject.ananya.referencedata.SpringIntegrationTest;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
@@ -79,6 +80,25 @@ public class AllLocationsTest extends SpringIntegrationTest {
 
         List<Location> locationsFromDb = template.loadAll(Location.class);
         assertEquals(2, locationsFromDb.size());
+    }
+
+    @Test
+    public void shouldLoadAllValidLocations() {
+        String district = "district";
+        String district1 = "district1";
+        String block = "block";
+        String panchayat = "panchayat";
+        Location location = new Location(district, block, panchayat, "VERIFIED");
+        Location location1 = new Location(district1, block, panchayat, "NOT_VERIFIED");
+        Set<Location> locations = new HashSet<>();
+        locations.add(location);
+        locations.add(location1);
+        template.saveOrUpdateAll(locations);
+
+        List<Location> locationsList = allLocations.getAllForStatus(LocationStatus.VERIFIED);
+
+        assertEquals(1, locationsList.size());
+        assertEquals(location, locationsList.get(0));
     }
 
     @Test
