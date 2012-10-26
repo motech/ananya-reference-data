@@ -34,7 +34,7 @@ public class FrontLineWorkerControllerTest {
     private FrontLineWorkerService frontLineWorkerService;
 
     private FrontLineWorkerController frontLineWorkerController;
-    private UUID flwId = UUID.randomUUID();
+    private String flwId = UUID.randomUUID().toString();
 
     @Before
     public void setUp() {

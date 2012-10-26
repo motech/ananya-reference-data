@@ -14,7 +14,7 @@ import static junit.framework.Assert.assertTrue;
 
 public class FrontLineWorkerWebRequestValidatorTest {
 
-    private UUID flwId = UUID.randomUUID();
+    private String flwId = UUID.randomUUID().toString();
 
     @Test
     public void shouldInvalidateMissingIdAndVerificationStatusAndNotOtherFields() {
@@ -32,6 +32,36 @@ public class FrontLineWorkerWebRequestValidatorTest {
 
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("reason field is blank"));
+    }
+
+    @Test
+    public void shouldInvalidateTheFlwIdFormat(){
+        String uuidInInvalidFormat = "abcd1234";
+
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest(uuidInInvalidFormat, "9234567890", VerificationStatus.OTHER.name(), "reason"));
+
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("id field is not in valid UUID format"));
+    }
+
+    @Test
+    public void shouldInvalidateTheFlwIdWithExtraCharacters(){
+        String uuidWithExtraCharacters = "1234dadb-1234-1234-9876-abcdeef2345689";
+
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest(uuidWithExtraCharacters, "9234567890", VerificationStatus.OTHER.name(), "reason"));
+
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("id field is not in valid UUID format"));
+    }
+
+    @Test
+    public void shouldInvalidateFlwIdWithInvalidCharacters(){
+        String uuidWithInvalidCharacters = "1234dadb-1234-1234-9876-abcdef1234xy";
+
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest(uuidWithInvalidCharacters, "9234567890", VerificationStatus.OTHER.name(), "reason"));
+
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("id field is not in valid UUID format"));
     }
 
     @Test

@@ -10,6 +10,8 @@ import org.motechproject.ananya.referencedata.flw.validators.ValidationException
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class FrontLineWorkerService {
     private AllFrontLineWorkers allFrontLineWorkers;
@@ -22,9 +24,10 @@ public class FrontLineWorkerService {
     }
 
     public void updateVerifiedFlw(FrontLineWorkerWebRequest webRequest) {
-        FrontLineWorker frontLineWorker = allFrontLineWorkers.getByFlwId(webRequest.getFlwId());
+        UUID flwId = UUID.fromString(webRequest.getFlwId());
+        FrontLineWorker frontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
         if (frontLineWorker == null)
-            frontLineWorker = new FrontLineWorker(webRequest.getFlwId());
+            frontLineWorker = new FrontLineWorker(flwId);
         else
             validateMsisdnMatch(webRequest.getMsisdn(), frontLineWorker.getMsisdn());
         FrontLineWorker updatedFrontLineWorker = FrontLineWorkerMapper.mapFrom(webRequest, frontLineWorker);

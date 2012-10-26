@@ -7,7 +7,7 @@ import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
-import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class FrontLineWorkerWebRequestValidator {
 
@@ -32,9 +32,11 @@ public class FrontLineWorkerWebRequestValidator {
         }
     }
 
-    private static void validateFlwId(UUID flwId, Errors errors) {
-        if (flwId == null)
+    private static void validateFlwId(String flwId, Errors errors) {
+        if (StringUtils.isEmpty(flwId))
             errors.add("id field is blank");
+        else if (!Pattern.matches("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", flwId))
+            errors.add("id field is not in valid UUID format");
     }
 
     private static void validateVerificationStatus(String verificationStatus, Errors errors) {
