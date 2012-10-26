@@ -27,7 +27,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
 
     @Test
     public void shouldAddLocationToDB() {
-        Location location = new Location("district", "block", "panchayat", "NOT VERIFIED");
+        Location location = new Location("district", "block", "panchayat", "NOT_VERIFIED");
 
         allLocations.add(location);
 
@@ -43,7 +43,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat, "NOT VERIFIED");
+        Location location = new Location(district, block, panchayat, "NOT_VERIFIED");
 
         allLocations.add(location);
 
@@ -56,7 +56,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat, "NOT VERIFIED");
+        Location location = new Location(district, block, panchayat, "NOT_VERIFIED");
 
         allLocations.add(location);
 
@@ -70,7 +70,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String district1 = "district1";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat, "NOT VERIFIED");
+        Location location = new Location(district, block, panchayat, "NOT_VERIFIED");
         Location location1 = new Location(district1, block, panchayat, "VALID");
         Set<Location> locations = new HashSet<Location>();
         locations.add(location);
@@ -88,14 +88,14 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String district1 = "district1";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat, "VERIFIED");
+        Location location = new Location(district, block, panchayat, "VALID");
         Location location1 = new Location(district1, block, panchayat, "NOT_VERIFIED");
         Set<Location> locations = new HashSet<>();
         locations.add(location);
         locations.add(location1);
         template.saveOrUpdateAll(locations);
 
-        List<Location> locationsList = allLocations.getAllForStatus(LocationStatus.VERIFIED);
+        List<Location> locationsList = allLocations.getAllForStatus(LocationStatus.VALID);
 
         assertEquals(1, locationsList.size());
         assertEquals(location, locationsList.get(0));

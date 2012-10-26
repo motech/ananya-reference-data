@@ -2,6 +2,7 @@ package org.motechproject.ananya.referencedata.flw.request;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 
 import javax.xml.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class LocationRequest {
 
     @JsonIgnore
     @XmlTransient
-    private String status = "NOT VERIFIED";
+    private String status = LocationStatus.NOT_VERIFIED.name();
 
     public LocationRequest() {
     }

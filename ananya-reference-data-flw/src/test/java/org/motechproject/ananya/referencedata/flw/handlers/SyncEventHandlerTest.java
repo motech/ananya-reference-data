@@ -51,7 +51,7 @@ public class SyncEventHandlerTest {
     public void shouldInvokeClientServiceWithFrontLineWorkerData() throws IOException {
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         String msisdn = "1234";
-        Location location = new Location("district1", "block1", "panchayat1", "NOT VERIFIED");
+        Location location = new Location("district1", "block1", "panchayat1", "NOT_VERIFIED");
         DateTime lastModified = DateTime.now();
         location.setLastModified(lastModified);
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), "name1", Designation.ANM, location);

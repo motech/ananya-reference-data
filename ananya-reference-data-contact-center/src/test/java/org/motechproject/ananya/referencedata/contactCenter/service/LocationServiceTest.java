@@ -32,7 +32,7 @@ public class LocationServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        LocationRequest request = new LocationRequest(district, block, panchayat, "VERIFIED");
+        LocationRequest request = new LocationRequest(district, block, panchayat, "VALID");
         Location expectedLocation = new Location();
         when(allLocations.getFor(district, block, panchayat)).thenReturn(expectedLocation);
 
@@ -44,7 +44,7 @@ public class LocationServiceTest {
     @Test
     public void shouldGetAllValidLocation() {
         ArrayList<Location> expectedLocationList = new ArrayList<>();
-        when(allLocations.getAllForStatus(LocationStatus.VERIFIED)).thenReturn(expectedLocationList);
+        when(allLocations.getAllForStatus(LocationStatus.VALID)).thenReturn(expectedLocationList);
 
         List<Location> actualLocationList = locationService.getAllValidLocations();
 

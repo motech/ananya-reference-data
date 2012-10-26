@@ -13,7 +13,7 @@ public class LocationMapperTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        String status = "Verified" ;
+        String status = "VALID" ;
 
         Location location = LocationMapper.mapFrom(new LocationRequest(district, block, panchayat, status));
 

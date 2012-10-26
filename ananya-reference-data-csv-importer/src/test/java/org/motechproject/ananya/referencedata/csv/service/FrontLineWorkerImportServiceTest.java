@@ -189,7 +189,7 @@ public class FrontLineWorkerImportServiceTest {
         String newPanchayat = "panchayat1";
         String status = "VALID";
         FrontLineWorkerImportRequest frontLineWorkerWebRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat, status));
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat", "NOT VERIFIED"));
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat", "NOT_VERIFIED"));
         List<FrontLineWorker> frontLineWorkerList = new ArrayList<>();
         frontLineWorkerList.add(frontLineWorker);
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat, "VALID"));
@@ -223,7 +223,7 @@ public class FrontLineWorkerImportServiceTest {
         String newPanchayat = "panchayat1";
         String newStatus = "VALID";
         FrontLineWorkerImportRequest frontLineWorkerWebRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat, newStatus));
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat", "NOT VERIFIED"));
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat", "NOT_VERIFIED"));
         List<FrontLineWorker> frontLineWorkerList = new ArrayList<>();
         frontLineWorkerList.add(frontLineWorker);
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat, newStatus));
@@ -245,7 +245,7 @@ public class FrontLineWorkerImportServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         FrontLineWorkerImportRequest frontLineWorkerWebRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat, "VALID"));
-        FrontLineWorker frontLineWorker1 = new FrontLineWorker(Long.valueOf(msisdn), "old name", Designation.ANM, new Location("district", "block", "panchayat", "NOT VERIFIED"));
+        FrontLineWorker frontLineWorker1 = new FrontLineWorker(Long.valueOf(msisdn), "old name", Designation.ANM, new Location("district", "block", "panchayat", "NOT_VERIFIED"));
         List<FrontLineWorker> frontLineWorkerList = new ArrayList<FrontLineWorker>();
         frontLineWorkerList.add(frontLineWorker1);
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(frontLineWorkerList);

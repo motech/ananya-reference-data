@@ -26,7 +26,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     public void setUp() {
         template.deleteAll(template.loadAll(FrontLineWorker.class));
         template.deleteAll(template.loadAll(Location.class));
-        location = new Location("district", "block", "panchayat", "NOT VERIFIED");
+        location = new Location("district", "block", "panchayat", "NOT_VERIFIED");
         template.save(location);
     }
 

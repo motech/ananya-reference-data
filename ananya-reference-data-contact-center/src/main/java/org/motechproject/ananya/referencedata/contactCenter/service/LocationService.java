@@ -29,11 +29,10 @@ public class LocationService {
     }
 
     public List<Location> getAllValidLocations() {
-        return allLocations.getAllForStatus(LocationStatus.VERIFIED);
+        return allLocations.getAllForStatus(LocationStatus.VALID);
     }
 
     private Location getExistingLocation(LocationRequest request) {
         return allLocations.getFor(request.getDistrict(), request.getBlock(), request.getPanchayat());
     }
-
 }

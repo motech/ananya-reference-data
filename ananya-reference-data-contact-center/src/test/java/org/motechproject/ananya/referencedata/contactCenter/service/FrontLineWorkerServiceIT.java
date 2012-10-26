@@ -112,6 +112,6 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
         assertEquals(district, updatedFrontLineWorker.getLocation().getDistrict());
         assertEquals(block, updatedFrontLineWorker.getLocation().getBlock());
         assertEquals(panchayat,updatedFrontLineWorker.getLocation().getPanchayat());
-        assertEquals("NOT VERIFIED", updatedFrontLineWorker.getLocation().getStatus());
+        assertEquals("NOT_VERIFIED", updatedFrontLineWorker.getLocation().getStatus());
     }
 }
