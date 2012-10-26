@@ -5,9 +5,9 @@ import org.apache.commons.collections.Transformer;
 import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.validators.CSVRequestValidationException;
+import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.motechproject.ananya.referencedata.web.response.LocationResponse;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
-import org.motechproject.ananya.referencedata.web.validator.ValidationResponse;
 import org.motechproject.ananya.referencedata.web.validator.WebRequestValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,15 +35,14 @@ public class LocationController extends BaseController {
     public
     @ResponseBody
     LocationResponseList getLocationMaster(@RequestParam String channel) throws IOException {
-        ValidationResponse validationResponse = webRequestValidator.validateChannel(channel);
-        raiseExceptionIfThereAreErrors(validationResponse);
-
+        validateRequest(channel);
         return mapFrom(locationService.getAllValidLocations());
     }
 
-    private void raiseExceptionIfThereAreErrors(ValidationResponse validationResponse) {
-        if (validationResponse.hasErrors()) {
-            throw new CSVRequestValidationException(validationResponse.getErrorMessage());
+    private void validateRequest(String channel) {
+        Errors errors = webRequestValidator.validateChannel(channel);
+        if (errors.hasErrors()) {
+            throw new CSVRequestValidationException(errors.allMessages());
         }
     }
 

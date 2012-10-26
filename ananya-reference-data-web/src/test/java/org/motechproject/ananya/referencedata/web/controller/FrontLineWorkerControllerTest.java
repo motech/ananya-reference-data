@@ -1,6 +1,5 @@
 package org.motechproject.ananya.referencedata.web.controller;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -12,6 +11,7 @@ import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
 import org.motechproject.ananya.referencedata.web.utils.TestUtils;
+import org.motechproject.ananya.referencedata.web.validator.WebRequestValidator;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.server.MvcResult;
 import org.springframework.test.web.server.ResultMatcher;
@@ -32,9 +32,12 @@ public class FrontLineWorkerControllerTest {
 
     @Mock
     private FrontLineWorkerService frontLineWorkerService;
+    @Mock
+    private WebRequestValidator webRequestValidator;
 
     private FrontLineWorkerController frontLineWorkerController;
     private String flwId = UUID.randomUUID().toString();
+    private String channel = "contact_center";
 
     @Before
     public void setUp() {
@@ -46,7 +49,7 @@ public class FrontLineWorkerControllerTest {
     public void shouldUpdateTheStatusForAValidFLWRequestXml() throws Exception {
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.INVALID.name(), "Invalid User");
 
-        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
+        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk(), channel);
 
         ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
         verify(frontLineWorkerService).updateVerifiedFlw(captor.capture());
@@ -58,7 +61,7 @@ public class FrontLineWorkerControllerTest {
     public void shouldReturnValidationErrorForAnInvalidFLWRequestXml() throws Exception {
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", null, "Invalid User");
 
-        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field has invalid/blank value"), status().isBadRequest());
+        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field has invalid/blank value"), status().isBadRequest(), "contact_center");
 
         verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
     }
@@ -76,7 +79,7 @@ public class FrontLineWorkerControllerTest {
     }
 
     @Test
-     public void shouldReturnValidationErrorForAnInvalidFLWRequestJson() throws Exception {
+    public void shouldReturnValidationErrorForAnInvalidFLWRequestJson() throws Exception {
         String reason = "Invalid User";
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", null, reason);
 
@@ -111,7 +114,7 @@ public class FrontLineWorkerControllerTest {
     public void shouldUpdateTheStatusForAValidSuccessfulFLWRequestXml() throws Exception {
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
 
-        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
+        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk(), "contact_center");
 
         ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
         verify(frontLineWorkerService).updateVerifiedFlw(captor.capture());
@@ -124,14 +127,24 @@ public class FrontLineWorkerControllerTest {
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), new LocationRequest());
         BaseResponse expectedResponse = BaseResponse.failure("name field is blank,district field is blank,block field is blank,panchayat field is blank");
 
-        postFLWRequestXml(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest());
+        postFLWRequestXml(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest(), "contact_center");
 
         verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
     }
 
-    private void postFLWRequestXml(FrontLineWorkerWebRequest frontLineWorkerWebRequest, BaseResponse expectedResponse, ResultMatcher statusMatcher) throws Exception {
+    @Test
+    public void shouldValidateChannelParam() throws Exception {
+        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
+        BaseResponse expectedResponse = BaseResponse.failure("Invalid channel: comedy_central");
+
+        postFLWRequestXml(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest(), "comedy_central");
+
+        verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
+    }
+
+    private void postFLWRequestXml(FrontLineWorkerWebRequest frontLineWorkerWebRequest, BaseResponse expectedResponse, ResultMatcher statusMatcher, String channel) throws Exception {
         MvcResult result = mockMvc(frontLineWorkerController)
-                .perform(post("/flw").body(TestUtils.toXml(FrontLineWorkerWebRequest.class, frontLineWorkerWebRequest).getBytes())
+                .perform(post("/flw").body(TestUtils.toXml(FrontLineWorkerWebRequest.class, frontLineWorkerWebRequest).getBytes()).param("channel", channel)
                         .contentType(MediaType.APPLICATION_XML).accept(MediaType.APPLICATION_XML))
                 .andExpect(statusMatcher)
                 .andExpect(content().type("application/xml"))
@@ -139,12 +152,12 @@ public class FrontLineWorkerControllerTest {
 
         String responseString = result.getResponse().getContentAsString();
         BaseResponse actualResponse = TestUtils.fromXml(BaseResponse.class, responseString);
-        Assert.assertEquals(expectedResponse, actualResponse);
+        assertEquals(expectedResponse, actualResponse);
     }
 
     private void postFlwRequestJson(FrontLineWorkerWebRequest frontLineWorkerWebRequest, BaseResponse expectedResponse, ResultMatcher statusMatcher) throws Exception {
         MvcResult result = mockMvc(frontLineWorkerController)
-                .perform(post("/flw").body(TestUtils.toJson(frontLineWorkerWebRequest).getBytes())
+                .perform(post("/flw").body(TestUtils.toJson(frontLineWorkerWebRequest).getBytes()).param("channel", channel)
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(statusMatcher)
                 .andExpect(content().type("application/json"))
@@ -152,6 +165,6 @@ public class FrontLineWorkerControllerTest {
 
         String responseString = result.getResponse().getContentAsString();
         BaseResponse actualResponse = TestUtils.fromJson(BaseResponse.class, responseString);
-        Assert.assertEquals(expectedResponse, actualResponse);
+        assertEquals(expectedResponse, actualResponse);
     }
 }

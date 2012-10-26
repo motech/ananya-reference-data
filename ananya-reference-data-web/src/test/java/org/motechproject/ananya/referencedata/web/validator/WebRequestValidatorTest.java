@@ -3,8 +3,9 @@ package org.motechproject.ananya.referencedata.web.validator;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
-import static org.junit.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class WebRequestValidatorTest {
@@ -15,10 +16,10 @@ public class WebRequestValidatorTest {
     public void shouldInvalidateAndThrowExceptionIfChannelIsInvalid() {
         WebRequestValidator webRequestValidator = new WebRequestValidator();
 
-        ValidationResponse validationResponse = webRequestValidator.validateChannel("invalid_channel");
+        Errors errors = webRequestValidator.validateChannel("invalid_channel");
 
-        assertTrue(validationResponse.hasErrors());
-        assertEquals(1, validationResponse.getErrors().size());
-        assertEquals("Invalid channel: invalid_channel" + System.lineSeparator(), validationResponse.getErrorMessage());
+        assertTrue(errors.hasErrors());
+        assertEquals(1, errors.getCount());
+        assertEquals("Invalid channel: invalid_channel", errors.allMessages());
     }
 }

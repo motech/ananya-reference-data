@@ -6,12 +6,10 @@ import org.motechproject.ananya.referencedata.contactCenter.validator.FrontLineW
 import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
+import org.motechproject.ananya.referencedata.web.validator.WebRequestValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class FrontLineWorkerController extends BaseController {
@@ -24,14 +22,16 @@ public class FrontLineWorkerController extends BaseController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/flw", produces = {"application/json", "application/xml"})
     @ResponseBody
-    public BaseResponse updateVerifiedFlw(@RequestBody FrontLineWorkerWebRequest frontLineWorkerWebRequest) {
-        validateRequest(frontLineWorkerWebRequest);
+    public BaseResponse updateVerifiedFlw(@RequestBody FrontLineWorkerWebRequest frontLineWorkerWebRequest, @RequestParam String channel ) {
+        validateRequest(frontLineWorkerWebRequest, channel);
         frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
         return BaseResponse.success();
     }
 
-    private void validateRequest(FrontLineWorkerWebRequest frontLineWorkerWebRequest) {
-        Errors errors = FrontLineWorkerWebRequestValidator.validate(frontLineWorkerWebRequest);
+    private void validateRequest(FrontLineWorkerWebRequest frontLineWorkerWebRequest, String channel) {
+        WebRequestValidator webRequestValidator = new WebRequestValidator();
+        Errors errors = webRequestValidator.validateChannel(channel);
+        errors.addAll(FrontLineWorkerWebRequestValidator.validate(frontLineWorkerWebRequest));
         if (errors.hasErrors())
             throw new ValidationException(errors.allMessages());
     }

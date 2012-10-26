@@ -7,9 +7,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.motechproject.ananya.referencedata.web.response.LocationResponse;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
-import org.motechproject.ananya.referencedata.web.validator.ValidationResponse;
 import org.motechproject.ananya.referencedata.web.validator.WebRequestValidator;
 import org.springframework.http.MediaType;
 
@@ -40,7 +40,7 @@ public class LocationControllerTest {
     public void shouldGetLocationMasterCsv() throws Exception {
         final Location validLocation = new Location("d1", "b1", "p1", "valid");
         String channel = "contact_center";
-        when(webRequestValidator.validateChannel(channel)).thenReturn(new ValidationResponse());
+        when(webRequestValidator.validateChannel(channel)).thenReturn(new Errors());
         when(locationService.getAllValidLocations()).thenReturn(new ArrayList<Location>() {{
             add(validLocation);
         }});
@@ -57,9 +57,9 @@ public class LocationControllerTest {
     @Test
     public void shouldValidateChannel() throws Exception {
         String channel = "blah";
-        ValidationResponse validationResponse = new ValidationResponse();
-        validationResponse.addError("some error");
-        when(webRequestValidator.validateChannel(channel)).thenReturn(validationResponse);
+        Errors errors = new Errors();
+        errors.add("some error");
+        when(webRequestValidator.validateChannel(channel)).thenReturn(errors);
 
         mockMvc(locationController)
                 .perform(get("/alllocations").param("channel", channel).accept(new MediaType("text", "csv", Charset.defaultCharset())))
