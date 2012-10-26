@@ -1,7 +1,6 @@
 package org.motechproject.ananya.referencedata.flw.domain;
 
 import java.util.Date;
-import java.util.UUID;
 
 public class FrontLineWorkerContract {
 
@@ -10,9 +9,9 @@ public class FrontLineWorkerContract {
     private String designation;
     private Date lastModified;
     private LocationContract location;
-    private UUID flwId;
+    private String flwId;
 
-    public FrontLineWorkerContract(String msisdn, String name, String designation, Date lastModified, LocationContract location, UUID flwId) {
+    public FrontLineWorkerContract(String msisdn, String name, String designation, Date lastModified, LocationContract location, String flwId) {
         this.name = name;
         this.msisdn = msisdn;
         this.designation = designation;
@@ -41,7 +40,7 @@ public class FrontLineWorkerContract {
         return lastModified;
     }
 
-    public UUID getFlwId() {
+    public String getFlwId() {
         return flwId;
     }
 }

@@ -8,6 +8,6 @@ import java.util.Date;
 public class FrontLineWorkerContractMapper {
 
     public static FrontLineWorkerContract mapFrom(FrontLineWorker frontLineWorker) {
-        return new FrontLineWorkerContract(frontLineWorker.getMsisdn().toString(), frontLineWorker.getName(), frontLineWorker.getDesignation(), new Date(frontLineWorker.getLastModified().getMillis()), LocationContractMapper.mapFrom(frontLineWorker.getLocation()), frontLineWorker.getFlwId());
+        return new FrontLineWorkerContract(frontLineWorker.getMsisdn().toString(), frontLineWorker.getName(), frontLineWorker.getDesignation(), new Date(frontLineWorker.getLastModified().getMillis()), LocationContractMapper.mapFrom(frontLineWorker.getLocation()), frontLineWorker.getFlwId().toString());
     }
 }
