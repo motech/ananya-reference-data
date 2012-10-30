@@ -23,8 +23,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class FrontLineWorkerServiceTest {
-    private FrontLineWorkerService frontLineWorkerService;
+public class FrontLineWorkerContactCenterServiceTest {
+    private FrontLineWorkerContactCenterService frontLineWorkerContactCenterService;
     @Mock
     private AllFrontLineWorkers allFrontLineWorkers;
     @Mock
@@ -38,7 +38,7 @@ public class FrontLineWorkerServiceTest {
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerService = new FrontLineWorkerService(allFrontLineWorkers, locationService);
+        frontLineWorkerContactCenterService = new FrontLineWorkerContactCenterService(allFrontLineWorkers, locationService);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class FrontLineWorkerServiceTest {
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, reason);
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
 
-        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), msisdn, verificationStatus.name(), reason));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), msisdn, verificationStatus.name(), reason));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
@@ -72,7 +72,7 @@ public class FrontLineWorkerServiceTest {
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
         when(locationService.handleLocation(locationRequest)).thenReturn(existingLocation);
 
-        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), msisdn, verificationStatus.name(), "name", Designation.ANM.name(), locationRequest));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), msisdn, verificationStatus.name(), "name", Designation.ANM.name(), locationRequest));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
@@ -91,7 +91,7 @@ public class FrontLineWorkerServiceTest {
         String reason = "reason";
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
 
-        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), msisdn, verificationStatus.name(), reason));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), msisdn, verificationStatus.name(), reason));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
@@ -114,7 +114,7 @@ public class FrontLineWorkerServiceTest {
 
         expectedException.expect(ValidationException.class);
         expectedException.expectMessage(String.format("Given msisdn %s does not match existing msisdn %s for the given id.", newMsisdn, existingMsisdn));
-        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), newMsisdn, verificationStatus.name(), reason));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), newMsisdn, verificationStatus.name(), reason));
 
         verify(allFrontLineWorkers, never()).createOrUpdate(any(FrontLineWorker.class));
         verify(locationService, never()).handleLocation(any(LocationRequest.class));

@@ -20,10 +20,10 @@ import java.util.UUID;
 
 import static junit.framework.Assert.assertEquals;
 
-public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
+public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest {
 
     @Autowired
-    private FrontLineWorkerService frontLineWorkerService;
+    private FrontLineWorkerContactCenterService frontLineWorkerContactCenterService;
     @Autowired
     private AllFrontLineWorkers allFrontLineWorkers;
     @Autowired
@@ -42,7 +42,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
         allFrontLineWorkers.add(frontLineWorker);
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId.toString(), msisdn, VerificationStatus.OTHER.name(), "Out of town");
 
-        frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
+        frontLineWorkerContactCenterService.updateVerifiedFlw(frontLineWorkerWebRequest);
 
         FrontLineWorker updatedFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
         assertEquals(frontLineWorkerWebRequest.getVerificationStatus(), updatedFrontLineWorker.getVerificationStatus());
@@ -63,7 +63,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
         allFrontLineWorkers.add(frontLineWorker);
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId.toString(), msisdn, VerificationStatus.OTHER.name(), "Out of town");
 
-        frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
+        frontLineWorkerContactCenterService.updateVerifiedFlw(frontLineWorkerWebRequest);
 
         assertEquals(2, template.loadAll(FrontLineWorker.class).size());
     }
@@ -81,7 +81,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
         String designation = Designation.ANM.name();
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId.toString(), msisdn, VerificationStatus.SUCCESS.name(), name, designation, locationRequest);
 
-        frontLineWorkerService.updateVerifiedFlw(frontLineWorkerWebRequest);
+        frontLineWorkerContactCenterService.updateVerifiedFlw(frontLineWorkerWebRequest);
 
         FrontLineWorker updatedFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
         assertEquals(frontLineWorker.getFlwId(), updatedFrontLineWorker.getFlwId());
@@ -106,7 +106,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
 
-        frontLineWorkerService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), msisdn, VerificationStatus.SUCCESS.name(), name, designation.name(), new LocationRequest(district, block, panchayat)));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), msisdn, VerificationStatus.SUCCESS.name(), name, designation.name(), new LocationRequest(district, block, panchayat)));
 
         FrontLineWorker updatedFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
         assertEquals(district, updatedFrontLineWorker.getLocation().getDistrict());

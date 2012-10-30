@@ -4,10 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.motechproject.ananya.referencedata.SpringIntegrationTest;
-import org.motechproject.ananya.referencedata.flw.domain.Designation;
-import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
-import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -47,6 +44,19 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
         assertEquals(1, frontLineWorkerList.size());
         assertNotNull(frontLineWorkerList.get(0).getLastModified());
         assertNotNull(frontLineWorkerList.get(0).getFlwId());
+    }
+
+    @Test
+    public void shouldAddAllFrontLineWorkers() {
+        List<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>() {{
+            add(new FrontLineWorker(UUID.randomUUID()));
+            add(new FrontLineWorker(UUID.randomUUID()));
+        }};
+
+        allFrontLineWorkers.addAll(frontLineWorkers);
+
+        List<FrontLineWorker> frontLineWorkerList = template.loadAll(FrontLineWorker.class);
+        assertEquals(2, frontLineWorkerList.size());
     }
 
     @Test
@@ -154,5 +164,18 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     public void shouldReturnNullWhenFrontLineWorkerByFlwIdDoesNotExist() {
         FrontLineWorker frontLineWorker = allFrontLineWorkers.getByFlwId(UUID.randomUUID());
         assertNull(frontLineWorker);
+    }
+
+    @Test
+    public void shouldGetAllFlwWithGivenLocation() {
+        List<FrontLineWorker> expectedFrontLineWorkers = new ArrayList<FrontLineWorker>() {{
+            add(new FrontLineWorker(1234567890L, "name", Designation.ANM, location));
+            add(new FrontLineWorker(1234567891L, "name", Designation.ANM, location));
+        }};
+        allFrontLineWorkers.addAll(expectedFrontLineWorkers);
+
+        List<FrontLineWorker> actualFrontLineWorkers = allFrontLineWorkers.getForLocation(location);
+
+        assertEquals(expectedFrontLineWorkers, actualFrontLineWorkers);
     }
 }

@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
-import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWorkerContactCenterService;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
@@ -31,7 +31,7 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.s
 public class FrontLineWorkerControllerTest {
 
     @Mock
-    private FrontLineWorkerService frontLineWorkerService;
+    private FrontLineWorkerContactCenterService frontLineWorkerContactCenterService;
     @Mock
     private WebRequestValidator webRequestValidator;
 
@@ -42,7 +42,7 @@ public class FrontLineWorkerControllerTest {
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerController = new FrontLineWorkerController(frontLineWorkerService);
+        frontLineWorkerController = new FrontLineWorkerController(frontLineWorkerContactCenterService);
     }
 
     @Test
@@ -52,7 +52,7 @@ public class FrontLineWorkerControllerTest {
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk(), channel);
 
         ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
-        verify(frontLineWorkerService).updateVerifiedFlw(captor.capture());
+        verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
         FrontLineWorkerWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
         assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
     }
@@ -63,7 +63,7 @@ public class FrontLineWorkerControllerTest {
 
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field has invalid/blank value"), status().isBadRequest(), "contact_center");
 
-        verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
+        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class FrontLineWorkerControllerTest {
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
 
         ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
-        verify(frontLineWorkerService).updateVerifiedFlw(captor.capture());
+        verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
         FrontLineWorkerWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
         assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
     }
@@ -85,7 +85,7 @@ public class FrontLineWorkerControllerTest {
 
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field has invalid/blank value"), status().isBadRequest());
 
-        verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
+        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class FrontLineWorkerControllerTest {
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
 
         ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
-        verify(frontLineWorkerService).updateVerifiedFlw(captor.capture());
+        verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
         FrontLineWorkerWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
         assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
     }
@@ -107,7 +107,7 @@ public class FrontLineWorkerControllerTest {
 
         postFlwRequestJson(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest());
 
-        verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
+        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class FrontLineWorkerControllerTest {
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk(), "contact_center");
 
         ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
-        verify(frontLineWorkerService).updateVerifiedFlw(captor.capture());
+        verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
         FrontLineWorkerWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
         assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
     }
@@ -129,7 +129,7 @@ public class FrontLineWorkerControllerTest {
 
         postFLWRequestXml(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest(), "contact_center");
 
-        verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
+        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
     }
 
     @Test
@@ -139,7 +139,7 @@ public class FrontLineWorkerControllerTest {
 
         postFLWRequestXml(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest(), "comedy_central");
 
-        verify(frontLineWorkerService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
+        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
     }
 
     private void postFLWRequestXml(FrontLineWorkerWebRequest frontLineWorkerWebRequest, BaseResponse expectedResponse, ResultMatcher statusMatcher, String channel) throws Exception {

@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.csv.request;
 
+import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 
 public class LocationImportRequest {
@@ -24,6 +25,17 @@ public class LocationImportRequest {
         this.district = district;
         this.block = block;
         this.panchayat = panchayat;
+        this.status = status;
+    }
+
+    public LocationImportRequest(String district, String block, String panchayat, String status,
+                                 String newDistrict, String newBlock, String newPanchayat) {
+        this.district = district;
+        this.block = block;
+        this.panchayat = panchayat;
+        this.newDistrict = newDistrict;
+        this.newBlock = newBlock;
+        this.newPanchayat = newPanchayat;
         this.status = status;
     }
 
@@ -85,5 +97,15 @@ public class LocationImportRequest {
 
     public String toCSV() {
         return "\"" + district + "\"" + "," + "\"" + block + "\"" + "," +  "\"" + panchayat + "\"";
+    }
+
+    public boolean isForInvalidation() {
+        return LocationStatus.isInvalidStatus(status);
+    }
+
+    public boolean hasAlternateLocation() {
+        return StringUtils.isNotEmpty(newBlock)
+                && StringUtils.isNotEmpty(newDistrict)
+                && StringUtils.isNotEmpty(newPanchayat);
     }
 }

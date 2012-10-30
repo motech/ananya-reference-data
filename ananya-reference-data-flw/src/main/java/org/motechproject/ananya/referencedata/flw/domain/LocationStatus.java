@@ -29,4 +29,8 @@ public enum LocationStatus {
         return true;
 
     }
+
+    public static boolean isInvalidStatus(String status) {
+        return isValid(status) && INVALID.equals(from(status));
+    }
 }

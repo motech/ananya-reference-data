@@ -10,6 +10,7 @@ import org.motechproject.ananya.referencedata.csv.validator.LocationImportValida
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
+import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -25,15 +26,16 @@ public class LocationImportServiceTest {
     AllLocations allLocations;
     @Mock
     private LocationImportValidator locationValidator;
+    @Mock
+    private FrontLineWorkerService frontLineWorkerService;
     @Captor
     ArgumentCaptor<Set<Location>> captor;
-
     LocationImportService locationImportService;
 
     @Before
     public void setUp() {
         initMocks(this);
-        locationImportService = new LocationImportService(allLocations, locationValidator);
+        locationImportService = new LocationImportService(allLocations, locationValidator, frontLineWorkerService);
     }
 
     @Test
@@ -68,5 +70,31 @@ public class LocationImportServiceTest {
         Location actualLocation = locationImportService.getFor("district", "block", "panchayat");
 
         assertEquals(location, actualLocation);
+    }
+
+    @Test
+    public void shouldAddLocationsWithAlternateLocationsAndUpfateFLWsForBulkAddition() {
+        String panchayat = "panchayat";
+        String block = "block";
+        String district1 = "district1";
+        String district2 = "district2";
+        LocationImportRequest locationRequest2 = new LocationImportRequest(
+                district2, block, panchayat, "INVALID", district1, block, panchayat);
+        ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
+        locationImportRequests.add(locationRequest2);
+        Location location = new Location(district2, block, panchayat, LocationStatus.NOT_VERIFIED.name(), null);
+        Location alternateLocation = new Location(district1, block, panchayat, LocationStatus.VALID.name(), null);
+        when(allLocations.getFor(district2, block, panchayat)).thenReturn(location);
+        when(allLocations.getFor(district1, block, panchayat)).thenReturn(alternateLocation);
+
+        locationImportService.addAllWithoutValidations(locationImportRequests);
+
+        verify(allLocations).addAll(captor.capture());
+        Set<Location> locationsSaved = captor.getValue();
+        location.setAlternateLocation(alternateLocation);
+        location.setStatus(LocationStatus.INVALID);
+        assertTrue(locationsSaved.contains(location));
+
+        verify(frontLineWorkerService).updateWithAlternateLocationForFLWsWith(location);
     }
 }

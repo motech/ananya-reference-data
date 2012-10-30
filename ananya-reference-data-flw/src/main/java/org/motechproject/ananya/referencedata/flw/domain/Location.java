@@ -59,6 +59,10 @@ public class Location extends BaseEntity {
         this.status = status.name();
     }
 
+    public void setAlternateLocation(Location alternateLocation) {
+        this.alternateLocation = alternateLocation;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -66,6 +70,8 @@ public class Location extends BaseEntity {
 
         Location location = (Location) o;
 
+        if (alternateLocation != null ? !alternateLocation.equals(location.alternateLocation) : location.alternateLocation != null)
+            return false;
         if (block != null ? !block.equalsIgnoreCase(location.block) : location.block != null) return false;
         if (district != null ? !district.equalsIgnoreCase(location.district) : location.district != null) return false;
         if (panchayat != null ? !panchayat.equalsIgnoreCase(location.panchayat) : location.panchayat != null) return false;
@@ -80,6 +86,7 @@ public class Location extends BaseEntity {
         result = 31 * result + (block != null ? block.hashCode() : 0);
         result = 31 * result + (panchayat != null ? panchayat.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (alternateLocation != null ? alternateLocation.hashCode() : 0);
         return result;
     }
 

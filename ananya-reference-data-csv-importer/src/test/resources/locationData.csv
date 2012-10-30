@@ -3,3 +3,4 @@ district,block,panchayat,status,newDistrict,newBlock,newPanchayat
 "D2","B2","P2","VALID"
 "D2","B2","P2","IN_Review"
 "D2","B2","P3","in_review"
+"D2","B2","P4","invalid","D2","B2","P2"

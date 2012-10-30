@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class FrontLineWorkerService {
+public class FrontLineWorkerContactCenterService {
     private AllFrontLineWorkers allFrontLineWorkers;
     private LocationService locationService;
 
     @Autowired
-    public FrontLineWorkerService(AllFrontLineWorkers allFrontLineWorkers, LocationService locationService) {
+    public FrontLineWorkerContactCenterService(AllFrontLineWorkers allFrontLineWorkers, LocationService locationService) {
         this.allFrontLineWorkers = allFrontLineWorkers;
         this.locationService = locationService;
     }

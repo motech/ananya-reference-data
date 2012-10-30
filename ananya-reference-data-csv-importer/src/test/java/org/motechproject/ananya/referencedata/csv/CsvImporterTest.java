@@ -26,18 +26,23 @@ public class CsvImporterTest extends SpringIntegrationTest {
 
     @Test
     public void shouldImportLocationData() throws Exception {
-        template.save(new Location("D2", "B2", "P2", LocationStatus.NOT_VERIFIED.name(), null));
+        Location location1 = new Location("D2", "B2", "P2", LocationStatus.NOT_VERIFIED.name(), null);
+        Location location2 = new Location("D2", "B2", "P4", LocationStatus.NOT_VERIFIED.name(), null);
+        template.save(location1);
+        template.save(location2);
         URL locationData = this.getClass().getResource("/locationData.csv");
         String[] arguments = {"Location", locationData.getPath()};
 
         CsvImporter.main(arguments);
 
         List<Location> locationDimensions = template.loadAll(Location.class);
-        assertEquals(2, locationDimensions.size());
-        assertEquals("D2", locationDimensions.get(0).getDistrict());
-        assertEquals("B2", locationDimensions.get(0).getBlock());
-        assertEquals("P2", locationDimensions.get(0).getPanchayat());
-        assertEquals(LocationStatus.IN_REVIEW.name(), locationDimensions.get(0).getStatus());
+        assertEquals(3, locationDimensions.size());
+
+        location1.setStatus(LocationStatus.IN_REVIEW);
+        assertEquals(location1, locationDimensions.get(0));
+        location2.setStatus(LocationStatus.INVALID);
+        location2.setAlternateLocation(location1);
+        assertEquals(location2, locationDimensions.get(2));
     }
 
     @Test
