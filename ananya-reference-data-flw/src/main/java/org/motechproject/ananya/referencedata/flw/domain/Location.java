@@ -1,6 +1,7 @@
 package org.motechproject.ananya.referencedata.flw.domain;
 
 import liquibase.util.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 
@@ -19,10 +20,15 @@ public class Location extends BaseEntity {
     @Column(name = "status")
     private String status;
 
+    @ManyToOne
+    @JoinColumn(name = "alternate_location")
+    private Location alternateLocation;
+
     public Location() {
     }
 
-    public Location(String district, String block, String panchayat, String status) {
+    public Location(String district, String block, String panchayat, String status, Location alternateLocation) {
+        this.alternateLocation = alternateLocation;
         this.district = StringUtils.trimToEmpty(district);
         this.block = StringUtils.trimToEmpty(block);
         this.panchayat = StringUtils.trimToEmpty(panchayat);
@@ -43,6 +49,10 @@ public class Location extends BaseEntity {
 
     public String getStatus() {
         return status;
+    }
+
+    public Location getAlternateLocation() {
+        return alternateLocation;
     }
 
     @Override
@@ -71,10 +81,6 @@ public class Location extends BaseEntity {
 
     @Override
     public String toString() {
-        return "{" +
-                "district=\"" + district + '"' +
-                ", block=\"" + block + '"' +
-                ", panchayat=\"" + panchayat + '"' +
-                '}';
+        return ToStringBuilder.reflectionToString(this);
     }
 }

@@ -14,7 +14,7 @@ public class FrontLineWorkerContractMapperTest {
         String panchayat = "panchayat1";
         DateTime now = DateTime.now();
         String status = "VALID";
-        Location location = new Location(district, block, panchayat, status);
+        Location location = new Location(district, block, panchayat, status, null);
         location.setLastModified(now);
 
         Long msisdn = 1234567890L;

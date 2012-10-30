@@ -108,4 +108,10 @@
         </sql>
     </changeSet>
 
+    <changeSet context="setup" author="ThoughtWorks" id="13">
+        <sql splitStatements="false">
+            ALTER TABLE ananya_reference_data.location ADD COLUMN alternate_location int;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

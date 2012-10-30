@@ -38,7 +38,7 @@ public class LocationControllerTest {
 
     @Test
     public void shouldGetLocationMasterCsv() throws Exception {
-        final Location validLocation = new Location("d1", "b1", "p1", "valid");
+        final Location validLocation = new Location("d1", "b1", "p1", "valid", null);
         String channel = "contact_center";
         when(webRequestValidator.validateChannel(channel)).thenReturn(new Errors());
         when(locationService.getAllValidLocations()).thenReturn(new ArrayList<Location>() {{

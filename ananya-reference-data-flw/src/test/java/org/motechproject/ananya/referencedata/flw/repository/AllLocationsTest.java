@@ -27,7 +27,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
 
     @Test
     public void shouldAddLocationToDB() {
-        Location location = new Location("district", "block", "panchayat", "NOT_VERIFIED");
+        Location location = new Location("district", "block", "panchayat", "NOT_VERIFIED", null);
 
         allLocations.add(location);
 
@@ -43,7 +43,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat, "NOT_VERIFIED");
+        Location location = new Location(district, block, panchayat, "NOT_VERIFIED", null);
 
         allLocations.add(location);
 
@@ -56,7 +56,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat, "NOT_VERIFIED");
+        Location location = new Location(district, block, panchayat, "NOT_VERIFIED", null);
 
         allLocations.add(location);
 
@@ -70,8 +70,8 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String district1 = "district1";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat, "NOT_VERIFIED");
-        Location location1 = new Location(district1, block, panchayat, "VALID");
+        Location location = new Location(district, block, panchayat, "NOT_VERIFIED", null);
+        Location location1 = new Location(district1, block, panchayat, "VALID", null);
         Set<Location> locations = new HashSet<Location>();
         locations.add(location);
         locations.add(location1);
@@ -88,8 +88,8 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String district1 = "district1";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat, "VALID");
-        Location location1 = new Location(district1, block, panchayat, "NOT_VERIFIED");
+        Location location = new Location(district, block, panchayat, "VALID", null);
+        Location location1 = new Location(district1, block, panchayat, "NOT_VERIFIED", null);
         Set<Location> locations = new HashSet<>();
         locations.add(location);
         locations.add(location1);

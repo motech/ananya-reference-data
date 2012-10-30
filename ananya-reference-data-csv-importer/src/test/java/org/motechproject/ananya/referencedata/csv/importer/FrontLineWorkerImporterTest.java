@@ -46,7 +46,7 @@ public class FrontLineWorkerImporterTest {
     @Test
     public void shouldValidateFLWRequests() {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
-        Location location = new Location("D1", "B1", "P1", "VALID");
+        Location location = new Location("D1", "B1", "P1", "VALID", null);
         when(locationImportService.getFor("D1", "B1", "P1")).thenReturn(location);
         frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1234567890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1", "VALID")));
 
@@ -60,7 +60,7 @@ public class FrontLineWorkerImporterTest {
     @Test
     public void shouldFailValidationIfFLWDoesNotHaveAllTheDetails() {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
-        Location location = new Location("D1", "B1", "P1", "VALID");
+        Location location = new Location("D1", "B1", "P1", "VALID", null);
         when(locationImportService.getFor("D1", "B1", "P1")).thenReturn(location);
         frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1asdf67890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1", "VALID")));
 

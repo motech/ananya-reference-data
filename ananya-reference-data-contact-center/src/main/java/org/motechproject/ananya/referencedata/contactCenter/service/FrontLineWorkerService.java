@@ -33,7 +33,6 @@ public class FrontLineWorkerService {
         FrontLineWorker updatedFrontLineWorker = FrontLineWorkerMapper.mapFrom(webRequest, frontLineWorker);
         if (VerificationStatus.isSuccess(webRequest.getVerificationStatus())) {
             Location location = locationService.handleLocation(webRequest.getLocation());
-
             updatedFrontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(frontLineWorker, location);
         }
         allFrontLineWorkers.createOrUpdate(updatedFrontLineWorker);

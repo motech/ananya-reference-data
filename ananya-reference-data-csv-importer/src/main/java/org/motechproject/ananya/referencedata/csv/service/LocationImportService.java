@@ -38,7 +38,6 @@ public class LocationImportService {
     @Transactional
     public LocationCreationResponse add(LocationRequest locationRequest) {
         LocationCreationResponse response = new LocationCreationResponse();
-
         Location location = LocationMapper.mapFrom(locationRequest);
         LocationValidationResponse locationValidationResponse = locationImportValidator.validate(location);
         if (locationValidationResponse.isValid()) {

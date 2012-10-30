@@ -8,8 +8,8 @@ public class LocationTest {
 
     @Test
     public void shouldIgnoreCaseWhileComparingLocations() {
-        Location location1 = new Location("d1", "B1", "p1", "NOT_VERIFIED");
-        Location location2 = new Location("D1", "b1", "p1", "NoT_VERIFIED");
+        Location location1 = new Location("d1", "B1", "p1", "NOT_VERIFIED", null);
+        Location location2 = new Location("D1", "b1", "p1", "NoT_VERIFIED", null);
         assertEquals(location1, location2);
     }
 }

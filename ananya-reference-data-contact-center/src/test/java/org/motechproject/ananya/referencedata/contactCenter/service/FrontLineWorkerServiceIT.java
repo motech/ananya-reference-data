@@ -36,7 +36,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
     @Test
     public void shouldUpdateAnExistingFlwDuringUnsuccessfulRegistration() {
         String msisdn = "1234567890";
-        Location location = new Location("d", "b", "p", "VALID");
+        Location location = new Location("d", "b", "p", "VALID", null);
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), null, null, location, flwId, VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
@@ -57,7 +57,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
     public void shouldCreateANewFlwIfFLWDoesNotExistDuringRegistration() {
         String msisdn = "1234567890";
 
-        Location location = new Location("d", "b", "p", "VALID");
+        Location location = new Location("d", "b", "p", "VALID", null);
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "name", Designation.ANM, location, UUID.randomUUID(), VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
@@ -101,7 +101,7 @@ public class FrontLineWorkerServiceIT extends SpringIntegrationTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location("d", "b", "p", "VALID");
+        Location location = new Location("d", "b", "p", "VALID", null);
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), name, designation, location, flwId, VerificationStatus.OTHER, "Random reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);

@@ -20,7 +20,7 @@ public class  BaseEntity {
     }
 
     public DateTime getLastModified() {
-        return new DateTime(lastModified.getTime());
+        return lastModified == null ? null : new DateTime(lastModified.getTime());
     }
 
     public void setLastModified(DateTime lastModified) {

@@ -40,7 +40,7 @@ public class LocationImporterTest {
     public void shouldValidateLocationRequests() {
         ArrayList<Object> locationRequests = new ArrayList<Object>();
         locationRequests.add(new LocationRequest("D1", "B1", "P1", "VALID"));
-        when(locationImportValidator.validate(new Location("D1","B1","P1", "VALID"))).thenReturn(new LocationValidationResponse());
+        when(locationImportValidator.validate(new Location("D1","B1","P1", "VALID", null))).thenReturn(new LocationValidationResponse());
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
@@ -55,7 +55,7 @@ public class LocationImporterTest {
         locationRequests.add(new LocationRequest("D1", "B1", null, "VALID"));
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
         locationValidationResponse.forBlankFieldsInLocation();
-        when(locationImportValidator.validate(new Location("D1", "B1", null, "VALID"))).thenReturn(locationValidationResponse);
+        when(locationImportValidator.validate(new Location("D1", "B1", null, "VALID", null))).thenReturn(locationValidationResponse);
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
@@ -68,11 +68,11 @@ public class LocationImporterTest {
     public void shouldFailValidationIfThereAreDuplicateLocations() {
         ArrayList<Object> locationRequests = new ArrayList<Object>();
         ArrayList<Location> locations = new ArrayList<Location>();
-        locations.add(new Location("D1", "B1", "P1", "VALID"));
+        locations.add(new Location("D1", "B1", "P1", "VALID", null));
         locationRequests.add(new LocationRequest("D1", "B1", "P1", "VALID"));
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
         locationValidationResponse.forDuplicateLocation();
-        when(locationImportValidator.validate(new Location("D1", "B1", "P1", "VALID"))).thenReturn(locationValidationResponse);
+        when(locationImportValidator.validate(new Location("D1", "B1", "P1", "VALID", null))).thenReturn(locationValidationResponse);
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
