@@ -1,7 +1,9 @@
 package org.motechproject.ananya.referencedata.csv.validator;
 
 import org.apache.commons.lang.StringUtils;
+import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +19,27 @@ public class LocationImportValidator {
         this.allLocations = allLocations;
     }
 
-    public LocationValidationResponse validate(Location location) {
+    public LocationValidationResponse validate(LocationImportRequest locationRequest) {
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
-        if (StringUtils.isEmpty(location.getDistrict()) || StringUtils.isEmpty(location.getBlock()) || StringUtils.isEmpty(location.getPanchayat()))
+        String district = locationRequest.getDistrict();
+        String block = locationRequest.getBlock();
+        String panchayat = locationRequest.getPanchayat();
+        String status = locationRequest.getStatus();
+
+        if (StringUtils.isEmpty(district)
+                || StringUtils.isEmpty(block)
+                || StringUtils.isEmpty(panchayat)) {
             locationValidationResponse.forBlankFieldsInLocation();
-        Location alreadyPresentLocation = allLocations.getFor(location.getDistrict(), location.getBlock(), location.getPanchayat());
-        if (alreadyPresentLocation != null)
+        }
+
+        Location alreadyPresentLocation = allLocations.getFor(district, block, panchayat);
+        if (alreadyPresentLocation != null && alreadyPresentLocation.getStatus().equals(status)){
             locationValidationResponse.forDuplicateLocation();
+        }
+
+        if(!LocationStatus.isValid(status)){
+            locationValidationResponse.forInvalidStatus();
+        }
         return locationValidationResponse;
     }
 }

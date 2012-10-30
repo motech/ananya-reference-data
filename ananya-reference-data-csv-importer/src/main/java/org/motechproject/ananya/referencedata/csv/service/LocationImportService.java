@@ -1,12 +1,10 @@
 package org.motechproject.ananya.referencedata.csv.service;
 
-import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
-import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
-import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.csv.response.LocationCreationResponse;
-import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
+import org.motechproject.ananya.referencedata.csv.mapper.LocationImportMapper;
+import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
 import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
+import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -36,26 +34,15 @@ public class LocationImportService {
     }
 
     @Transactional
-    public LocationCreationResponse add(LocationRequest locationRequest) {
-        LocationCreationResponse response = new LocationCreationResponse();
-        Location location = LocationMapper.mapFrom(locationRequest);
-        LocationValidationResponse locationValidationResponse = locationImportValidator.validate(location);
-        if (locationValidationResponse.isValid()) {
-            allLocations.add(location);
-            return response.withCreated();
-        }
-        return response.withValidationResponse(locationValidationResponse);
-    }
-
-    @Transactional
-    public void addAllWithoutValidations(List<LocationRequest> locationRequests) {
-        Set<Location> locations = new HashSet<Location>();
-        for (LocationRequest request : locationRequests) {
+    public void addAllWithoutValidations(List<LocationImportRequest> locationImportRequests) {
+        Set<Location> locations = new HashSet<>();
+        for (LocationImportRequest request : locationImportRequests) {
             Location alreadyPresentLocation = allLocations.getFor(request.getDistrict(), request.getBlock(), request.getPanchayat());
-            Location location = LocationMapper.mapFrom(request);
-            if (alreadyPresentLocation == null) {
-                locations.add(location);
-            }
+            Location locationToAdd =  alreadyPresentLocation == null
+                    ? LocationImportMapper.mapFrom(request)
+                    : LocationImportMapper.mapFrom(alreadyPresentLocation, request);
+
+            locations.add(locationToAdd);
         }
         allLocations.addAll(locations);
     }

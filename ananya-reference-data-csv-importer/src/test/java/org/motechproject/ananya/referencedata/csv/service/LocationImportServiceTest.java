@@ -5,12 +5,11 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.motechproject.ananya.referencedata.csv.response.LocationCreationResponse;
-import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
+import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
 import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
-import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -38,63 +37,21 @@ public class LocationImportServiceTest {
     }
 
     @Test
-    public void shouldValidateLocationRequests() {
-        String panchayat = "panchayat";
-        String block = "block";
-        LocationRequest locationRequest = new LocationRequest(null, block, panchayat, "VALID");
-        LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
-        locationValidationResponse.forBlankFieldsInLocation();
-        when(locationValidator.validate(new Location(null, "block", "panchayat", "VALID", null))).thenReturn(locationValidationResponse);
-
-        LocationCreationResponse locationCreationResponse = locationImportService.add(locationRequest);
-
-        assertEquals("Blank district, block or panchayat", locationCreationResponse.getMessage());
-    }
-
-    @Test
-    public void shouldInvalidateDuplicateLocationCreationRequests() {
-        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "VALID");
-        LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
-        locationValidationResponse.forDuplicateLocation();
-        when(locationValidator.validate(new Location("district", "block", "panchayat", "VALID", null))).thenReturn(locationValidationResponse);
-
-        LocationCreationResponse locationCreationResponse = locationImportService.add(locationRequest);
-
-        assertEquals("Location already present", locationCreationResponse.getMessage());
-    }
-
-    @Test
-    public void shouldAddTheLocationToDB() {
-        String panchayat = "panchayat";
-        String block = "block";
-        String district = "district";
-        LocationRequest locationRequest = new LocationRequest(district, block, panchayat, "VALID");
-        when(locationValidator.validate(new Location("district", "block", "panchayat", "VALID", null))).thenReturn(new LocationValidationResponse());
-
-        LocationCreationResponse locationCreationResponse = locationImportService.add(locationRequest);
-
-        ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
-        verify(allLocations).add(captor.capture());
-        Location location = captor.getValue();
-        assertEquals(district, location.getDistrict());
-        assertEquals(block, location.getBlock());
-        assertEquals(panchayat, location.getPanchayat());
-        assertEquals("Location created successfully", locationCreationResponse.getMessage());
-    }
-
-    @Test
     public void shouldBulkSaveLocation() {
         String panchayat = "panchayat";
         String block = "block";
         String district1 = "district1";
         String district2 = "district2";
-        LocationRequest locationRequest1 = new LocationRequest(district1, block, panchayat, "VALID");
-        LocationRequest locationRequest2 = new LocationRequest(district2, block, panchayat, "INVALID");
-        ArrayList<LocationRequest> locationRequests = new ArrayList<LocationRequest>();
-        locationRequests.add(locationRequest1);
-        locationRequests.add(locationRequest2);
+        Location location = new Location(district2, block, panchayat, LocationStatus.VALID.name(), null);
+        LocationImportRequest locationRequest1 = new LocationImportRequest(district1, block, panchayat, "VALID");
+        LocationImportRequest locationRequest2 = new LocationImportRequest(district2, block, panchayat, "INVALID");
+        ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
+        locationImportRequests.add(locationRequest1);
+        locationImportRequests.add(locationRequest2);
+        when(allLocations.getFor(district1, block, panchayat)).thenReturn(null);
+        when(allLocations.getFor(district2, block, panchayat)).thenReturn(location);
 
-        locationImportService.addAllWithoutValidations(locationRequests);
+        locationImportService.addAllWithoutValidations(locationImportRequests);
 
         verify(allLocations).addAll(captor.capture());
         Set<Location> value = captor.getValue();

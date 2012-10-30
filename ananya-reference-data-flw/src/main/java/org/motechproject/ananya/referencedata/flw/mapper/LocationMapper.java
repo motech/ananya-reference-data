@@ -1,10 +1,11 @@
 package org.motechproject.ananya.referencedata.flw.mapper;
 
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 
 public class LocationMapper {
     public static Location mapFrom(LocationRequest request) {
-        return new Location(request.getDistrict(), request.getBlock(), request.getPanchayat(), request.getStatus(), null);
+        return new Location(request.getDistrict(), request.getBlock(), request.getPanchayat(), LocationStatus.NOT_VERIFIED.name(), null);
     }
 }

@@ -8,6 +8,7 @@ import org.motechproject.ananya.referencedata.csv.exception.InvalidArgumentExcep
 import org.motechproject.ananya.referencedata.csv.exception.WrongNumberArgsException;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.springframework.test.annotation.ExpectedException;
 
 import java.net.URL;
@@ -25,16 +26,18 @@ public class CsvImporterTest extends SpringIntegrationTest {
 
     @Test
     public void shouldImportLocationData() throws Exception {
+        template.save(new Location("D2", "B2", "P2", LocationStatus.NOT_VERIFIED.name(), null));
         URL locationData = this.getClass().getResource("/locationData.csv");
         String[] arguments = {"Location", locationData.getPath()};
 
         CsvImporter.main(arguments);
 
         List<Location> locationDimensions = template.loadAll(Location.class);
-        assertEquals(1, locationDimensions.size());
+        assertEquals(2, locationDimensions.size());
         assertEquals("D2", locationDimensions.get(0).getDistrict());
         assertEquals("B2", locationDimensions.get(0).getBlock());
         assertEquals("P2", locationDimensions.get(0).getPanchayat());
+        assertEquals(LocationStatus.IN_REVIEW.name(), locationDimensions.get(0).getStatus());
     }
 
     @Test

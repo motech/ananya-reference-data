@@ -22,6 +22,11 @@ public class LocationValidationResponse {
         this.message.add("Invalid location");
     }
 
+    public void forInvalidStatus() {
+        isValid = false;
+        this.message.add("Invalid status");
+    }
+
     public boolean isValid() {
         return isValid;
     }

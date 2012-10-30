@@ -1,7 +1,6 @@
 package org.motechproject.ananya.referencedata.csv.importer;
 
-import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
-import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
 import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
 import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
 import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@CSVImporter(entity = "Location", bean = LocationRequest.class)
+@CSVImporter(entity = "Location", bean = LocationImportRequest.class)
 @Component
 public class LocationImporter {
 
@@ -38,12 +37,12 @@ public class LocationImporter {
         int recordCounter = 0;
         List<Error> errors = new ArrayList<Error>();
 
-        List<LocationRequest> locationRequests = convertToLocationRequest(objects);
+        List<LocationImportRequest> locationImportRequests = convertToLocationRequest(objects);
 
         addHeader(errors);
         logger.info("Started validating location csv records");
-        for (LocationRequest locationRequest : locationRequests) {
-            LocationValidationResponse locationValidationResponse = locationImportValidator.validate(LocationMapper.mapFrom(locationRequest));
+        for (LocationImportRequest locationRequest : locationImportRequests) {
+            LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest);
             if (locationValidationResponse.isInValid()) {
                 isValid = false;
             }
@@ -57,8 +56,8 @@ public class LocationImporter {
     @Post
     public void postData(List<Object> objects) {
         logger.info("Started posting location data");
-        List<LocationRequest> locationRequests = convertToLocationRequest(objects);
-        locationImportService.addAllWithoutValidations(locationRequests);
+        List<LocationImportRequest> locationImportRequests = convertToLocationRequest(objects);
+        locationImportService.addAllWithoutValidations(locationImportRequests);
         logger.info("Finished posting location data");
     }
 
@@ -69,15 +68,15 @@ public class LocationImporter {
         return validationResponse;
     }
 
-    private List<LocationRequest> convertToLocationRequest(List<Object> objects) {
-        List<LocationRequest> locationRequests = new ArrayList<LocationRequest>();
+    private List<LocationImportRequest> convertToLocationRequest(List<Object> objects) {
+        List<LocationImportRequest> locationRequests = new ArrayList<>();
         for (Object object : objects) {
-            locationRequests.add((LocationRequest) object);
+            locationRequests.add((LocationImportRequest) object);
         }
         return locationRequests;
     }
 
     private boolean addHeader(List<Error> errors) {
-        return errors.add(new Error("disrtict,block,panchayat,error"));
+        return errors.add(new Error("district,block,panchayat,error"));
     }
 }

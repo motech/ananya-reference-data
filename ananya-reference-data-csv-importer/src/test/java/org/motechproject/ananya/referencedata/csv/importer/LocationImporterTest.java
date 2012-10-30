@@ -5,8 +5,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
 import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
 import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
 import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
@@ -27,7 +26,7 @@ public class LocationImporterTest {
     @Mock
     private LocationImportValidator locationImportValidator;
     @Captor
-    private ArgumentCaptor<List<LocationRequest>> captor;
+    private ArgumentCaptor<List<LocationImportRequest>> captor;
     private LocationImporter locationImporter;
 
     @Before
@@ -38,24 +37,27 @@ public class LocationImporterTest {
 
     @Test
     public void shouldValidateLocationRequests() {
-        ArrayList<Object> locationRequests = new ArrayList<Object>();
-        locationRequests.add(new LocationRequest("D1", "B1", "P1", "VALID"));
-        when(locationImportValidator.validate(new Location("D1","B1","P1", "VALID", null))).thenReturn(new LocationValidationResponse());
+        ArrayList<Object> locationRequests = new ArrayList<>();
+        LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", "P1", "VALID");
+        locationRequests.add(locationImportRequest);
+        when(locationImportValidator.validate(locationImportRequest)).
+                thenReturn(new LocationValidationResponse());
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
         assertTrue(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("disrtict,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
+        assertEquals("district,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
     }
 
     @Test
     public void shouldFailValidationIfLocationDoesNotHaveAllTheDetails() {
-        ArrayList<Object> locationRequests = new ArrayList<Object>();
-        locationRequests.add(new LocationRequest("D1", "B1", null, "VALID"));
+        ArrayList<Object> locationRequests = new ArrayList<>();
+        LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", null, "VALID");
+        locationRequests.add(locationImportRequest);
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
         locationValidationResponse.forBlankFieldsInLocation();
-        when(locationImportValidator.validate(new Location("D1", "B1", null, "VALID", null))).thenReturn(locationValidationResponse);
+        when(locationImportValidator.validate(locationImportRequest)).thenReturn(locationValidationResponse);
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
@@ -66,13 +68,12 @@ public class LocationImporterTest {
 
     @Test
     public void shouldFailValidationIfThereAreDuplicateLocations() {
-        ArrayList<Object> locationRequests = new ArrayList<Object>();
-        ArrayList<Location> locations = new ArrayList<Location>();
-        locations.add(new Location("D1", "B1", "P1", "VALID", null));
-        locationRequests.add(new LocationRequest("D1", "B1", "P1", "VALID"));
+        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", "VALID");
+        ArrayList<Object> locationRequests = new ArrayList<>();
+        locationRequests.add(locationRequest);
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
         locationValidationResponse.forDuplicateLocation();
-        when(locationImportValidator.validate(new Location("D1", "B1", "P1", "VALID", null))).thenReturn(locationValidationResponse);
+        when(locationImportValidator.validate(locationRequest)).thenReturn(locationValidationResponse);
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
@@ -83,13 +84,13 @@ public class LocationImporterTest {
 
     @Test
     public void shouldSaveLocation() {
-        ArrayList<Object> locationRequests = new ArrayList<Object>();
-        locationRequests.add(new LocationRequest("D1", "B1", "P1", "VALID"));
+        ArrayList<Object> locationRequests = new ArrayList<>();
+        locationRequests.add(new LocationImportRequest("D1", "B1", "P1", "VALID"));
 
         locationImporter.postData(locationRequests);
 
         verify(locationImportService).addAllWithoutValidations(captor.capture());
-        List<LocationRequest> locationRequestsToSave = captor.getValue();
+        List<LocationImportRequest> locationRequestsToSave = captor.getValue();
         assertEquals(1, locationRequestsToSave.size());
         assertEquals("D1", locationRequestsToSave.get(0).getDistrict());
         assertEquals("B1", locationRequestsToSave.get(0).getBlock());
