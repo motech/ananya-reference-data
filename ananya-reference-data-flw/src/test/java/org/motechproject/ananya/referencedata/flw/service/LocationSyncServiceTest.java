@@ -37,8 +37,8 @@ public class LocationSyncServiceTest {
         }};
         String flwUrl = "flwUrl";
         String kilkariUrl = "kilkariUrl";
-        when(clientServiceProperties.get(SyncURLs.KEY_LOCATION_SYNC_FLW_URL)).thenReturn(flwUrl);
-        when(clientServiceProperties.get(SyncURLs.KEY_LOCATION_SYNC_KILKARI_URL)).thenReturn(kilkariUrl);
+        when(clientServiceProperties.getProperty(SyncURLs.KEY_LOCATION_SYNC_FLW_URL)).thenReturn(flwUrl);
+        when(clientServiceProperties.getProperty(SyncURLs.KEY_LOCATION_SYNC_KILKARI_URL)).thenReturn(kilkariUrl);
 
         locationSyncService.sync(locations);
 

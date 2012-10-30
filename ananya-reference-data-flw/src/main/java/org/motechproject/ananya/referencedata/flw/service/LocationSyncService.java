@@ -28,8 +28,8 @@ public class LocationSyncService {
         for (Location location : locations) {
             logger.info("Raising event to sync for location: " + location.toString());
             LocationSyncRequest locationSyncRequest = LocationSyncRequestMapper.map(location);
-            httpClientService.post((String) clientServicesProperties.get(SyncURLs.KEY_LOCATION_SYNC_FLW_URL), locationSyncRequest);
-            httpClientService.post((String) clientServicesProperties.get(SyncURLs.KEY_LOCATION_SYNC_KILKARI_URL), locationSyncRequest);
+            httpClientService.post(clientServicesProperties.getProperty(SyncURLs.KEY_LOCATION_SYNC_FLW_URL), locationSyncRequest);
+            httpClientService.post(clientServicesProperties.getProperty(SyncURLs.KEY_LOCATION_SYNC_KILKARI_URL), locationSyncRequest);
         }
     }
 }

@@ -1,8 +1,10 @@
 package org.motechproject.ananya.referencedata.flw.domain;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+
 import java.util.Date;
 
-public class FrontLineWorkerContract {
+public class FrontLineWorkerSyncRequest {
 
     private String name;
     private String msisdn;
@@ -11,7 +13,7 @@ public class FrontLineWorkerContract {
     private LocationContract location;
     private String flwId;
 
-    public FrontLineWorkerContract(String msisdn, String name, String designation, Date lastModified, LocationContract location, String flwId) {
+    public FrontLineWorkerSyncRequest(String msisdn, String name, String designation, Date lastModified, LocationContract location, String flwId) {
         this.name = name;
         this.msisdn = msisdn;
         this.designation = designation;
@@ -42,5 +44,10 @@ public class FrontLineWorkerContract {
 
     public String getFlwId() {
         return flwId;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return EqualsBuilder.reflectionEquals(this, other);
     }
 }

@@ -6,7 +6,7 @@ import org.motechproject.ananya.referencedata.flw.domain.*;
 
 import static org.junit.Assert.assertEquals;
 
-public class FrontLineWorkerContractMapperTest {
+public class FrontLineWorkerSyncRequestMapperTest {
     @Test
     public void shouldMapFromFlwToFlwContract() {
         String district = "district1";
@@ -23,17 +23,17 @@ public class FrontLineWorkerContractMapperTest {
 
         FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, designation, location);
         frontLineWorker.setLastModified(now);
-        FrontLineWorkerContract frontLineWorkerContract = FrontLineWorkerContractMapper.mapFrom(frontLineWorker);
+        FrontLineWorkerSyncRequest frontLineWorkerSyncRequest = FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker);
 
-        assertEquals(msisdn.toString(), frontLineWorkerContract.getMsisdn());
-        assertEquals(name, frontLineWorkerContract.getName());
-        assertEquals(designation.name(), frontLineWorkerContract.getDesignation());
-        assertEquals(now.toDate(), frontLineWorkerContract.getLastModified());
+        assertEquals(msisdn.toString(), frontLineWorkerSyncRequest.getMsisdn());
+        assertEquals(name, frontLineWorkerSyncRequest.getName());
+        assertEquals(designation.name(), frontLineWorkerSyncRequest.getDesignation());
+        assertEquals(now.toDate(), frontLineWorkerSyncRequest.getLastModified());
 
-        LocationContract locationContract = frontLineWorkerContract.getLocation();
+        LocationContract locationContract = frontLineWorkerSyncRequest.getLocation();
         assertEquals(block, locationContract.getBlock());
         assertEquals(district, locationContract.getDistrict());
         assertEquals(panchayat, locationContract.getPanchayat());
-        assertEquals(frontLineWorker.getFlwId().toString(), frontLineWorkerContract.getFlwId());
+        assertEquals(frontLineWorker.getFlwId().toString(), frontLineWorkerSyncRequest.getFlwId());
     }
 }

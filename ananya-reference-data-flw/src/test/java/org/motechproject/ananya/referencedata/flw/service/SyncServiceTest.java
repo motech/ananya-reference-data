@@ -3,8 +3,9 @@ package org.motechproject.ananya.referencedata.flw.service;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.motechproject.ananya.referencedata.flw.domain.*;
-import org.motechproject.scheduler.context.EventContext;
+import org.motechproject.ananya.referencedata.flw.domain.Designation;
+import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
+import org.motechproject.ananya.referencedata.flw.domain.Location;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +15,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class SyncServiceTest {
     @Mock
-    private EventContext eventContext;
+    private FrontLineWorkerSyncService frontLineWorkerSyncService;
     @Mock
     private AnanyaReferenceDataPropertiesService propertiesService;
     @Mock
@@ -25,17 +26,17 @@ public class SyncServiceTest {
     @Before
     public void setUp() {
         initMocks(this);
-        syncService = new SyncService(eventContext, propertiesService,locationSyncService);
+        syncService = new SyncService(propertiesService,locationSyncService, frontLineWorkerSyncService);
     }
 
     @Test
     public void shouldPublishFlwDataIntoQueue() {
         when(propertiesService.isSyncOn()).thenReturn(true);
 
-        FrontLineWorker frontLineWorker = new FrontLineWorker(12L, "Aragorn", Designation.ANM, null);
+        final FrontLineWorker frontLineWorker = new FrontLineWorker(12L, "Aragorn", Designation.ANM, null);
         syncService.syncFrontLineWorker(frontLineWorker);
 
-        verify(eventContext).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, frontLineWorker);
+        verify(frontLineWorkerSyncService).sync(new ArrayList<FrontLineWorker>(){{add(frontLineWorker);}});
     }
 
     @Test
@@ -45,7 +46,7 @@ public class SyncServiceTest {
 
         syncService.syncFrontLineWorker(frontLineWorker);
 
-        verify(eventContext, never()).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, frontLineWorker);
+        verify(frontLineWorkerSyncService, never()).sync(any(new ArrayList<FrontLineWorker>().getClass()));
     }
 
     @Test
@@ -58,8 +59,7 @@ public class SyncServiceTest {
 
         syncService.syncAllFrontLineWorkers(frontLineWorkers);
 
-        verify(eventContext).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, frontLineWorker1);
-        verify(eventContext).send(SyncEventKeys.FRONT_LINE_WORKER_DATA_MESSAGE, frontLineWorker2);
+        verify(frontLineWorkerSyncService).sync(frontLineWorkers);
     }
 
     @Test

@@ -1,5 +1,7 @@
 package org.motechproject.ananya.referencedata.flw.domain;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+
 public class LocationContract {
 
     private String district;
@@ -22,5 +24,10 @@ public class LocationContract {
 
     public String getPanchayat() {
         return panchayat;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return EqualsBuilder.reflectionEquals(this, other);
     }
 }

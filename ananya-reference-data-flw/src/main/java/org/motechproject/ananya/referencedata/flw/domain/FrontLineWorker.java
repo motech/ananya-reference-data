@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.flw.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -138,5 +139,10 @@ public class FrontLineWorker extends BaseEntity {
         result = 31 * result + (verificationStatus != null ? verificationStatus.hashCode() : 0);
         result = 31 * result + (reason != null ? reason.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }
