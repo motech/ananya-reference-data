@@ -20,7 +20,7 @@ public class FrontLineWorkerController extends BaseController {
         this.frontLineWorkerService = frontLineWorkerService;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/flw", produces = {"application/json", "application/xml"})
+    @RequestMapping(method = RequestMethod.POST, value = "/flw")
     @ResponseBody
     public BaseResponse updateVerifiedFlw(@RequestBody FrontLineWorkerWebRequest frontLineWorkerWebRequest, @RequestParam String channel ) {
         validateRequest(frontLineWorkerWebRequest, channel);
