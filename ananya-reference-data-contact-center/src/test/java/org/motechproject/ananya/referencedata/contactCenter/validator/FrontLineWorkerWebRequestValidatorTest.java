@@ -95,8 +95,17 @@ public class FrontLineWorkerWebRequestValidatorTest {
         Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest(flwId, "9234567890", VerificationStatus.SUCCESS.name(), null, null, null));
 
         assertEquals(3, errors.getCount());
-        assertTrue(errors.hasMessage("name field is blank"));
+        assertTrue(errors.hasMessage("name field has invalid/blank value"));
         assertTrue(errors.hasMessage("designation field has invalid/blank value"));
+        assertTrue(errors.hasMessage("location field is blank"));
+    }
+
+    @Test
+    public void shouldInvalidateNameWithInvalidCharactersForASuccessfulRegistration(){
+        Errors errors = FrontLineWorkerWebRequestValidator.validate(new FrontLineWorkerWebRequest(flwId, "9234567890", VerificationStatus.SUCCESS.name(), "a, b * c", "ANM", null));
+
+        assertEquals(2, errors.getCount());
+        assertTrue(errors.hasMessage("name field has invalid/blank value"));
         assertTrue(errors.hasMessage("location field is blank"));
     }
 }

@@ -1,12 +1,10 @@
 package org.motechproject.ananya.referencedata.csv.validator;
 
-import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportRequest;
 import org.motechproject.ananya.referencedata.csv.response.FrontLineWorkerImportValidationResponse;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
-
-import java.util.regex.Pattern;
+import org.motechproject.ananya.referencedata.flw.utils.ValidationUtils;
 
 public class FrontLineWorkerImportRequestValidator {
     public FrontLineWorkerImportValidationResponse validate(FrontLineWorkerImportRequest frontLineWorkerImportRequest, Location location) {
@@ -33,7 +31,7 @@ public class FrontLineWorkerImportRequestValidator {
 
     private void validateName(FrontLineWorkerImportRequest frontLineWorkerWebRequest, FrontLineWorkerImportValidationResponse frontLineWorkerImportValidationResponse) {
         String name = frontLineWorkerWebRequest.getName();
-        if (StringUtils.isNotBlank(name) && !Pattern.matches("[a-zA-Z0-9\\s\\.]*", name)) {
+        if (ValidationUtils.isInvalidNameWithBlankAllowed(name)) {
             frontLineWorkerImportValidationResponse.forInvalidName();
         }
     }

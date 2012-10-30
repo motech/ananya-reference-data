@@ -103,7 +103,7 @@ public class FrontLineWorkerControllerTest {
     @Test
     public void shouldReturnValidationErrorForAnInvalidSuccessfulFLWRequestJson() throws Exception {
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), new LocationRequest());
-        BaseResponse expectedResponse = BaseResponse.failure("name field is blank,district field is blank,block field is blank,panchayat field is blank");
+        BaseResponse expectedResponse = BaseResponse.failure("name field has invalid/blank value,district field is blank,block field is blank,panchayat field is blank");
 
         postFlwRequestJson(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest());
 
@@ -125,7 +125,7 @@ public class FrontLineWorkerControllerTest {
     @Test
     public void shouldReturnValidationErrorForAnInvalidSuccessfulFLWRequestXml() throws Exception {
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), new LocationRequest());
-        BaseResponse expectedResponse = BaseResponse.failure("name field is blank,district field is blank,block field is blank,panchayat field is blank");
+        BaseResponse expectedResponse = BaseResponse.failure("name field has invalid/blank value,district field is blank,block field is blank,panchayat field is blank");
 
         postFLWRequestXml(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest(), "contact_center");
 

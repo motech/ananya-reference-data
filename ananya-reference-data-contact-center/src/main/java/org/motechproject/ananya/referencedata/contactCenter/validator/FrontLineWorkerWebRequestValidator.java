@@ -5,6 +5,7 @@ import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWor
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
+import org.motechproject.ananya.referencedata.flw.utils.ValidationUtils;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
 import java.util.regex.Pattern;
@@ -26,17 +27,17 @@ public class FrontLineWorkerWebRequestValidator {
         return errors;
     }
 
-    private static void validateMsisdn(String msisdn, Errors errors) {
-        if (PhoneNumber.isNotValid(msisdn)) {
-            errors.add("msisdn field has invalid/blank value");
-        }
-    }
-
     private static void validateFlwId(String flwId, Errors errors) {
         if (StringUtils.isEmpty(flwId))
             errors.add("id field is blank");
         else if (!Pattern.matches("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", flwId))
             errors.add("id field is not in valid UUID format");
+    }
+
+    private static void validateMsisdn(String msisdn, Errors errors) {
+        if (PhoneNumber.isNotValid(msisdn)) {
+            errors.add("msisdn field has invalid/blank value");
+        }
     }
 
     private static void validateVerificationStatus(String verificationStatus, Errors errors) {
@@ -51,8 +52,8 @@ public class FrontLineWorkerWebRequestValidator {
 
     private static void validateSuccessfulRegistrationRequest(FrontLineWorkerWebRequest frontLineWorkerWebRequest, Errors errors) {
         String designation = frontLineWorkerWebRequest.getDesignation();
-        if (StringUtils.isEmpty(frontLineWorkerWebRequest.getName()))
-            errors.add("name field is blank");
+        if(ValidationUtils.isInvalidName(frontLineWorkerWebRequest.getName()))
+            errors.add("name field has invalid/blank value");
         if (StringUtils.isEmpty(designation) || !Designation.isValid(designation))
             errors.add("designation field has invalid/blank value");
         if (StringUtils.isNotEmpty(frontLineWorkerWebRequest.getReason()))
