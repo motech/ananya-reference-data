@@ -49,7 +49,7 @@ public class FrontLineWorkerControllerTest {
     public void shouldUpdateTheStatusForAValidFLWRequestXml() throws Exception {
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.INVALID.name(), "Invalid User");
 
-        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk(), channel);
+        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success("The FLW has been updated successfully"), status().isOk(), channel);
 
         ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
         verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
@@ -70,7 +70,7 @@ public class FrontLineWorkerControllerTest {
     public void shouldUpdateTheStatusForAValidFLWRequestJson() throws Exception {
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.INVALID.name(), "Invalid User");
 
-        postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
+        postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success("The FLW has been updated successfully"), status().isOk());
 
         ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
         verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
@@ -92,7 +92,7 @@ public class FrontLineWorkerControllerTest {
     public void shouldUpdateTheStatusForAValidSuccessfulFLWRequestJson() throws Exception {
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
 
-        postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk());
+        postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success("The FLW has been updated successfully"), status().isOk());
 
         ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
         verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
@@ -114,7 +114,7 @@ public class FrontLineWorkerControllerTest {
     public void shouldUpdateTheStatusForAValidSuccessfulFLWRequestXml() throws Exception {
         FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
 
-        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success(), status().isOk(), "contact_center");
+        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success("The FLW has been updated successfully"), status().isOk(), "contact_center");
 
         ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
         verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());

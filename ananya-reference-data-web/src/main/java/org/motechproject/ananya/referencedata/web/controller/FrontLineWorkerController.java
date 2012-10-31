@@ -25,7 +25,7 @@ public class FrontLineWorkerController extends BaseController {
     public BaseResponse updateVerifiedFlw(@RequestBody FrontLineWorkerWebRequest frontLineWorkerWebRequest, @RequestParam String channel ) {
         validateRequest(frontLineWorkerWebRequest, channel);
         frontLineWorkerContactCenterService.updateVerifiedFlw(frontLineWorkerWebRequest);
-        return BaseResponse.success();
+        return BaseResponse.success("The FLW has been updated successfully");
     }
 
     private void validateRequest(FrontLineWorkerWebRequest frontLineWorkerWebRequest, String channel) {

@@ -33,8 +33,8 @@ public class BaseResponse {
     BaseResponse() {
     }
 
-    public static BaseResponse success() {
-        return new BaseResponse(SUCCESS);
+    public static BaseResponse success(String description) {
+        return new BaseResponse(SUCCESS, description);
     }
 
     public static BaseResponse failure(String description) {
