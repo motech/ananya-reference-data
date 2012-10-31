@@ -3,12 +3,12 @@ package org.motechproject.ananya.referencedata.web.controller;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
+import org.motechproject.ananya.referencedata.contactCenter.validator.WebRequestValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.validators.CSVRequestValidationException;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.motechproject.ananya.referencedata.web.response.LocationResponse;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
-import org.motechproject.ananya.referencedata.web.validator.WebRequestValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,12 +23,10 @@ import java.util.List;
 public class LocationController extends BaseController {
 
     private LocationService locationService;
-    private WebRequestValidator webRequestValidator;
 
     @Autowired
-    public LocationController(LocationService locationService, WebRequestValidator webRequestValidator) {
+    public LocationController(LocationService locationService) {
         this.locationService = locationService;
-        this.webRequestValidator = webRequestValidator;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/alllocations", produces = "text/csv")
@@ -40,7 +38,8 @@ public class LocationController extends BaseController {
     }
 
     private void validateRequest(String channel) {
-        Errors errors = webRequestValidator.validateChannel(channel);
+        Errors errors = new Errors();
+        new WebRequestValidator().validateChannel(channel, errors);
         if (errors.hasErrors()) {
             throw new CSVRequestValidationException(errors.allMessages());
         }

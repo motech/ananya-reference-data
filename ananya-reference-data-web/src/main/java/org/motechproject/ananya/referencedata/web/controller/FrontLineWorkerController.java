@@ -1,12 +1,10 @@
 package org.motechproject.ananya.referencedata.web.controller;
 
-import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequest;
 import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWorkerContactCenterService;
-import org.motechproject.ananya.referencedata.contactCenter.validator.FrontLineWorkerWebRequestValidator;
 import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
-import org.motechproject.ananya.referencedata.web.validator.WebRequestValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,17 +20,23 @@ public class FrontLineWorkerController extends BaseController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/flw")
     @ResponseBody
-    public BaseResponse updateVerifiedFlw(@RequestBody FrontLineWorkerWebRequest frontLineWorkerWebRequest, @RequestParam String channel ) {
+    public BaseResponse updateVerifiedFlw(@RequestBody FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest, @RequestParam String channel ) {
+        frontLineWorkerWebRequest.setChannel(channel);
         validateRequest(frontLineWorkerWebRequest, channel);
+
         frontLineWorkerContactCenterService.updateVerifiedFlw(frontLineWorkerWebRequest);
         return BaseResponse.success("The FLW has been updated successfully");
     }
 
-    private void validateRequest(FrontLineWorkerWebRequest frontLineWorkerWebRequest, String channel) {
-        WebRequestValidator webRequestValidator = new WebRequestValidator();
-        Errors errors = webRequestValidator.validateChannel(channel);
-        errors.addAll(FrontLineWorkerWebRequestValidator.validate(frontLineWorkerWebRequest));
-        if (errors.hasErrors())
-            throw new ValidationException(errors.allMessages());
+    private void validateRequest(FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest, String channel) {
+        Errors validationErrors = frontLineWorkerWebRequest.validate();
+        raiseExceptionIfThereAreErrors(validationErrors);
+    }
+
+
+    private void raiseExceptionIfThereAreErrors(Errors validationErrors) {
+        if (validationErrors.hasErrors()) {
+            throw new ValidationException(validationErrors.allMessages());
+        }
     }
 }

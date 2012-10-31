@@ -4,14 +4,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequest;
 import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWorkerContactCenterService;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
-import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
+import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
+import org.motechproject.ananya.referencedata.web.utils.FrontLineWorkerVerificationWebRequestBuilder;
 import org.motechproject.ananya.referencedata.web.utils.TestUtils;
-import org.motechproject.ananya.referencedata.web.validator.WebRequestValidator;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.server.MvcResult;
 import org.springframework.test.web.server.ResultMatcher;
@@ -20,8 +20,7 @@ import java.util.UUID;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.motechproject.ananya.referencedata.web.utils.MVCTestUtils.mockMvc;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
@@ -32,8 +31,7 @@ public class FrontLineWorkerControllerTest {
 
     @Mock
     private FrontLineWorkerContactCenterService frontLineWorkerContactCenterService;
-    @Mock
-    private WebRequestValidator webRequestValidator;
+
 
     private FrontLineWorkerController frontLineWorkerController;
     private String flwId = UUID.randomUUID().toString();
@@ -47,104 +45,112 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldUpdateTheStatusForAValidFLWRequestXml() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.INVALID.name(), "Invalid User");
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.INVALID.name(), "Invalid User");
 
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success("The FLW has been updated successfully"), status().isOk(), channel);
 
-        ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
+        ArgumentCaptor<FrontLineWorkerVerificationWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerVerificationWebRequest.class);
         verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
-        FrontLineWorkerWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
+        FrontLineWorkerVerificationWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
         assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
     }
 
     @Test
     public void shouldReturnValidationErrorForAnInvalidFLWRequestXml() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", null, "Invalid User");
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId, "911234567890", null, "Invalid User");
 
-        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field has invalid/blank value"), status().isBadRequest(), "contact_center");
+        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field is missing"), status().isBadRequest(), "contact_center");
 
-        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
+        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerVerificationWebRequest.class));
     }
 
     @Test
     public void shouldUpdateTheStatusForAValidFLWRequestJson() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.INVALID.name(), "Invalid User");
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.INVALID.name(), "Invalid User");
 
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success("The FLW has been updated successfully"), status().isOk());
 
-        ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
+        ArgumentCaptor<FrontLineWorkerVerificationWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerVerificationWebRequest.class);
         verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
-        FrontLineWorkerWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
+        FrontLineWorkerVerificationWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
         assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
     }
 
     @Test
     public void shouldReturnValidationErrorForAnInvalidFLWRequestJson() throws Exception {
         String reason = "Invalid User";
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", null, reason);
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId, "911234567890", null, reason);
 
-        postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field has invalid/blank value"), status().isBadRequest());
+        postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field is missing"), status().isBadRequest());
 
-        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
+        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerVerificationWebRequest.class));
     }
 
     @Test
     public void shouldUpdateTheStatusForAValidSuccessfulFLWRequestJson() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), "district", "block", "panchayat");
 
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success("The FLW has been updated successfully"), status().isOk());
 
-        ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
+        ArgumentCaptor<FrontLineWorkerVerificationWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerVerificationWebRequest.class);
         verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
-        FrontLineWorkerWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
+        FrontLineWorkerVerificationWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
         assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
     }
 
     @Test
     public void shouldReturnValidationErrorForAnInvalidSuccessfulFLWRequestJson() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), new LocationRequest());
-        BaseResponse expectedResponse = BaseResponse.failure("name field has invalid/blank value,district field is blank,block field is blank,panchayat field is blank");
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), null, null, null);
+        BaseResponse expectedResponse = BaseResponse.failure("some validation failed");
+        doThrow(new ValidationException("some validation failed")).when(frontLineWorkerContactCenterService).updateVerifiedFlw(frontLineWorkerWebRequest);
 
         postFlwRequestJson(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest());
 
-        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
+        ArgumentCaptor<FrontLineWorkerVerificationWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerVerificationWebRequest.class);
+        verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
+        FrontLineWorkerVerificationWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
+        assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
     }
 
     @Test
     public void shouldUpdateTheStatusForAValidSuccessfulFLWRequestXml() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), "district", "block", "panchayat");
 
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success("The FLW has been updated successfully"), status().isOk(), "contact_center");
 
-        ArgumentCaptor<FrontLineWorkerWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerWebRequest.class);
+        ArgumentCaptor<FrontLineWorkerVerificationWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerVerificationWebRequest.class);
         verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
-        FrontLineWorkerWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
+        FrontLineWorkerVerificationWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
         assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
     }
 
     @Test
     public void shouldReturnValidationErrorForAnInvalidSuccessfulFLWRequestXml() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), new LocationRequest());
-        BaseResponse expectedResponse = BaseResponse.failure("name field has invalid/blank value,district field is blank,block field is blank,panchayat field is blank");
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), null, null, null);
+        BaseResponse expectedResponse = BaseResponse.failure("some validation failed");
+        doThrow(new ValidationException("some validation failed")).when(frontLineWorkerContactCenterService).updateVerifiedFlw(frontLineWorkerWebRequest);
 
         postFLWRequestXml(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest(), "contact_center");
 
-        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
+        ArgumentCaptor<FrontLineWorkerVerificationWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerVerificationWebRequest.class);
+        verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
+        FrontLineWorkerVerificationWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
+        assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
     }
 
     @Test
     public void shouldValidateChannelParam() throws Exception {
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), new LocationRequest("district", "block", "panchayat"));
-        BaseResponse expectedResponse = BaseResponse.failure("Invalid channel: comedy_central");
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), "district", "block", "panchayat");
+        BaseResponse expectedResponse = BaseResponse.failure("invalid channel: comedy_central");
 
         postFLWRequestXml(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest(), "comedy_central");
 
-        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerWebRequest.class));
+        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerVerificationWebRequest.class));
     }
 
-    private void postFLWRequestXml(FrontLineWorkerWebRequest frontLineWorkerWebRequest, BaseResponse expectedResponse, ResultMatcher statusMatcher, String channel) throws Exception {
+    private void postFLWRequestXml(FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest, BaseResponse expectedResponse, ResultMatcher statusMatcher, String channel) throws Exception {
         MvcResult result = mockMvc(frontLineWorkerController)
-                .perform(post("/flw").body(TestUtils.toXml(FrontLineWorkerWebRequest.class, frontLineWorkerWebRequest).getBytes()).param("channel", channel)
+                .perform(post("/flw").body(TestUtils.toXml(FrontLineWorkerVerificationWebRequest.class, frontLineWorkerWebRequest).getBytes()).param("channel", channel)
                         .contentType(MediaType.APPLICATION_XML).accept(MediaType.APPLICATION_XML))
                 .andExpect(statusMatcher)
                 .andExpect(content().type("application/xml"))
@@ -155,7 +161,7 @@ public class FrontLineWorkerControllerTest {
         assertEquals(expectedResponse, actualResponse);
     }
 
-    private void postFlwRequestJson(FrontLineWorkerWebRequest frontLineWorkerWebRequest, BaseResponse expectedResponse, ResultMatcher statusMatcher) throws Exception {
+    private void postFlwRequestJson(FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest, BaseResponse expectedResponse, ResultMatcher statusMatcher) throws Exception {
         MvcResult result = mockMvc(frontLineWorkerController)
                 .perform(post("/flw").body(TestUtils.toJson(frontLineWorkerWebRequest).getBytes()).param("channel", channel)
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
@@ -166,5 +172,20 @@ public class FrontLineWorkerControllerTest {
         String responseString = result.getResponse().getContentAsString();
         BaseResponse actualResponse = TestUtils.fromJson(BaseResponse.class, responseString);
         assertEquals(expectedResponse, actualResponse);
+    }
+
+
+    private FrontLineWorkerVerificationWebRequest failedFrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String verificationStatus, String reason) {
+        FrontLineWorkerVerificationWebRequestBuilder builder = new FrontLineWorkerVerificationWebRequestBuilder();
+        builder.withDefaults().withFlwId(flwId).withMsisdn(msisdn).withVerificationStatus(verificationStatus).withReason(reason);
+        builder.withFailedVerification(true);
+        return builder.build();
+    }
+
+    public FrontLineWorkerVerificationWebRequest successfulFrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String verificationStatus, String name, String designation, String district, String block, String panchayat) {
+        FrontLineWorkerVerificationWebRequestBuilder builder = new FrontLineWorkerVerificationWebRequestBuilder();
+        builder.withDefaults().withFlwId(flwId).withMsisdn(msisdn).withVerificationStatus(verificationStatus);
+        builder.withName(name).withDesignation(designation).withDistrict(district).withBlock(block).withPanchayat(panchayat);
+        return builder.build();
     }
 }

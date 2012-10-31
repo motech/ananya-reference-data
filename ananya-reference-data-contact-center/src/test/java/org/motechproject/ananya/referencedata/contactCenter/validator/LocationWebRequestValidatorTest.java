@@ -24,7 +24,7 @@ public class LocationWebRequestValidatorTest {
         Errors errors = LocationWebRequestValidator.validate(null);
 
         assertEquals(1, errors.getCount());
-        assertTrue(errors.hasMessage("location field is blank"));
+        assertTrue(errors.hasMessage("location is missing"));
     }
 
     @Test

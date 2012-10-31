@@ -9,18 +9,9 @@ public class VerificationStatusTest {
 
     @Test
     public void shouldValidateVerificationStatus() {
-        assertTrue(VerificationStatus.isValid("SUCCESS"));
+        assertTrue(VerificationStatus.isValid("   SUCCEss   "));
         assertTrue(VerificationStatus.isValid("INVALID  "));
         assertTrue(VerificationStatus.isValid("OthER"));
         assertFalse(VerificationStatus.isValid("Purple"));
-    }
-
-    @Test
-    public void shouldCheckForSuccessVerificationState() {
-        assertTrue(VerificationStatus.isSuccess("SUCCESS"));
-        assertTrue(VerificationStatus.isSuccess("  SUCCESS"));
-        assertTrue(VerificationStatus.isSuccess("SuCCEsS"));
-        assertFalse(VerificationStatus.isSuccess("Legolas"));
-        assertFalse(VerificationStatus.isSuccess(null));
     }
 }

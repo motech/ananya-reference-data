@@ -6,7 +6,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequest;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequestBuilder;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
@@ -49,7 +50,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, reason);
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
 
-        frontLineWorkerContactCenterService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), msisdn, verificationStatus.name(), reason));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(failedFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), reason));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
@@ -72,7 +73,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
         when(locationService.handleLocation(locationRequest)).thenReturn(existingLocation);
 
-        frontLineWorkerContactCenterService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), msisdn, verificationStatus.name(), "name", Designation.ANM.name(), locationRequest));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), "name", Designation.ANM.name(), "district", "block", "panchy"));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
@@ -91,7 +92,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         String reason = "reason";
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
 
-        frontLineWorkerContactCenterService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), msisdn, verificationStatus.name(), reason));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(failedFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), reason));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
@@ -114,9 +115,23 @@ public class FrontLineWorkerContactCenterServiceTest {
 
         expectedException.expect(ValidationException.class);
         expectedException.expectMessage(String.format("Given msisdn %s does not match existing msisdn %s for the given id.", newMsisdn, existingMsisdn));
-        frontLineWorkerContactCenterService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), newMsisdn, verificationStatus.name(), reason));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(failedFrontLineWorkerVerificationWebRequest(flwId.toString(), newMsisdn, verificationStatus.name(), reason));
 
         verify(allFrontLineWorkers, never()).createOrUpdate(any(FrontLineWorker.class));
         verify(locationService, never()).handleLocation(any(LocationRequest.class));
+    }
+
+    private FrontLineWorkerVerificationWebRequest failedFrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String verificationStatus, String reason) {
+        FrontLineWorkerVerificationWebRequestBuilder builder = new FrontLineWorkerVerificationWebRequestBuilder();
+        builder.withDefaults().withFlwId(flwId).withMsisdn(msisdn).withVerificationStatus(verificationStatus).withReason(reason);
+        builder.withFailedVerification(true);
+        return builder.build();
+    }
+
+    public FrontLineWorkerVerificationWebRequest successfulFrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String verificationStatus, String name, String designation, String district, String block, String panchayat) {
+        FrontLineWorkerVerificationWebRequestBuilder builder = new FrontLineWorkerVerificationWebRequestBuilder();
+        builder.withDefaults().withFlwId(flwId).withMsisdn(msisdn).withVerificationStatus(verificationStatus);
+        builder.withName(name).withDesignation(designation).withDistrict(district).withBlock(block).withPanchayat(panchayat);
+        return builder.build();
     }
 }

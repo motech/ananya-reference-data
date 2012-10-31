@@ -11,15 +11,23 @@ public class FrontLineWorkerImportMapper {
     public static FrontLineWorker mapToNewFlw(FrontLineWorkerImportRequest frontLineWorkerImportRequest, Location location) {
         Long msisdn = StringUtils.isBlank(frontLineWorkerImportRequest.getMsisdn()) ? null : formatMsisdn(frontLineWorkerImportRequest.getMsisdn());
 
-        return new FrontLineWorker(msisdn, trim(frontLineWorkerImportRequest.getName()), Designation.getFor(frontLineWorkerImportRequest.getDesignation()), location);
+        return new FrontLineWorker(msisdn, trim(frontLineWorkerImportRequest.getName()), Designation.from(frontLineWorkerImportRequest.getDesignation()), location);
     }
 
     public static FrontLineWorker mapToExistingFlw(FrontLineWorker existingFrontLineWorker, FrontLineWorkerImportRequest frontLineWorkerImportRequest, Location location) {
         existingFrontLineWorker.setName(trim(frontLineWorkerImportRequest.getName()));
-        existingFrontLineWorker.setDesignation(Designation.getFor(frontLineWorkerImportRequest.getDesignation()));
+        existingFrontLineWorker.setDesignation(getDesignation(frontLineWorkerImportRequest.getDesignation()));
         existingFrontLineWorker.setLocation(location);
 
         return existingFrontLineWorker;
+    }
+
+    private static Designation getDesignation(String designation) {
+        if(Designation.isValid(designation)) {
+            return Designation.from(designation);
+        }
+
+        return null;
     }
 
     private static String trim(String name) {

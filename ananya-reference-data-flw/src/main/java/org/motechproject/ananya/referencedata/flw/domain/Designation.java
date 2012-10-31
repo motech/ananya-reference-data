@@ -7,7 +7,7 @@ public enum Designation {
     ANM,
     AWW;
 
-    private static Designation from(String string) {
+    public static Designation from(String string) {
         return Designation.valueOf(StringUtils.trimToEmpty(string).toUpperCase());
     }
 
@@ -18,9 +18,5 @@ public enum Designation {
             return false;
         }
         return true;
-    }
-
-    public static Designation getFor(String designation) {
-        return isValid(designation) ? from(designation) : null;
     }
 }

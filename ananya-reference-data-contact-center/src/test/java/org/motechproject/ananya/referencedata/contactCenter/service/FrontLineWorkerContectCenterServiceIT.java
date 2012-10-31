@@ -5,7 +5,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.motechproject.ananya.referencedata.contactCenter.SpringIntegrationTest;
-import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequest;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequestBuilder;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
@@ -40,13 +41,14 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), null, null, location, flwId, VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId.toString(), msisdn, VerificationStatus.OTHER.name(), "Out of town");
+        String newReason = "Out of town";
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, VerificationStatus.OTHER.name(), newReason);
 
         frontLineWorkerContactCenterService.updateVerifiedFlw(frontLineWorkerWebRequest);
 
         FrontLineWorker updatedFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
-        assertEquals(frontLineWorkerWebRequest.getVerificationStatus(), updatedFrontLineWorker.getVerificationStatus());
-        assertEquals(frontLineWorkerWebRequest.getReason(), updatedFrontLineWorker.getReason());
+        assertEquals(VerificationStatus.OTHER.name(), updatedFrontLineWorker.getVerificationStatus());
+        assertEquals(newReason, updatedFrontLineWorker.getReason());
         assertEquals(frontLineWorker.getName(), updatedFrontLineWorker.getName());
         assertEquals(frontLineWorker.getMsisdn(), updatedFrontLineWorker.getMsisdn());
         assertEquals(frontLineWorker.getDesignation(), updatedFrontLineWorker.getDesignation());
@@ -61,7 +63,7 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "name", Designation.ANM, location, UUID.randomUUID(), VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId.toString(), msisdn, VerificationStatus.OTHER.name(), "Out of town");
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, VerificationStatus.OTHER.name(), "Out of town");
 
         frontLineWorkerContactCenterService.updateVerifiedFlw(frontLineWorkerWebRequest);
 
@@ -79,7 +81,7 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
         allFrontLineWorkers.add(frontLineWorker);
         template.flush();
         String designation = Designation.ANM.name();
-        FrontLineWorkerWebRequest frontLineWorkerWebRequest = new FrontLineWorkerWebRequest(flwId.toString(), msisdn, VerificationStatus.SUCCESS.name(), name, designation, locationRequest);
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, VerificationStatus.SUCCESS.name(), name, designation, "district", "block", "panchayat");
 
         frontLineWorkerContactCenterService.updateVerifiedFlw(frontLineWorkerWebRequest);
 
@@ -106,12 +108,26 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
 
-        frontLineWorkerContactCenterService.updateVerifiedFlw(new FrontLineWorkerWebRequest(flwId.toString(), msisdn, VerificationStatus.SUCCESS.name(), name, designation.name(), new LocationRequest(district, block, panchayat)));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, VerificationStatus.SUCCESS.name(), name, designation.name(), district, block, panchayat));
 
         FrontLineWorker updatedFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
         assertEquals(district, updatedFrontLineWorker.getLocation().getDistrict());
         assertEquals(block, updatedFrontLineWorker.getLocation().getBlock());
         assertEquals(panchayat,updatedFrontLineWorker.getLocation().getPanchayat());
         assertEquals("NOT_VERIFIED", updatedFrontLineWorker.getLocation().getStatus());
+    }
+
+    private FrontLineWorkerVerificationWebRequest failedFrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String verificationStatus, String reason) {
+        FrontLineWorkerVerificationWebRequestBuilder builder = new FrontLineWorkerVerificationWebRequestBuilder();
+        builder.withDefaults().withFlwId(flwId).withMsisdn(msisdn).withVerificationStatus(verificationStatus).withReason(reason);
+        builder.withFailedVerification(true);
+        return builder.build();
+    }
+
+    public FrontLineWorkerVerificationWebRequest successfulFrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String verificationStatus, String name, String designation, String district, String block, String panchayat) {
+        FrontLineWorkerVerificationWebRequestBuilder builder = new FrontLineWorkerVerificationWebRequestBuilder();
+        builder.withDefaults().withFlwId(flwId).withMsisdn(msisdn).withVerificationStatus(verificationStatus);
+        builder.withName(name).withDesignation(designation).withDistrict(district).withBlock(block).withPanchayat(panchayat);
+        return builder.build();
     }
 }

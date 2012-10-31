@@ -1,11 +1,12 @@
 package org.motechproject.ananya.referencedata.contactCenter.service;
 
 import org.motechproject.ananya.referencedata.contactCenter.mapper.FrontLineWorkerMapper;
-import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerWebRequest;
+import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequest;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
+import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,23 +24,37 @@ public class FrontLineWorkerContactCenterService {
         this.locationService = locationService;
     }
 
-    public void updateVerifiedFlw(FrontLineWorkerWebRequest webRequest) {
-        UUID flwId = UUID.fromString(webRequest.getFlwId());
+    public void updateVerifiedFlw(FrontLineWorkerVerificationWebRequest webRequest) {
+        FrontLineWorkerVerificationRequest request = webRequest.getVerificationRequest();
+        updateVerifiedFlw(request);
+    }
+
+    private void updateVerifiedFlw(FrontLineWorkerVerificationRequest request) {
+        Errors validationErrors = request.validate();
+        raiseExceptionIfThereAreErrors(validationErrors);
+
+        UUID flwId = request.getFlwId();
         FrontLineWorker frontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
         if (frontLineWorker == null)
             frontLineWorker = new FrontLineWorker(flwId);
         else
-            validateMsisdnMatch(webRequest.getMsisdn(), frontLineWorker.getMsisdn());
-        FrontLineWorker updatedFrontLineWorker = FrontLineWorkerMapper.mapFrom(webRequest, frontLineWorker);
-        if (VerificationStatus.isSuccess(webRequest.getVerificationStatus())) {
-            Location location = locationService.handleLocation(webRequest.getLocation());
+            validateMsisdnMatch(request.getMsisdn(), frontLineWorker.getMsisdn());
+        FrontLineWorker updatedFrontLineWorker = FrontLineWorkerMapper.mapFrom(request, frontLineWorker);
+        if (VerificationStatus.SUCCESS == request.getVerificationStatus()) {
+            Location location = locationService.handleLocation(request.getLocation());
             updatedFrontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(frontLineWorker, location);
         }
         allFrontLineWorkers.createOrUpdate(updatedFrontLineWorker);
     }
 
-    private void validateMsisdnMatch(String requestMsisdn, Long existingMsisdn) {
-        if (!requestMsisdn.equals(existingMsisdn.toString()))
+    private void validateMsisdnMatch(Long requestMsisdn, Long existingMsisdn) {
+        if (!requestMsisdn.equals(existingMsisdn))
             throw new ValidationException(String.format("Given msisdn %s does not match existing msisdn %s for the given id.", requestMsisdn, existingMsisdn));
+    }
+
+    private void raiseExceptionIfThereAreErrors(Errors validationErrors) {
+        if (validationErrors.hasErrors()) {
+            throw new ValidationException(validationErrors.allMessages());
+        }
     }
 }

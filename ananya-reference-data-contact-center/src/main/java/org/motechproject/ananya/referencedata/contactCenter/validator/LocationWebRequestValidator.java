@@ -10,7 +10,7 @@ public class LocationWebRequestValidator {
         Errors errors = new Errors();
 
         if (locationRequest == null) {
-            errors.add("location field is blank");
+            errors.add("location is missing");
             return errors;
         }
 
