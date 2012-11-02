@@ -18,7 +18,15 @@ public class FrontLineWorkerVerificationRequestTest {
         FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber("9900504646"), VerificationStatus.SUCCESS, null, null, null, null);
         Errors errors = verificationRequest.validate();
         assertEquals(3, errors.getCount());
-        assertEquals("designation field has invalid/blank value,name field has blank value,location is missing", errors.allMessages());
+        assertEquals("designation field has invalid/blank value,name field has invalid/blank value,location is missing", errors.allMessages());
+    }
+
+    @Test
+    public void shouldInvalidateSuccessRequestIfNameIsInvalid() {
+        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber("9900504646"), VerificationStatus.SUCCESS, "कुछ", Designation.ASHA, new LocationRequest("district", "block", "panchayat"), null);
+        Errors errors = verificationRequest.validate();
+        assertEquals(1, errors.getCount());
+        assertEquals("name field has invalid/blank value", errors.allMessages());
     }
 
     @Test

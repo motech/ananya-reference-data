@@ -8,6 +8,7 @@ import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class FrontLineWorkerVerificationRequest {
 
@@ -59,8 +60,8 @@ public class FrontLineWorkerVerificationRequest {
 
     public Errors validate() {
         Errors errors = new Errors();
-        if(VerificationStatus.SUCCESS == verificationStatus) {
-            validateSuccessRequest(errors);
+        if (VerificationStatus.SUCCESS == verificationStatus) {
+            validateSuccessulVerification(errors);
             return errors;
         }
 
@@ -69,29 +70,29 @@ public class FrontLineWorkerVerificationRequest {
     }
 
     private void validateInvalidOtherRequest(Errors errors) {
-        if(StringUtils.isBlank(reason)) {
+        if (StringUtils.isBlank(reason)) {
             errors.add("reason field has blank value");
         }
-        if(name != null) {
+        if (name != null) {
             errors.add("name field should not be a part of the request");
         }
-        if(location != null) {
+        if (location != null) {
             errors.add("location field should not be a part of the request");
         }
-        if(designation != null) {
+        if (designation != null) {
             errors.add("designation field should not be a part of the request");
         }
     }
 
-    private void validateSuccessRequest(Errors errors) {
-        if(designation == null) {
+    private void validateSuccessulVerification(Errors errors) {
+        if (designation == null) {
             errors.add("designation field has invalid/blank value");
         }
-        if(StringUtils.isBlank(name)) {
-            errors.add("name field has blank value");
+        if (StringUtils.isBlank(name) || !Pattern.matches("[a-zA-Z0-9\\s\\.]*", name)) {
+            errors.add("name field has invalid/blank value");
         }
         errors.addAll(LocationWebRequestValidator.validate(location));
-        if(reason != null) {
+        if (reason != null) {
             errors.add("reason field should not be a part of the request");
         }
     }
