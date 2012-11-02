@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 public class CsvImporterTest extends SpringIntegrationTest {
     @Before
@@ -28,21 +29,30 @@ public class CsvImporterTest extends SpringIntegrationTest {
     public void shouldImportLocationData() throws Exception {
         Location location1 = new Location("D2", "B2", "P2", LocationStatus.NOT_VERIFIED.name(), null);
         Location location2 = new Location("D2", "B2", "P4", LocationStatus.NOT_VERIFIED.name(), null);
+        Location location3 = new Location("D5", "B5", "P5", LocationStatus.IN_REVIEW.name(), null);
+        Location location4 = new Location("D3", "B3", "P3", LocationStatus.IN_REVIEW.name(), null);
         template.save(location1);
         template.save(location2);
+        template.save(location3);
+        template.save(location4);
         URL locationData = this.getClass().getResource("/locationData.csv");
         String[] arguments = {"Location", locationData.getPath()};
 
         CsvImporter.main(arguments);
 
         List<Location> locationDimensions = template.loadAll(Location.class);
-        assertEquals(3, locationDimensions.size());
+        assertEquals(5, locationDimensions.size());
 
-        location1.setStatus(LocationStatus.IN_REVIEW);
-        assertEquals(location1, locationDimensions.get(0));
-        location2.setStatus(LocationStatus.INVALID);
-        location2.setAlternateLocation(location1);
-        assertEquals(location2, locationDimensions.get(2));
+        Location expectedLocation1 = new Location("D2", "B2", "P2", LocationStatus.VALID.name(), null);
+        Location expectedLocation2 = new Location("D2", "B2", "P4", LocationStatus.INVALID.name(), expectedLocation1);
+        Location expectedLocation5 = new Location("D1", "B1", "P1", LocationStatus.VALID.name(), null);
+        Location expectedLocation3 = new Location("D3", "B3", "P3", LocationStatus.INVALID.name(), expectedLocation5);
+        Location expectedLocation4 = new Location("D5", "B5", "P5", LocationStatus.VALID.name(), null);
+        assertTrue(locationDimensions.contains(expectedLocation1));
+        assertTrue(locationDimensions.contains(expectedLocation2));
+        assertTrue(locationDimensions.contains(expectedLocation3));
+        assertTrue(locationDimensions.contains(expectedLocation4));
+        assertTrue(locationDimensions.contains(expectedLocation5));
     }
 
     @Test

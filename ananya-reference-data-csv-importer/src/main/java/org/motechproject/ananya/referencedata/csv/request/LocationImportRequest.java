@@ -10,7 +10,7 @@ public class LocationImportRequest {
     private String newDistrict;
     private String newBlock;
     private String newPanchayat;
-    private String status = LocationStatus.NOT_VERIFIED.name();
+    private String status;
 
     public LocationImportRequest() {
     }
@@ -107,5 +107,23 @@ public class LocationImportRequest {
         return StringUtils.isNotEmpty(newBlock)
                 && StringUtils.isNotEmpty(newDistrict)
                 && StringUtils.isNotEmpty(newPanchayat);
+    }
+
+    public boolean matchesLocation(String district, String block, String panchayat) {
+        return this.district.equals(district) && this.block.equals(block) && this.panchayat.equals(panchayat);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LocationImportRequest that = (LocationImportRequest) o;
+
+        if (block != null ? !block.equalsIgnoreCase(that.block) : that.block != null) return false;
+        if (district != null ? !district.equalsIgnoreCase(that.district) : that.district != null) return false;
+        if (panchayat != null ? !panchayat.equalsIgnoreCase(that.panchayat) : that.panchayat != null) return false;
+
+        return true;
     }
 }

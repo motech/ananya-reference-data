@@ -24,7 +24,32 @@ public class LocationValidationResponse {
 
     public void forInvalidStatus() {
         isValid = false;
-        this.message.add("Invalid status");
+        this.message.add("Blank or Invalid status");
+    }
+
+    public void forBlankAlternateLocation() {
+        this.isValid = false;
+        this.message.add("Location is invalid and does not have an alternate location");
+    }
+
+    public void forInvalidAlternateLocation() {
+        this.isValid = false;
+        this.message.add("Location is invalid and has an invalid alternate location");
+    }
+
+    public void forLocationNotExisting() {
+        this.isValid = false;
+        this.message.add("Location is not present in DB");
+    }
+
+    public void forLocationExisting() {
+        this.isValid = false;
+        this.message.add("Location is already present in DB");
+    }
+
+    public void forNeedlessAlternateLocation() {
+        this.isValid = false;
+        this.message.add("Alternate location provided when not required");
     }
 
     public boolean isValid() {

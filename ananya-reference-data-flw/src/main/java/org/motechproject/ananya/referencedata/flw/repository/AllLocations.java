@@ -26,6 +26,10 @@ public class AllLocations {
         template.save(location);
     }
 
+    public void update(Location location) {
+        template.update(location);
+    }
+
     public Location getFor(String district, String block, String panchayat) {
         DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
 

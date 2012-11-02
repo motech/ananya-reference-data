@@ -13,10 +13,12 @@ import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -35,31 +37,42 @@ public class LocationImportServiceTest {
     @Before
     public void setUp() {
         initMocks(this);
-        locationImportService = new LocationImportService(allLocations, locationValidator, frontLineWorkerService);
+        locationImportService = new LocationImportService(allLocations, frontLineWorkerService);
     }
 
     @Test
     public void shouldBulkSaveLocation() {
-        String panchayat = "panchayat";
-        String block = "block";
-        String district1 = "district1";
-        String district2 = "district2";
-        Location location = new Location(district2, block, panchayat, LocationStatus.VALID.name(), null);
-        LocationImportRequest locationRequest1 = new LocationImportRequest(district1, block, panchayat, "VALID");
-        LocationImportRequest locationRequest2 = new LocationImportRequest(district2, block, panchayat, "INVALID");
-        ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
-        locationImportRequests.add(locationRequest1);
-        locationImportRequests.add(locationRequest2);
-        when(allLocations.getFor(district1, block, panchayat)).thenReturn(null);
-        when(allLocations.getFor(district2, block, panchayat)).thenReturn(location);
+        List<LocationImportRequest> locationImportRequests = new ArrayList<>();
+        locationImportRequests.add(new LocationImportRequest("d1", "b1", "p1", "new"));
+        locationImportRequests.add(new LocationImportRequest("d2", "b2", "p2", "valid"));
+        locationImportRequests.add(new LocationImportRequest("d3", "b3", "p3", "invalid", "d2", "b2", "p2"));
+
+        when(allLocations.getFor("d2", "b2", "p2")).thenReturn(new Location("d2", "b2", "p2", "in_review", null));
+        when(allLocations.getFor("d3", "b3", "p3")).thenReturn(new Location("d3", "b3", "p3", "in_review", null));
 
         locationImportService.addAllWithoutValidations(locationImportRequests);
 
-        verify(allLocations).addAll(captor.capture());
-        Set<Location> value = captor.getValue();
-        assertEquals(2, value.size());
-        assertTrue(value.contains(new Location(district1, block, panchayat, "VALID", null)));
-        assertTrue(value.contains(new Location(district2, block, panchayat, "INVALID", null)));
+        ArgumentCaptor<Location> locationArgumentCaptor = ArgumentCaptor.forClass(Location.class);
+        verify(allLocations, times(1)).add(locationArgumentCaptor.capture());
+        Location location1 = locationArgumentCaptor.getValue();
+        assertEquals("d1", location1.getDistrict());
+        assertEquals("VALID", location1.getStatus());
+
+        locationArgumentCaptor = ArgumentCaptor.forClass(Location.class);
+        verify(allLocations, times(2)).update(locationArgumentCaptor.capture());
+        List<Location> locations = locationArgumentCaptor.getAllValues();
+        Location location2 = locations.get(0);
+        assertEquals("d2", location2.getDistrict());
+        assertEquals("VALID", location2.getStatus());
+        Location location3 = locations.get(1);
+        assertEquals("d3", location3.getDistrict());
+        assertEquals("INVALID", location3.getStatus());
+        assertEquals(location2.getDistrict(), location3.getAlternateLocation().getDistrict());
+
+        locationArgumentCaptor = ArgumentCaptor.forClass(Location.class);
+        verify(frontLineWorkerService).updateWithAlternateLocationForFLWsWith(locationArgumentCaptor.capture());
+        Location location4 = locationArgumentCaptor.getValue();
+        assertEquals(location3, location4);
     }
 
     @Test
@@ -70,31 +83,5 @@ public class LocationImportServiceTest {
         Location actualLocation = locationImportService.getFor("district", "block", "panchayat");
 
         assertEquals(location, actualLocation);
-    }
-
-    @Test
-    public void shouldAddLocationsWithAlternateLocationsAndUpfateFLWsForBulkAddition() {
-        String panchayat = "panchayat";
-        String block = "block";
-        String district1 = "district1";
-        String district2 = "district2";
-        LocationImportRequest locationRequest2 = new LocationImportRequest(
-                district2, block, panchayat, "INVALID", district1, block, panchayat);
-        ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
-        locationImportRequests.add(locationRequest2);
-        Location location = new Location(district2, block, panchayat, LocationStatus.NOT_VERIFIED.name(), null);
-        Location alternateLocation = new Location(district1, block, panchayat, LocationStatus.VALID.name(), null);
-        when(allLocations.getFor(district2, block, panchayat)).thenReturn(location);
-        when(allLocations.getFor(district1, block, panchayat)).thenReturn(alternateLocation);
-
-        locationImportService.addAllWithoutValidations(locationImportRequests);
-
-        verify(allLocations).addAll(captor.capture());
-        Set<Location> locationsSaved = captor.getValue();
-        location.setAlternateLocation(alternateLocation);
-        location.setStatus(LocationStatus.INVALID);
-        assertTrue(locationsSaved.contains(location));
-
-        verify(frontLineWorkerService).updateWithAlternateLocationForFLWsWith(location);
     }
 }

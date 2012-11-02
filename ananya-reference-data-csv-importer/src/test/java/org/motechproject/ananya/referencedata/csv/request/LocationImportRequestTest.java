@@ -24,4 +24,15 @@ public class LocationImportRequestTest {
         request = new LocationImportRequest("d", "b", "p", LocationStatus.INVALID.name(), "d1", "b1", "p1");
         assertTrue(request.hasAlternateLocation());
     }
+
+    @Test
+    public void shouldVerifyIfLocationMatchesWithRequestLocation() {
+        String district = "d";
+        String block = "b";
+        String panchayat = "p";
+        LocationImportRequest request = new LocationImportRequest(district, block, panchayat, LocationStatus.INVALID.name());
+
+        assertTrue(request.matchesLocation(district, block, panchayat));
+        assertFalse(request.matchesLocation("d1", "b1", "p1"));
+    }
 }

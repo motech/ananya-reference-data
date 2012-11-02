@@ -9,6 +9,7 @@ import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
 import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
 import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
 import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.importer.domain.ValidationResponse;
 
 import java.util.ArrayList;
@@ -28,19 +29,23 @@ public class LocationImporterTest {
     @Captor
     private ArgumentCaptor<List<LocationImportRequest>> captor;
     private LocationImporter locationImporter;
+    private List<LocationImportRequest> locationImportRequests;
 
     @Before
     public void setUp() {
         initMocks(this);
         locationImporter = new LocationImporter(locationImportService, locationImportValidator);
+        locationImportRequests = new ArrayList<>();
     }
 
     @Test
     public void shouldValidateLocationRequests() {
-        ArrayList<Object> locationRequests = new ArrayList<>();
-        LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", "P1", "VALID");
-        locationRequests.add(locationImportRequest);
-        when(locationImportValidator.validate(locationImportRequest)).
+        final LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.VALID.name());
+        locationImportRequests.add(locationImportRequest);
+        ArrayList<Object> locationRequests = new ArrayList<Object>(){{
+            add(locationImportRequest);
+        }};
+        when(locationImportValidator.validate(locationImportRequest, locationImportRequests)).
                 thenReturn(new LocationValidationResponse());
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
@@ -55,9 +60,10 @@ public class LocationImporterTest {
         ArrayList<Object> locationRequests = new ArrayList<>();
         LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", null, "VALID");
         locationRequests.add(locationImportRequest);
+        locationImportRequests.add(locationImportRequest);
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
         locationValidationResponse.forBlankFieldsInLocation();
-        when(locationImportValidator.validate(locationImportRequest)).thenReturn(locationValidationResponse);
+        when(locationImportValidator.validate(locationImportRequest, locationImportRequests)).thenReturn(locationValidationResponse);
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
@@ -68,12 +74,13 @@ public class LocationImporterTest {
 
     @Test
     public void shouldFailValidationIfThereAreDuplicateLocations() {
-        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", "VALID");
+        LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", "P1", "VALID");
         ArrayList<Object> locationRequests = new ArrayList<>();
-        locationRequests.add(locationRequest);
+        locationRequests.add(locationImportRequest);
+        locationImportRequests.add(locationImportRequest);
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
         locationValidationResponse.forDuplicateLocation();
-        when(locationImportValidator.validate(locationRequest)).thenReturn(locationValidationResponse);
+        when(locationImportValidator.validate(locationImportRequest, locationImportRequests)).thenReturn(locationValidationResponse);
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
