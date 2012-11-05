@@ -4,7 +4,6 @@ import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.Predicate;
 import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
 import org.motechproject.ananya.referencedata.csv.utils.CollectionUtils;
-import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
@@ -40,7 +39,7 @@ public class LocationImportService {
     public void addAllWithoutValidations(List<LocationImportRequest> locationImportRequests) {
         processNewLocationRequests(locationImportRequests);
 
-        processValidatingLocationsRequests(locationImportRequests);
+       processValidAndInReviewLocationsRequests(locationImportRequests);
 
         processInvalidatingLocationRequests(locationImportRequests);
     }
@@ -72,7 +71,7 @@ public class LocationImportService {
         );
     }
 
-    private void processValidatingLocationsRequests(List<LocationImportRequest> locationImportRequests) {
+    private void processValidAndInReviewLocationsRequests(List<LocationImportRequest> locationImportRequests) {
         CollectionUtils.forAllDo(locationImportRequests,
                 new Predicate() {
                     @Override
@@ -80,7 +79,7 @@ public class LocationImportService {
                         LocationImportRequest request = (LocationImportRequest) object;
 
                         String status = request.getStatus();
-                        return LocationStatus.isValidStatus(status);
+                        return LocationStatus.isValidOrInReviewStatus(status);
                     }
                 }, new Closure() {
                     @Override

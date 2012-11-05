@@ -17,10 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class LocationImportServiceTest {
@@ -46,9 +43,11 @@ public class LocationImportServiceTest {
         locationImportRequests.add(new LocationImportRequest("d1", "b1", "p1", "new"));
         locationImportRequests.add(new LocationImportRequest("d2", "b2", "p2", "valid"));
         locationImportRequests.add(new LocationImportRequest("d3", "b3", "p3", "invalid", "d2", "b2", "p2"));
+        locationImportRequests.add(new LocationImportRequest("d4", "b4", "p4", "in_review"));
 
-        when(allLocations.getFor("d2", "b2", "p2")).thenReturn(new Location("d2", "b2", "p2", "in_review", null));
-        when(allLocations.getFor("d3", "b3", "p3")).thenReturn(new Location("d3", "b3", "p3", "in_review", null));
+        when(allLocations.getFor("d2", "b2", "p2")).thenReturn(new Location("d2", "b2", "p2", LocationStatus.IN_REVIEW.name(), null));
+        when(allLocations.getFor("d3", "b3", "p3")).thenReturn(new Location("d3", "b3", "p3", LocationStatus.IN_REVIEW.name(), null));
+        when(allLocations.getFor("d4", "b4", "p4")).thenReturn(new Location("d4", "b4", "p4", LocationStatus.NOT_VERIFIED.name(), null));
 
         locationImportService.addAllWithoutValidations(locationImportRequests);
 
@@ -59,20 +58,23 @@ public class LocationImportServiceTest {
         assertEquals("VALID", location1.getStatus());
 
         locationArgumentCaptor = ArgumentCaptor.forClass(Location.class);
-        verify(allLocations, times(2)).update(locationArgumentCaptor.capture());
+        verify(allLocations, times(3)).update(locationArgumentCaptor.capture());
         List<Location> locations = locationArgumentCaptor.getAllValues();
         Location location2 = locations.get(0);
         assertEquals("d2", location2.getDistrict());
-        assertEquals("VALID", location2.getStatus());
+        assertEquals(LocationStatus.VALID.name(), location2.getStatus());
         Location location3 = locations.get(1);
-        assertEquals("d3", location3.getDistrict());
-        assertEquals("INVALID", location3.getStatus());
-        assertEquals(location2.getDistrict(), location3.getAlternateLocation().getDistrict());
+        assertEquals("d4", location3.getDistrict());
+        assertEquals(LocationStatus.IN_REVIEW.name(), location3.getStatus());
+        Location location4 = locations.get(2);
+        assertEquals("d3", location4.getDistrict());
+        assertEquals(LocationStatus.INVALID.name(), location4.getStatus());
+        assertEquals(location2.getDistrict(), location4.getAlternateLocation().getDistrict());
 
         locationArgumentCaptor = ArgumentCaptor.forClass(Location.class);
         verify(frontLineWorkerService).updateWithAlternateLocationForFLWsWith(locationArgumentCaptor.capture());
-        Location location4 = locationArgumentCaptor.getValue();
-        assertEquals(location3, location4);
+        Location location5 = locationArgumentCaptor.getValue();
+        assertEquals(location4, location5);
     }
 
     @Test

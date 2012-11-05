@@ -2,12 +2,59 @@ package org.motechproject.ananya.referencedata.flw.domain;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public enum LocationStatus {
-    VALID,
-    INVALID,
-    NOT_VERIFIED,
-    IN_REVIEW,
-    NEW;
+    NEW{
+        @Override
+        public boolean canTransitionTo(LocationStatus toStatus) {
+            return false;
+        }
+    },
+    VALID{
+        @Override
+        public boolean canTransitionTo(LocationStatus toStatus) {
+            List<LocationStatus> validStates = new ArrayList<LocationStatus>(){{
+                add(LocationStatus.VALID);
+                add(LocationStatus.INVALID);
+            }};
+            return validStates.contains(toStatus);
+        }
+    },
+    INVALID{
+        @Override
+        public boolean canTransitionTo(LocationStatus toStatus) {
+            List<LocationStatus> validStates = new ArrayList<LocationStatus>(){{
+                add(LocationStatus.INVALID);
+            }};
+            return validStates.contains(toStatus);
+        }
+    },
+    NOT_VERIFIED{
+        @Override
+        public boolean canTransitionTo(LocationStatus toStatus) {
+            List<LocationStatus> validStates = new ArrayList<LocationStatus>(){{
+                add(LocationStatus.VALID);
+                add(LocationStatus.INVALID);
+                add(LocationStatus.IN_REVIEW);
+            }};
+            return validStates.contains(toStatus);
+        }
+    },
+    IN_REVIEW{
+        @Override
+        public boolean canTransitionTo(LocationStatus toStatus) {
+            List<LocationStatus> validStates = new ArrayList<LocationStatus>(){{
+                add(LocationStatus.IN_REVIEW);
+                add(LocationStatus.VALID);
+                add(LocationStatus.INVALID);
+            }};
+            return validStates.contains(toStatus);
+        }
+    };
+
+    public abstract boolean canTransitionTo(LocationStatus toStatus);
 
     public static LocationStatus from(String string) {
         try {
@@ -51,5 +98,9 @@ public enum LocationStatus {
 
     public static boolean isValidCsvStatus(String status) {
         return contains(status) && !isNotVerifiedStatus(status);
+    }
+
+    public static boolean isValidOrInReviewStatus(String status) {
+        return isValidStatus(status) || isInReviewStatus(status);
     }
 }

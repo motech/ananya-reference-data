@@ -31,28 +31,32 @@ public class CsvImporterTest extends SpringIntegrationTest {
         Location location2 = new Location("D2", "B2", "P4", LocationStatus.NOT_VERIFIED.name(), null);
         Location location3 = new Location("D5", "B5", "P5", LocationStatus.IN_REVIEW.name(), null);
         Location location4 = new Location("D3", "B3", "P3", LocationStatus.IN_REVIEW.name(), null);
+        Location location5 = new Location("D6", "B6", "P6", LocationStatus.NOT_VERIFIED.name(), null);
         template.save(location1);
         template.save(location2);
         template.save(location3);
         template.save(location4);
+        template.save(location5);
         URL locationData = this.getClass().getResource("/locationData.csv");
         String[] arguments = {"Location", locationData.getPath()};
 
         CsvImporter.main(arguments);
 
         List<Location> locationDimensions = template.loadAll(Location.class);
-        assertEquals(5, locationDimensions.size());
+        assertEquals(6, locationDimensions.size());
 
         Location expectedLocation1 = new Location("D2", "B2", "P2", LocationStatus.VALID.name(), null);
         Location expectedLocation2 = new Location("D2", "B2", "P4", LocationStatus.INVALID.name(), expectedLocation1);
         Location expectedLocation5 = new Location("D1", "B1", "P1", LocationStatus.VALID.name(), null);
         Location expectedLocation3 = new Location("D3", "B3", "P3", LocationStatus.INVALID.name(), expectedLocation5);
         Location expectedLocation4 = new Location("D5", "B5", "P5", LocationStatus.VALID.name(), null);
+        Location expectedLocation6 = new Location("D6", "B6", "P6", LocationStatus.IN_REVIEW.name(), null);
         assertTrue(locationDimensions.contains(expectedLocation1));
         assertTrue(locationDimensions.contains(expectedLocation2));
         assertTrue(locationDimensions.contains(expectedLocation3));
         assertTrue(locationDimensions.contains(expectedLocation4));
         assertTrue(locationDimensions.contains(expectedLocation5));
+        assertTrue(locationDimensions.contains(expectedLocation6));
     }
 
     @Test
