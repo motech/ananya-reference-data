@@ -14,6 +14,7 @@ public class LocationStatusTest {
         assertEquals(LocationStatus.VALID, LocationStatus.from(" valiD  "));
         assertEquals(LocationStatus.NOT_VERIFIED, LocationStatus.from("  Not_verified"));
         assertNull(LocationStatus.from("not verified"));
+        assertNull(LocationStatus.from(null));
     }
 
     @Test
@@ -52,15 +53,6 @@ public class LocationStatusTest {
         assertTrue(LocationStatus.isValidCsvStatus("in_review"));
         assertTrue(LocationStatus.isValidCsvStatus("invalid"));
         assertFalse(LocationStatus.isValidCsvStatus("not_verified"));
-    }
-
-    @Test
-    public void shouldTestIfStatusIsUpdtable() {
-        assertTrue(LocationStatus.isUpdatable("in_review"));
-        assertTrue(LocationStatus.isUpdatable("not_Verified"));
-        assertFalse(LocationStatus.isUpdatable("invalid"));
-        assertFalse(LocationStatus.isUpdatable("Valid"));
-        assertFalse(LocationStatus.isUpdatable("NEW"));
     }
 
     @Test

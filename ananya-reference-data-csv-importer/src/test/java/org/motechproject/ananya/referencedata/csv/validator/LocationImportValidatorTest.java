@@ -219,4 +219,18 @@ public class LocationImportValidatorTest {
         assertFalse(response.isValid());
         assertTrue(response.getMessage().contains("Alternate location provided when not required"));
     }
+
+    @Test
+    public void shouldUpdateDBForAStatusOtherThanNewOnlyIfTransitionIsApplicable() {
+        ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
+        String district = "D1";
+        String block = "B1";
+        String panchayat = "P1";
+        LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.VALID.name());
+        when(allLocations.getFor(district,block,panchayat)).thenReturn(new Location(district,block,panchayat,LocationStatus.VALID, null));
+
+        LocationValidationResponse response = locationImportValidator.validate(locationImportRequest, locationImportRequests);
+
+        assertTrue(response.isValid());
+    }
 }

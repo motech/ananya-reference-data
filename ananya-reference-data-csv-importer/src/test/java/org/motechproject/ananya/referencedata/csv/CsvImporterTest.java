@@ -29,8 +29,8 @@ public class CsvImporterTest extends SpringIntegrationTest {
     public void shouldImportLocationData() throws Exception {
         Location location1 = new Location("D2", "B2", "P2", LocationStatus.NOT_VERIFIED, null);
         Location location2 = new Location("D2", "B2", "P4", LocationStatus.NOT_VERIFIED, null);
-        Location location3 = new Location("D5", "B5", "P5", LocationStatus.IN_REVIEW, null);
-        Location location4 = new Location("D3", "B3", "P3", LocationStatus.IN_REVIEW, null);
+        Location location3 = new Location("D5", "B5", "P5", LocationStatus.VALID, null);
+        Location location4 = new Location("D3", "B3", "P3", LocationStatus.VALID, null);
         Location location5 = new Location("D6", "B6", "P6", LocationStatus.NOT_VERIFIED, null);
         template.save(location1);
         template.save(location2);

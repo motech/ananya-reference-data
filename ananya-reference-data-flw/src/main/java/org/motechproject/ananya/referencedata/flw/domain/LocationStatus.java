@@ -92,10 +92,6 @@ public enum LocationStatus {
         return isValidStatus(status) || isNewStatus(status);
     }
 
-    public static boolean isUpdatable(String status) {
-        return isNotVerifiedStatus(status) || isInReviewStatus(status);
-    }
-
     public static boolean isValidCsvStatus(String status) {
         return contains(status) && !isNotVerifiedStatus(status);
     }

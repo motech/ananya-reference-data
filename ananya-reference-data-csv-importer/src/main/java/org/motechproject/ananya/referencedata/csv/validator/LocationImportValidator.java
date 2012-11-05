@@ -55,11 +55,12 @@ public class LocationImportValidator {
 
     private void validateExistenceInDb(LocationImportRequest locationRequest, LocationValidationResponse locationValidationResponse) {
         Location alreadyPresentLocation = getLocationFormDb(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
-        if (!LocationStatus.isNewStatus(locationRequest.getStatus()) && alreadyPresentLocation == null)
+        String status = locationRequest.getStatus();
+        if (!LocationStatus.isNewStatus(status) && alreadyPresentLocation == null)
             locationValidationResponse.forLocationNotExisting();
-        if (!LocationStatus.isNewStatus(locationRequest.getStatus()) && alreadyPresentLocation != null && !LocationStatus.isUpdatable(alreadyPresentLocation.getStatus().name()))
+        if (!LocationStatus.isNewStatus(status) && alreadyPresentLocation != null && !alreadyPresentLocation.getStatus().canTransitionTo(LocationStatus.from(status)))
             locationValidationResponse.forLocationNotExisting();
-        if (LocationStatus.isNewStatus(locationRequest.getStatus()) && alreadyPresentLocation != null)
+        if (LocationStatus.isNewStatus(status) && alreadyPresentLocation != null)
             locationValidationResponse.forLocationExisting();
 
     }
