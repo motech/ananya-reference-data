@@ -168,13 +168,13 @@ public class LocationImportValidatorTest {
         ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
         locationImportRequests.add(new LocationImportRequest("D1", "B1", "P1", LocationStatus.VALID.toString()));
         locationImportRequests.add(new LocationImportRequest("d1", "B1", "P1", LocationStatus.NEW.toString()));
-        LocationImportRequest locationImportRequest = new LocationImportRequest("D3", "B3", "P3", LocationStatus.INVALID.toString(), "D4", "B4", "P4");
+        LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.INVALID.toString(), "D4", "B4", "P4");
         locationImportRequests.add(locationImportRequest);
 
         LocationValidationResponse response = locationImportValidator.validate(locationImportRequest, locationImportRequests);
 
         assertFalse(response.isValid());
-        assertTrue(response.getMessage().contains("Location already present"));
+        assertTrue(response.getMessage().contains("Duplicate location in CSV file"));
     }
 
     @Test

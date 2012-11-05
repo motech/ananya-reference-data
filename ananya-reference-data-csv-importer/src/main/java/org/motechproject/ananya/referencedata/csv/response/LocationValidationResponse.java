@@ -14,7 +14,7 @@ public class LocationValidationResponse {
 
     public void forDuplicateLocation() {
         isValid = false;
-        this.message.add("Location already present");
+        this.message.add("Duplicate location in CSV file");
     }
 
     public void forInvalidLocation() {

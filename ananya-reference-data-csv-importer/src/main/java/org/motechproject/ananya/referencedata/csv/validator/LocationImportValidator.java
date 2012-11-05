@@ -9,7 +9,6 @@ import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -29,11 +28,11 @@ public class LocationImportValidator {
 
         validateStatus(locationRequest, locationValidationResponse);
 
-        validateDuplicateEntries(locationImportRequests, locationValidationResponse);
-
-        validateInvalidLocation(locationRequest, locationImportRequests, locationValidationResponse);
+        validateDuplicateEntries(locationRequest, locationImportRequests, locationValidationResponse);
 
         validateExistenceInDb(locationRequest, locationValidationResponse);
+
+        validateInvalidLocation(locationRequest, locationImportRequests, locationValidationResponse);
         return locationValidationResponse;
     }
 
@@ -67,24 +66,24 @@ public class LocationImportValidator {
 
     private void validateInvalidLocation(LocationImportRequest locationRequest, List<LocationImportRequest> locationImportRequests, LocationValidationResponse locationValidationResponse) {
         if (locationRequest.isForInvalidation())
-            validateForInvalidLocations(locationRequest, locationValidationResponse, locationImportRequests);
-        else {
-            if (locationRequest.hasAlternateLocation()) {
-                locationValidationResponse.forNeedlessAlternateLocation();
+            validateAlternateLocation(locationRequest, locationImportRequests, locationValidationResponse);
+        else if (locationRequest.hasAlternateLocation()) {
+            locationValidationResponse.forNeedlessAlternateLocation();
+        }
+    }
+
+    private void validateDuplicateEntries(LocationImportRequest locationRequest, List<LocationImportRequest> locationImportRequests, LocationValidationResponse locationValidationResponse) {
+        int duplicateRequestCount = 0;
+        for (LocationImportRequest csvImportRequest : locationImportRequests) {
+            if (csvImportRequest.equals(locationRequest)) duplicateRequestCount++;
+            if (duplicateRequestCount > 1) {
+                locationValidationResponse.forDuplicateLocation();
+                break;
             }
         }
     }
 
-    private void validateDuplicateEntries(List<LocationImportRequest> locationImportRequests, LocationValidationResponse locationValidationResponse) {
-        List<LocationImportRequest> duplicateCheckList = new ArrayList<>();
-        for (LocationImportRequest csvImportRequest : locationImportRequests) {
-            if (duplicateCheckList.contains(csvImportRequest))
-                locationValidationResponse.forDuplicateLocation();
-            else duplicateCheckList.add(csvImportRequest);
-        }
-    }
-
-    private void validateForInvalidLocations(LocationImportRequest locationRequest, LocationValidationResponse locationValidationResponse, List<LocationImportRequest> locationImportRequests) {
+    private void validateAlternateLocation(LocationImportRequest locationRequest, List<LocationImportRequest> locationImportRequests, LocationValidationResponse locationValidationResponse) {
         if (!locationRequest.hasAlternateLocation()) {
             locationValidationResponse.forBlankAlternateLocation();
         } else if (!isAlternateLocationPresentInDbAsValid(locationRequest) && !validLocationPresentInCsv(locationRequest, locationImportRequests)) {

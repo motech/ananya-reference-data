@@ -86,7 +86,7 @@ public class LocationImporterTest {
 
         assertFalse(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("\"D1\",\"B1\",\"P1\",\"[Location already present]\"", validationResponse.getErrors().get(1).getMessage());
+        assertEquals("\"D1\",\"B1\",\"P1\",\"[Duplicate location in CSV file]\"", validationResponse.getErrors().get(1).getMessage());
     }
 
     @Test
