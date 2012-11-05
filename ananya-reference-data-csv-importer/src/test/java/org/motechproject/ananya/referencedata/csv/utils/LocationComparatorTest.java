@@ -14,10 +14,10 @@ public class LocationComparatorTest {
 
     @Test
     public void shouldSortAllTheValidLocationsToStartOfFile() {
-        final LocationImportRequest locationImportRequest1 = new LocationImportRequest("d", "b", "p", LocationStatus.INVALID.name());
-        final LocationImportRequest locationImportRequest2 = new LocationImportRequest("d1", "b1", "p1", LocationStatus.VALID.name());
-        final LocationImportRequest locationImportRequest3 = new LocationImportRequest("d1", "b1", "p2", LocationStatus.VALID.name());
-        final LocationImportRequest locationImportRequest4 = new LocationImportRequest("d2", "b2", "p2", LocationStatus.NEW.name());
+        final LocationImportRequest locationImportRequest1 = new LocationImportRequest("d", "b", "p", LocationStatus.INVALID.toString());
+        final LocationImportRequest locationImportRequest2 = new LocationImportRequest("d1", "b1", "p1", LocationStatus.VALID.toString());
+        final LocationImportRequest locationImportRequest3 = new LocationImportRequest("d1", "b1", "p2", LocationStatus.VALID.toString());
+        final LocationImportRequest locationImportRequest4 = new LocationImportRequest("d2", "b2", "p2", LocationStatus.NEW.toString());
         List<LocationImportRequest> locationImportRequests = new ArrayList<LocationImportRequest>() {{
             add(locationImportRequest1);
             add(locationImportRequest2);

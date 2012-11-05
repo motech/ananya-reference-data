@@ -32,7 +32,7 @@ public class Location extends BaseEntity {
         this.district = StringUtils.trimToEmpty(district);
         this.block = StringUtils.trimToEmpty(block);
         this.panchayat = StringUtils.trimToEmpty(panchayat);
-        this.status = status.name();
+        this.status = status.toString();
     }
 
     public String getDistrict() {
@@ -56,7 +56,7 @@ public class Location extends BaseEntity {
     }
 
     public void setStatus(LocationStatus status) {
-        this.status = status.name();
+        this.status = status.toString();
     }
 
     public void setAlternateLocation(Location alternateLocation) {

@@ -40,7 +40,7 @@ public class LocationImporterTest {
 
     @Test
     public void shouldValidateLocationRequests() {
-        final LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.VALID.name());
+        final LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.VALID.toString());
         locationImportRequests.add(locationImportRequest);
         ArrayList<Object> locationRequests = new ArrayList<Object>(){{
             add(locationImportRequest);

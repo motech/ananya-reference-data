@@ -42,6 +42,11 @@ public class LocationValidationResponse {
         this.message.add("Location is not present in DB");
     }
 
+    public void forCannotTransitionFromExistingState() {
+        this.isValid = false;
+        this.message.add("Location cannot be updated to the specified status");
+    }
+
     public void forLocationExisting() {
         this.isValid = false;
         this.message.add("Location is already present in DB");

@@ -12,8 +12,8 @@ public class LocationStatusTest {
     @Test
     public void shouldReturnTheCorrectLocationStatus() {
         assertEquals(LocationStatus.VALID, LocationStatus.from(" valiD  "));
-        assertEquals(LocationStatus.NOT_VERIFIED, LocationStatus.from("  Not_verified"));
-        assertNull(LocationStatus.from("not verified"));
+        assertEquals(LocationStatus.NOT_VERIFIED, LocationStatus.from("  Not verified"));
+        assertEquals(LocationStatus.IN_REVIEW, LocationStatus.from("  In review"));
         assertNull(LocationStatus.from(null));
     }
 
@@ -50,9 +50,9 @@ public class LocationStatusTest {
     public void shouldTestForAValidCsvStatus() {
         assertTrue(LocationStatus.isValidCsvStatus("new"));
         assertTrue(LocationStatus.isValidCsvStatus("Valid"));
-        assertTrue(LocationStatus.isValidCsvStatus("in_review"));
+        assertTrue(LocationStatus.isValidCsvStatus("in review"));
         assertTrue(LocationStatus.isValidCsvStatus("invalid"));
-        assertFalse(LocationStatus.isValidCsvStatus("not_verified"));
+        assertFalse(LocationStatus.isValidCsvStatus("not verified"));
     }
 
     @Test

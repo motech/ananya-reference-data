@@ -54,7 +54,7 @@ public class LocationImportValidatorTest {
     @Test
     public void shouldFailValidationIfStatusIsNotVerified() {
         ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
-        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.NOT_VERIFIED.name());
+        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.NOT_VERIFIED.toString());
 
         LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequests);
 
@@ -67,7 +67,7 @@ public class LocationImportValidatorTest {
         ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
         when(allLocations.getFor("D1", "B1", "P1")).thenReturn(null);
 
-        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.NEW.name());
+        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.NEW.toString());
         LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequests);
 
         assertTrue(locationValidationResponse.isValid());
@@ -77,7 +77,7 @@ public class LocationImportValidatorTest {
     @Test
     public void shouldFailValidationForABlankAlternateLocationForAnInvalidLocation() {
         ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
-        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.INVALID.name());
+        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.INVALID.toString());
 
         LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequests);
 
@@ -90,7 +90,7 @@ public class LocationImportValidatorTest {
         ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
         Location location = new Location("D1", "B1", "P1", LocationStatus.NOT_VERIFIED, null);
         when(allLocations.getFor("D1", "B1", "P1")).thenReturn(location);
-        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.VALID.name());
+        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.VALID.toString());
 
         LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequests);
 
@@ -105,7 +105,7 @@ public class LocationImportValidatorTest {
         Location alternateLocation = new Location("D2", "B2", "P2", LocationStatus.VALID, null);
         when(allLocations.getFor("D1", "B1", "P1")).thenReturn(location);
         when(allLocations.getFor("D2", "B2", "P2")).thenReturn(alternateLocation);
-        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.INVALID.name(), "D2", "B2", "P2");
+        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.INVALID.toString(), "D2", "B2", "P2");
 
         LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequests);
 
@@ -116,11 +116,11 @@ public class LocationImportValidatorTest {
     @Test
     public void shouldValidateForInvalidAlternateLocationInDBForAnInvalidLocation() {
         ArrayList<LocationImportRequest> locationImportRequestsFromCsv = new ArrayList<>();
-        locationImportRequestsFromCsv.add(new LocationImportRequest("D1", "B1", "P1", LocationStatus.INVALID.name(), "D2", "B2", "P2"));
-        locationImportRequestsFromCsv.add(new LocationImportRequest("D3", "B3", "P3", LocationStatus.VALID.name()));
+        locationImportRequestsFromCsv.add(new LocationImportRequest("D1", "B1", "P1", LocationStatus.INVALID.toString(), "D2", "B2", "P2"));
+        locationImportRequestsFromCsv.add(new LocationImportRequest("D3", "B3", "P3", LocationStatus.VALID.toString()));
         when(allLocations.getFor("D2", "B2", "P2")).thenReturn(new Location("D2", "B2", "P2", LocationStatus.NEW, null));
 
-        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.INVALID.name(), "D2", "B2", "P2");
+        LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.INVALID.toString(), "D2", "B2", "P2");
         LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequestsFromCsv);
 
         assertFalse(locationValidationResponse.isValid());
@@ -133,8 +133,8 @@ public class LocationImportValidatorTest {
         String block = "B2";
         String panchayat = "P2";
         ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
-        locationImportRequests.add(new LocationImportRequest("D1", "B1", "P1", LocationStatus.NEW.name()));
-        LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.INVALID.name(), "D1", "B1", "P1");
+        locationImportRequests.add(new LocationImportRequest("D1", "B1", "P1", LocationStatus.NEW.toString()));
+        LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.INVALID.toString(), "D1", "B1", "P1");
         locationImportRequests.add(locationImportRequest);
         when(allLocations.getFor("D1", "B1", "P1")).thenReturn(null);
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat, LocationStatus.NOT_VERIFIED, null));
@@ -151,8 +151,8 @@ public class LocationImportValidatorTest {
         String block = "B3";
         String panchayat = "P3";
         ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
-        locationImportRequests.add(new LocationImportRequest("D4", "B4", "P4", LocationStatus.NEW.name()));
-        LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.INVALID.name(), "D4", "B4", "P4");
+        locationImportRequests.add(new LocationImportRequest("D4", "B4", "P4", LocationStatus.NEW.toString()));
+        LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.INVALID.toString(), "D4", "B4", "P4");
         locationImportRequests.add(locationImportRequest);
         when(allLocations.getFor("D4", "B4", "P4")).thenReturn(null);
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat, LocationStatus.NOT_VERIFIED, null));
@@ -166,9 +166,9 @@ public class LocationImportValidatorTest {
     @Test
     public void shouldValidateForDuplicateEntries() {
         ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
-        locationImportRequests.add(new LocationImportRequest("D1", "B1", "P1", LocationStatus.VALID.name()));
-        locationImportRequests.add(new LocationImportRequest("d1", "B1", "P1", LocationStatus.NEW.name()));
-        LocationImportRequest locationImportRequest = new LocationImportRequest("D3", "B3", "P3", LocationStatus.INVALID.name(), "D4", "B4", "P4");
+        locationImportRequests.add(new LocationImportRequest("D1", "B1", "P1", LocationStatus.VALID.toString()));
+        locationImportRequests.add(new LocationImportRequest("d1", "B1", "P1", LocationStatus.NEW.toString()));
+        LocationImportRequest locationImportRequest = new LocationImportRequest("D3", "B3", "P3", LocationStatus.INVALID.toString(), "D4", "B4", "P4");
         locationImportRequests.add(locationImportRequest);
 
         LocationValidationResponse response = locationImportValidator.validate(locationImportRequest, locationImportRequests);
@@ -183,7 +183,7 @@ public class LocationImportValidatorTest {
         String district = "D3";
         String block = "B3";
         String panchayat = "P3";
-        LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.NEW.name());
+        LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.NEW.toString());
         locationImportRequests.add(locationImportRequest);
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat, LocationStatus.VALID, null));
 
@@ -199,7 +199,7 @@ public class LocationImportValidatorTest {
         String district = "D3";
         String block = "B3";
         String panchayat = "P3";
-        LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.VALID.name());
+        LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.VALID.toString());
         locationImportRequests.add(locationImportRequest);
         when(allLocations.getFor(district, block, panchayat)).thenReturn(null);
 
@@ -212,7 +212,7 @@ public class LocationImportValidatorTest {
     @Test
     public void shouldInvalidateLocationRequestIfStatusIsNotInvalidAndItHasAlternateLocation() {
         ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
-        LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.VALID.name(), "D2", "B2", "P2");
+        LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.VALID.toString(), "D2", "B2", "P2");
 
         LocationValidationResponse response = locationImportValidator.validate(locationImportRequest, locationImportRequests);
 
@@ -226,11 +226,26 @@ public class LocationImportValidatorTest {
         String district = "D1";
         String block = "B1";
         String panchayat = "P1";
-        LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.VALID.name());
+        LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.VALID.toString());
         when(allLocations.getFor(district,block,panchayat)).thenReturn(new Location(district,block,panchayat,LocationStatus.VALID, null));
 
         LocationValidationResponse response = locationImportValidator.validate(locationImportRequest, locationImportRequests);
 
         assertTrue(response.isValid());
+    }
+
+    @Test
+    public void shouldFailValidationForAStatusOtherThanNewOnlyIfTransitionIsNotApplicable() {
+        ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
+        String district = "D1";
+        String block = "B1";
+        String panchayat = "P1";
+        LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.IN_REVIEW.toString());
+        when(allLocations.getFor(district,block,panchayat)).thenReturn(new Location(district,block,panchayat,LocationStatus.VALID, null));
+
+        LocationValidationResponse response = locationImportValidator.validate(locationImportRequest, locationImportRequests);
+
+        assertFalse(response.isValid());
+        assertTrue(response.getMessage().contains("Location cannot be updated to the specified status"));
     }
 }

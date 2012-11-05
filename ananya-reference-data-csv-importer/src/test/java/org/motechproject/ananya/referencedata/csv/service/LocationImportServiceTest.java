@@ -3,7 +3,6 @@ package org.motechproject.ananya.referencedata.csv.service;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
 import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
@@ -14,7 +13,6 @@ import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -27,8 +25,6 @@ public class LocationImportServiceTest {
     private LocationImportValidator locationValidator;
     @Mock
     private FrontLineWorkerService frontLineWorkerService;
-    @Captor
-    ArgumentCaptor<Set<Location>> captor;
     LocationImportService locationImportService;
 
     @Before
@@ -40,10 +36,10 @@ public class LocationImportServiceTest {
     @Test
     public void shouldBulkSaveLocation() {
         List<LocationImportRequest> locationImportRequests = new ArrayList<>();
-        locationImportRequests.add(new LocationImportRequest("d1", "b1", "p1", "new"));
-        locationImportRequests.add(new LocationImportRequest("d2", "b2", "p2", "valid"));
-        locationImportRequests.add(new LocationImportRequest("d3", "b3", "p3", "invalid", "d2", "b2", "p2"));
-        locationImportRequests.add(new LocationImportRequest("d4", "b4", "p4", "in_review"));
+        locationImportRequests.add(new LocationImportRequest("d1", "b1", "p1", LocationStatus.NEW.toString()));
+        locationImportRequests.add(new LocationImportRequest("d2", "b2", "p2", LocationStatus.VALID.toString()));
+        locationImportRequests.add(new LocationImportRequest("d3", "b3", "p3", LocationStatus.INVALID.toString(), "d2", "b2", "p2"));
+        locationImportRequests.add(new LocationImportRequest("d4", "b4", "p4", LocationStatus.IN_REVIEW.toString()));
 
         when(allLocations.getFor("d2", "b2", "p2")).thenReturn(new Location("d2", "b2", "p2", LocationStatus.IN_REVIEW, null));
         when(allLocations.getFor("d3", "b3", "p3")).thenReturn(new Location("d3", "b3", "p3", LocationStatus.IN_REVIEW, null));

@@ -6,35 +6,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum LocationStatus {
-    NEW{
+    NEW("NEW") {
         @Override
         public boolean canTransitionTo(LocationStatus toStatus) {
             return false;
         }
     },
-    VALID{
+    VALID("VALID") {
         @Override
         public boolean canTransitionTo(LocationStatus toStatus) {
-            List<LocationStatus> validStates = new ArrayList<LocationStatus>(){{
+            List<LocationStatus> validStates = new ArrayList<LocationStatus>() {{
                 add(LocationStatus.VALID);
                 add(LocationStatus.INVALID);
             }};
             return validStates.contains(toStatus);
         }
     },
-    INVALID{
+    INVALID("INVALID") {
         @Override
         public boolean canTransitionTo(LocationStatus toStatus) {
-            List<LocationStatus> validStates = new ArrayList<LocationStatus>(){{
+            List<LocationStatus> validStates = new ArrayList<LocationStatus>() {{
                 add(LocationStatus.INVALID);
             }};
             return validStates.contains(toStatus);
         }
     },
-    NOT_VERIFIED{
+    NOT_VERIFIED("NOT VERIFIED") {
         @Override
         public boolean canTransitionTo(LocationStatus toStatus) {
-            List<LocationStatus> validStates = new ArrayList<LocationStatus>(){{
+            List<LocationStatus> validStates = new ArrayList<LocationStatus>() {{
                 add(LocationStatus.VALID);
                 add(LocationStatus.INVALID);
                 add(LocationStatus.IN_REVIEW);
@@ -42,10 +42,10 @@ public enum LocationStatus {
             return validStates.contains(toStatus);
         }
     },
-    IN_REVIEW{
+    IN_REVIEW("IN REVIEW") {
         @Override
         public boolean canTransitionTo(LocationStatus toStatus) {
-            List<LocationStatus> validStates = new ArrayList<LocationStatus>(){{
+            List<LocationStatus> validStates = new ArrayList<LocationStatus>() {{
                 add(LocationStatus.IN_REVIEW);
                 add(LocationStatus.VALID);
                 add(LocationStatus.INVALID);
@@ -54,14 +54,28 @@ public enum LocationStatus {
         }
     };
 
+    private String description;
+
+    LocationStatus(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return this.description;
+    }
+
     public abstract boolean canTransitionTo(LocationStatus toStatus);
 
-    public static LocationStatus from(String string) {
-        try {
-            return LocationStatus.valueOf(StringUtils.trimToEmpty(StringUtils.upperCase(string)));
-        } catch (Exception e) {
-            return null;
+    public static LocationStatus from(String status) {
+        if (status != null) {
+            for (LocationStatus locationStatus : LocationStatus.values()) {
+                if (StringUtils.trimToEmpty(status).equalsIgnoreCase(locationStatus.description)) {
+                    return locationStatus;
+                }
+            }
         }
+        return null;
     }
 
     public static boolean contains(String status) {

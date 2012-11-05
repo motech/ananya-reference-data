@@ -39,7 +39,7 @@ public class LocationImportService {
     public void addAllWithoutValidations(List<LocationImportRequest> locationImportRequests) {
         processNewLocationRequests(locationImportRequests);
 
-       processValidAndInReviewLocationsRequests(locationImportRequests);
+        processValidAndInReviewLocationsRequests(locationImportRequests);
 
         processInvalidatingLocationRequests(locationImportRequests);
     }

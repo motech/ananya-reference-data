@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 public class LocationImportRequestTest {
     @Test
     public void shouldValidateRequestInvalidStatus() {
-        LocationImportRequest request = new LocationImportRequest("d", "b", "p", LocationStatus.INVALID.name());
+        LocationImportRequest request = new LocationImportRequest("d", "b", "p", LocationStatus.INVALID.toString());
         assertTrue(request.isForInvalidation());
 
         request.setStatus(LocationStatus.VALID.name());
@@ -18,7 +18,7 @@ public class LocationImportRequestTest {
 
     @Test
     public void shouldValidateExistanceOfAlternateLocation() {
-        LocationImportRequest request = new LocationImportRequest("d", "b", "p", LocationStatus.INVALID.name());
+        LocationImportRequest request = new LocationImportRequest("d", "b", "p", LocationStatus.INVALID.toString());
         assertFalse(request.hasAlternateLocation());
 
         request = new LocationImportRequest("d", "b", "p", LocationStatus.INVALID.name(), "d1", "b1", "p1");
@@ -30,7 +30,7 @@ public class LocationImportRequestTest {
         String district = "d";
         String block = "b";
         String panchayat = "p";
-        LocationImportRequest request = new LocationImportRequest(district, block, panchayat, LocationStatus.INVALID.name());
+        LocationImportRequest request = new LocationImportRequest(district, block, panchayat, LocationStatus.INVALID.toString());
 
         assertTrue(request.matchesLocation(district, block, panchayat));
         assertFalse(request.matchesLocation("d1", "b1", "p1"));
