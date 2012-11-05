@@ -45,9 +45,9 @@ public class LocationImportServiceTest {
         locationImportRequests.add(new LocationImportRequest("d3", "b3", "p3", "invalid", "d2", "b2", "p2"));
         locationImportRequests.add(new LocationImportRequest("d4", "b4", "p4", "in_review"));
 
-        when(allLocations.getFor("d2", "b2", "p2")).thenReturn(new Location("d2", "b2", "p2", LocationStatus.IN_REVIEW.name(), null));
-        when(allLocations.getFor("d3", "b3", "p3")).thenReturn(new Location("d3", "b3", "p3", LocationStatus.IN_REVIEW.name(), null));
-        when(allLocations.getFor("d4", "b4", "p4")).thenReturn(new Location("d4", "b4", "p4", LocationStatus.NOT_VERIFIED.name(), null));
+        when(allLocations.getFor("d2", "b2", "p2")).thenReturn(new Location("d2", "b2", "p2", LocationStatus.IN_REVIEW, null));
+        when(allLocations.getFor("d3", "b3", "p3")).thenReturn(new Location("d3", "b3", "p3", LocationStatus.IN_REVIEW, null));
+        when(allLocations.getFor("d4", "b4", "p4")).thenReturn(new Location("d4", "b4", "p4", LocationStatus.NOT_VERIFIED, null));
 
         locationImportService.addAllWithoutValidations(locationImportRequests);
 
@@ -55,20 +55,20 @@ public class LocationImportServiceTest {
         verify(allLocations, times(1)).add(locationArgumentCaptor.capture());
         Location location1 = locationArgumentCaptor.getValue();
         assertEquals("d1", location1.getDistrict());
-        assertEquals("VALID", location1.getStatus());
+        assertEquals(LocationStatus.VALID, location1.getStatus());
 
         locationArgumentCaptor = ArgumentCaptor.forClass(Location.class);
         verify(allLocations, times(3)).update(locationArgumentCaptor.capture());
         List<Location> locations = locationArgumentCaptor.getAllValues();
         Location location2 = locations.get(0);
         assertEquals("d2", location2.getDistrict());
-        assertEquals(LocationStatus.VALID.name(), location2.getStatus());
+        assertEquals(LocationStatus.VALID, location2.getStatus());
         Location location3 = locations.get(1);
         assertEquals("d4", location3.getDistrict());
-        assertEquals(LocationStatus.IN_REVIEW.name(), location3.getStatus());
+        assertEquals(LocationStatus.IN_REVIEW, location3.getStatus());
         Location location4 = locations.get(2);
         assertEquals("d3", location4.getDistrict());
-        assertEquals(LocationStatus.INVALID.name(), location4.getStatus());
+        assertEquals(LocationStatus.INVALID, location4.getStatus());
         assertEquals(location2.getDistrict(), location4.getAlternateLocation().getDistrict());
 
         locationArgumentCaptor = ArgumentCaptor.forClass(Location.class);
@@ -79,7 +79,7 @@ public class LocationImportServiceTest {
 
     @Test
     public void shouldGetLocationForASpecificDistrictBlockAndPanchayat() {
-        Location location = new Location("district", "block", "panchayat", "VALID", null);
+        Location location = new Location("district", "block", "panchayat", LocationStatus.VALID, null);
         when(allLocations.getFor("district", "block", "panchayat")).thenReturn(location);
 
         Location actualLocation = locationImportService.getFor("district", "block", "panchayat");

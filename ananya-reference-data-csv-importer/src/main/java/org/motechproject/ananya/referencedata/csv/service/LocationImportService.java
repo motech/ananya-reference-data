@@ -63,7 +63,7 @@ public class LocationImportService {
                                 request.getDistrict(),
                                 request.getBlock(),
                                 request.getPanchayat(),
-                                LocationStatus.VALID.name(),
+                                LocationStatus.VALID,
                                 null)
                         );
                     }

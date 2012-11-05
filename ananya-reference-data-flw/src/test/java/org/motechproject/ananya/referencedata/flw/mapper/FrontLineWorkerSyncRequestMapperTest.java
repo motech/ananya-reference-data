@@ -13,7 +13,7 @@ public class FrontLineWorkerSyncRequestMapperTest {
         String block = "block1";
         String panchayat = "panchayat1";
         DateTime now = DateTime.now();
-        String status = "VALID";
+        LocationStatus status = LocationStatus.VALID;
         Location location = new Location(district, block, panchayat, status, null);
         location.setLastModified(now);
 

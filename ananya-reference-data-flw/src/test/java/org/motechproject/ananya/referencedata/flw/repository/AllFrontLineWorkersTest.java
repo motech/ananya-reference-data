@@ -23,7 +23,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     public void setUp() {
         template.deleteAll(template.loadAll(FrontLineWorker.class));
         template.deleteAll(template.loadAll(Location.class));
-        location = new Location("district", "block", "panchayat", "NOT_VERIFIED", null);
+        location = new Location("district", "block", "panchayat", LocationStatus.NOT_VERIFIED, null);
         template.save(location);
     }
 
@@ -67,7 +67,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
         Designation newDesignation = Designation.ANM;
         String newDistrict = "district1";
         existingFrontLineWorker.setName(newName);
-        String status = "VALID";
+        LocationStatus status = LocationStatus.VALID;
         Location newLocation = new Location(newDistrict, "block1", "panchayat1", status, null);
         template.save(existingFrontLineWorker);
         template.save(newLocation);
@@ -92,7 +92,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
         Designation newDesignation = Designation.ANM;
         String newDistrict = "district1";
         existingFrontLineWorker.setName(newName);
-        String status = "VALID";
+        LocationStatus status = LocationStatus.VALID;
         Location newLocation = new Location(newDistrict, "block1", "panchayat1", status, null);
         template.save(newLocation);
         existingFrontLineWorker.setDesignation(newDesignation);

@@ -29,7 +29,7 @@ public class LocationSyncServiceTest {
     @Test
     public void shouldSyncAllLocations() {
         LocationSyncService locationSyncService = new LocationSyncService(httpClientService, clientServiceProperties);
-        final Location locationToBeSynced = new Location("D1", "B1", "P1", LocationStatus.NOT_VERIFIED.name(), null);
+        final Location locationToBeSynced = new Location("D1", "B1", "P1", LocationStatus.NOT_VERIFIED, null);
         DateTime dateTime = DateTime.now();
         locationToBeSynced.setLastModified(dateTime);
         final List<Location> locations = new ArrayList<Location>() {{

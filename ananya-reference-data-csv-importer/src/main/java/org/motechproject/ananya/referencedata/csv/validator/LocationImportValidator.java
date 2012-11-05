@@ -57,7 +57,7 @@ public class LocationImportValidator {
         Location alreadyPresentLocation = getLocationFormDb(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
         if (!LocationStatus.isNewStatus(locationRequest.getStatus()) && alreadyPresentLocation == null)
             locationValidationResponse.forLocationNotExisting();
-        if (!LocationStatus.isNewStatus(locationRequest.getStatus()) && alreadyPresentLocation != null && !LocationStatus.isUpdatable(alreadyPresentLocation.getStatus()))
+        if (!LocationStatus.isNewStatus(locationRequest.getStatus()) && alreadyPresentLocation != null && !LocationStatus.isUpdatable(alreadyPresentLocation.getStatus().name()))
             locationValidationResponse.forLocationNotExisting();
         if (LocationStatus.isNewStatus(locationRequest.getStatus()) && alreadyPresentLocation != null)
             locationValidationResponse.forLocationExisting();
@@ -93,7 +93,7 @@ public class LocationImportValidator {
 
     private boolean isAlternateLocationPresentInDbAsValid(LocationImportRequest locationRequest) {
         Location alternateLocationFormDb = getLocationFormDb(locationRequest.getNewDistrict(), locationRequest.getNewBlock(), locationRequest.getNewPanchayat());
-        return alternateLocationFormDb != null && LocationStatus.isValidStatus(alternateLocationFormDb.getStatus());
+        return alternateLocationFormDb != null && LocationStatus.isValidStatus(alternateLocationFormDb.getStatus().name());
     }
 
     private boolean validLocationPresentInCsv(LocationImportRequest locationRequest, List<LocationImportRequest> locationImportRequests) {

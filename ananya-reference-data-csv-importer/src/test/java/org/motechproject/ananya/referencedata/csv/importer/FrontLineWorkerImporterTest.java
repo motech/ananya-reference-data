@@ -9,6 +9,7 @@ import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportR
 import org.motechproject.ananya.referencedata.csv.service.FrontLineWorkerImportService;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
 import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
@@ -46,7 +47,7 @@ public class FrontLineWorkerImporterTest {
     @Test
     public void shouldValidateFLWRequests() {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
-        Location location = new Location("D1", "B1", "P1", "VALID", null);
+        Location location = new Location("D1", "B1", "P1", LocationStatus.VALID, null);
         when(locationImportService.getFor("D1", "B1", "P1")).thenReturn(location);
         frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1234567890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1", "VALID")));
 
@@ -60,7 +61,7 @@ public class FrontLineWorkerImporterTest {
     @Test
     public void shouldFailValidationIfFLWDoesNotHaveAllTheDetails() {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
-        Location location = new Location("D1", "B1", "P1", "VALID", null);
+        Location location = new Location("D1", "B1", "P1", LocationStatus.VALID, null);
         when(locationImportService.getFor("D1", "B1", "P1")).thenReturn(location);
         frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1asdf67890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1", "VALID")));
 

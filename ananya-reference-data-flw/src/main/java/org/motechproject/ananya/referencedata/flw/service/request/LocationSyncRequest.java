@@ -2,14 +2,15 @@ package org.motechproject.ananya.referencedata.flw.service.request;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.joda.time.DateTime;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 
 public class LocationSyncRequest {
     private LocationRequest actualLocation;
     private LocationRequest newLocation;
-    private String locationStatus;
+    private LocationStatus locationStatus;
     private DateTime lastModifiedTime;
 
-    public LocationSyncRequest(LocationRequest actualLocation, LocationRequest newLocation, String locationStatus, DateTime lastModifiedTime) {
+    public LocationSyncRequest(LocationRequest actualLocation, LocationRequest newLocation, LocationStatus locationStatus, DateTime lastModifiedTime) {
         this.actualLocation = actualLocation;
         this.newLocation = newLocation;
         this.locationStatus = locationStatus;
@@ -24,7 +25,7 @@ public class LocationSyncRequest {
         return newLocation;
     }
 
-    public String getLocationStatus() {
+    public LocationStatus getLocationStatus() {
         return locationStatus;
     }
 

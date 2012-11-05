@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationContract;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -14,7 +15,7 @@ public class LocationContractMapperTest {
         String block = "block1";
         String district = "district1";
 
-        Location location = new Location(district, block, panchayat, "VALID", null);
+        Location location = new Location(district, block, panchayat, LocationStatus.VALID, null);
         DateTime lastModified = DateTime.now();
         location.setLastModified(lastModified);
         LocationContract locationContract = LocationContractMapper.mapFrom(location);

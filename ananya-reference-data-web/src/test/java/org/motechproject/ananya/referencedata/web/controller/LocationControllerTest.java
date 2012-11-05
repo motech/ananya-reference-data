@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.web.response.LocationResponse;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
 import org.springframework.http.MediaType;
@@ -34,7 +35,7 @@ public class LocationControllerTest {
 
     @Test
     public void shouldGetLocationMasterCsv() throws Exception {
-        final Location validLocation = new Location("d1", "b1", "p1", "valid", null);
+        final Location validLocation = new Location("d1", "b1", "p1", LocationStatus.VALID, null);
         String channel = "contact_center";
         when(locationService.getAllValidLocations()).thenReturn(new ArrayList<Location>() {{
             add(validLocation);

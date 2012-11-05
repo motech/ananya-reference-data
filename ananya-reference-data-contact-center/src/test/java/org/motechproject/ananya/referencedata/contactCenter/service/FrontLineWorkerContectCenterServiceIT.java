@@ -7,10 +7,7 @@ import org.junit.rules.ExpectedException;
 import org.motechproject.ananya.referencedata.contactCenter.SpringIntegrationTest;
 import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequest;
 import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequestBuilder;
-import org.motechproject.ananya.referencedata.flw.domain.Designation;
-import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
-import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.domain.*;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
@@ -37,7 +34,7 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
     @Test
     public void shouldUpdateAnExistingFlwDuringUnsuccessfulRegistration() {
         String msisdn = "1234567890";
-        Location location = new Location("d", "b", "p", "VALID", null);
+        Location location = new Location("d", "b", "p", LocationStatus.VALID, null);
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), null, null, location, flwId, VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
@@ -59,7 +56,7 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
     public void shouldCreateANewFlwIfFLWDoesNotExistDuringRegistration() {
         String msisdn = "1234567890";
 
-        Location location = new Location("d", "b", "p", "VALID", null);
+        Location location = new Location("d", "b", "p", LocationStatus.VALID, null);
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "name", Designation.ANM, location, UUID.randomUUID(), VerificationStatus.INVALID, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
@@ -103,7 +100,7 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location("d", "b", "p", "VALID", null);
+        Location location = new Location("d", "b", "p", LocationStatus.VALID, null);
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), name, designation, location, flwId, VerificationStatus.OTHER, "Random reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
@@ -114,7 +111,7 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
         assertEquals(district, updatedFrontLineWorker.getLocation().getDistrict());
         assertEquals(block, updatedFrontLineWorker.getLocation().getBlock());
         assertEquals(panchayat,updatedFrontLineWorker.getLocation().getPanchayat());
-        assertEquals("NOT_VERIFIED", updatedFrontLineWorker.getLocation().getStatus());
+        assertEquals(LocationStatus.NOT_VERIFIED, updatedFrontLineWorker.getLocation().getStatus());
     }
 
     private FrontLineWorkerVerificationWebRequest failedFrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String verificationStatus, String reason) {

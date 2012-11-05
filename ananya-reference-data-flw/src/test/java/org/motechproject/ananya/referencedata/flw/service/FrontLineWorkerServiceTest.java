@@ -36,8 +36,8 @@ public class FrontLineWorkerServiceTest {
 
     @Test
     public void shouldUpdateLocationsOfAllFLWsFromCurrentLocationToAlternateLocation() {
-        Location alternateLocation = new Location("district", "block", "panchayat", LocationStatus.VALID.name(), null);;
-        Location currentLocation = new Location("district", "block", "panchayat", LocationStatus.NOT_VERIFIED.name(), alternateLocation);
+        Location alternateLocation = new Location("district", "block", "panchayat", LocationStatus.VALID, null);;
+        Location currentLocation = new Location("district", "block", "panchayat", LocationStatus.NOT_VERIFIED, alternateLocation);
         List<FrontLineWorker> frontLineWorkers = new ArrayList<>();
         FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "name", Designation.ASHA, currentLocation);
         frontLineWorkers.add(frontLineWorker);

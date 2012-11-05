@@ -27,7 +27,7 @@ public class FrontLineWorkerSyncServiceTest {
 
     @Test
     public void shouldSyncListOfFLW() {
-        Location location = new Location("D1", "B1", "P1", LocationStatus.VALID.name(), null);
+        Location location = new Location("D1", "B1", "P1", LocationStatus.VALID, null);
         final FrontLineWorker frontLineWorker = new FrontLineWorker(1L, "name", Designation.ANM, location);
         frontLineWorker.setLastModified(DateTime.now());
         List<FrontLineWorker> frontLineWorkers = new ArrayList();

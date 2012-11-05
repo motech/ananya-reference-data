@@ -20,6 +20,6 @@ public class LocationMapperTest {
         assertEquals(district, location.getDistrict());
         assertEquals(block, location.getBlock());
         assertEquals(panchayat, location.getPanchayat());
-        assertEquals(LocationStatus.NOT_VERIFIED.name(), location.getStatus());
+        assertEquals(LocationStatus.NOT_VERIFIED, location.getStatus());
     }
 }

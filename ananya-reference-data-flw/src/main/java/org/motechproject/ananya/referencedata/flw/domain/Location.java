@@ -27,12 +27,12 @@ public class Location extends BaseEntity {
     public Location() {
     }
 
-    public Location(String district, String block, String panchayat, String status, Location alternateLocation) {
+    public Location(String district, String block, String panchayat, LocationStatus status, Location alternateLocation) {
         this.alternateLocation = alternateLocation;
         this.district = StringUtils.trimToEmpty(district);
         this.block = StringUtils.trimToEmpty(block);
         this.panchayat = StringUtils.trimToEmpty(panchayat);
-        this.status = status;
+        this.status = status.name();
     }
 
     public String getDistrict() {
@@ -47,8 +47,8 @@ public class Location extends BaseEntity {
         return panchayat;
     }
 
-    public String getStatus() {
-        return status;
+    public LocationStatus getStatus() {
+        return LocationStatus.from(status);
     }
 
     public Location getAlternateLocation() {
@@ -75,7 +75,7 @@ public class Location extends BaseEntity {
         if (block != null ? !block.equalsIgnoreCase(location.block) : location.block != null) return false;
         if (district != null ? !district.equalsIgnoreCase(location.district) : location.district != null) return false;
         if (panchayat != null ? !panchayat.equalsIgnoreCase(location.panchayat) : location.panchayat != null) return false;
-        if (status != null ? !status.equalsIgnoreCase(location.status) : location.status != null) return false;
+        if (status != null ? !status.equals(location.status) : location.status != null) return false;
 
         return true;
     }
