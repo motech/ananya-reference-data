@@ -47,7 +47,7 @@ public class AllLocations {
 
     public List<Location> getAllForStatus(LocationStatus status) {
         DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
-        criteria.add(Restrictions.eq("status", status.name()).ignoreCase());
+        criteria.add(Restrictions.eq("status", status));
         return template.findByCriteria(criteria);
     }
 }

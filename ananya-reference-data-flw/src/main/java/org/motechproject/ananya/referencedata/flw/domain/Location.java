@@ -18,7 +18,8 @@ public class Location extends BaseEntity {
     private String panchayat;
 
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private LocationStatus status;
 
     @ManyToOne
     @JoinColumn(name = "alternate_location")
@@ -32,7 +33,7 @@ public class Location extends BaseEntity {
         this.district = StringUtils.trimToEmpty(district);
         this.block = StringUtils.trimToEmpty(block);
         this.panchayat = StringUtils.trimToEmpty(panchayat);
-        this.status = status.toString();
+        this.status = status;
     }
 
     public String getDistrict() {
@@ -48,7 +49,7 @@ public class Location extends BaseEntity {
     }
 
     public LocationStatus getStatus() {
-        return LocationStatus.from(status);
+        return status;
     }
 
     public Location getAlternateLocation() {
@@ -56,7 +57,7 @@ public class Location extends BaseEntity {
     }
 
     public void setStatus(LocationStatus status) {
-        this.status = status.toString();
+        this.status = status;
     }
 
     public void setAlternateLocation(Location alternateLocation) {
