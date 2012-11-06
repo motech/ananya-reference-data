@@ -82,7 +82,7 @@ public class LocationImportValidatorTest {
         LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequests);
 
         assertFalse(locationValidationResponse.isValid());
-        assertTrue(locationValidationResponse.getMessage().contains("Location is invalid and does not have an alternate location"));
+        assertTrue(locationValidationResponse.getMessage().contains("Alternate location not present"));
     }
 
     @Test
@@ -124,7 +124,7 @@ public class LocationImportValidatorTest {
         LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequestsFromCsv);
 
         assertFalse(locationValidationResponse.isValid());
-        assertTrue(locationValidationResponse.getMessage().contains("Location is invalid and has an invalid alternate location"));
+        assertTrue(locationValidationResponse.getMessage().contains("Alternate location is not a valid/new location"));
     }
 
     @Test

@@ -29,12 +29,12 @@ public class LocationValidationResponse {
 
     public void forBlankAlternateLocation() {
         this.isValid = false;
-        this.message.add("Location is invalid and does not have an alternate location");
+        this.message.add("Alternate location not present");
     }
 
     public void forInvalidAlternateLocation() {
         this.isValid = false;
-        this.message.add("Location is invalid and has an invalid alternate location");
+        this.message.add("Alternate location is not a valid/new location");
     }
 
     public void forLocationNotExisting() {
