@@ -2,7 +2,9 @@ package org.motechproject.ananya.referencedata.flw.service.request;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-public class LocationRequest {
+import java.io.Serializable;
+
+public class LocationRequest implements Serializable {
     private String district;
     private String block;
     private String panchayat;

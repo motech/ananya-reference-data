@@ -4,7 +4,9 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.joda.time.DateTime;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 
-public class LocationSyncRequest {
+import java.io.Serializable;
+
+public class LocationSyncRequest implements Serializable {
     private LocationRequest actualLocation;
     private LocationRequest newLocation;
     private LocationStatus locationStatus;
