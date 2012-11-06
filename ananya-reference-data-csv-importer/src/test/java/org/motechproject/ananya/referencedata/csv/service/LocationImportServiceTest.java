@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
@@ -50,23 +51,25 @@ public class LocationImportServiceTest {
         when(allLocations.getFor("d4", "b4", "p4")).thenReturn(new Location("d4", "b4", "p4", LocationStatus.NOT_VERIFIED, null));
 
         locationImportService.addAllWithoutValidations(locationImportRequests);
+        InOrder orderedExecution = inOrder(allLocations);
 
         ArgumentCaptor<Location> locationArgumentCaptor = ArgumentCaptor.forClass(Location.class);
-        verify(allLocations, times(1)).add(locationArgumentCaptor.capture());
+        orderedExecution.verify(allLocations, times(1)).add(locationArgumentCaptor.capture());
         Location location1 = locationArgumentCaptor.getValue();
         assertEquals("d1", location1.getDistrict());
         assertEquals(LocationStatus.VALID, location1.getStatus());
 
         locationArgumentCaptor = ArgumentCaptor.forClass(Location.class);
-        verify(allLocations, times(3)).update(locationArgumentCaptor.capture());
-        List<Location> locations = locationArgumentCaptor.getAllValues();
-        Location location2 = locations.get(0);
+        orderedExecution.verify(allLocations).update(locationArgumentCaptor.capture());
+        Location location2 = locationArgumentCaptor.getValue();
         assertEquals("d2", location2.getDistrict());
         assertEquals(LocationStatus.VALID, location2.getStatus());
-        Location location3 = locations.get(1);
+        orderedExecution.verify(allLocations).update(locationArgumentCaptor.capture());
+        Location location3 = locationArgumentCaptor.getValue();
         assertEquals("d4", location3.getDistrict());
         assertEquals(LocationStatus.IN_REVIEW, location3.getStatus());
-        Location location4 = locations.get(2);
+        orderedExecution.verify(allLocations).update(locationArgumentCaptor.capture());
+        Location location4 = locationArgumentCaptor.getValue();
         assertEquals("d3", location4.getDistrict());
         assertEquals(LocationStatus.INVALID, location4.getStatus());
         assertEquals(location2.getDistrict(), location4.getAlternateLocation().getDistrict());
