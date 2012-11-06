@@ -39,7 +39,7 @@ public class LocationImporter {
         int recordCounter = 0;
         List<Error> errors = new ArrayList<Error>();
 
-        List<LocationImportRequest> locationImportRequests = convertToLocationRequestAndSort(objects);
+        List<LocationImportRequest> locationImportRequests = convertToLocationRequest(objects);
 
         addHeader(errors);
         logger.info("Started validating location csv records");
@@ -58,7 +58,8 @@ public class LocationImporter {
     @Post
     public void postData(List<Object> objects) {
         logger.info("Started posting location data");
-        List<LocationImportRequest> locationImportRequests = convertToLocationRequestAndSort(objects);
+        List<LocationImportRequest> locationImportRequests = convertToLocationRequest(objects);
+        Collections.sort(locationImportRequests, new LocationComparator());
         locationImportService.addAllWithoutValidations(locationImportRequests);
         logger.info("Finished posting location data");
     }
@@ -70,13 +71,11 @@ public class LocationImporter {
         return validationResponse;
     }
 
-    private List<LocationImportRequest> convertToLocationRequestAndSort(List<Object> objects) {
+    private List<LocationImportRequest> convertToLocationRequest(List<Object> objects) {
         List<LocationImportRequest> locationRequests = new ArrayList<>();
         for (Object object : objects) {
             locationRequests.add((LocationImportRequest) object);
         }
-
-        Collections.sort(locationRequests, new LocationComparator());
 
         return locationRequests;
     }

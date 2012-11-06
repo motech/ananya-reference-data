@@ -98,9 +98,9 @@ public class LocationImportValidator {
 
     private boolean validLocationPresentInCsv(LocationImportRequest locationRequest, List<LocationImportRequest> locationImportRequests) {
         for (LocationImportRequest locationRequestFromCsv : locationImportRequests) {
-            if (!LocationStatus.isValidAlternateLocationStatus(locationRequestFromCsv.getStatus())) break;
+            boolean validAlternateLocationStatus = LocationStatus.isValidAlternateLocationStatus(locationRequestFromCsv.getStatus());
             if (locationRequestFromCsv.matchesLocation(locationRequest.getNewDistrict(),
-                    locationRequest.getNewBlock(), locationRequest.getNewPanchayat()))
+                    locationRequest.getNewBlock(), locationRequest.getNewPanchayat()) && validAlternateLocationStatus)
                 return true;
         }
         return false;
