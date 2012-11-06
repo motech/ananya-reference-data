@@ -57,6 +57,11 @@ public class LocationValidationResponse {
         this.message.add("Alternate location provided when not required");
     }
 
+    public void forAlternateLocationSameAsLocation() {
+        this.isValid = false;
+        this.message.add("Alternate location same as location");
+    }
+
     public boolean isValid() {
         return isValid;
     }

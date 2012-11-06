@@ -101,10 +101,8 @@ public class LocationImportValidatorTest {
     @Test
     public void shouldValidateForValidAlternateLocationInDBForAnInvalidLocation() {
         ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
-        Location location = new Location("D1", "B1", "P1", LocationStatus.NOT_VERIFIED, null);
-        Location alternateLocation = new Location("D2", "B2", "P2", LocationStatus.VALID, null);
-        when(allLocations.getFor("D1", "B1", "P1")).thenReturn(location);
-        when(allLocations.getFor("D2", "B2", "P2")).thenReturn(alternateLocation);
+        when(allLocations.getFor("D1", "B1", "P1")).thenReturn(new Location("D1", "B1", "P1", LocationStatus.NOT_VERIFIED, null));
+        when(allLocations.getFor("D2", "B2", "P2")).thenReturn(new Location("D2", "B2", "P2", LocationStatus.VALID, null));
         LocationImportRequest locationRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.INVALID.toString(), "D2", "B2", "P2");
 
         LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequests);
@@ -208,7 +206,7 @@ public class LocationImportValidatorTest {
         assertFalse(response.isValid());
         assertTrue(response.getMessage().contains("Location is not present in DB"));
     }
-    
+
     @Test
     public void shouldInvalidateLocationRequestIfStatusIsNotInvalidAndItHasAlternateLocation() {
         ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
@@ -227,7 +225,7 @@ public class LocationImportValidatorTest {
         String block = "B1";
         String panchayat = "P1";
         LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.VALID.toString());
-        when(allLocations.getFor(district,block,panchayat)).thenReturn(new Location(district,block,panchayat,LocationStatus.VALID, null));
+        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat, LocationStatus.VALID, null));
 
         LocationValidationResponse response = locationImportValidator.validate(locationImportRequest, locationImportRequests);
 
@@ -241,11 +239,44 @@ public class LocationImportValidatorTest {
         String block = "B1";
         String panchayat = "P1";
         LocationImportRequest locationImportRequest = new LocationImportRequest(district, block, panchayat, LocationStatus.IN_REVIEW.toString());
-        when(allLocations.getFor(district,block,panchayat)).thenReturn(new Location(district,block,panchayat,LocationStatus.VALID, null));
+        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat, LocationStatus.VALID, null));
 
         LocationValidationResponse response = locationImportValidator.validate(locationImportRequest, locationImportRequests);
 
         assertFalse(response.isValid());
         assertTrue(response.getMessage().contains("Location cannot be updated to the specified status"));
+    }
+
+    @Test
+    public void shouldNotHaveAlternateLocationSameAsTheLocation() {
+        ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
+        LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.INVALID.toString(), "D1", "B1", "P1");
+
+        LocationValidationResponse response = locationImportValidator.validate(locationImportRequest, locationImportRequests);
+
+        assertFalse(response.isValid());
+        assertTrue(response.getMessage().contains("Alternate location same as location"));
+    }
+
+    @Test
+    public void shouldNotHaveCircularReferenceToAlternateLocation() {
+        ArrayList<LocationImportRequest> locationImportRequests = new ArrayList<>();
+        String d1 = "D1";
+        String b1 = "B1";
+        String p1 = "P1";
+        String d2 = "D2";
+        String b2 = "B2";
+        String p2 = "P2";
+        LocationImportRequest locationImportRequest1 = new LocationImportRequest(d1, b1, p1, LocationStatus.INVALID.toString(), d2, b2, p2);
+        LocationImportRequest locationImportRequest2 = new LocationImportRequest(d2, b2, p2, LocationStatus.INVALID.toString(), d1, b1, p1);
+        locationImportRequests.add(locationImportRequest1);
+        locationImportRequests.add(locationImportRequest2);
+        when(allLocations.getFor(d1, b1, p1)).thenReturn(new Location(d1, b1, p1, LocationStatus.VALID, null));
+        when(allLocations.getFor(d2, b2, p2)).thenReturn(new Location(d2, b2, p2, LocationStatus.VALID, null));
+
+        LocationValidationResponse response = locationImportValidator.validate(locationImportRequest2, locationImportRequests);
+
+        assertFalse(response.isValid());
+        assertTrue(response.getMessage().contains("Alternate location is not a valid/new location"));
     }
 }
