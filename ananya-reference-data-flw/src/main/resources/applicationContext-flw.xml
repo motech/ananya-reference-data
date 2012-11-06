@@ -15,7 +15,6 @@
     <context:annotation-config/>
 
     <import resource="classpath:applicationContextHttpClient.xml"/>
-    <bean id="statsdAgent" class="org.motechproject.ananya.referencedata.flw.metrics.DummyStats"/>
 
     <context:component-scan base-package="org.motechproject.ananya.referencedata"/>
 
