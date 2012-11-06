@@ -36,9 +36,9 @@ public class SyncService {
         }
     }
 
-    public void syncAllLocations(ArrayList<Location> locations) {
+    public void syncLocation(Location location) {
         if (propertiesService.isSyncOn()) {
-            locationSyncService.sync(locations);
+            locationSyncService.sync(location);
         }
     }
 }

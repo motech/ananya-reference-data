@@ -8,6 +8,7 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.flw.service.SyncService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -19,15 +20,18 @@ import java.util.List;
 public class LocationImportService {
     private AllLocations allLocations;
     private FrontLineWorkerService frontLineWorkerService;
+    private SyncService syncService;
 
     public LocationImportService() {
     }
 
     @Autowired
     public LocationImportService(AllLocations allLocations,
-                                 FrontLineWorkerService frontLineWorkerService) {
+                                 FrontLineWorkerService frontLineWorkerService,
+                                 SyncService syncService) {
         this.allLocations = allLocations;
         this.frontLineWorkerService = frontLineWorkerService;
+        this.syncService = syncService;
     }
 
     @Cacheable(value = "locationSearchCache")
@@ -59,13 +63,14 @@ public class LocationImportService {
                     public void execute(Object input) {
                         LocationImportRequest request = (LocationImportRequest) input;
 
-                        allLocations.add(new Location(
+                        Location location = new Location(
                                 request.getDistrict(),
                                 request.getBlock(),
                                 request.getPanchayat(),
                                 LocationStatus.VALID,
-                                null)
-                        );
+                                null);
+                        allLocations.add(location);
+                        syncService.syncLocation(location);
                     }
                 }
         );
@@ -93,6 +98,7 @@ public class LocationImportService {
                         );
                         validLocationFromDb.setStatus(LocationStatus.from(request.getStatus()));
                         allLocations.update(validLocationFromDb);
+                        syncService.syncLocation(validLocationFromDb);
                     }
                 }
         );
@@ -128,6 +134,7 @@ public class LocationImportService {
                         allLocations.update(invalidLocationFromDb);
 
                         frontLineWorkerService.updateWithAlternateLocationForFLWsWith(invalidLocationFromDb);
+                        syncService.syncLocation(invalidLocationFromDb);
                     }
                 }
         );

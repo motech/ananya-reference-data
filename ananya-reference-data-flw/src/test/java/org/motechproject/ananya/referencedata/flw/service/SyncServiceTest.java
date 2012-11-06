@@ -65,10 +65,10 @@ public class SyncServiceTest {
     @Test
     public void shouldSyncAllLocations() {
         when(propertiesService.isSyncOn()).thenReturn(true);
-        ArrayList<Location> locations = new ArrayList<>() ;
+        Location location = new Location();
 
-        syncService.syncAllLocations(locations);
+        syncService.syncLocation(location);
 
-        verify(locationSyncService).sync(locations);
+        verify(locationSyncService).sync(location);
     }
 }

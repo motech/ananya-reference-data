@@ -9,7 +9,6 @@ import org.motechproject.http.client.service.HttpClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Properties;
 
 @Service
@@ -24,12 +23,10 @@ public class LocationSyncService {
         this.clientServicesProperties = clientServicesProperties;
     }
 
-    public void sync(List<Location> locations) {
-        for (Location location : locations) {
+    public void sync(Location location) {
             logger.info("Raising event to sync for location: " + location.toString());
             LocationSyncRequest locationSyncRequest = LocationSyncRequestMapper.map(location);
             httpClientService.post(clientServicesProperties.getProperty(SyncURLs.KEY_LOCATION_SYNC_FLW_URL), locationSyncRequest);
             httpClientService.post(clientServicesProperties.getProperty(SyncURLs.KEY_LOCATION_SYNC_KILKARI_URL), locationSyncRequest);
-        }
     }
 }

@@ -2,22 +2,25 @@ package org.motechproject.ananya.referencedata.csv.service;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
 import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
+import org.motechproject.ananya.referencedata.flw.service.SyncService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
+@RunWith(MockitoJUnitRunner.class)
 public class LocationImportServiceTest {
     @Mock
     AllLocations allLocations;
@@ -25,12 +28,13 @@ public class LocationImportServiceTest {
     private LocationImportValidator locationValidator;
     @Mock
     private FrontLineWorkerService frontLineWorkerService;
+    @Mock
+    private SyncService syncService;
     LocationImportService locationImportService;
 
     @Before
     public void setUp() {
-        initMocks(this);
-        locationImportService = new LocationImportService(allLocations, frontLineWorkerService);
+        locationImportService = new LocationImportService(allLocations, frontLineWorkerService, syncService);
     }
 
     @Test
@@ -71,6 +75,18 @@ public class LocationImportServiceTest {
         verify(frontLineWorkerService).updateWithAlternateLocationForFLWsWith(locationArgumentCaptor.capture());
         Location location5 = locationArgumentCaptor.getValue();
         assertEquals(location4, location5);
+
+        verifySync(location1, location2, location3, location4);
+    }
+
+    private void verifySync(Location location1, Location location2, Location location3, Location location4) {
+        ArgumentCaptor<Location> locationCaptor = ArgumentCaptor.forClass(Location.class);
+        verify(syncService, times(4)).syncLocation(locationCaptor.capture());
+        List<Location> locationList = locationCaptor.getAllValues();
+        locationList.contains(location1);
+        locationList.contains(location2);
+        locationList.contains(location3);
+        locationList.contains(location4);
     }
 
     @Test

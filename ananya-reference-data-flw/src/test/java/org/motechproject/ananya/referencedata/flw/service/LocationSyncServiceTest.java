@@ -12,8 +12,6 @@ import org.motechproject.ananya.referencedata.flw.service.request.LocationReques
 import org.motechproject.ananya.referencedata.flw.service.request.LocationSyncRequest;
 import org.motechproject.http.client.service.HttpClientService;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import static org.mockito.Mockito.verify;
@@ -32,15 +30,12 @@ public class LocationSyncServiceTest {
         final Location locationToBeSynced = new Location("D1", "B1", "P1", LocationStatus.NOT_VERIFIED, null);
         DateTime dateTime = DateTime.now();
         locationToBeSynced.setLastModified(dateTime);
-        final List<Location> locations = new ArrayList<Location>() {{
-            add(locationToBeSynced);
-        }};
         String flwUrl = "flwUrl";
         String kilkariUrl = "kilkariUrl";
         when(clientServiceProperties.getProperty(SyncURLs.KEY_LOCATION_SYNC_FLW_URL)).thenReturn(flwUrl);
         when(clientServiceProperties.getProperty(SyncURLs.KEY_LOCATION_SYNC_KILKARI_URL)).thenReturn(kilkariUrl);
 
-        locationSyncService.sync(locations);
+        locationSyncService.sync(locationToBeSynced);
 
         LocationRequest actualLocation = new LocationRequest(locationToBeSynced.getDistrict(), locationToBeSynced.getBlock(), locationToBeSynced.getPanchayat());
         LocationSyncRequest expectedLocationSyncRequest = new LocationSyncRequest(actualLocation, actualLocation, locationToBeSynced.getStatus(), locationToBeSynced.getLastModified());
