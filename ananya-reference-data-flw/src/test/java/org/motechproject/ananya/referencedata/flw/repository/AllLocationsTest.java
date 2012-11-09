@@ -8,6 +8,7 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -83,22 +84,20 @@ public class AllLocationsTest extends SpringIntegrationTest {
     }
 
     @Test
-    public void shouldLoadAllValidLocations() {
-        String district = "district";
-        String district1 = "district1";
-        String block = "block";
-        String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat, LocationStatus.VALID, null);
-        Location location1 = new Location(district1, block, panchayat, LocationStatus.NOT_VERIFIED, null);
-        Set<Location> locations = new HashSet<>();
-        locations.add(location);
-        locations.add(location1);
-        template.saveOrUpdateAll(locations);
+    public void shouldLoadLocationsBasedOnStatus() {
+        Location validLocation1 = new Location("district", "block", "panchayat", LocationStatus.VALID, null);
+        Location validLocation2 = new Location("district3", "block3", "panchayat3", LocationStatus.VALID, null);
+        Location unverifiedLocation = new Location("district1", "block1", "panchayat1", LocationStatus.NOT_VERIFIED, null);
+        Location invalidLocation = new Location("district2", "block2", "panchayat2", LocationStatus.INVALID, null);
 
-        List<Location> locationsList = allLocations.getAllForStatus(LocationStatus.VALID);
+        template.saveOrUpdateAll(Arrays.asList(validLocation1,unverifiedLocation,validLocation2,invalidLocation));
 
-        assertEquals(1, locationsList.size());
-        assertEquals(location, locationsList.get(0));
+        List<Location> locationsList = allLocations.getForStatuses(LocationStatus.VALID,LocationStatus.NOT_VERIFIED);
+
+        assertEquals(3, locationsList.size());
+        assertTrue(locationsList.contains(validLocation1));
+        assertTrue(locationsList.contains(validLocation2));
+        assertTrue(locationsList.contains(unverifiedLocation));
     }
 
     @Test

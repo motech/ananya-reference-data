@@ -11,6 +11,7 @@ import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -44,9 +45,19 @@ public class LocationServiceTest {
     @Test
     public void shouldGetAllValidLocation() {
         ArrayList<Location> expectedLocationList = new ArrayList<>();
-        when(allLocations.getAllForStatus(LocationStatus.VALID)).thenReturn(expectedLocationList);
+        when(allLocations.getForStatuses(LocationStatus.VALID)).thenReturn(expectedLocationList);
 
         List<Location> actualLocationList = locationService.getAllValidLocations();
+
+        assertEquals(expectedLocationList, actualLocationList);
+    }
+
+    @Test
+    public void shouldGetLocationsToBeVerified() {
+        List<Location> expectedLocationList = Arrays.asList(new Location("d1","b1","p1",LocationStatus.NOT_VERIFIED, null));
+        when(allLocations.getForStatuses(LocationStatus.NOT_VERIFIED,LocationStatus.IN_REVIEW)).thenReturn(expectedLocationList);
+
+        List<Location> actualLocationList = locationService.getLocationsToBeVerified();
 
         assertEquals(expectedLocationList, actualLocationList);
     }

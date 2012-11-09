@@ -29,7 +29,11 @@ public class LocationService {
     }
 
     public List<Location> getAllValidLocations() {
-        return allLocations.getAllForStatus(LocationStatus.VALID);
+        return allLocations.getForStatuses(LocationStatus.VALID);
+    }
+
+    public List<Location> getLocationsToBeVerified() {
+        return allLocations.getForStatuses(LocationStatus.NOT_VERIFIED,LocationStatus.IN_REVIEW);
     }
 
     private Location getExistingLocation(LocationRequest request) {
