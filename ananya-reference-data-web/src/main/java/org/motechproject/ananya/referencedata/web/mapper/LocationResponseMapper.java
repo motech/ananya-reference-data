@@ -19,7 +19,7 @@ public class LocationResponseMapper {
                 return new LocationResponse(request.getDistrict(), request.getBlock(), request.getPanchayat());
             }
         });
-        return new LocationResponseList(locationResponses);
+        return new LocationResponseList(locationResponses,LocationResponse.class);
     }
 
     public static LocationResponseList mapWithStatus(List<Location> locationList) {
@@ -30,7 +30,7 @@ public class LocationResponseMapper {
                 return new LocationsToBeVerifiedResponse(request.getDistrict(), request.getBlock(), request.getPanchayat(),request.getStatus().toString());
             }
         });
-        return new LocationResponseList(locationResponses);
+        return new LocationResponseList(locationResponses,LocationsToBeVerifiedResponse.class);
 
     }
 }

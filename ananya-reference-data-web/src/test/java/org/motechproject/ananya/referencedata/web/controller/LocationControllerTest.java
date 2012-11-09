@@ -68,12 +68,25 @@ public class LocationControllerTest {
 
     }
 
+    @Test
+    public void shouldReturnCsvHeadersIfLocationsIsAnEmptyList() throws Exception {
+        String channel = "contact_center";
+        when(locationService.getLocationsToBeVerified()).thenReturn(new ArrayList<Location>());
+
+        MvcResult mvcResult = mockMvc(locationController).perform(get("/locationsToBeVerified").param("channel", channel).accept(new MediaType("text", "csv")))
+                .andExpect(status().isOk())
+                .andExpect(content().type("text/csv"))
+                .andReturn();
+        String response = mvcResult.getResponse().getContentAsString();
+        System.out.println(response);
+
+    }
+
     private void assertLocationResponse(Location expectedLocation, LocationResponse response) {
         LocationResponse locationResponse = response;
         assertEquals(expectedLocation.getBlock(), locationResponse.getBlock());
         assertEquals(expectedLocation.getDistrict(), locationResponse.getDistrict());
         assertEquals(expectedLocation.getPanchayat(), locationResponse.getPanchayat());
-        assertEquals(expectedLocation.getStatus(), locationResponse.getPanchayat());
     }
 
     @Test
