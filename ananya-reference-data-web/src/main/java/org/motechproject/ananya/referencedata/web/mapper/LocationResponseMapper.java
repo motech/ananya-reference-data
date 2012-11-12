@@ -27,7 +27,7 @@ public class LocationResponseMapper {
             @Override
             public Object transform(Object input) {
                 Location request = (Location) input;
-                return new LocationsWithStatusResponse(request.getDistrict(), request.getBlock(), request.getPanchayat(),request.getStatus().toString());
+                return new LocationsWithStatusResponse(request.getDistrict(), request.getBlock(), request.getPanchayat(),request.getStatus().getDescription());
             }
         });
         return new LocationResponseList(locationResponses,LocationsWithStatusResponse.class);

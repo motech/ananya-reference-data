@@ -17,11 +17,6 @@ public class LocationValidationResponse {
         this.message.add("Duplicate location in CSV file");
     }
 
-    public void forInvalidLocation() {
-        isValid = false;
-        this.message.add("Invalid location");
-    }
-
     public void forInvalidStatus() {
         isValid = false;
         this.message.add("Blank or Invalid status");
@@ -57,11 +52,6 @@ public class LocationValidationResponse {
         this.message.add("Alternate location provided when not required");
     }
 
-    public void forAlternateLocationSameAsLocation() {
-        this.isValid = false;
-        this.message.add("Alternate location same as location");
-    }
-
     public boolean isValid() {
         return isValid;
     }
@@ -77,5 +67,9 @@ public class LocationValidationResponse {
 
     public boolean isInValid() {
         return !isValid;
+    }
+
+    public void add(String message) {
+        this.message.add(message);
     }
 }

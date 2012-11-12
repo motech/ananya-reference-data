@@ -64,6 +64,10 @@ public class Location extends BaseEntity {
         this.alternateLocation = alternateLocation;
     }
 
+    public boolean isValidatedLocation() {
+        return status == LocationStatus.VALID;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -60,8 +60,7 @@ public enum LocationStatus {
         this.description = description;
     }
 
-    @Override
-    public String toString() {
+    public String getDescription() {
         return this.description;
     }
 
@@ -78,39 +77,19 @@ public enum LocationStatus {
         return null;
     }
 
-    public static boolean contains(String status) {
+    public static boolean isValid(String status) {
         return from(status) != null;
     }
 
-    public static boolean isValidStatus(String status) {
-        return VALID.equals(from(status));
+    public boolean isValidStatusForAlternateLocation() {
+        return this == VALID || this == NEW;
     }
 
-    public static boolean isInvalidStatus(String status) {
-        return INVALID.equals(from(status));
+    public boolean isValidCsvStatus() {
+        return this != NOT_VERIFIED;
     }
 
-    public static boolean isNewStatus(String status) {
-        return NEW.equals(from(status));
-    }
-
-    public static boolean isNotVerifiedStatus(String status) {
-        return NOT_VERIFIED.equals(from(status));
-    }
-
-    private static boolean isInReviewStatus(String status) {
-        return IN_REVIEW.equals(from(status));
-    }
-
-    public static boolean isValidAlternateLocationStatus(String status) {
-        return isValidStatus(status) || isNewStatus(status);
-    }
-
-    public static boolean isValidCsvStatus(String status) {
-        return contains(status) && !isNotVerifiedStatus(status);
-    }
-
-    public static boolean isValidOrInReviewStatus(String status) {
-        return isValidStatus(status) || isInReviewStatus(status);
+    public boolean isValidOrInReviewStatus() {
+        return this == VALID || this == IN_REVIEW;
     }
 }

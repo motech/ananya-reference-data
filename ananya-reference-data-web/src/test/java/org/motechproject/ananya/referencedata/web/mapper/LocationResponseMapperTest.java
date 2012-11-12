@@ -41,9 +41,9 @@ public class LocationResponseMapperTest {
         LocationsWithStatusResponse response1 = (LocationsWithStatusResponse)locationResponses.get(0);
         LocationsWithStatusResponse response2 = (LocationsWithStatusResponse)locationResponses.get(1);
         assertLocationResponse(location1, response1);
-        assertEquals(location1.getStatus().toString(), response1.getStatus());
+        assertEquals(location1.getStatus().getDescription(), response1.getStatus());
         assertLocationResponse(location2,response2);
-        assertEquals(location2.getStatus().toString(), response2.getStatus());
+        assertEquals(location2.getStatus().getDescription(), response2.getStatus());
 
     }
 

@@ -19,40 +19,19 @@ public class LocationStatusTest {
 
     @Test
     public void shouldCheckIfStatusIsValidOrNew() {
-        assertTrue(LocationStatus.isValidAlternateLocationStatus("Valid"));
-        assertTrue(LocationStatus.isValidAlternateLocationStatus("new"));
-        assertFalse(LocationStatus.isValidAlternateLocationStatus("InValid"));
-        assertFalse(LocationStatus.isValidAlternateLocationStatus("In review"));
-    }
-
-    @Test
-    public void shouldCheckIfStatusIsValid() {
-        assertTrue(LocationStatus.isValidStatus("Valid"));
-        assertFalse(LocationStatus.isValidStatus("InValid"));
-        assertFalse(LocationStatus.isValidStatus("In review"));
-    }
-
-    @Test
-    public void shouldCheckIfStatusIsInvalid() {
-        assertTrue(LocationStatus.isInvalidStatus("InValid"));
-        assertFalse(LocationStatus.isInvalidStatus("Valid"));
-        assertFalse(LocationStatus.isInvalidStatus("In_review"));
-    }
-
-    @Test
-    public void shouldCheckIfStatusIsNew() {
-        assertTrue(LocationStatus.isNewStatus("new"));
-        assertFalse(LocationStatus.isNewStatus("Valid"));
-        assertFalse(LocationStatus.isNewStatus("In_review"));
+        assertTrue(LocationStatus.VALID.isValidStatusForAlternateLocation());
+        assertTrue(LocationStatus.NEW.isValidStatusForAlternateLocation());
+        assertFalse(LocationStatus.IN_REVIEW.isValidStatusForAlternateLocation());
+        assertFalse(LocationStatus.INVALID.isValidStatusForAlternateLocation());
     }
 
     @Test
     public void shouldTestForAValidCsvStatus() {
-        assertTrue(LocationStatus.isValidCsvStatus("new"));
-        assertTrue(LocationStatus.isValidCsvStatus("Valid"));
-        assertTrue(LocationStatus.isValidCsvStatus("in review"));
-        assertTrue(LocationStatus.isValidCsvStatus("invalid"));
-        assertFalse(LocationStatus.isValidCsvStatus("not verified"));
+        assertTrue(LocationStatus.NEW.isValidCsvStatus());
+        assertTrue(LocationStatus.VALID.isValidCsvStatus());
+        assertTrue(LocationStatus.INVALID.isValidCsvStatus());
+        assertTrue(LocationStatus.IN_REVIEW.isValidCsvStatus());
+        assertFalse(LocationStatus.NOT_VERIFIED.isValidCsvStatus());
     }
 
     @Test
@@ -155,5 +134,20 @@ public class LocationStatusTest {
             else
                 assertFalse("Should not allow transition to : " + status.name(), fromStatus.canTransitionTo(status));
         }
+    }
+
+    @Test
+    public void shouldValidateIfStatusStringIsValid() {
+        assertTrue(LocationStatus.isValid("valid"));
+        assertTrue(LocationStatus.isValid("invalid"));
+        assertTrue(LocationStatus.isValid("in review"));
+        assertTrue(LocationStatus.isValid("not verified"));
+        assertTrue(LocationStatus.isValid("new"));
+        assertTrue(LocationStatus.isValid("  In revieW   "));
+
+        assertFalse(LocationStatus.isValid("  In  revieW   "));
+        assertFalse(LocationStatus.isValid("   "));
+        assertFalse(LocationStatus.isValid(""));
+        assertFalse(LocationStatus.isValid(null));
     }
 }

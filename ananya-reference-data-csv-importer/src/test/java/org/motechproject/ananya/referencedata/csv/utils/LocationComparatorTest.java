@@ -1,7 +1,7 @@
 package org.motechproject.ananya.referencedata.csv.utils;
 
 import org.junit.Test;
-import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
+import org.motechproject.ananya.referencedata.csv.request.LocationImportCSVRequest;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 
 import java.util.ArrayList;
@@ -14,22 +14,26 @@ public class LocationComparatorTest {
 
     @Test
     public void shouldSortAllTheValidLocationsToStartOfFile() {
-        final LocationImportRequest locationImportRequest1 = new LocationImportRequest("d", "b", "p", LocationStatus.INVALID.toString());
-        final LocationImportRequest locationImportRequest2 = new LocationImportRequest("d1", "b1", "p1", LocationStatus.VALID.toString());
-        final LocationImportRequest locationImportRequest3 = new LocationImportRequest("d1", "b1", "p2", LocationStatus.VALID.toString());
-        final LocationImportRequest locationImportRequest4 = new LocationImportRequest("d2", "b2", "p2", LocationStatus.NEW.toString());
-        List<LocationImportRequest> locationImportRequests = new ArrayList<LocationImportRequest>() {{
-            add(locationImportRequest1);
-            add(locationImportRequest2);
-            add(locationImportRequest3);
-            add(locationImportRequest4);
+        final LocationImportCSVRequest locationImportCSVRequest1 = locationImportCSVRequest("d", "b", "p", LocationStatus.INVALID.getDescription());
+        final LocationImportCSVRequest locationImportCSVRequest2 = locationImportCSVRequest("d1", "b1", "p1", LocationStatus.VALID.getDescription());
+        final LocationImportCSVRequest locationImportCSVRequest3 = locationImportCSVRequest("d1", "b1", "p2", LocationStatus.VALID.getDescription());
+        final LocationImportCSVRequest locationImportCSVRequest4 = locationImportCSVRequest("d2", "b2", "p2", LocationStatus.NEW.getDescription());
+        List<LocationImportCSVRequest> locationImportCSVRequests = new ArrayList<LocationImportCSVRequest>() {{
+            add(locationImportCSVRequest1);
+            add(locationImportCSVRequest2);
+            add(locationImportCSVRequest3);
+            add(locationImportCSVRequest4);
         }};
 
-        Collections.sort(locationImportRequests, new LocationComparator());
+        Collections.sort(locationImportCSVRequests, new LocationComparator());
 
-        assertEquals(locationImportRequest2, locationImportRequests.get(0));
-        assertEquals(locationImportRequest3, locationImportRequests.get(1));
-        assertEquals(locationImportRequest4, locationImportRequests.get(2));
-        assertEquals(locationImportRequest1, locationImportRequests.get(3));
+        assertEquals(locationImportCSVRequest2, locationImportCSVRequests.get(0));
+        assertEquals(locationImportCSVRequest3, locationImportCSVRequests.get(1));
+        assertEquals(locationImportCSVRequest4, locationImportCSVRequests.get(2));
+        assertEquals(locationImportCSVRequest1, locationImportCSVRequests.get(3));
+    }
+
+    private LocationImportCSVRequest locationImportCSVRequest(String district, String block, String panchayat, String status) {
+        return new LocationImportCSVRequestBuilder().withDefaults().buildWith(district, block, panchayat, status);
     }
 }

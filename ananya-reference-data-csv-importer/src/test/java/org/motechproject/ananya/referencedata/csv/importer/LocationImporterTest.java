@@ -5,9 +5,10 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
+import org.motechproject.ananya.referencedata.csv.request.LocationImportCSVRequest;
 import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
 import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
+import org.motechproject.ananya.referencedata.csv.utils.LocationImportCSVRequestBuilder;
 import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.importer.domain.ValidationResponse;
@@ -26,26 +27,27 @@ public class LocationImporterTest {
     private LocationImportService locationImportService;
     @Mock
     private LocationImportValidator locationImportValidator;
+
     @Captor
-    private ArgumentCaptor<List<LocationImportRequest>> captor;
+    private ArgumentCaptor<List<LocationImportCSVRequest>> captor;
     private LocationImporter locationImporter;
-    private List<LocationImportRequest> locationImportRequests;
+    private List<LocationImportCSVRequest> locationImportCSVRequests;
 
     @Before
     public void setUp() {
         initMocks(this);
         locationImporter = new LocationImporter(locationImportService, locationImportValidator);
-        locationImportRequests = new ArrayList<>();
+        locationImportCSVRequests = new ArrayList<>();
     }
 
     @Test
     public void shouldValidateLocationRequests() {
-        final LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", "P1", LocationStatus.VALID.toString());
-        locationImportRequests.add(locationImportRequest);
+        final LocationImportCSVRequest locationImportCSVRequest = locationImportCSVRequest("D1", "B1", "P1", LocationStatus.VALID.getDescription());
+        locationImportCSVRequests.add(locationImportCSVRequest);
         ArrayList<Object> locationRequests = new ArrayList<Object>(){{
-            add(locationImportRequest);
+            add(locationImportCSVRequest);
         }};
-        when(locationImportValidator.validate(locationImportRequest, locationImportRequests)).
+        when(locationImportValidator.validate(locationImportCSVRequest, locationImportCSVRequests)).
                 thenReturn(new LocationValidationResponse());
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
@@ -58,12 +60,12 @@ public class LocationImporterTest {
     @Test
     public void shouldFailValidationIfLocationDoesNotHaveAllTheDetails() {
         ArrayList<Object> locationRequests = new ArrayList<>();
-        LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", null, "VALID");
-        locationRequests.add(locationImportRequest);
-        locationImportRequests.add(locationImportRequest);
+        LocationImportCSVRequest locationImportCSVRequest = locationImportCSVRequest("D1", "B1", null, "VALID");
+        locationRequests.add(locationImportCSVRequest);
+        locationImportCSVRequests.add(locationImportCSVRequest);
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
         locationValidationResponse.forBlankFieldsInLocation();
-        when(locationImportValidator.validate(locationImportRequest, locationImportRequests)).thenReturn(locationValidationResponse);
+        when(locationImportValidator.validate(locationImportCSVRequest, locationImportCSVRequests)).thenReturn(locationValidationResponse);
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
@@ -74,13 +76,13 @@ public class LocationImporterTest {
 
     @Test
     public void shouldFailValidationIfThereAreDuplicateLocations() {
-        LocationImportRequest locationImportRequest = new LocationImportRequest("D1", "B1", "P1", "VALID");
+        LocationImportCSVRequest locationImportCSVRequest = locationImportCSVRequest("D1", "B1", "P1", "VALID");
         ArrayList<Object> locationRequests = new ArrayList<>();
-        locationRequests.add(locationImportRequest);
-        locationImportRequests.add(locationImportRequest);
+        locationRequests.add(locationImportCSVRequest);
+        locationImportCSVRequests.add(locationImportCSVRequest);
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
         locationValidationResponse.forDuplicateLocation();
-        when(locationImportValidator.validate(locationImportRequest, locationImportRequests)).thenReturn(locationValidationResponse);
+        when(locationImportValidator.validate(locationImportCSVRequest, locationImportCSVRequests)).thenReturn(locationValidationResponse);
 
         ValidationResponse validationResponse = locationImporter.validate(locationRequests);
 
@@ -92,16 +94,24 @@ public class LocationImporterTest {
     @Test
     public void shouldSaveLocation() {
         ArrayList<Object> locationRequests = new ArrayList<>();
-        locationRequests.add(new LocationImportRequest("D1", "B1", "P1", "VALID"));
+        locationRequests.add(locationImportCSVRequest("D1", "B1", "P1", "VALID"));
 
         locationImporter.postData(locationRequests);
 
         verify(locationImportService).addAllWithoutValidations(captor.capture());
-        List<LocationImportRequest> locationRequestsToSave = captor.getValue();
-        assertEquals(1, locationRequestsToSave.size());
-        assertEquals("D1", locationRequestsToSave.get(0).getDistrict());
-        assertEquals("B1", locationRequestsToSave.get(0).getBlock());
-        assertEquals("P1", locationRequestsToSave.get(0).getPanchayat());
-        assertEquals("VALID", locationRequestsToSave.get(0).getStatus());
+        List<LocationImportCSVRequest> locationRequestsToSaveCSV = captor.getValue();
+        assertEquals(1, locationRequestsToSaveCSV.size());
+        assertEquals("D1", locationRequestsToSaveCSV.get(0).getDistrict());
+        assertEquals("B1", locationRequestsToSaveCSV.get(0).getBlock());
+        assertEquals("P1", locationRequestsToSaveCSV.get(0).getPanchayat());
+        assertEquals(LocationStatus.VALID.getDescription(), locationRequestsToSaveCSV.get(0).getStatus());
+    }
+
+    private LocationImportCSVRequest locationImportCSVRequest(String district, String block, String panchayat, String status, String newDistrict, String newBlock, String newPanchayat) {
+        return new LocationImportCSVRequestBuilder().withDefaults().buildWith(district, block, panchayat, status, newDistrict, newBlock, newPanchayat);
+    }
+
+    private LocationImportCSVRequest locationImportCSVRequest(String district, String block, String panchayat, String status) {
+        return locationImportCSVRequest(district, block, panchayat, status, null, null, null);
     }
 }

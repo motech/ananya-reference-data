@@ -1,7 +1,7 @@
 package org.motechproject.ananya.referencedata.csv.validator;
 
-import org.apache.commons.lang.StringUtils;
-import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
+import org.apache.commons.collections.CollectionUtils;
+import org.motechproject.ananya.referencedata.csv.request.LocationImportCSVRequest;
 import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
@@ -21,103 +21,77 @@ public class LocationImportValidator {
         this.allLocations = allLocations;
     }
 
-    public LocationValidationResponse validate(LocationImportRequest locationRequest, List<LocationImportRequest> locationImportRequests) {
-        LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
+    public LocationValidationResponse validate(LocationImportCSVRequest csvRequest, List<LocationImportCSVRequest> csvRequests) {
+        LocationValidationResponse validationResponse = new LocationValidationResponse();
+        csvRequest.validate(validationResponse);
+        if (validationResponse.isInValid()) {
+            return validationResponse;
+        }
+        validateDuplicateEntries(csvRequest, csvRequests, validationResponse);
+        validateExistenceInDb(csvRequest, validationResponse);
+        validateInvalidLocation(csvRequest, csvRequests, validationResponse);
+        return validationResponse;
+    }
 
-        validateDistrictBlockPanchayat(locationRequest, locationValidationResponse);
+    private void validateDuplicateEntries(LocationImportCSVRequest locationCSVRequest, List<LocationImportCSVRequest> locationImportCSVRequests, LocationValidationResponse validationResponse) {
+        if (CollectionUtils.cardinality(locationCSVRequest, locationImportCSVRequests) > 1)
+            validationResponse.forDuplicateLocation();
+    }
 
-        validateStatus(locationRequest, locationValidationResponse);
+    private void validateExistenceInDb(LocationImportCSVRequest csvRequest, LocationValidationResponse validationResponse) {
+        LocationStatus status = LocationStatus.from(csvRequest.getStatus());
+        Location alreadyPresentLocation = getLocationFormDb(csvRequest.getDistrict(), csvRequest.getBlock(), csvRequest.getPanchayat());
+        if (status == LocationStatus.NEW && alreadyPresentLocation != null)
+            validationResponse.forLocationExisting();
+        if (status != LocationStatus.NEW) {
+            if (alreadyPresentLocation == null) {
+                validationResponse.forLocationNotExisting();
+                return;
+            }
+            if (!alreadyPresentLocation.getStatus().canTransitionTo(status))
+                validationResponse.forCannotTransitionFromExistingState();
+        }
+    }
 
-        validateDuplicateEntries(locationRequest, locationImportRequests, locationValidationResponse);
+    private void validateInvalidLocation(LocationImportCSVRequest locationCSVRequest, List<LocationImportCSVRequest> locationImportCSVRequests, LocationValidationResponse validationResponse) {
+        LocationStatus status = LocationStatus.from(locationCSVRequest.getStatus());
+        if (status == LocationStatus.INVALID) {
+            validateAlternateLocation(locationCSVRequest, locationImportCSVRequests, validationResponse);
+            return;
+        }
+        if (locationCSVRequest.hasAlternateLocation()) {
+            validationResponse.forNeedlessAlternateLocation();
+        }
+    }
 
-        validateExistenceInDb(locationRequest, locationValidationResponse);
+    private void validateAlternateLocation(LocationImportCSVRequest csvRequest, List<LocationImportCSVRequest> csvRequests, LocationValidationResponse validationResponse) {
+        if (!csvRequest.hasAlternateLocation()) {
+            validationResponse.forBlankAlternateLocation();
+            return;
+        }
+        LocationImportCSVRequest alternateLocationFromCSV = getIfPresentInCsv(csvRequest, csvRequests);
+        if (alternateLocationFromCSV != null && !LocationStatus.from(alternateLocationFromCSV.getStatus()).isValidStatusForAlternateLocation()) {
+            validationResponse.forInvalidAlternateLocation();
+        }
+        if (alternateLocationFromCSV == null && !isAlternateLocationPresentInDbAsValid(csvRequest))
+            validationResponse.forInvalidAlternateLocation();
+    }
 
-        validateInvalidLocation(locationRequest, locationImportRequests, locationValidationResponse);
-        return locationValidationResponse;
+    private LocationImportCSVRequest getIfPresentInCsv(LocationImportCSVRequest locationCSVRequest, List<LocationImportCSVRequest> locationImportCSVRequests) {
+        for (LocationImportCSVRequest locationCSVRequestFromCsv : locationImportCSVRequests) {
+            if (locationCSVRequestFromCsv.matchesLocation(locationCSVRequest.getNewDistrict(),
+                    locationCSVRequest.getNewBlock(), locationCSVRequest.getNewPanchayat()))
+                return locationCSVRequestFromCsv;
+        }
+        return null;
+    }
+
+    private boolean isAlternateLocationPresentInDbAsValid(LocationImportCSVRequest locationCSVRequest) {
+        Location alternateLocationFormDb = getLocationFormDb(locationCSVRequest.getNewDistrict(), locationCSVRequest.getNewBlock(), locationCSVRequest.getNewPanchayat());
+        return alternateLocationFormDb != null && alternateLocationFormDb.isValidatedLocation();
     }
 
     private Location getLocationFormDb(String district, String block, String panchayat) {
         return allLocations.getFor(district, block, panchayat);
-    }
-
-    private void validateDistrictBlockPanchayat(LocationImportRequest request, LocationValidationResponse locationValidationResponse) {
-        if (StringUtils.isEmpty(request.getDistrict())
-                || StringUtils.isEmpty(request.getBlock())
-                || StringUtils.isEmpty(request.getPanchayat()))
-            locationValidationResponse.forBlankFieldsInLocation();
-    }
-
-    private void validateStatus(LocationImportRequest request, LocationValidationResponse locationValidationResponse) {
-        if (StringUtils.isEmpty(request.getStatus()) || !LocationStatus.isValidCsvStatus(request.getStatus()))
-            locationValidationResponse.forInvalidStatus();
-    }
-
-    private void validateExistenceInDb(LocationImportRequest locationRequest, LocationValidationResponse locationValidationResponse) {
-        Location alreadyPresentLocation = getLocationFormDb(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
-        String status = locationRequest.getStatus();
-        if (LocationStatus.isNewStatus(status) && alreadyPresentLocation != null)
-            locationValidationResponse.forLocationExisting();
-        if (!LocationStatus.isNewStatus(status) && alreadyPresentLocation == null)
-            locationValidationResponse.forLocationNotExisting();
-        if (!LocationStatus.isNewStatus(status) && alreadyPresentLocation != null && !alreadyPresentLocation.getStatus().canTransitionTo(LocationStatus.from(status)))
-            locationValidationResponse.forCannotTransitionFromExistingState();
-    }
-
-    private void validateDuplicateEntries(LocationImportRequest locationRequest, List<LocationImportRequest> locationImportRequests, LocationValidationResponse locationValidationResponse) {
-        int duplicateRequestCount = 0;
-        for (LocationImportRequest csvImportRequest : locationImportRequests) {
-            if (csvImportRequest.equals(locationRequest)) duplicateRequestCount++;
-            if (duplicateRequestCount > 1) {
-                locationValidationResponse.forDuplicateLocation();
-                break;
-            }
-        }
-    }
-
-    private void validateInvalidLocation(LocationImportRequest locationRequest, List<LocationImportRequest> locationImportRequests, LocationValidationResponse locationValidationResponse) {
-        if (locationRequest.isForInvalidation())
-            validateAlternateLocation(locationRequest, locationImportRequests, locationValidationResponse);
-        else if (locationRequest.hasAlternateLocation()) {
-            locationValidationResponse.forNeedlessAlternateLocation();
-        }
-    }
-
-    private void validateAlternateLocation(LocationImportRequest locationRequest, List<LocationImportRequest> locationImportRequests, LocationValidationResponse locationValidationResponse) {
-        if (!locationRequest.hasAlternateLocation()) {
-            locationValidationResponse.forBlankAlternateLocation();
-        } else {
-            if (locationRequest.matchesLocation(locationRequest.getNewDistrict(), locationRequest.getNewBlock(), locationRequest.getNewPanchayat()))
-                locationValidationResponse.forAlternateLocationSameAsLocation();
-            if (!(isAlternateLocationPresentInDbAsValidAndNotInvalidatedInCSV(locationRequest, locationImportRequests))
-                    && !presentAsValidInCsv(locationRequest, locationImportRequests)) {
-                locationValidationResponse.forInvalidAlternateLocation();
-            }
-        }
-    }
-
-    private boolean isAlternateLocationPresentInDbAsValidAndNotInvalidatedInCSV(LocationImportRequest locationRequest, List<LocationImportRequest> locationImportRequests) {
-        Location alternateLocationFormDb = getLocationFormDb(locationRequest.getNewDistrict(), locationRequest.getNewBlock(), locationRequest.getNewPanchayat());
-        boolean validAlternateLocation = alternateLocationFormDb != null && LocationStatus.isValidStatus(alternateLocationFormDb.getStatus().toString());
-        return validAlternateLocation && !presentAsInvalidInCsv(locationRequest, locationImportRequests);
-    }
-
-    private boolean presentAsInvalidInCsv(LocationImportRequest locationRequest, List<LocationImportRequest> locationImportRequests) {
-        for (LocationImportRequest locationRequestFromCsv : locationImportRequests) {
-            boolean invalidAlternateLocationStatus = !LocationStatus.isValidAlternateLocationStatus(locationRequestFromCsv.getStatus());
-            if (locationRequestFromCsv.matchesLocation(locationRequest.getNewDistrict(),
-                    locationRequest.getNewBlock(), locationRequest.getNewPanchayat()) && invalidAlternateLocationStatus)
-                return true;
-        }
-        return false;
-    }
-
-    private boolean presentAsValidInCsv(LocationImportRequest locationRequest, List<LocationImportRequest> locationImportRequests) {
-        for (LocationImportRequest locationRequestFromCsv : locationImportRequests) {
-            boolean validAlternateLocationStatus = LocationStatus.isValidAlternateLocationStatus(locationRequestFromCsv.getStatus());
-            if (locationRequestFromCsv.matchesLocation(locationRequest.getNewDistrict(),
-                    locationRequest.getNewBlock(), locationRequest.getNewPanchayat()) && validAlternateLocationStatus)
-                return true;
-        }
-        return false;
     }
 }

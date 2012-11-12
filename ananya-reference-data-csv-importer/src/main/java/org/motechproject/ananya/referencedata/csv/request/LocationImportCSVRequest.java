@@ -1,9 +1,12 @@
 package org.motechproject.ananya.referencedata.csv.request;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 
-public class LocationImportRequest {
+public class LocationImportCSVRequest {
     private String district;
     private String block;
     private String panchayat;
@@ -12,31 +15,7 @@ public class LocationImportRequest {
     private String newPanchayat;
     private String status;
 
-    public LocationImportRequest() {
-    }
-
-    public LocationImportRequest(String district, String block, String panchayat) {
-        this.district = district;
-        this.block = block;
-        this.panchayat = panchayat;
-    }
-
-    public LocationImportRequest(String district, String block, String panchayat, String status) {
-        this.district = district;
-        this.block = block;
-        this.panchayat = panchayat;
-        this.status = status;
-    }
-
-    public LocationImportRequest(String district, String block, String panchayat, String status,
-                                 String newDistrict, String newBlock, String newPanchayat) {
-        this.district = district;
-        this.block = block;
-        this.panchayat = panchayat;
-        this.newDistrict = newDistrict;
-        this.newBlock = newBlock;
-        this.newPanchayat = newPanchayat;
-        this.status = status;
+    public LocationImportCSVRequest() {
     }
 
     public String getDistrict() {
@@ -53,6 +32,10 @@ public class LocationImportRequest {
 
     public String getStatus() {
         return status;
+    }
+
+    public LocationStatus getStatusEnum() {
+        return LocationStatus.from(status);
     }
 
     public String getNewDistrict() {
@@ -99,10 +82,6 @@ public class LocationImportRequest {
         return "\"" + district + "\"" + "," + "\"" + block + "\"" + "," +  "\"" + panchayat + "\"";
     }
 
-    public boolean isForInvalidation() {
-        return LocationStatus.isInvalidStatus(status);
-    }
-
     public boolean hasAlternateLocation() {
         return StringUtils.isNotEmpty(newBlock)
                 && StringUtils.isNotEmpty(newDistrict)
@@ -118,12 +97,42 @@ public class LocationImportRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        LocationImportRequest that = (LocationImportRequest) o;
+        LocationImportCSVRequest that = (LocationImportCSVRequest) o;
 
-        if (block != null ? !block.equalsIgnoreCase(that.block) : that.block != null) return false;
-        if (district != null ? !district.equalsIgnoreCase(that.district) : that.district != null) return false;
-        if (panchayat != null ? !panchayat.equalsIgnoreCase(that.panchayat) : that.panchayat != null) return false;
+        return new EqualsBuilder()
+                .append(toUpperCase(this.district), toUpperCase(that.district))
+                .append(toUpperCase(this.block), toUpperCase(that.block))
+                .append(toUpperCase(this.panchayat), toUpperCase(that.panchayat))
+                .isEquals();
+    }
 
-        return true;
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(toUpperCase(this.district))
+                .append(toUpperCase(this.block))
+                .append(toUpperCase(this.panchayat))
+                .toHashCode();
+    }
+
+    private String toUpperCase(String value) {
+        return value != null ? value.toUpperCase() : null;
+    }
+
+    public void validate(LocationValidationResponse validationResponse) {
+        validateLocationFields(validationResponse);
+        validateStatus(validationResponse);
+    }
+
+    private void validateLocationFields(LocationValidationResponse validationResponse) {
+        if(StringUtils.isEmpty(district)
+                || StringUtils.isEmpty(block)
+                || StringUtils.isEmpty(panchayat))
+            validationResponse.forBlankFieldsInLocation();
+    }
+
+    private void validateStatus(LocationValidationResponse validationResponse) {
+        if (!LocationStatus.isValid(status) || !LocationStatus.from(status).isValidCsvStatus())
+            validationResponse.forInvalidStatus();
     }
 }

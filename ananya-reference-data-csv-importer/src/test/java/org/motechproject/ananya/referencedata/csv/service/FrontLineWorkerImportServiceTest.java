@@ -37,10 +37,8 @@ public class FrontLineWorkerImportServiceTest {
     @Mock
     private Properties clientServicesProperties;
 
-
     @Captor
     ArgumentCaptor<List<FrontLineWorker>> captor;
-
     @Captor
     ArgumentCaptor<List<FrontLineWorker>> anotherCaptor;
 
@@ -105,6 +103,7 @@ public class FrontLineWorkerImportServiceTest {
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(prefixedMsisdn))).thenReturn(Arrays.asList(new FrontLineWorker(),new FrontLineWorker()));
 
         frontLineWorkerImportService.createOrUpdate(frontLineWorkerImportRequest);
+
         verify(allFrontLineWorkers).createOrUpdate(any(FrontLineWorker.class));
         verify(syncService,never()).syncFrontLineWorker(any(FrontLineWorker.class));
     }
@@ -189,7 +188,7 @@ public class FrontLineWorkerImportServiceTest {
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
         LocationStatus status = LocationStatus.VALID;
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat, status.toString()));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat, status.getDescription()));
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat", LocationStatus.NOT_VERIFIED, null));
         List<FrontLineWorker> frontLineWorkerList = new ArrayList<>();
         frontLineWorkerList.add(frontLineWorker);
@@ -200,9 +199,7 @@ public class FrontLineWorkerImportServiceTest {
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
-
         FrontLineWorker value = captor.getValue();
-
         assertEquals((Long) Long.parseLong(prefixedMsisdn), value.getMsisdn());
         assertEquals(newName, value.getName());
         assertEquals(Designation.ASHA.name(), value.getDesignation());
@@ -223,7 +220,7 @@ public class FrontLineWorkerImportServiceTest {
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
         LocationStatus newStatus = LocationStatus.VALID;
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat, newStatus.toString()));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat, newStatus.getDescription()));
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(prefixedMsisdn), "name", Designation.ANM, new Location("district", "block", "panchayat", LocationStatus.NOT_VERIFIED, null));
         List<FrontLineWorker> frontLineWorkerList = new ArrayList<>();
         frontLineWorkerList.add(frontLineWorker);
@@ -257,7 +254,6 @@ public class FrontLineWorkerImportServiceTest {
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
         FrontLineWorker frontLineWorker = captor.getValue();
-
         assertEquals(StringUtils.EMPTY, frontLineWorker.getName());
         assertEquals("FLW created/updated successfully", frontLineWorkerImportResponse.getMessage());
     }
@@ -272,7 +268,7 @@ public class FrontLineWorkerImportServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         LocationStatus status = LocationStatus.VALID;
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat, status.toString()));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat, status.getDescription()));
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(null);
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat, status, null));
 
@@ -294,7 +290,7 @@ public class FrontLineWorkerImportServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         LocationStatus status = LocationStatus.VALID;
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat, status.toString()));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat, status.getDescription()));
         when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat, status, null));
 
         FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerImportRequest);
@@ -312,7 +308,7 @@ public class FrontLineWorkerImportServiceTest {
         final String block = "block";
         final String panchayat = "panchayat";
         final LocationStatus status = LocationStatus.VALID;
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat, status.toString()));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat, status.getDescription()));
         when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(new ArrayList<FrontLineWorker>() {
             {
                 add(new FrontLineWorker(Long.valueOf(msisdn), "oldName", Designation.ANM, new Location(district, block, panchayat, status, null)));
@@ -338,7 +334,7 @@ public class FrontLineWorkerImportServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat, LocationStatus.VALID.toString()));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, name, designation, new LocationRequest(district, block, panchayat, LocationStatus.VALID.getDescription()));
 
         FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerImportRequest);
 
@@ -355,7 +351,7 @@ public class FrontLineWorkerImportServiceTest {
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
         LocationStatus newStatus = LocationStatus.VALID;
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat, newStatus.toString()));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat, newStatus.getDescription()));
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat, newStatus, null));
 
         FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerImportRequest);
@@ -377,7 +373,7 @@ public class FrontLineWorkerImportServiceTest {
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
         LocationStatus newStatus = LocationStatus.VALID;
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat, newStatus.toString()));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat, newStatus.getDescription()));
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat, newStatus, null));
         when(allFrontLineWorkers.getByMsisdn(Long.parseLong(prefixedMsisdn))).thenReturn(new ArrayList<FrontLineWorker>() {
             {
@@ -404,7 +400,7 @@ public class FrontLineWorkerImportServiceTest {
         String newBlock = "block1";
         String newPanchayat = "panchayat1";
         LocationStatus newStatus = LocationStatus.VALID;
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat, newStatus.toString()));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat, newStatus.getDescription()));
         when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat, newStatus, null));
 
         FrontLineWorkerImportResponse frontLineWorkerImportResponse = frontLineWorkerImportService.createOrUpdate(frontLineWorkerImportRequest);

@@ -7,7 +7,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
+import org.motechproject.ananya.referencedata.csv.request.LocationImportCSVRequest;
+import org.motechproject.ananya.referencedata.csv.utils.LocationImportCSVRequestBuilder;
 import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
@@ -40,19 +41,19 @@ public class LocationImportServiceTest {
 
     @Test
     public void shouldBulkSaveLocation() {
-        List<LocationImportRequest> locationImportRequests = new ArrayList<>();
-        locationImportRequests.add(new LocationImportRequest("d1", "b1", "p1", LocationStatus.NEW.toString()));
-        locationImportRequests.add(new LocationImportRequest("d2", "b2", "p2", LocationStatus.VALID.toString()));
-        locationImportRequests.add(new LocationImportRequest("d3", "b3", "p3", LocationStatus.INVALID.toString(), "d2", "b2", "p2"));
-        locationImportRequests.add(new LocationImportRequest("d4", "b4", "p4", LocationStatus.IN_REVIEW.toString()));
+        List<LocationImportCSVRequest> locationImportCSVRequests = new ArrayList<>();
+        locationImportCSVRequests.add(locationImportCSVRequest("d1", "b1", "p1", LocationStatus.NEW.getDescription()));
+        locationImportCSVRequests.add(locationImportCSVRequest("d2", "b2", "p2", LocationStatus.VALID.getDescription()));
+        locationImportCSVRequests.add(locationImportCSVRequest("d3", "b3", "p3", LocationStatus.INVALID.getDescription(), "d2", "b2", "p2"));
+        locationImportCSVRequests.add(locationImportCSVRequest("d4", "b4", "p4", LocationStatus.IN_REVIEW.getDescription()));
 
         when(allLocations.getFor("d2", "b2", "p2")).thenReturn(new Location("d2", "b2", "p2", LocationStatus.IN_REVIEW, null));
         when(allLocations.getFor("d3", "b3", "p3")).thenReturn(new Location("d3", "b3", "p3", LocationStatus.IN_REVIEW, null));
         when(allLocations.getFor("d4", "b4", "p4")).thenReturn(new Location("d4", "b4", "p4", LocationStatus.NOT_VERIFIED, null));
 
-        locationImportService.addAllWithoutValidations(locationImportRequests);
-        InOrder orderedExecution = inOrder(allLocations);
+        locationImportService.addAllWithoutValidations(locationImportCSVRequests);
 
+        InOrder orderedExecution = inOrder(allLocations);
         ArgumentCaptor<Location> locationArgumentCaptor = ArgumentCaptor.forClass(Location.class);
         orderedExecution.verify(allLocations, times(1)).add(locationArgumentCaptor.capture());
         Location location1 = locationArgumentCaptor.getValue();
@@ -82,6 +83,16 @@ public class LocationImportServiceTest {
         verifySync(location1, location2, location3, location4);
     }
 
+    @Test
+    public void shouldGetLocationForASpecificDistrictBlockAndPanchayat() {
+        Location location = new Location("district", "block", "panchayat", LocationStatus.VALID, null);
+        when(allLocations.getFor("district", "block", "panchayat")).thenReturn(location);
+
+        Location actualLocation = locationImportService.getFor("district", "block", "panchayat");
+
+        assertEquals(location, actualLocation);
+    }
+
     private void verifySync(Location location1, Location location2, Location location3, Location location4) {
         ArgumentCaptor<Location> locationCaptor = ArgumentCaptor.forClass(Location.class);
         verify(syncService, times(4)).syncLocation(locationCaptor.capture());
@@ -92,13 +103,11 @@ public class LocationImportServiceTest {
         locationList.contains(location4);
     }
 
-    @Test
-    public void shouldGetLocationForASpecificDistrictBlockAndPanchayat() {
-        Location location = new Location("district", "block", "panchayat", LocationStatus.VALID, null);
-        when(allLocations.getFor("district", "block", "panchayat")).thenReturn(location);
+    private LocationImportCSVRequest locationImportCSVRequest(String district, String block, String panchayat, String status, String newDistrict, String newBlock, String newPanchayat) {
+        return new LocationImportCSVRequestBuilder().withDefaults().buildWith(district, block, panchayat, status, newDistrict, newBlock, newPanchayat);
+    }
 
-        Location actualLocation = locationImportService.getFor("district", "block", "panchayat");
-
-        assertEquals(location, actualLocation);
+    private LocationImportCSVRequest locationImportCSVRequest(String district, String block, String panchayat, String status) {
+        return locationImportCSVRequest(district, block, panchayat, status, null, null, null);
     }
 }

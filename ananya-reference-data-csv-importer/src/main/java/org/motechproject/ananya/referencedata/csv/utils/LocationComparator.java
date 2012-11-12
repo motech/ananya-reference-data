@@ -1,17 +1,23 @@
 package org.motechproject.ananya.referencedata.csv.utils;
 
-import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
+import org.motechproject.ananya.referencedata.csv.request.LocationImportCSVRequest;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 
 import java.util.Comparator;
 
-public class LocationComparator implements Comparator<LocationImportRequest> {
+public class LocationComparator implements Comparator<LocationImportCSVRequest> {
     @Override
-    public int compare(LocationImportRequest request1, LocationImportRequest request2) {
-        if (LocationStatus.isInvalidStatus(request1.getStatus()) && LocationStatus.isValidAlternateLocationStatus(request2.getStatus()))
-            return 1;
-        if (LocationStatus.isValidAlternateLocationStatus(request1.getStatus()) && LocationStatus.isInvalidStatus(request2.getStatus()))
-            return -1;
-        return 0;
+    public int compare(LocationImportCSVRequest csvRequest1, LocationImportCSVRequest csvRequest2) {
+        LocationStatus thisStatus = csvRequest1.getStatusEnum();
+        LocationStatus thatStatus = csvRequest2.getStatusEnum();
+
+        int thisWeightage = getStatusWeightage(thisStatus);
+        int thatWeightage = getStatusWeightage(thatStatus);
+        return thisWeightage > thatWeightage ? -1 : thisWeightage < thatWeightage ? 1 : 0;
     }
+
+    public int getStatusWeightage(LocationStatus status) {
+        return status == LocationStatus.NEW || status == LocationStatus.VALID ? 2 : 1;
+    }
+
 }

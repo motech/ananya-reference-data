@@ -1,6 +1,6 @@
 package org.motechproject.ananya.referencedata.csv.importer;
 
-import org.motechproject.ananya.referencedata.csv.request.LocationImportRequest;
+import org.motechproject.ananya.referencedata.csv.request.LocationImportCSVRequest;
 import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
 import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
 import org.motechproject.ananya.referencedata.csv.utils.LocationComparator;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@CSVImporter(entity = "Location", bean = LocationImportRequest.class)
+@CSVImporter(entity = "Location", bean = LocationImportCSVRequest.class)
 @Component
 public class LocationImporter {
 
@@ -36,20 +36,20 @@ public class LocationImporter {
     @Validate
     public ValidationResponse validate(List<Object> objects) {
         boolean isValid = true;
-        int recordCounter = 0;
+        int recordCounter = 1;
         List<Error> errors = new ArrayList<Error>();
 
-        List<LocationImportRequest> locationImportRequests = convertToLocationRequest(objects);
+        List<LocationImportCSVRequest> locationImportCSVRequests = convertToLocationRequest(objects);
 
         addHeader(errors);
         logger.info("Started validating location csv records");
-        for (LocationImportRequest locationRequest : locationImportRequests) {
-            LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequests);
+        for (LocationImportCSVRequest locationCSVRequest : locationImportCSVRequests) {
+            LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationCSVRequest, locationImportCSVRequests);
             if (locationValidationResponse.isInValid()) {
                 isValid = false;
             }
-            logger.info("Validated location record number : " + recordCounter++ + "with validation status : " + isValid);
-            errors.add(new Error(locationRequest.toCSV() + "," + "\"" + locationValidationResponse.getMessage() + "\""));
+            logger.info("Validated location record number : " + recordCounter++ + " with validation status : " + isValid);
+            errors.add(new Error(locationCSVRequest.toCSV() + "," + "\"" + locationValidationResponse.getMessage() + "\""));
         }
         logger.info("Completed validating location csv records");
         return constructValidationResponse(isValid, errors);
@@ -58,9 +58,9 @@ public class LocationImporter {
     @Post
     public void postData(List<Object> objects) {
         logger.info("Started posting location data");
-        List<LocationImportRequest> locationImportRequests = convertToLocationRequest(objects);
-        Collections.sort(locationImportRequests, new LocationComparator());
-        locationImportService.addAllWithoutValidations(locationImportRequests);
+        List<LocationImportCSVRequest> locationImportCSVRequests = convertToLocationRequest(objects);
+        Collections.sort(locationImportCSVRequests, new LocationComparator());
+        locationImportService.addAllWithoutValidations(locationImportCSVRequests);
         logger.info("Finished posting location data");
     }
 
@@ -71,13 +71,13 @@ public class LocationImporter {
         return validationResponse;
     }
 
-    private List<LocationImportRequest> convertToLocationRequest(List<Object> objects) {
-        List<LocationImportRequest> locationRequests = new ArrayList<>();
+    private List<LocationImportCSVRequest> convertToLocationRequest(List<Object> objects) {
+        List<LocationImportCSVRequest> locationCSVRequests = new ArrayList<>();
         for (Object object : objects) {
-            locationRequests.add((LocationImportRequest) object);
+            locationCSVRequests.add((LocationImportCSVRequest) object);
         }
 
-        return locationRequests;
+        return locationCSVRequests;
     }
 
     private boolean addHeader(List<Error> errors) {
