@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.motechproject.ananya.referencedata.csv.response.LocationValidationResponse;
+import org.motechproject.ananya.referencedata.csv.utils.CSVRecordBuilder;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 
 public class LocationImportCSVRequest {
@@ -79,7 +80,15 @@ public class LocationImportCSVRequest {
     }
 
     public String toCSV() {
-        return "\"" + district + "\"" + "," + "\"" + block + "\"" + "," +  "\"" + panchayat + "\"";
+        CSVRecordBuilder builder = new CSVRecordBuilder();
+        builder.appendColumn(district)
+                .appendColumn(block)
+                .appendColumn(panchayat)
+                .appendColumn(status)
+                .appendColumn(newDistrict)
+                .appendColumn(newBlock)
+                .appendColumn(newPanchayat);
+        return builder.toString();
     }
 
     public boolean hasAlternateLocation() {
@@ -134,5 +143,11 @@ public class LocationImportCSVRequest {
     private void validateStatus(LocationValidationResponse validationResponse) {
         if (!LocationStatus.isValid(status) || !LocationStatus.from(status).isValidCsvStatus())
             validationResponse.forInvalidStatus();
+    }
+
+    public String getHeaderRowForErrors() {
+        CSVRecordBuilder builder = new CSVRecordBuilder(false);
+        builder.appendColumn("district", "block", "panchayat", "status", "newDistrict", "newBlock", "newPanchayat", "error");
+        return builder.toString();
     }
 }

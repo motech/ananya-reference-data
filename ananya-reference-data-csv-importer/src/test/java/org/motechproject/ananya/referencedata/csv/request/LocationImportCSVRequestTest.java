@@ -63,7 +63,17 @@ public class LocationImportCSVRequestTest {
 
     @Test
     public void shouldReturnStatusEnum() {
+        assertEquals(LocationStatus.VALID, locationImportCSVRequest(null, null, null, "valid").getStatusEnum());
+        assertEquals(LocationStatus.IN_REVIEW, locationImportCSVRequest(null, null, null, " in revIEW   ").getStatusEnum());
+        assertNull(locationImportCSVRequest(null, null, null, "invalid status").getStatusEnum());
+        assertNull(locationImportCSVRequest(null, null, null, null).getStatusEnum());
+    }
 
+    @Test
+    public void shouldReturnHeaderRowWithErrorsColumn() {
+        String headerRowForErrors = new LocationImportCSVRequest().getHeaderRowForErrors();
+
+        assertEquals("\"district\",\"block\",\"panchayat\",\"status\",\"newDistrict\",\"newBlock\",\"newPanchayat\",\"error\"", headerRowForErrors);
     }
 
     private LocationImportCSVRequest locationImportCSVRequest(String district, String block, String panchayat, String status, String newDistrict, String newBlock, String newPanchayat) {

@@ -34,31 +34,28 @@ public class LocationImporter {
     }
 
     @Validate
-    public ValidationResponse validate(List<Object> objects) {
-        boolean isValid = true;
+    public ValidationResponse validate(List<LocationImportCSVRequest> locationImportCSVRequests) {
+        boolean isFileValid = true;
         int recordCounter = 1;
         List<Error> errors = new ArrayList<Error>();
-
-        List<LocationImportCSVRequest> locationImportCSVRequests = convertToLocationRequest(objects);
 
         addHeader(errors);
         logger.info("Started validating location csv records");
         for (LocationImportCSVRequest locationCSVRequest : locationImportCSVRequests) {
             LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationCSVRequest, locationImportCSVRequests);
             if (locationValidationResponse.isInValid()) {
-                isValid = false;
+                isFileValid = false;
             }
-            logger.info("Validated location record number : " + recordCounter++ + " with validation status : " + isValid);
+            logger.info("Validated location record number: " + recordCounter++ + "; is valid: " + locationValidationResponse.isValid());
             errors.add(new Error(locationCSVRequest.toCSV() + "," + "\"" + locationValidationResponse.getMessage() + "\""));
         }
         logger.info("Completed validating location csv records");
-        return constructValidationResponse(isValid, errors);
+        return constructValidationResponse(isFileValid, errors);
     }
 
     @Post
-    public void postData(List<Object> objects) {
+    public void postData(List<LocationImportCSVRequest> locationImportCSVRequests) {
         logger.info("Started posting location data");
-        List<LocationImportCSVRequest> locationImportCSVRequests = convertToLocationRequest(objects);
         Collections.sort(locationImportCSVRequests, new LocationComparator());
         locationImportService.addAllWithoutValidations(locationImportCSVRequests);
         logger.info("Finished posting location data");
@@ -71,16 +68,7 @@ public class LocationImporter {
         return validationResponse;
     }
 
-    private List<LocationImportCSVRequest> convertToLocationRequest(List<Object> objects) {
-        List<LocationImportCSVRequest> locationCSVRequests = new ArrayList<>();
-        for (Object object : objects) {
-            locationCSVRequests.add((LocationImportCSVRequest) object);
-        }
-
-        return locationCSVRequests;
-    }
-
     private boolean addHeader(List<Error> errors) {
-        return errors.add(new Error("district,block,panchayat,error"));
+        return errors.add(new Error(new LocationImportCSVRequest().getHeaderRowForErrors()));
     }
 }
