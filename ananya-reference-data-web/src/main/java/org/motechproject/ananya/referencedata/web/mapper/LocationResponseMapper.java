@@ -5,7 +5,7 @@ import org.apache.commons.collections.Transformer;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.web.response.LocationResponse;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
-import org.motechproject.ananya.referencedata.web.response.LocationsToBeVerifiedResponse;
+import org.motechproject.ananya.referencedata.web.response.LocationsWithStatusResponse;
 
 import java.util.List;
 
@@ -23,14 +23,14 @@ public class LocationResponseMapper {
     }
 
     public static LocationResponseList mapWithStatus(List<Location> locationList) {
-        List<LocationsToBeVerifiedResponse> locationResponses = (List<LocationsToBeVerifiedResponse>) CollectionUtils.collect(locationList, new Transformer() {
+        List<LocationsWithStatusResponse> locationResponses = (List<LocationsWithStatusResponse>) CollectionUtils.collect(locationList, new Transformer() {
             @Override
             public Object transform(Object input) {
                 Location request = (Location) input;
-                return new LocationsToBeVerifiedResponse(request.getDistrict(), request.getBlock(), request.getPanchayat(),request.getStatus().toString());
+                return new LocationsWithStatusResponse(request.getDistrict(), request.getBlock(), request.getPanchayat(),request.getStatus().toString());
             }
         });
-        return new LocationResponseList(locationResponses,LocationsToBeVerifiedResponse.class);
+        return new LocationResponseList(locationResponses,LocationsWithStatusResponse.class);
 
     }
 }

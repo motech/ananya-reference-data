@@ -5,7 +5,7 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.web.response.LocationResponse;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
-import org.motechproject.ananya.referencedata.web.response.LocationsToBeVerifiedResponse;
+import org.motechproject.ananya.referencedata.web.response.LocationsWithStatusResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +38,8 @@ public class LocationResponseMapperTest {
 
         LocationResponseList locationResponses = LocationResponseMapper.mapWithStatus(locationList);
 
-        LocationsToBeVerifiedResponse response1 = (LocationsToBeVerifiedResponse)locationResponses.get(0);
-        LocationsToBeVerifiedResponse response2 = (LocationsToBeVerifiedResponse)locationResponses.get(1);
+        LocationsWithStatusResponse response1 = (LocationsWithStatusResponse)locationResponses.get(0);
+        LocationsWithStatusResponse response2 = (LocationsWithStatusResponse)locationResponses.get(1);
         assertLocationResponse(location1, response1);
         assertEquals(location1.getStatus().toString(), response1.getStatus());
         assertLocationResponse(location2,response2);
