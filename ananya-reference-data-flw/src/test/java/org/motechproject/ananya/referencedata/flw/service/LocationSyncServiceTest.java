@@ -12,7 +12,7 @@ import org.motechproject.ananya.referencedata.flw.service.request.LocationReques
 import org.motechproject.ananya.referencedata.flw.service.request.LocationSyncRequest;
 import org.motechproject.http.client.service.HttpClientService;
 
-import java.util.Properties;
+import java.util.Arrays;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,18 +22,17 @@ public class LocationSyncServiceTest {
     @Mock
     private HttpClientService httpClientService;
     @Mock
-    private Properties clientServiceProperties;
+    private SyncURLs syncURLs;
 
     @Test
     public void shouldSyncAllLocations() {
-        LocationSyncService locationSyncService = new LocationSyncService(httpClientService, clientServiceProperties);
+        LocationSyncService locationSyncService = new LocationSyncService(httpClientService, syncURLs);
         final Location locationToBeSynced = new Location("D1", "B1", "P1", LocationStatus.NOT_VERIFIED, null);
         DateTime dateTime = DateTime.now();
         locationToBeSynced.setLastModified(dateTime);
         String flwUrl = "flwUrl";
         String kilkariUrl = "kilkariUrl";
-        when(clientServiceProperties.getProperty(SyncURLs.KEY_LOCATION_SYNC_FLW_URL)).thenReturn(flwUrl);
-        when(clientServiceProperties.getProperty(SyncURLs.KEY_LOCATION_SYNC_KILKARI_URL)).thenReturn(kilkariUrl);
+        when(syncURLs.getLocationSyncEndpointUrls()).thenReturn(Arrays.asList(flwUrl,kilkariUrl));
 
         locationSyncService.sync(locationToBeSynced);
 

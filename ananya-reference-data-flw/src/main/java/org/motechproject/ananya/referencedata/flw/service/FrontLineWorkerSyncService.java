@@ -9,24 +9,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Properties;
 
 @Service
 public class FrontLineWorkerSyncService {
     private HttpClientService httpClientService;
-    private Properties clientServicesProperties;
+    private SyncURLs syncURLs;
     Logger logger = Logger.getLogger(FrontLineWorkerSyncService.class);
 
     @Autowired
-    public FrontLineWorkerSyncService(HttpClientService httpClientService, Properties clientServicesProperties) {
+    public FrontLineWorkerSyncService(HttpClientService httpClientService, SyncURLs syncURLs) {
         this.httpClientService = httpClientService;
-        this.clientServicesProperties = clientServicesProperties;
+        this.syncURLs = syncURLs;
     }
 
     public void sync(List<FrontLineWorker> frontLineWorkerList) {
         for (FrontLineWorker frontLineWorker : frontLineWorkerList) {
             logger.info("Raising event to sync for flw: " + frontLineWorker.toString());
-            httpClientService.post(clientServicesProperties.getProperty(SyncURLs.KEY_FRONT_LINE_WORKER_CREATE_URL), FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker));
+            httpClientService.post(syncURLs.getFlwSyncEndpointUrl(),
+                    FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker));
         }
     }
 }

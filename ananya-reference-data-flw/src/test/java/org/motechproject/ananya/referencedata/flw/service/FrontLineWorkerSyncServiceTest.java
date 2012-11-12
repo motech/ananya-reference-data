@@ -11,7 +11,6 @@ import org.motechproject.http.client.service.HttpClientService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -23,7 +22,7 @@ public class FrontLineWorkerSyncServiceTest {
     private HttpClientService httpClientService;
 
     @Mock
-    private Properties clientServicesProperties;
+    private SyncURLs syncURLs;
 
     @Test
     public void shouldSyncListOfFLW() {
@@ -32,9 +31,9 @@ public class FrontLineWorkerSyncServiceTest {
         frontLineWorker.setLastModified(DateTime.now());
         List<FrontLineWorker> frontLineWorkers = new ArrayList();
         frontLineWorkers.add(frontLineWorker);
-        FrontLineWorkerSyncService frontLineWorkerSyncService = new FrontLineWorkerSyncService(httpClientService, clientServicesProperties);
+        FrontLineWorkerSyncService frontLineWorkerSyncService = new FrontLineWorkerSyncService(httpClientService, syncURLs);
         String url = "url";
-        when(clientServicesProperties.getProperty(SyncURLs.KEY_FRONT_LINE_WORKER_CREATE_URL)).thenReturn(url);
+        when(syncURLs.getFlwSyncEndpointUrl()).thenReturn(url);
 
         frontLineWorkerSyncService.sync(frontLineWorkers);
 
