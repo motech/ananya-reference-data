@@ -1,7 +1,30 @@
 <div class="row-fluid">
     <div class="span12">
         <div class="page-header">
-            <h2>Home</h2>
+            <h2>Configure location master</h2>
         </div>
+    </div>
+</div>
+
+<div class="row-fluid">
+    <div class="span12">
+        <form action="#" name="f" class="form-horizontal">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="j_download">$label.page.location.master.download</label>
+                    <div class="controls">
+                        <input name="j_download" id="j_download" type="button" class="input-medium" value="Download">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="j_upload">$label.page.location.master.upload</label>
+                    <div class="controls">
+                        <input name="j_file" id="j_file" type="file" class="input-medium">
+                        <input name="j_upload" id="j_upload" type="button" class="input-medium" value="Upload">
+                    </div>
+                </div>
+            </fieldset>
+        </form>
     </div>
 </div>
