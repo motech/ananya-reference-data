@@ -12,15 +12,15 @@
     <util:properties id="postgresProperties" location="classpath:postgres.properties"/>
     <util:properties id="referencedataProperties" location="classpath:referencedata.properties"/>
 
+    <context:component-scan base-package="org.motechproject.ananya.referencedata"/>
     <context:property-placeholder location="classpath*:*.properties"/>
     <context:spring-configured/>
     <context:annotation-config/>
 
     <import resource="classpath:applicationContext-Diagnostics.xml"/>
     <import resource="classpath:applicationContext-contact-center.xml"/>
-    <context:component-scan base-package="org.motechproject.ananya.referencedata"/>
-
     <import resource="classpath:applicationContext-flw.xml"/>
+    <import resource="classpath:applicationContext-AdminConsole.xml"/>
 
     <bean id="configurationDiagnostic" class="org.motechproject.diagnostics.diagnostics.ConfigurationDiagnostic">
         <constructor-arg>

@@ -134,6 +134,10 @@
     <dependencies>
         <dependency>
             <groupId>org.motechproject.ananya.referencedata</groupId>
+            <artifactId>ananya-reference-data-admin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.motechproject.ananya.referencedata</groupId>
             <artifactId>ananya-reference-data-flw</artifactId>
         </dependency>
         <dependency>
@@ -144,6 +148,11 @@
         <dependency>
             <groupId>org.motechproject.ananya.referencedata</groupId>
             <artifactId>ananya-reference-data-csv-importer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.motechproject.ananya.referencedata</groupId>
+            <artifactId>ananya-reference-data-admin</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -173,6 +182,10 @@
         <dependency>
             <groupId>org.motechproject.contrib-ananya</groupId>
             <artifactId>motech-web-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-tools</artifactId>
         </dependency>
     </dependencies>
 </project>

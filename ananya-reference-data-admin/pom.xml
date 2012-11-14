@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>ananya-reference-data</artifactId>
+        <groupId>org.motechproject.ananya.referencedata</groupId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ananya-reference-data-admin</artifactId>
+    <packaging>jar</packaging>
+
+    <name>ananya-reference-data-admin</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.motechproject</groupId>
+            <artifactId>motech-platform-server-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.motechproject.contrib-ananya</groupId>
+            <artifactId>motech-bulk-export-import</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.motechproject.contrib-ananya</groupId>
+            <artifactId>motech-http-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${project.basedir}/../build/maven.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>recreate-postgres-security-schema</id>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <target>
+                                <echo message="Reference-data DB security schema reset: START"/>
+                                <path id="dependencies">
+                                    <fileset file="${project.basedir}/../build/postgresql-9.1-901.jdbc4.jar"/>
+                                </path>
+                                <sql driver="org.postgresql.Driver"
+                                     url="jdbc:postgresql://${postgres.server}/${postgres.db}"
+                                     userid="${postgres.user}"
+                                     classpathref="dependencies"
+                                     password="${postgres.password}">
+                                    DROP SCHEMA IF EXISTS ${postgres.security.schema} CASCADE;
+                                    CREATE SCHEMA ${postgres.security.schema} AUTHORIZATION ${postgres.user};
+                                    GRANT ALL ON SCHEMA ${postgres.security.schema} TO ${postgres.user};
+                                </sql>
+                                <echo message="Reference-data DB security schema reset: END"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>2.0.1</version>
+                <executions>
+                    <execution>
+                        <id>run-postgres-change-sets</id>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <changeLogFile>src/test/resources/sql/main-data-definition-log.xml</changeLogFile>
+                            <driver>org.postgresql.Driver</driver>
+                            <url>jdbc:postgresql://${postgres.server}/${postgres.db}</url>
+                            <username>${postgres.user}</username>
+                            <password>${postgres.password}</password>
+                            <defaultSchemaName>${postgres.security.schema}</defaultSchemaName>
+                        </configuration>
+                        <goals>
+                            <goal>update</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

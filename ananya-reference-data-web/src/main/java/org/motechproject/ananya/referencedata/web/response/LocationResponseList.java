@@ -19,4 +19,9 @@ public class LocationResponseList extends ArrayList<LocationResponse> {
     public Class<?> getType(){
         return clazz;
     }
+
+    @ComponentTypeProvider
+    public Class getComponentTypeProvider(){
+        return LocationResponse.class;
+    }
 }
