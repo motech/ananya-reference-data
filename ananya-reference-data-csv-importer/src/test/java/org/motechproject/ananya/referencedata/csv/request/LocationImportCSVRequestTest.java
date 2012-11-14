@@ -73,7 +73,7 @@ public class LocationImportCSVRequestTest {
     public void shouldReturnHeaderRowWithErrorsColumn() {
         String headerRowForErrors = new LocationImportCSVRequest().getHeaderRowForErrors();
 
-        assertEquals("\"district\",\"block\",\"panchayat\",\"status\",\"newDistrict\",\"newBlock\",\"newPanchayat\",\"error\"", headerRowForErrors);
+        assertEquals("district,block,panchayat,status,newDistrict,newBlock,newPanchayat,error", headerRowForErrors);
     }
 
     private LocationImportCSVRequest locationImportCSVRequest(String district, String block, String panchayat, String status, String newDistrict, String newBlock, String newPanchayat) {
