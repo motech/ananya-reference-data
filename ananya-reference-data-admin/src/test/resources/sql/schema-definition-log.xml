@@ -16,4 +16,11 @@
         </sql>
     </changeSet>
 
+    <changeSet context="setup" author="ThoughtWorks" id="2">
+        <sql splitStatements="false">
+            INSERT INTO security.admin_users(name, password)
+            values('admin', md5('password'));
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
