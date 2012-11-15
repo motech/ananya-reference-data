@@ -12,16 +12,23 @@
             <fieldset>
                 <div class="control-group">
                     <label class="control-label" for="j_download">$label.page.location.master.download</label>
+
                     <div class="controls">
                         <input name="j_download" id="j_download" type="button" class="input-medium" value="Download">
                     </div>
                 </div>
+            </fieldset>
+        </form>
 
+        <form method="post" action="locationsUpload"
+              enctype="multipart/form-data" modelattribute="csvUpload" class="form-horizontal">
+            <fieldset>
                 <div class="control-group">
                     <label class="control-label" for="j_upload">$label.page.location.master.upload</label>
+
                     <div class="controls">
-                        <input name="j_file" id="j_file" type="file" class="input-medium">
-                        <input name="j_upload" id="j_upload" type="button" class="input-medium" value="Upload">
+                        <input name="fileData" id="j_file" type="file" class="input-medium">
+                        <input name="j_upload" id="j_upload" type="submit" class="input-medium" value="Upload">
                     </div>
                 </div>
             </fieldset>

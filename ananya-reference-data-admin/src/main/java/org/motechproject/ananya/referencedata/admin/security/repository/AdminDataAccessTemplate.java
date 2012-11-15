@@ -16,5 +16,4 @@ public class AdminDataAccessTemplate extends HibernateTemplate {
         super(sessionFactory);
         setAllowCreate(false);
     }
-
 }

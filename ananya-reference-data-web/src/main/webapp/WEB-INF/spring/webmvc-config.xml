@@ -21,6 +21,8 @@
         </mvc:message-converters>
     </mvc:annotation-driven>
 
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
     <!--
         DO NOT remove the following line.
         The following defines the Resource Handler for static content.
