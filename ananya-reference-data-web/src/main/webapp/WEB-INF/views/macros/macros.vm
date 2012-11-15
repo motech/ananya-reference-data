@@ -19,12 +19,11 @@
 </head>
 #end
 
-#macro(navbar)<s></s>
+#macro(default_navbar)<s></s>
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container-fluid">
             <a class="brand" href="admin/home">$label.topbar.app.link</a>
-
             <div class="nav-collapse">
                 <ul class="nav">
                     <li><a href="admin/home">$label.topbar.home.link</a></li>
@@ -32,6 +31,21 @@
                 <p class="navbar-text pull-right">
                     <a href="security/j_spring_security_logout">$label.topbar.app.logout.link</a>
                 </p>
+            </div>
+        </div>
+    </div>
+</div>
+#end
+
+#macro(login_navbar)<s></s>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="brand" href="admin/home">$label.topbar.app.link</a>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a href="admin/home">$label.topbar.home.link</a></li>
+                </ul>
             </div>
         </div>
     </div>

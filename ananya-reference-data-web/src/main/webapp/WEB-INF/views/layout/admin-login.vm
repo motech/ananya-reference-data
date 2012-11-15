@@ -1,6 +1,6 @@
 #head()
 <body>
-    #navbar()
+    #login_navbar()
 <div class=container-fluid>
     <div class="row-fluid mainbox">
         <div class="span10">
