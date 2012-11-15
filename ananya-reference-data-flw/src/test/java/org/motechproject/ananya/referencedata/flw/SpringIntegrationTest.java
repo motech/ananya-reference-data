@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata;
+package org.motechproject.ananya.referencedata.flw;
 
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

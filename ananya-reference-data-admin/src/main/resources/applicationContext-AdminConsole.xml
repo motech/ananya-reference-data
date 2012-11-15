@@ -11,7 +11,7 @@
 <util:properties id="referenceDataProperties" location="classpath:/referencedata.properties"/>
 
     <context:property-placeholder location="classpath*:*.properties"/>
-    <context:component-scan base-package="org.motechproject.ananya.referencedata"/>
+    <context:component-scan base-package="org.motechproject.ananya.referencedata.admin.security"/>
 
 
     <bean id="securitySessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">

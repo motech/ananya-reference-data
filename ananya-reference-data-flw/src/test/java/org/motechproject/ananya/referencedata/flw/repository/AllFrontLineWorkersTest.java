@@ -3,7 +3,7 @@ package org.motechproject.ananya.referencedata.flw.repository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.motechproject.ananya.referencedata.SpringIntegrationTest;
+import org.motechproject.ananya.referencedata.flw.SpringIntegrationTest;
 import org.motechproject.ananya.referencedata.flw.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 

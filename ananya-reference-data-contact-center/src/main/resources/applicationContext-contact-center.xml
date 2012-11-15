@@ -12,7 +12,7 @@
 
     <import resource="classpath:applicationContext-flw.xml"/>
     <context:property-placeholder location="classpath*:*.properties"/>
-    <context:component-scan base-package="org.motechproject.ananya.referencedata"/>
+    <context:component-scan base-package="org.motechproject.ananya.referencedata.contactCenter"/>
 
 
 </beans>

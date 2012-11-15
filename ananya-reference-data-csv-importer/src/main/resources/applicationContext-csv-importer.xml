@@ -9,8 +9,7 @@
 
 <context:property-placeholder location="classpath*:*.properties"/>
     <context:annotation-config/>
-    <context:component-scan base-package="org.motechproject.ananya.referencedata"/>
-
+    <context:component-scan base-package="org.motechproject.ananya.referencedata.csv"/>
     <import resource="classpath*:applicationBulkImportContext.xml"/>
     <import resource="classpath*:applicationContext-flw.xml"/>
 </beans>

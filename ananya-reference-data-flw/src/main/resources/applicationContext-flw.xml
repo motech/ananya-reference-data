@@ -16,7 +16,7 @@
 
     <import resource="classpath:applicationContextHttpClient.xml"/>
 
-    <context:component-scan base-package="org.motechproject.ananya.referencedata"/>
+    <context:component-scan base-package="org.motechproject.ananya.referencedata.flw"/>
 
     <bean id="defaultEhCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="configLocation" value="classpath:ehcache.xml"/>

@@ -7,16 +7,8 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <name>Ananya Reference Data Admin</name>
     <artifactId>ananya-reference-data-admin</artifactId>
-    <packaging>jar</packaging>
-
-    <name>ananya-reference-data-admin</name>
-    <url>http://maven.apache.org</url>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <dependencies>
         <dependency>

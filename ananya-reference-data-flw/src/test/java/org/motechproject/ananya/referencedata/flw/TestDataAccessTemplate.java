@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata;
+package org.motechproject.ananya.referencedata.flw;
 
 import org.hibernate.SessionFactory;
 import org.junit.Ignore;
