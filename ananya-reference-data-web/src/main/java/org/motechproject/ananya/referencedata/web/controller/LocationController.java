@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 
 @Controller
 public class LocationController extends BaseController {
@@ -47,7 +48,15 @@ public class LocationController extends BaseController {
     @RequestMapping(method = RequestMethod.POST, value = "/locationsUpload")
     public void uploadLocations(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws IOException {
         byte[] errors = csvImporter.importLocation(csvUploadRequest.getFileData());
-        FileCopyUtils.copy(errors, httpServletResponse.getOutputStream());
+        downloadErrorCsv(httpServletResponse, errors);
+    }
+
+    private void downloadErrorCsv(HttpServletResponse httpServletResponse, byte[] errors) throws IOException {
+        httpServletResponse.setHeader("Content-Disposition",
+                "attachment; filename=errors.csv");
+        OutputStream outputStream = httpServletResponse.getOutputStream();
+        FileCopyUtils.copy(errors, outputStream);
+        outputStream.flush();
     }
 
     private void validateRequest(String channel) {

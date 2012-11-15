@@ -66,7 +66,7 @@ public class LocationControllerTest {
         Location location1 = new Location("d1", "b1", "p1", LocationStatus.NOT_VERIFIED, null);
         Location location2 = new Location("d2", "b2", "p2", LocationStatus.IN_REVIEW, null);
         String channel = "contact_center";
-        when(locationService.getLocationsToBeVerified()).thenReturn(Arrays.asList(location1,location2));
+        when(locationService.getLocationsToBeVerified()).thenReturn(Arrays.asList(location1, location2));
 
         MvcResult mvcResult = mockMvc(locationController).perform(get("/locationsToBeVerified").param("channel", channel).accept(new MediaType("text", "csv")))
                 .andExpect(status().isOk())
@@ -121,5 +121,8 @@ public class LocationControllerTest {
         locationController.uploadLocations(csvFileRequest, response);
 
         verify(outputStream).write(bytes);
+        verify(response).setHeader("Content-Disposition",
+                "attachment; filename=errors.csv");
+        verify(outputStream).flush();
     }
 }
