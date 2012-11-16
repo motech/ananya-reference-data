@@ -28,8 +28,8 @@
                     <label class="control-label" for="j_upload">$label.page.location.master.upload</label>
 
                     <div class="controls">
-                        <input name="fileData" id="j_file" type="file" class="input-medium"/>
-                        <input name="j_upload" id="j_upload" type="submit" class="input-medium" value="Upload"/>
+                        <input name="fileData" id="j_file" type="file" class="input-medium required">
+                        <input name="j_upload" id="j_upload" type="submit" class="input-medium" value="Upload">
                     </div>
                 </div>
 
