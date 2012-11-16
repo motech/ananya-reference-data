@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.ananya.referencedata.web.domain.page.HomePage;
 import org.motechproject.ananya.referencedata.web.domain.page.LoginPage;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -17,8 +16,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AdminControllerTest {
-    @Mock
-    private HomePage homePage;
+
     @Mock
     private LoginPage loginPage;
 
@@ -26,7 +24,7 @@ public class AdminControllerTest {
 
     @Before
     public void setUp(){
-        adminController = new AdminController(loginPage, homePage);
+        adminController = new AdminController(loginPage);
     }
 
     @Test
@@ -38,16 +36,6 @@ public class AdminControllerTest {
         when(loginPage.display(loginError)).thenReturn(expectedModelAndView);
 
         ModelAndView actualModelAndView = adminController.login(request);
-
-        assertEquals(expectedModelAndView, actualModelAndView);
-    }
-
-    @Test
-    public void shouldDisplayHomePage() {
-        ModelAndView expectedModelAndView = new ModelAndView();
-        when(homePage.display()).thenReturn(expectedModelAndView);
-
-        ModelAndView actualModelAndView = adminController.home();
 
         assertEquals(expectedModelAndView, actualModelAndView);
     }
