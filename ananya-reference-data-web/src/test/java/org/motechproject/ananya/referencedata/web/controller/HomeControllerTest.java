@@ -47,7 +47,7 @@ public class HomeControllerTest {
         Location location = new Location("d", "b", "p", LocationStatus.NOT_VERIFIED, null);
         when(locationService.getLocationsToBeVerified()).thenReturn(Arrays.asList(location));
 
-        MvcResult mvcResult = mockMvc(homeController).perform(get("/admin/home/download"))
+        MvcResult mvcResult = mockMvc(homeController).perform(get("/admin/location/download"))
                 .andExpect(status().isOk()).andReturn();
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
@@ -58,7 +58,7 @@ public class HomeControllerTest {
     public void shouldThrowExceptionOnError() throws Exception {
         when(locationService.getLocationsToBeVerified()).thenThrow(new RuntimeException("aragorn"));
 
-        MvcResult mvcResult = mockMvc(homeController).perform(get("/admin/home/download"))
+        MvcResult mvcResult = mockMvc(homeController).perform(get("/admin/location/download"))
                 .andExpect(status().is(500)).andReturn();
 
         assertEquals("/admin/popup-error",mvcResult.getResponse().getForwardedUrl());
