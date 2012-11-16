@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Controller
@@ -22,7 +21,7 @@ public class HomeController {
         this.locationController = locationController;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/admin/home")
+    @RequestMapping(method = RequestMethod.GET, value = {"/admin", "/admin/home"})
     public ModelAndView home() {
         return new ModelAndView("admin/home");
 
