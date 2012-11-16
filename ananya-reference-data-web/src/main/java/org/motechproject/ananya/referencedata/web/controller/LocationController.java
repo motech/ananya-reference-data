@@ -37,13 +37,6 @@ public class LocationController extends BaseController {
         return LocationResponseMapper.mapWithoutStatus(locationService.getAllValidLocations());
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/locationsToBeVerified", produces = "text/csv")
-    @ResponseBody
-    public LocationResponseList getLocationsToBeVerified(@RequestParam String channel) throws IOException {
-        validateRequest(channel);
-        return LocationResponseMapper.mapWithStatus(locationService.getLocationsToBeVerified());
-    }
-
     @RequestMapping(method = RequestMethod.POST, value = "/locationsUpload")
     public void uploadLocations(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws IOException {
         byte[] errors = csvImporter.importLocation(csvUploadRequest.getFileData());

@@ -4,11 +4,13 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
 import org.motechproject.ananya.referencedata.flw.validators.CSVRequestValidationException;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
+import org.motechproject.ananya.referencedata.web.exception.PopUpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -40,6 +42,14 @@ public abstract class BaseController {
         logger.error(getExceptionString(exception));
     }
 
+    @ExceptionHandler(PopUpException.class)
+    @ResponseBody
+    public ModelAndView handlePopUpException(final Exception exception, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        logger.error(getExceptionString(exception));
+        return new ModelAndView("/admin/popup-error").addObject("errorMessage", exception.getMessage());
+    }
+
     private String getExceptionString(Exception ex) {
         StringBuilder sb = new StringBuilder();
         sb.append(ExceptionUtils.getMessage(ex));
@@ -49,3 +59,4 @@ public abstract class BaseController {
         return sb.toString();
     }
 }
+

@@ -1,0 +1,12 @@
+<script type="text/javascript">
+    var error = "${errorMessage}";
+    alert('Sorry an error occurred - '+error);
+</script>
+
+
+
+
+
+
+
+

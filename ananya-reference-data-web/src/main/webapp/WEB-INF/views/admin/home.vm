@@ -9,7 +9,6 @@
 
 <div class="row-fluid">
     <div class="span12">
-        <form action="#" name="f" class="form-horizontal">
             <fieldset>
                 <div class="control-group">
                     <label class="control-label" for="j_download">$label.page.location.master.download</label>
@@ -19,7 +18,9 @@
                     </div>
                 </div>
             </fieldset>
-        </form>
+
+        <iframe id="downloadHelper" class="hidden">
+        </iframe>
 
         <form method="post" action="locationsUpload"
               enctype="multipart/form-data" modelattribute="csvUpload" class="form-horizontal">
@@ -32,10 +33,6 @@
                         <input name="j_upload" id="j_upload" type="submit" class="input-medium" value="Upload">
                     </div>
                 </div>
-
-                <iframe id="downloadHelper" class="hidden">
-                </iframe>
-
             </fieldset>
         </form>
     </div>
