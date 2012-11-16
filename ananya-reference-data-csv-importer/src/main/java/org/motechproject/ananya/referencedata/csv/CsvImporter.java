@@ -48,7 +48,7 @@ public class CsvImporter {
     }
 
     private File createTempLocationCsvFile(CommonsMultipartFile file) throws IOException {
-        String tempLocationCsvFilePath = FileUtils.getTempDirectoryPath() + "location.csv";
+        String tempLocationCsvFilePath = FileUtils.getTempDirectoryPath() + File.separator + "location.csv";
         File locationCsv = new File(tempLocationCsvFilePath);
         FileUtils.writeByteArrayToFile(locationCsv, file.getBytes());
         return locationCsv;
@@ -63,7 +63,7 @@ public class CsvImporter {
     }
 
     private File getErrorFile() throws IOException {
-        String errorCsvFilePath = FileUtils.getTempDirectoryPath() + "errors.csv";
+        String errorCsvFilePath = FileUtils.getTempDirectoryPath() + File.separator  + "errors.csv";
         File errorsCsv = new File(errorCsvFilePath);
         return errorsCsv;
     }
