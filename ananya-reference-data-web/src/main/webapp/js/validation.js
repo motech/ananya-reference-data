@@ -3,7 +3,7 @@ $(document).ready(function () {
         var form = $(event.target);
         var result = true;
 
-        var requiredInputs = form.find('.required').each(function (index, element) {
+        form.find('.required').each(function (index, element) {
             element = $(element);
             if (element.val() == "") {
                 removeErrorMsg(element);
@@ -14,7 +14,7 @@ $(document).ready(function () {
             }
         });
 
-        var fileFormatCheck = form.find('#j_file').each(function(index, element){
+        form.find('#fileData').each(function(index, element){
             element = $(element);
             var fileName = element.val();
             var fileNameArray = fileName.split(".");

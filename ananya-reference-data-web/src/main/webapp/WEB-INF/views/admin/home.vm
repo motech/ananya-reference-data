@@ -22,17 +22,24 @@
         <iframe id="downloadHelper" class="hidden">
         </iframe>
 
-        <form method="post" action="locationsUpload"
+        <form method="post" action="admin/location/upload"
               enctype="multipart/form-data" modelattribute="csvUpload" class="form-horizontal">
             <fieldset>
                 <div class="control-group">
-                    <label class="control-label" for="j_upload">$label.page.location.master.upload</label>
-
+                    <label class="control-label" for="uploadAction">$label.page.location.master.upload</label>
                     <div class="controls">
-                        <input name="fileData" id="j_file" type="file" class="input-medium required">
-                        <input name="j_upload" id="j_upload" type="submit" class="input-medium" value="Upload">
+                        <input name="fileData" id="fileData" type="file" class="input-medium required">
+                        <input name="upload" id="uploadAction" type="submit" class="input-medium" value="Upload">
                     </div>
                 </div>
+
+                #if($successMessage)
+                    <div class="alert alert-info">
+                        Locations Uploaded Successfully.
+                        <a class="close" data-dismiss="alert">x</a>
+                    </div>
+                #end
+
             </fieldset>
         </form>
     </div>
