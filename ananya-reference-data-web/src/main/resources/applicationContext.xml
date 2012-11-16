@@ -20,7 +20,7 @@
     <import resource="classpath:applicationContext-Diagnostics.xml"/>
     <import resource="classpath:applicationContext-contact-center.xml"/>
     <import resource="classpath:applicationContext-flw.xml"/>
-    <import resource="classpath:applicationContext-AdminConsole.xml"/>
+    <import resource="classpath:applicationContext-security.xml"/>
 
     <bean id="configurationDiagnostic" class="org.motechproject.diagnostics.diagnostics.ConfigurationDiagnostic">
         <constructor-arg>

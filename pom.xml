@@ -12,7 +12,6 @@
         <module>ananya-reference-data-flw</module>
         <module>ananya-reference-data-csv-importer</module>
         <module>ananya-reference-data-contact-center</module>
-        <module>ananya-reference-data-admin</module>
     </modules>
     <name>Ananya Reference-Data</name>
 
@@ -339,11 +338,6 @@
                 <groupId>org.motechproject.contrib-ananya</groupId>
                 <artifactId>motech-web-utils</artifactId>
                 <version>${motech.contrib.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.motechproject.ananya.referencedata</groupId>
-                <artifactId>ananya-reference-data-admin</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.motechproject.ananya.referencedata</groupId>

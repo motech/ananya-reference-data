@@ -6,19 +6,10 @@
 
     <changeSet context="setup" author="ThoughtWorks" id="1">
         <sql splitStatements="false">
-            CREATE TABLE security.admin_users(
-            id serial primary key,
-            name varchar(255),
-            password varchar(255),
-            last_modified timestamp
-            );
-        </sql>
-    </changeSet>
-
-    <changeSet context="setup" author="ThoughtWorks" id="2">
-        <sql splitStatements="false">
-            INSERT INTO security.admin_users(name, password)
-            values('admin', md5('password'));
+            create table security.users (username varchar(255), password varchar(255), enabled boolean);
+            create table security.authorities (username varchar(255), authority varchar(255));
+            insert into security.users values ('admin', md5('password'), true);
+            insert into security.authorities values ('admin', 'admin');
         </sql>
     </changeSet>
 </databaseChangeLog>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+
+    <http auto-config="false" use-expressions="true" entry-point-ref="authenticationEntryPoint">
+
+        <form-login login-page="/admin/login"
+                    default-target-url="/admin/home"
+                    login-processing-url="/security/j_spring_security_check"
+                    authentication-failure-url="/admin/login?login_error=t"/>
+
+        <logout logout-url="/security/j_spring_security_logout"
+                invalidate-session="true"
+                logout-success-url="/admin/login"/>
+
+        <intercept-url pattern="/admin/login" access="permitAll" requires-channel="any"/>
+        <intercept-url pattern="/admin/*" access="hasRole('admin')" requires-channel="any"/>
+
+    </http>
+
+    <beans:bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <beans:property name="driverClass" value="${jdbc.driverClassName}"/>
+        <beans:property name="jdbcUrl" value="${jdbc.url}"/>
+        <beans:property name="user" value="${jdbc.username}"/>
+        <beans:property name="password" value="${jdbc.password}"/>
+        <beans:property name="maxPoolSize" value="${hibernate.c3p0.max_size}"/>
+        <beans:property name="minPoolSize" value="${hibernate.c3p0.min_size}"/>
+        <beans:property name="checkoutTimeout" value="${hibernate.c3p0.timeout}"/>
+        <beans:property name="maxStatements" value="${hibernate.c3p0.max_statements}"/>
+        <beans:property name="idleConnectionTestPeriod" value="${hibernate.c3p0.idle_test_period}"/>
+        <beans:property name="acquireIncrement" value="${hibernate.c3p0.acquire_increment}"/>
+    </beans:bean>
+
+    <beans:bean name="userDetailsService" class="org.springframework.security.provisioning.JdbcUserDetailsManager">
+        <beans:property name="dataSource" ref="dataSource"/>
+        <beans:property name="usersByUsernameQuery"
+                        value="${security.users.by.username.query}"/>
+        <beans:property name="authoritiesByUsernameQuery"
+                        value="${security.authorities.by.username.query}"/>
+    </beans:bean>
+
+    <beans:bean class="org.springframework.security.authentication.encoding.Md5PasswordEncoder"/>
+
+    <beans:bean name="authenticationProvider"
+                class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <beans:property name="userDetailsService" ref="userDetailsService"/>
+        <beans:property name="passwordEncoder"
+                        ref="org.springframework.security.authentication.encoding.Md5PasswordEncoder"/>
+    </beans:bean>
+
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider ref="authenticationProvider"/>
+    </authentication-manager>
+
+    <beans:bean id="authenticationEntryPoint"
+                class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <beans:property name="loginFormUrl" value="/admin/login"/>
+        <beans:property name="forceHttps" value="false"/>
+    </beans:bean>
+
+</beans:beans>

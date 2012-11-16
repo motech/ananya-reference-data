@@ -44,10 +44,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-            </plugin>
-            <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>8.0.1.v20110908</version>
@@ -123,19 +119,63 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>recreate-postgres-security-schema</id>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <target>
+                                <echo message="Reference-data DB security schema reset: START"/>
+                                <path id="dependencies">
+                                    <fileset file="${project.basedir}/../build/postgresql-9.1-901.jdbc4.jar"/>
+                                </path>
+                                <sql driver="org.postgresql.Driver"
+                                     url="jdbc:postgresql://${postgres.server}/${postgres.db}"
+                                     userid="${postgres.user}"
+                                     classpathref="dependencies"
+                                     password="${postgres.password}">
+                                    DROP SCHEMA IF EXISTS ${postgres.security.schema} CASCADE;
+                                    CREATE SCHEMA ${postgres.security.schema} AUTHORIZATION ${postgres.user};
+                                    GRANT ALL ON SCHEMA ${postgres.security.schema} TO ${postgres.user};
+                                </sql>
+                                <echo message="Reference-data DB security schema reset: END"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>2.0.1</version>
+                <executions>
+                    <execution>
+                        <id>run-postgres-change-sets</id>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <changeLogFile>src/test/resources/sql/main-data-definition-log.xml</changeLogFile>
+                            <driver>org.postgresql.Driver</driver>
+                            <url>jdbc:postgresql://${postgres.server}/${postgres.db}</url>
+                            <username>${postgres.user}</username>
+                            <password>${postgres.password}</password>
+                            <defaultSchemaName>${postgres.security.schema}</defaultSchemaName>
+                        </configuration>
+                        <goals>
+                            <goal>update</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.motechproject.ananya.referencedata</groupId>
-            <artifactId>ananya-reference-data-admin</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.motechproject.ananya.referencedata</groupId>
             <artifactId>ananya-reference-data-flw</artifactId>
@@ -148,11 +188,6 @@
         <dependency>
             <groupId>org.motechproject.ananya.referencedata</groupId>
             <artifactId>ananya-reference-data-csv-importer</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.motechproject.ananya.referencedata</groupId>
-            <artifactId>ananya-reference-data-admin</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -186,6 +221,26 @@
         <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity-tools</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
     </dependencies>
 </project>

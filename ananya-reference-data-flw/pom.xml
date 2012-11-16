@@ -100,7 +100,7 @@
                             <target>
                                 <echo message="Reference-data DB reset: START"/>
                                 <path id="dependencies">
-                                    <fileset file="${project.basedir}/build/postgresql-9.1-901.jdbc4.jar"/>
+                                    <fileset file="${project.basedir}/../build/postgresql-9.1-901.jdbc4.jar"/>
                                 </path>
                                 <sql driver="org.postgresql.Driver"
                                      url="jdbc:postgresql://${postgres.server}/${postgres.db}"
