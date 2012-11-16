@@ -1,7 +1,9 @@
 package org.motechproject.ananya.referencedata.web.response;
 
+import org.joda.time.DateTime;
 import org.motechproject.export.annotation.ComponentTypeProvider;
 import org.motechproject.web.message.converters.annotations.CSVEntity;
+import org.motechproject.web.message.converters.annotations.CSVFileName;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,4 +26,12 @@ public class LocationResponseList extends ArrayList<LocationResponse> {
     public Class getComponentTypeProvider(){
         return LocationResponse.class;
     }
+
+    @CSVFileName
+    public String getFileName(){
+        return "locations-"+ DateTime.now().toString("yyyy-MM-dd'T'HH:mm")+".csv";
+    }
+    
+    
+    
 }

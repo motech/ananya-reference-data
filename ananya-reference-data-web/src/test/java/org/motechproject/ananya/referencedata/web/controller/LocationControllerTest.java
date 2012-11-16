@@ -23,8 +23,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.motechproject.ananya.referencedata.web.utils.MVCTestUtils.mockMvc;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
@@ -59,6 +58,7 @@ public class LocationControllerTest {
 
         assertEquals(1, responses.size());
         assertLocationResponse(validLocation, responses.get(0));
+        assertNotNull(responses.getFileName());
     }
 
     @Test

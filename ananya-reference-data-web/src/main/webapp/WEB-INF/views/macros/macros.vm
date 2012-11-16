@@ -1,21 +1,22 @@
 #macro(head)
 <head>
     <title>$label.home.page.title</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="$label.home.page.title">
-    <meta name="author" content="$label.home.author">
-    <base href="/ananya-reference-data/">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="$label.home.page.title" />
+    <meta name="author" content="$label.home.author" />
+    <base href="/ananya-reference-data/" />
 
-    <link rel="shortcut icon" href="assets/ico/favicon.ico">
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="css/ananya.css" rel="stylesheet">
+    <link rel="shortcut icon" href="assets/ico/favicon.ico" />
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/bootstrap-responsive.css" rel="stylesheet" />
+    <link href="css/ananya.css" rel="stylesheet" />
 
     <script src="js/html5.js"></script>
     <script src="js/jquery-min.js"></script>
     <script src="js/bootstrap-min.js"></script>
     <script src="js/validation.js"></script>
+    <script src="js/home.js"></script>
 </head>
 #end
 
@@ -53,7 +54,7 @@
 #end
 
 #macro(footer)
-<hr>
+<hr />
 <footer>
     <p>&copy; $label.home.footer.copyright</p>
 </footer>

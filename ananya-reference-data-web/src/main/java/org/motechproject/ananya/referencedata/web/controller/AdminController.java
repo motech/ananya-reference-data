@@ -1,6 +1,5 @@
 package org.motechproject.ananya.referencedata.web.controller;
 
-import org.motechproject.ananya.referencedata.web.domain.page.HomePage;
 import org.motechproject.ananya.referencedata.web.domain.page.LoginPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +17,10 @@ public class AdminController {
     private static Logger log = LoggerFactory.getLogger(AdminController.class);
 
     private LoginPage loginPage;
-    private HomePage homePage;
 
     @Autowired
-    public AdminController(LoginPage loginPage, HomePage homePage) {
+    public AdminController(LoginPage loginPage) {
         this.loginPage = loginPage;
-        this.homePage = homePage;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/admin/login")
@@ -32,8 +29,5 @@ public class AdminController {
         return loginPage.display(error);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/admin/home")
-    public ModelAndView home() {
-        return homePage.display();
-    }
 }
+
