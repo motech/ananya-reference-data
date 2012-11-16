@@ -110,6 +110,10 @@ public class FrontLineWorker extends BaseEntity {
         this.reason = reason;
     }
 
+    public boolean hasBeenVerified() {
+        return verificationStatus != null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

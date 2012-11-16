@@ -31,7 +31,4 @@ public class LocationResponseList extends ArrayList<LocationResponse> {
     public String getFileName(){
         return "locations-"+ DateTime.now().toString("yyyy-MM-dd'T'HH:mm")+".csv";
     }
-    
-    
-    
 }

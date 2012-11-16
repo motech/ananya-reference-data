@@ -2,8 +2,7 @@ package org.motechproject.ananya.referencedata.flw.domain;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class FrontLineWorkerTest {
 
@@ -20,5 +19,16 @@ public class FrontLineWorkerTest {
         assertEquals(name, frontLineWorker.getName());
         assertEquals(Designation.ANM.name(), frontLineWorker.getDesignation());
         assertEquals(location, frontLineWorker.getLocation());
+    }
+
+    @Test
+    public void shouldCheckIfVerificationStatusExists() {
+        FrontLineWorker frontLineWorker1= new FrontLineWorker();
+        frontLineWorker1.setVerificationStatus(VerificationStatus.INVALID);
+        FrontLineWorker frontLineWorker2 = new FrontLineWorker();
+
+        assertTrue(frontLineWorker1.hasBeenVerified());
+        assertFalse(frontLineWorker2.hasBeenVerified());
+
     }
 }

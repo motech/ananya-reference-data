@@ -22,6 +22,7 @@ public class FrontLineWorkerSyncRequestMapperTest {
         Designation designation = Designation.ANM;
 
         FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, designation, location);
+        frontLineWorker.setVerificationStatus(VerificationStatus.SUCCESS);
         frontLineWorker.setLastModified(now);
         FrontLineWorkerSyncRequest frontLineWorkerSyncRequest = FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker);
 
@@ -35,5 +36,6 @@ public class FrontLineWorkerSyncRequestMapperTest {
         assertEquals(district, locationContract.getDistrict());
         assertEquals(panchayat, locationContract.getPanchayat());
         assertEquals(frontLineWorker.getFlwId().toString(), frontLineWorkerSyncRequest.getFlwId());
+        assertEquals(VerificationStatus.SUCCESS.name(), frontLineWorker.getVerificationStatus());
     }
 }

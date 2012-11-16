@@ -13,7 +13,7 @@ public class FrontLineWorkerSyncRequest {
     private LocationContract location;
     private String flwId;
 
-    public FrontLineWorkerSyncRequest(String msisdn, String name, String designation, Date lastModified, LocationContract location, String flwId) {
+    public FrontLineWorkerSyncRequest(String msisdn, String name, String designation, Date lastModified, LocationContract location, String flwId, String verificationStatus) {
         this.name = name;
         this.msisdn = msisdn;
         this.designation = designation;
