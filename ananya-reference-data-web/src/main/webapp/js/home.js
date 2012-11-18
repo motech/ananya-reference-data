@@ -1,5 +1,6 @@
 $(document).ready(function(){
-    $('#j_download').click(function(){
+
+    $('#download_location').click(function(){
         $('#downloadHelper').attr('src', "admin/location/download");
     });
 

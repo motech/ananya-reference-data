@@ -11,10 +11,10 @@
     <div class="span12">
             <fieldset>
                 <div class="control-group">
-                    <label class="control-label" for="j_download">$label.page.location.master.download</label>
+                    <label class="control-label" for="download_location">$label.page.location.master.download</label>
 
                     <div class="controls">
-                        <input name="j_download" id="j_download" type="button" class="input-medium" value="Download" />
+                        <input name="download_location" id="download_location" type="button" class="input-medium" value="Download" />
                     </div>
                 </div>
             </fieldset>
