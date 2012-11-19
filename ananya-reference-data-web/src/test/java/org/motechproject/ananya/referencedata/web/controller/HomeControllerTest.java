@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.motechproject.ananya.referencedata.web.utils.MVCTestUtils.mockMvc;
@@ -52,12 +53,13 @@ public class HomeControllerTest {
         assertTrue(contentAsString.contains("d,b,p,NOT VERIFIED,,"));
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void shouldThrowExceptionOnError() throws Exception {
         when(locationService.getLocationsToBeVerified()).thenThrow(new RuntimeException("aragorn"));
 
-        mockMvc(homeController).perform(get("/admin/locationsToBeVerified/download"))
+        MvcResult mvcResult = mockMvc(homeController).perform(get("/admin/locationsToBeVerified/download"))
                 .andExpect(status().is(500)).andReturn();
+        assertEquals("The system is down. Please try after sometime.",mvcResult.getModelAndView().getModelMap().get("errorMessage"));
     }
 
 

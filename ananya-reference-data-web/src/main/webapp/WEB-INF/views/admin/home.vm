@@ -2,7 +2,7 @@
     <div class="row-fluid">
         <div class="span12">
             <div class="page-header">
-                <h2>Manage location master</h2>
+                <h2>Manage Location Master</h2>
             </div>
         </div>
     </div>
@@ -30,7 +30,7 @@
             <span>$label.page.location.download</span>
             <div>
                 <br />
-                <a class="btn btn-primary" data-dismiss="" href="/admin/locationsToBeVerified/download">Download</a>
+                <a class="btn btn-primary" data-dismiss="" href="admin/locationsToBeVerified/download">Download</a>
             </div>
         </div>
     </div>

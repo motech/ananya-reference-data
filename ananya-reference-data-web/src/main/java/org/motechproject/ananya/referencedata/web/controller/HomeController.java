@@ -1,17 +1,18 @@
 package org.motechproject.ananya.referencedata.web.controller;
 
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
 import org.motechproject.ananya.referencedata.csv.CsvImporter;
 import org.motechproject.ananya.referencedata.web.domain.CsvUploadRequest;
 import org.motechproject.ananya.referencedata.web.mapper.LocationResponseMapper;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +20,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 @Controller
-public class HomeController extends BaseController {
+public class HomeController {
+    private Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     private LocationService locationService;
     private CsvImporter csvImporter;
@@ -56,5 +58,22 @@ public class HomeController extends BaseController {
         OutputStream outputStream = httpServletResponse.getOutputStream();
         FileCopyUtils.copy(errors, outputStream);
         outputStream.flush();
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    public ModelAndView handleException(final Exception exception, HttpServletResponse response) throws IOException {
+        logger.error(getExceptionString(exception));
+        response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        return new ModelAndView("admin/home").addObject("errorMessage","The system is down. Please try after sometime.");
+    }
+
+    private String getExceptionString(Exception ex) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(ExceptionUtils.getMessage(ex));
+        sb.append(ExceptionUtils.getStackTrace(ex));
+        sb.append(ExceptionUtils.getRootCauseMessage(ex));
+        sb.append(ExceptionUtils.getRootCauseStackTrace(ex));
+        return sb.toString();
     }
 }
