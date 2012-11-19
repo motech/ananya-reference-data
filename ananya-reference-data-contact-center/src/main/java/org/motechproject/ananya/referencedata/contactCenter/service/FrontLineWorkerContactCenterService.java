@@ -7,6 +7,7 @@ import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
+import org.motechproject.ananya.referencedata.flw.service.SyncService;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,14 @@ public class FrontLineWorkerContactCenterService {
     private AllFrontLineWorkers allFrontLineWorkers;
     private LocationService locationService;
     private FrontLineWorkerRequestValidator requestValidator;
+    private SyncService syncService;
 
     @Autowired
-    public FrontLineWorkerContactCenterService(AllFrontLineWorkers allFrontLineWorkers, LocationService locationService, FrontLineWorkerRequestValidator requestValidator) {
+    public FrontLineWorkerContactCenterService(AllFrontLineWorkers allFrontLineWorkers, LocationService locationService, FrontLineWorkerRequestValidator requestValidator, SyncService syncService) {
         this.allFrontLineWorkers = allFrontLineWorkers;
         this.locationService = locationService;
         this.requestValidator = requestValidator;
+        this.syncService = syncService;
     }
 
     public void updateVerifiedFlw(FrontLineWorkerVerificationWebRequest webRequest) {
@@ -36,14 +39,23 @@ public class FrontLineWorkerContactCenterService {
     private void updateVerifiedFlw(FrontLineWorkerVerificationRequest request) {
         Errors validationErrors = requestValidator.validate(request);
         raiseExceptionIfThereAreErrors(validationErrors);
+        saveAndSync(request);
+    }
 
+    private void saveAndSync(FrontLineWorkerVerificationRequest request) {
+        FrontLineWorker updatedFrontLineWorker = constructFrontLineWorker(request);
+        allFrontLineWorkers.createOrUpdate(updatedFrontLineWorker);
+        syncService.syncFrontLineWorker(updatedFrontLineWorker);
+    }
+
+    private FrontLineWorker constructFrontLineWorker(FrontLineWorkerVerificationRequest request) {
         FrontLineWorker frontLineWorker = getFrontLineWorker(request);
         FrontLineWorker updatedFrontLineWorker = FrontLineWorkerMapper.mapFrom(request, frontLineWorker);
         if (VerificationStatus.SUCCESS == request.getVerificationStatus()) {
             Location location = locationService.handleLocation(request.getLocation());
             updatedFrontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(frontLineWorker, location);
         }
-        allFrontLineWorkers.createOrUpdate(updatedFrontLineWorker);
+        return updatedFrontLineWorker;
     }
 
     private FrontLineWorker getFrontLineWorker(FrontLineWorkerVerificationRequest request) {

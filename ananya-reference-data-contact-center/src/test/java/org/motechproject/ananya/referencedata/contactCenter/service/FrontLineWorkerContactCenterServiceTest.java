@@ -16,6 +16,7 @@ import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.flw.service.SyncService;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 
@@ -35,6 +36,8 @@ public class FrontLineWorkerContactCenterServiceTest {
     private LocationService locationService;
     @Mock
     private FrontLineWorkerRequestValidator requestValidator;
+    @Mock
+    private SyncService syncService;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -43,7 +46,7 @@ public class FrontLineWorkerContactCenterServiceTest {
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerContactCenterService = new FrontLineWorkerContactCenterService(allFrontLineWorkers, locationService, requestValidator);
+        frontLineWorkerContactCenterService = new FrontLineWorkerContactCenterService(allFrontLineWorkers, locationService, requestValidator, syncService);
     }
 
     @Test
@@ -117,6 +120,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         assertEquals(existingLocation, actualFrontLineWorker.getLocation());
         assertEquals(frontLineWorker.getMsisdn(), actualFrontLineWorker.getMsisdn());
         assertEquals(null, actualFrontLineWorker.getReason());
+        verify(syncService).syncFrontLineWorker(actualFrontLineWorker);
     }
 
     @Test
@@ -137,6 +141,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
         assertEquals(reason, actualFrontLineWorker.getReason());
         verify(locationService, never()).handleLocation(any(LocationRequest.class));
+        verify(syncService).syncFrontLineWorker(actualFrontLineWorker);
     }
 
     @Test
