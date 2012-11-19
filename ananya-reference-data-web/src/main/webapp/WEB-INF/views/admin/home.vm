@@ -1,48 +1,68 @@
 <div>
-<div class="row-fluid">
-    <div class="span12">
-        <div class="page-header">
-            <h2>Configure location master</h2>
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="page-header">
+                <h2>Manage location master</h2>
+            </div>
         </div>
     </div>
-</div>
 
-#if(${successMessage})
+    #if(${successMessage})
     <div class="alert alert-success">
         ${successMessage}
         <a class="close" data-dismiss="alert">x</a>
     </div>
-#end
-#if(${errorMessage})
+    #end
+    #if(${errorMessage})
     <div class="alert alert-error">
         ${errorMessage}
         <a class="close" data-dismiss="alert">x</a>
     </div>
-#end
-<div class="row-fluid">
+    #end
 
-    <div class="span12">
-
-        <fieldset>
-            <div class="control-group">
-                <div class="controls">
-                    <a class="btn" data-dismiss="" href="admin/location/download" name="Download Locations">Download Locations</a>
-                </div>
-            </div>
-        </fieldset>
-        <form method="post" action="admin/location/upload"
-              enctype="multipart/form-data" modelattribute="csvUpload" class="form-horizontal">
-            <fieldset>
-                <div class="control-group">
-                    <label class="control-label" for="uploadAction">$label.page.location.master.upload</label>
-                    <div class="controls">
-                        <input name="fileData" id="fileData" type="file" class="input-medium required">
-                        <input name="upload" id="uploadAction" type="submit" class="input-medium" value="Upload">
-                    </div>
-                </div>
-
-            </fieldset>
-        </form>
+    <div class="row-fluid">
+        <div class="well well-small">
+            <strong>Download Locations</strong>
+        </div>
     </div>
-</div>
+    <div class="row-fluid">
+        <div class="span12">
+            <span>$label.page.location.download</span>
+            <div>
+                <br />
+                <a class="btn btn-primary" data-dismiss="" href="admin/location/download"
+                   name="Download Locations">Download
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <hr/>
+    <div class="row-fluid">
+        <div class="well well-small">
+            <strong>Upload Locations</strong>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span12">
+            <form method="post" action="admin/location/upload"
+                  enctype="multipart/form-data" modelattribute="csvUpload">
+                <fieldset>
+                    <div class="control-group">
+                        <div class="controls">
+                            <label for="fileData">$label.page.location.master.upload</label>
+                            <input name="fileData" id="fileData" type="file" class="required"/>
+
+                        </div>
+                    </div>
+
+                    <input name="upload" id="uploadAction" type="submit" class="input-medium btn-primary"
+                           value="Upload"/>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
 </div>

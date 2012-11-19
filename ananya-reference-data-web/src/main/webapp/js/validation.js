@@ -8,7 +8,7 @@ $(document).ready(function () {
             if (element.val() == "") {
                 removeErrorMsg(element);
                 element.parents('.control-group').addClass('error');
-                element.parents('.controls').append('<br class="error-help"/><span class="help-inline error-help span2">This is required.</span>');
+                element.parents('.controls').append('<span class="help-inline error-help">This is required.</span>');
                 removeErrorMsgOnChange(element);
                 result = false;
             }
@@ -22,7 +22,7 @@ $(document).ready(function () {
             {
                 removeErrorMsg(element);
                 element.parents('.control-group').addClass('error');
-                element.parents('.controls').append('<br class="error-help"/><span class="help-inline error-help span2">Invalid file format.</span>');
+                element.parents('.controls').append('<span class="help-inline error-help">Invalid file format.</span>');
                 removeErrorMsgOnChange(element);
                 result = false;
             }
