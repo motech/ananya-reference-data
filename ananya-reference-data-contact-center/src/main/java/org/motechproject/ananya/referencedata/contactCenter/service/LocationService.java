@@ -5,6 +5,7 @@ import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.flw.service.SyncService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +14,12 @@ import java.util.List;
 @Service
 public class LocationService {
     private AllLocations allLocations;
+    private SyncService syncService;
 
     @Autowired
-    public LocationService(AllLocations allLocations) {
+    public LocationService(AllLocations allLocations, SyncService syncService) {
         this.allLocations = allLocations;
+        this.syncService = syncService;
     }
 
     public Location handleLocation(LocationRequest request) {
@@ -24,6 +27,7 @@ public class LocationService {
         if (location == null) {
             location = LocationMapper.mapFrom(request);
             allLocations.add(location);
+            syncService.syncLocation(location);
         }
         return location;
     }
@@ -33,7 +37,7 @@ public class LocationService {
     }
 
     public List<Location> getLocationsToBeVerified() {
-        return allLocations.getForStatuses(LocationStatus.NOT_VERIFIED,LocationStatus.IN_REVIEW);
+        return allLocations.getForStatuses(LocationStatus.NOT_VERIFIED, LocationStatus.IN_REVIEW);
     }
 
     private Location getExistingLocation(LocationRequest request) {

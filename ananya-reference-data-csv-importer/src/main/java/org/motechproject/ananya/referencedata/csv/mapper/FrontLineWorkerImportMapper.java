@@ -26,7 +26,6 @@ public class FrontLineWorkerImportMapper {
         if(Designation.isValid(designation)) {
             return Designation.from(designation);
         }
-
         return null;
     }
 
