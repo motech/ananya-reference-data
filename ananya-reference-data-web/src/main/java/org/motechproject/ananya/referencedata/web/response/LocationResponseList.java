@@ -22,11 +22,6 @@ public class LocationResponseList extends ArrayList<LocationResponse> {
         return clazz;
     }
 
-    @ComponentTypeProvider
-    public Class getComponentTypeProvider(){
-        return LocationResponse.class;
-    }
-
     @CSVFileName
     public String getFileName(){
         return "locations-"+ DateTime.now().toString("yyyy-MM-dd'T'HH:mm")+".csv";
