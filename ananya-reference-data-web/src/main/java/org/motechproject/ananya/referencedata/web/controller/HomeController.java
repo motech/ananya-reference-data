@@ -35,10 +35,10 @@ public class HomeController extends BaseController {
         return new ModelAndView("admin/home");
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/admin/location/download", produces = "text/csv")
+    @RequestMapping(method = RequestMethod.GET, value = "/admin/locationsToBeVerified/download", produces = "text/csv")
     @ResponseBody
-    public LocationResponseList locationResponseList() throws IOException {
-        return LocationResponseMapper.mapWithStatus(locationService.getLocationsToBeVerified());
+    public LocationResponseList getLocationsToBeVerified() throws IOException {
+        return LocationResponseMapper.mapLocationsToBeVerified(locationService.getLocationsToBeVerified());
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/admin/location/upload")

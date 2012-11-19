@@ -40,22 +40,23 @@ public class HomeControllerTest {
     }
 
     @Test
-    public void shouldReturnLocationsAsCSV() throws Exception {
+    public void shouldReturnLocationsToBeVerifiedAsCSV() throws Exception {
         Location location = new Location("d", "b", "p", LocationStatus.NOT_VERIFIED, null);
         when(locationService.getLocationsToBeVerified()).thenReturn(Arrays.asList(location));
 
-        MvcResult mvcResult = mockMvc(homeController).perform(get("/admin/location/download"))
+        MvcResult mvcResult = mockMvc(homeController).perform(get("/admin/locationsToBeVerified/download"))
                 .andExpect(status().isOk()).andReturn();
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        assertTrue(contentAsString.contains("d,b,p"));
+        assertTrue(contentAsString.contains("district,block,panchayat,status,newDistrict,newBlock,newPanchayat"));
+        assertTrue(contentAsString.contains("d,b,p,NOT VERIFIED,,"));
     }
 
     @Test(expected = Exception.class)
     public void shouldThrowExceptionOnError() throws Exception {
         when(locationService.getLocationsToBeVerified()).thenThrow(new RuntimeException("aragorn"));
 
-        MvcResult mvcResult = mockMvc(homeController).perform(get("/admin/location/download"))
+        mockMvc(homeController).perform(get("/admin/locationsToBeVerified/download"))
                 .andExpect(status().is(500)).andReturn();
     }
 

@@ -30,9 +30,7 @@
             <span>$label.page.location.download</span>
             <div>
                 <br />
-                <a class="btn btn-primary" data-dismiss="" href="admin/location/download"
-                   name="Download Locations">Download
-                </a>
+                <a class="btn btn-primary" data-dismiss="" href="/admin/locationsToBeVerified/download">Download</a>
             </div>
         </div>
     </div>

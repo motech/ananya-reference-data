@@ -30,14 +30,7 @@ public class LocationController extends BaseController {
     @ResponseBody
     LocationResponseList getLocationMaster(@RequestParam String channel) throws IOException {
         validateRequest(channel);
-        return LocationResponseMapper.mapWithoutStatus(locationService.getAllValidLocations());
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/locationsToBeVerified", produces = "text/csv")
-    @ResponseBody
-    public LocationResponseList getLocationsToBeVerified(@RequestParam String channel) throws IOException {
-        validateRequest(channel);
-        return LocationResponseMapper.mapWithStatus(locationService.getLocationsToBeVerified());
+        return LocationResponseMapper.mapValidLocations(locationService.getAllValidLocations());
     }
 
     private void validateRequest(String channel) {

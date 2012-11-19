@@ -5,7 +5,7 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.web.response.LocationResponse;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
-import org.motechproject.ananya.referencedata.web.response.LocationsWithStatusResponse;
+import org.motechproject.ananya.referencedata.web.response.LocationsToBeVerifiedResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class LocationResponseMapperTest {
         locationList.add(location1);
         locationList.add(location2);
 
-        LocationResponseList locationResponses = LocationResponseMapper.mapWithoutStatus(locationList);
+        LocationResponseList locationResponses = LocationResponseMapper.mapValidLocations(locationList);
 
         assertLocationResponse(location1,locationResponses.get(0));
         assertLocationResponse(location2,locationResponses.get(1));
@@ -36,10 +36,10 @@ public class LocationResponseMapperTest {
         locationList.add(location1);
         locationList.add(location2);
 
-        LocationResponseList locationResponses = LocationResponseMapper.mapWithStatus(locationList);
+        LocationResponseList locationResponses = LocationResponseMapper.mapLocationsToBeVerified(locationList);
 
-        LocationsWithStatusResponse response1 = (LocationsWithStatusResponse)locationResponses.get(0);
-        LocationsWithStatusResponse response2 = (LocationsWithStatusResponse)locationResponses.get(1);
+        LocationsToBeVerifiedResponse response1 = (LocationsToBeVerifiedResponse)locationResponses.get(0);
+        LocationsToBeVerifiedResponse response2 = (LocationsToBeVerifiedResponse)locationResponses.get(1);
         assertLocationResponse(location1, response1);
         assertEquals(location1.getStatus().getDescription(), response1.getStatus());
         assertLocationResponse(location2,response2);
