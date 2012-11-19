@@ -172,10 +172,27 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
             add(new FrontLineWorker(1234567890L, "name", Designation.ANM, location));
             add(new FrontLineWorker(1234567891L, "name", Designation.ANM, location));
         }};
-        allFrontLineWorkers.addAll(expectedFrontLineWorkers);
+        template.saveOrUpdateAll(expectedFrontLineWorkers);
 
         List<FrontLineWorker> actualFrontLineWorkers = allFrontLineWorkers.getForLocation(location);
 
         assertEquals(expectedFrontLineWorkers, actualFrontLineWorkers);
+    }
+
+    @Test
+    public void shouldGetByMsisdnWithNoStatus() {
+        final long msisdn = 1234567890L;
+        List<FrontLineWorker> flwWithStatus = new ArrayList<FrontLineWorker>() {{
+            add(new FrontLineWorker(msisdn, "name", Designation.ANM, location, UUID.randomUUID(), VerificationStatus.SUCCESS, "reason"));
+        }};
+        ArrayList<FrontLineWorker> flwWithoutStatus = new ArrayList<FrontLineWorker>() {{
+            add(new FrontLineWorker(msisdn, "name", Designation.ANM, location));
+        }};
+        template.saveOrUpdateAll(flwWithoutStatus);
+        template.saveOrUpdateAll(flwWithStatus);
+
+        List<FrontLineWorker> flwFromDb = allFrontLineWorkers.getByMsisdnWithStatus(msisdn);
+        assertEquals(1, flwFromDb.size());
+        assertEquals(flwWithStatus, flwFromDb);
     }
 }

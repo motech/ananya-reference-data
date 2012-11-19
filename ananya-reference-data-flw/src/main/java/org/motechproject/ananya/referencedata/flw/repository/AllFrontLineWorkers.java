@@ -61,4 +61,12 @@ public class AllFrontLineWorkers {
         criteria.add(Restrictions.eq("location", location));
         return (List<FrontLineWorker>) template.findByCriteria(criteria);
     }
+
+    public List<FrontLineWorker> getByMsisdnWithStatus(Long msisdn) {
+        DetachedCriteria criteria = DetachedCriteria.forClass(FrontLineWorker.class);
+        criteria.add(Restrictions.eq("msisdn", msisdn));
+        criteria.add(Restrictions.isNotNull("verificationStatus"));
+
+        return template.findByCriteria(criteria);
+    }
 }

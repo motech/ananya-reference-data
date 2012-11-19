@@ -20,7 +20,6 @@ import org.motechproject.ananya.referencedata.flw.service.SyncService;
 import java.util.*;
 
 import static junit.framework.Assert.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -86,26 +85,6 @@ public class FrontLineWorkerImportServiceTest {
         frontLineWorkerImportService.createOrUpdate(frontLineWorkerImportRequest);
 
         verifySync(frontLineWorkerImportRequest);
-    }
-
-    @Test
-    public void shouldNotInvokeSyncServiceToPushFlwChangesWhenThereIsMoreThanONeFlwWithTheSameMsisdn() {
-        String msisdn = "9999888822";
-        String prefixedMsisdn = "91" + msisdn;
-        String newName = "new name";
-        String newDesignation = "ASHA";
-        String newDistrict = "district1";
-        String newBlock = "block1";
-        String newPanchayat = "panchayat1";
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(msisdn, newName, newDesignation, new LocationRequest(newDistrict, newBlock, newPanchayat, "VALID"));
-
-        when(allLocations.getFor(newDistrict, newBlock, newPanchayat)).thenReturn(new Location(newDistrict, newBlock, newPanchayat, LocationStatus.VALID, null));
-        when(allFrontLineWorkers.getByMsisdn(Long.valueOf(prefixedMsisdn))).thenReturn(Arrays.asList(new FrontLineWorker(),new FrontLineWorker()));
-
-        frontLineWorkerImportService.createOrUpdate(frontLineWorkerImportRequest);
-
-        verify(allFrontLineWorkers).createOrUpdate(any(FrontLineWorker.class));
-        verify(syncService,never()).syncFrontLineWorker(any(FrontLineWorker.class));
     }
 
     @Test

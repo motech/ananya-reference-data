@@ -8,6 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequest;
 import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequestBuilder;
+import org.motechproject.ananya.referencedata.contactCenter.validator.FrontLineWorkerRequestValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
@@ -15,8 +16,10 @@ import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -30,25 +33,27 @@ public class FrontLineWorkerContactCenterServiceTest {
     private AllFrontLineWorkers allFrontLineWorkers;
     @Mock
     private LocationService locationService;
+    @Mock
+    private FrontLineWorkerRequestValidator requestValidator;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-
     private UUID flwId = UUID.randomUUID();
 
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerContactCenterService = new FrontLineWorkerContactCenterService(allFrontLineWorkers, locationService);
+        frontLineWorkerContactCenterService = new FrontLineWorkerContactCenterService(allFrontLineWorkers, locationService, requestValidator);
     }
 
     @Test
     public void shouldUpdateExistingFrontLineWorkerForUnsuccessfulRegistration() {
-        String msisdn = "9988776655";
+        String msisdn = "919988776655";
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
         String reason = "reason";
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, reason);
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
+        when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
         frontLineWorkerContactCenterService.updateVerifiedFlw(failedFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), reason));
 
@@ -68,6 +73,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, null);
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
+        when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
         LocationRequest locationRequest = new LocationRequest("district", "block", "panchy");
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
@@ -86,11 +92,40 @@ public class FrontLineWorkerContactCenterServiceTest {
     }
 
     @Test
+    public void shouldUpdateExistingFrontLineWorkerForDummyGuids() {
+        String msisdn = "9988776655";
+        VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), UUID.fromString("11111111-1111-1111-1111-111111111111"), verificationStatus, null);
+        FrontLineWorker frontLineWorker1 = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, null);
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
+        frontLineWorkers.add(frontLineWorker1);
+        when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(frontLineWorkers);
+        when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
+
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy");
+        Location existingLocation = LocationMapper.mapFrom(locationRequest);
+        when(locationService.handleLocation(locationRequest)).thenReturn(existingLocation);
+
+        frontLineWorkerContactCenterService.updateVerifiedFlw(successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), "name", Designation.ANM.name(), "district", "block", "panchy"));
+
+        ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
+        verify(allFrontLineWorkers).createOrUpdate(captor.capture());
+        FrontLineWorker actualFrontLineWorker = captor.getValue();
+        assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
+        assertEquals(frontLineWorker1.getFlwId(), actualFrontLineWorker.getFlwId());
+        assertEquals(existingLocation, actualFrontLineWorker.getLocation());
+        assertEquals(frontLineWorker.getMsisdn(), actualFrontLineWorker.getMsisdn());
+        assertEquals(null, actualFrontLineWorker.getReason());
+    }
+
+    @Test
     public void shouldCreateNewFLWIfFLWDoesNotExist() {
         String msisdn = "1122334455";
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
         String reason = "reason";
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
+        when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
         frontLineWorkerContactCenterService.updateVerifiedFlw(failedFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), reason));
 
@@ -106,15 +141,36 @@ public class FrontLineWorkerContactCenterServiceTest {
 
     @Test
     public void shouldThrowExceptionIfRequestHasDifferentMsisdn() {
-        Long existingMsisdn = 9988776655L;
-        String newMsisdn = "1122334455";
+        Long existingMsisdn = 919988776655L;
+        String newMsisdn = "911122334455";
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
         String reason = "reason";
         FrontLineWorker frontLineWorker = new FrontLineWorker(existingMsisdn, "", Designation.ANM, new Location(), flwId, verificationStatus, reason);
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
+        when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
         expectedException.expect(ValidationException.class);
         expectedException.expectMessage(String.format("Given msisdn %s does not match existing msisdn %s for the given id.", newMsisdn, existingMsisdn));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(failedFrontLineWorkerVerificationWebRequest(flwId.toString(), newMsisdn, verificationStatus.name(), reason));
+
+        verify(allFrontLineWorkers, never()).createOrUpdate(any(FrontLineWorker.class));
+        verify(locationService, never()).handleLocation(any(LocationRequest.class));
+    }
+
+    @Test
+    public void shouldThrowExceptionIfRequestHasValidationErrors() {
+        Long existingMsisdn = 919988776655L;
+        String newMsisdn = "911122334455";
+        VerificationStatus verificationStatus = VerificationStatus.INVALID;
+        String reason = "reason";
+        FrontLineWorker frontLineWorker = new FrontLineWorker(existingMsisdn, "", Designation.ANM, new Location(), flwId, verificationStatus, reason);
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
+        Errors errors = new Errors();
+        errors.add("some");
+        when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(errors);
+        expectedException.expect(ValidationException.class);
+        expectedException.expectMessage("some");
+
         frontLineWorkerContactCenterService.updateVerifiedFlw(failedFrontLineWorkerVerificationWebRequest(flwId.toString(), newMsisdn, verificationStatus.name(), reason));
 
         verify(allFrontLineWorkers, never()).createOrUpdate(any(FrontLineWorker.class));
