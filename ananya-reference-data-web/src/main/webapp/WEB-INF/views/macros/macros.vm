@@ -43,11 +43,6 @@
     <div class="navbar-inner">
         <div class="container-fluid">
             <a class="brand" href="admin/home">$label.topbar.app.link</a>
-            <div class="nav-collapse">
-                <ul class="nav">
-                    <li><a href="admin/home">$label.topbar.home.link</a></li>
-                </ul>
-            </div>
         </div>
     </div>
 </div>
