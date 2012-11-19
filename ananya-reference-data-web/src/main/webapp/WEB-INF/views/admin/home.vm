@@ -35,7 +35,7 @@
 
                 #if($successMessage)
                     <div class="alert alert-info">
-                        Locations Uploaded Successfully.
+                        ${successMessage}
                         <a class="close" data-dismiss="alert">x</a>
                     </div>
                 #end

@@ -53,7 +53,7 @@ public class HomeController extends BaseController {
             downloadErrorCsv(httpServletResponse, errors);
             return null;
         }
-        return new ModelAndView("admin/home").addObject("successMessage", "");
+        return new ModelAndView("admin/home").addObject("successMessage", "Locations Uploaded Successfully.");
     }
 
     private void downloadErrorCsv(HttpServletResponse httpServletResponse, byte[] errors) throws IOException {
