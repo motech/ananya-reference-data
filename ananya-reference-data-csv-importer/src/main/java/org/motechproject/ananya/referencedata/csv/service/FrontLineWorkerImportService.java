@@ -4,9 +4,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.csv.mapper.FrontLineWorkerImportMapper;
 import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportRequest;
-import org.motechproject.ananya.referencedata.csv.response.FrontLineWorkerImportResponse;
-import org.motechproject.ananya.referencedata.csv.response.FrontLineWorkerImportValidationResponse;
-import org.motechproject.ananya.referencedata.csv.validator.FrontLineWorkerImportRequestValidator;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
@@ -37,19 +34,6 @@ public class FrontLineWorkerImportService {
         this.syncService = syncService;
     }
 
-    public FrontLineWorkerImportResponse createOrUpdate(FrontLineWorkerImportRequest frontLineWorkerImportRequest) {
-        FrontLineWorkerImportResponse frontLineWorkerImportResponse = new FrontLineWorkerImportResponse();
-        LocationRequest locationRequest = frontLineWorkerImportRequest.getLocation();
-        Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
-        FrontLineWorkerImportValidationResponse frontLineWorkerImportValidationResponse = new FrontLineWorkerImportRequestValidator().validate(frontLineWorkerImportRequest, location);
-
-        if (!frontLineWorkerImportValidationResponse.isValid())
-            return frontLineWorkerImportResponse.withValidationResponse(frontLineWorkerImportValidationResponse);
-
-        saveAndSync(frontLineWorkerImportRequest, location);
-        return frontLineWorkerImportResponse.withCreatedOrUpdated();
-    }
-
     public void addAllWithoutValidations(List<FrontLineWorkerImportRequest> frontLineWorkerImportRequests) {
         List<FrontLineWorker> frontLineWorkers = new ArrayList<>();
         for (FrontLineWorkerImportRequest frontLineWorkerImportRequest : frontLineWorkerImportRequests) {
@@ -63,21 +47,6 @@ public class FrontLineWorkerImportService {
 
         saveAllFLWToDB(frontLineWorkers);
         syncService.syncAllFrontLineWorkers(frontLineWorkers);
-    }
-
-    private void saveAndSync(FrontLineWorkerImportRequest frontLineWorkerImportRequest, Location location) {
-        List<FrontLineWorker> existingFrontLineWorkers = existingFLW(frontLineWorkerImportRequest);
-        FrontLineWorker frontLineWorker = existingFrontLineWorkers.size() != 1
-                ? FrontLineWorkerImportMapper.mapToNewFlw(frontLineWorkerImportRequest, location)
-                : FrontLineWorkerImportMapper.mapToExistingFlw(existingFrontLineWorkers.get(0), frontLineWorkerImportRequest, location);
-        saveFLWToDB(frontLineWorker);
-        if (frontLineWorker.hasBeenVerified() || existingFrontLineWorkers.size() <= 1)
-            syncService.syncFrontLineWorker(frontLineWorker);
-    }
-
-    @Transactional
-    private void saveFLWToDB(FrontLineWorker frontLineWorker) {
-        allFrontLineWorkers.createOrUpdate(frontLineWorker);
     }
 
     @Transactional
