@@ -29,7 +29,7 @@ public class FrontLineWorkerSyncRequestMapperTest {
         assertEquals(msisdn.toString(), frontLineWorkerSyncRequest.getMsisdn());
         assertEquals(name, frontLineWorkerSyncRequest.getName());
         assertEquals(designation.name(), frontLineWorkerSyncRequest.getDesignation());
-        assertEquals(now.toDate(), frontLineWorkerSyncRequest.getLastModified());
+        assertEquals(now, frontLineWorkerSyncRequest.getLastModified());
 
         LocationContract locationContract = frontLineWorkerSyncRequest.getLocation();
         assertEquals(block, locationContract.getBlock());
