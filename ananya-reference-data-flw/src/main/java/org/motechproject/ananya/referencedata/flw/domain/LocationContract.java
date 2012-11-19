@@ -2,7 +2,9 @@ package org.motechproject.ananya.referencedata.flw.domain;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-public class LocationContract {
+import java.io.Serializable;
+
+public class LocationContract implements Serializable {
 
     private String district;
     private String block;
