@@ -3,7 +3,6 @@ package org.motechproject.ananya.referencedata.web.controller;
 import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
 import org.motechproject.ananya.referencedata.csv.CsvImporter;
 import org.motechproject.ananya.referencedata.web.domain.CsvUploadRequest;
-import org.motechproject.ananya.referencedata.web.exception.PopUpException;
 import org.motechproject.ananya.referencedata.web.mapper.LocationResponseMapper;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +38,7 @@ public class HomeController extends BaseController {
     @RequestMapping(method = RequestMethod.GET, value = "/admin/location/download", produces = "text/csv")
     @ResponseBody
     public LocationResponseList locationResponseList() throws IOException {
-        try {
-            return LocationResponseMapper.mapWithStatus(locationService.getLocationsToBeVerified());
-        } catch (Exception e) {
-            throw new PopUpException(e.getMessage());
-        }
+        return LocationResponseMapper.mapWithStatus(locationService.getLocationsToBeVerified());
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/admin/location/upload")

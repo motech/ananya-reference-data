@@ -7,21 +7,29 @@
     </div>
 </div>
 
+#if(${successMessage})
+    <div class="alert alert-success">
+        ${successMessage}
+        <a class="close" data-dismiss="alert">x</a>
+    </div>
+#end
+#if(${errorMessage})
+    <div class="alert alert-error">
+        ${errorMessage}
+        <a class="close" data-dismiss="alert">x</a>
+    </div>
+#end
 <div class="row-fluid">
+
     <div class="span12">
-            <fieldset>
-                <div class="control-group">
-                    <label class="control-label" for="download_location">$label.page.location.master.download</label>
 
-                    <div class="controls">
-                        <input name="download_location" id="download_location" type="button" class="input-medium" value="Download" />
-                    </div>
+        <fieldset>
+            <div class="control-group">
+                <div class="controls">
+                    <a class="btn" data-dismiss="" href="admin/location/download" name="Download Locations">Download Locations</a>
                 </div>
-            </fieldset>
-
-        <iframe id="downloadHelper" class="hidden">
-        </iframe>
-
+            </div>
+        </fieldset>
         <form method="post" action="admin/location/upload"
               enctype="multipart/form-data" modelattribute="csvUpload" class="form-horizontal">
             <fieldset>
@@ -32,13 +40,6 @@
                         <input name="upload" id="uploadAction" type="submit" class="input-medium" value="Upload">
                     </div>
                 </div>
-
-                #if($successMessage)
-                    <div class="alert alert-info">
-                        ${successMessage}
-                        <a class="close" data-dismiss="alert">x</a>
-                    </div>
-                #end
 
             </fieldset>
         </form>

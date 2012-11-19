@@ -18,11 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.motechproject.ananya.referencedata.web.utils.MVCTestUtils.mockMvc;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
@@ -54,15 +51,14 @@ public class HomeControllerTest {
         assertTrue(contentAsString.contains("d,b,p"));
     }
 
-    @Test
+    @Test(expected = Exception.class)
     public void shouldThrowExceptionOnError() throws Exception {
         when(locationService.getLocationsToBeVerified()).thenThrow(new RuntimeException("aragorn"));
 
         MvcResult mvcResult = mockMvc(homeController).perform(get("/admin/location/download"))
                 .andExpect(status().is(500)).andReturn();
-
-        assertEquals("/admin/popup-error",mvcResult.getResponse().getForwardedUrl());
     }
+
 
     @Test
     public void shouldUploadLocationsFile() throws IOException {
