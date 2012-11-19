@@ -3,8 +3,9 @@ package org.motechproject.ananya.referencedata.flw.domain;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.joda.time.DateTime;
 
-public class FrontLineWorkerSyncRequest {
+import java.io.Serializable;
 
+public class FrontLineWorkerSyncRequest implements Serializable {
     private String name;
     private String msisdn;
     private String designation;
