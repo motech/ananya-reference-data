@@ -89,14 +89,6 @@ public class FrontLineWorkerImportService {
         return allFrontLineWorkers.getByMsisdn(msisdn);
     }
 
-    private FrontLineWorker constructFrontLineWorker(FrontLineWorkerImportRequest frontLineWorkerImportRequest, Location location) {
-        List<FrontLineWorker> frontLineWorkers = existingFLW(frontLineWorkerImportRequest);
-        if (frontLineWorkers.size() != 1) {
-            return FrontLineWorkerImportMapper.mapToNewFlw(frontLineWorkerImportRequest, location);
-        }
-        return FrontLineWorkerImportMapper.mapToExistingFlw(frontLineWorkers.get(0), frontLineWorkerImportRequest, location);
-    }
-
     private FrontLineWorker constructFrontLineWorkerForBulkImport(FrontLineWorkerImportRequest frontLineWorkerRequest, Location location, List<FrontLineWorkerImportRequest> frontLineWorkerRequests) {
         List<FrontLineWorker> frontLineWorkersWithSameMsisdn = existingFLW(frontLineWorkerRequest);
         if (frontLineWorkersWithSameMsisdn.size() != 1 || hasDuplicatesInCSV(frontLineWorkerRequest, frontLineWorkerRequests)) {
