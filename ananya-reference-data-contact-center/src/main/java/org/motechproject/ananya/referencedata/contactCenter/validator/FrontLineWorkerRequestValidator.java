@@ -34,7 +34,7 @@ public class FrontLineWorkerRequestValidator {
 
     private void validateNoOtherFLWExistsWithSameMsisdnAndStatus(FrontLineWorkerVerificationRequest request, Errors errors) {
         List<FrontLineWorker> flwWithSameMsisdnAndWithSomeStatus = allFrontLineWorkers.getByMsisdnWithStatus(request.getMsisdn());
-        if (flwWithSameMsisdnAndWithSomeStatus.size() != 0)
+        if (flwWithSameMsisdnAndWithSomeStatus.size() == 1 && !flwWithSameMsisdnAndWithSomeStatus.get(0).getFlwId().equals(request.getFlwId()))
             errors.add("flw of same msisdn with status already exists");
     }
 
