@@ -1,31 +1,19 @@
 package org.motechproject.ananya.referencedata.csv;
 
 
-import org.apache.commons.io.FileUtils;
 import org.motechproject.ananya.referencedata.csv.exception.FileReadException;
 import org.motechproject.ananya.referencedata.csv.exception.InvalidArgumentException;
 import org.motechproject.ananya.referencedata.csv.exception.WrongNumberArgsException;
 import org.motechproject.importer.CSVDataImporter;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 
 @Component
 public class CsvImporter {
 
     private static final String APPLICATION_CONTEXT_XML = "applicationContext-csv-importer.xml";
-
-    public byte[] importLocation(CommonsMultipartFile file) throws IOException {
-        File tempLocationCsvFile = createTempLocationCsvFile(file);
-        importFile(tempLocationCsvFile.getPath(), ImportType.Location);
-        File errorFile = getErrorFile();
-        byte[] errors = readError(errorFile);
-        clearTempFiles(tempLocationCsvFile, errorFile);
-        return errors;
-    }
 
     public static void main(String args[]) throws Exception {
         try {
@@ -39,33 +27,6 @@ public class CsvImporter {
         } catch (Exception exception) {
             throw exception;
         }
-    }
-
-
-    private void clearTempFiles(File locationCsv, File errorFile) {
-        FileUtils.deleteQuietly(locationCsv);
-        FileUtils.deleteQuietly(errorFile);
-    }
-
-    private File createTempLocationCsvFile(CommonsMultipartFile file) throws IOException {
-        String tempLocationCsvFilePath = FileUtils.getTempDirectoryPath() + File.separator + "location.csv";
-        File locationCsv = new File(tempLocationCsvFilePath);
-        FileUtils.writeByteArrayToFile(locationCsv, file.getBytes());
-        return locationCsv;
-    }
-
-    private byte[] readError(File errorFile) {
-        try {
-            return FileUtils.readFileToByteArray(errorFile);
-        } catch (IOException e) {
-            return new byte[0];
-        }
-    }
-
-    private File getErrorFile() throws IOException {
-        String errorCsvFilePath = FileUtils.getTempDirectoryPath() + File.separator  + "errors.csv";
-        File errorsCsv = new File(errorCsvFilePath);
-        return errorsCsv;
     }
 
     private static void importFile(String filePath, ImportType importType) {

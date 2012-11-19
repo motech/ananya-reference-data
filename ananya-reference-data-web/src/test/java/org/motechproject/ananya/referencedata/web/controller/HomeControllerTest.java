@@ -6,16 +6,17 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
-import org.motechproject.ananya.referencedata.csv.CsvImporter;
+import org.motechproject.ananya.referencedata.csv.ImportType;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.web.domain.CsvUploadRequest;
+import org.motechproject.importer.model.AllCSVDataImportProcessor;
+import org.motechproject.importer.model.CSVDataImportProcessor;
 import org.springframework.test.web.server.MvcResult;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Arrays;
 
 import static junit.framework.Assert.assertEquals;
@@ -23,6 +24,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.motechproject.ananya.referencedata.web.utils.MVCTestUtils.mockMvc;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.server.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -31,13 +33,13 @@ public class HomeControllerTest {
     @Mock
     private LocationService locationService;
     @Mock
-    private CsvImporter csvImporter;
+    private AllCSVDataImportProcessor allCSVDataImportProcessor;
 
     private HomeController homeController;
 
     @Before
-    public void setup(){
-        homeController = new HomeController(locationService, csvImporter);
+    public void setup() {
+        homeController = new HomeController(locationService, allCSVDataImportProcessor);
     }
 
     @Test
@@ -62,22 +64,32 @@ public class HomeControllerTest {
         assertEquals("The system is down. Please try after sometime.",mvcResult.getModelAndView().getModelMap().get("errorMessage"));
     }
 
-
     @Test
-    public void shouldUploadLocationsFile() throws IOException {
+    public void shouldUploadLocationsFile() throws Exception {
         CommonsMultipartFile fileData = mock(CommonsMultipartFile.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         ServletOutputStream outputStream = mock(ServletOutputStream.class);
-        byte[] bytes = new byte[1];
+        CSVDataImportProcessor csvDataImportProcessor = mock(CSVDataImportProcessor.class);
         CsvUploadRequest csvFileRequest = new CsvUploadRequest(fileData);
+        String errorCsv = "response";
         when(response.getOutputStream()).thenReturn(outputStream);
-        when(csvImporter.importLocation(fileData)).thenReturn(bytes);
+        when(fileData.getBytes()).thenReturn(new byte[1]);
+        when(allCSVDataImportProcessor.get(ImportType.Location.name())).thenReturn(csvDataImportProcessor);
+        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent())).thenReturn(errorCsv);
 
         homeController.uploadLocations(csvFileRequest, response);
 
-        verify(outputStream).write(bytes);
-        verify(response).setHeader("Content-Disposition",
-                "attachment; filename=errors.csv");
+        verify(outputStream).write(errorCsv.getBytes());
+        verify(response).setHeader(eq("Content-Disposition"), matches(
+                "attachment; filename=location_upload_failures\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}.csv"));
         verify(outputStream).flush();
+    }
+
+    @Test(expected = Exception.class)
+    public void shouldThrowExceptionOnUploadError() throws Exception {
+        when(allCSVDataImportProcessor.get(ImportType.Location.name())).thenThrow(new Exception());
+
+        mockMvc(homeController).perform(post("/admin/location/upload").body(new byte[1]))
+                .andExpect(status().is(500)).andReturn();
     }
 }

@@ -2,16 +2,17 @@ package org.motechproject.ananya.referencedata.web.controller;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.joda.time.DateTime;
 import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
-import org.motechproject.ananya.referencedata.csv.CsvImporter;
+import org.motechproject.ananya.referencedata.csv.ImportType;
 import org.motechproject.ananya.referencedata.web.domain.CsvUploadRequest;
 import org.motechproject.ananya.referencedata.web.mapper.LocationResponseMapper;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
+import org.motechproject.importer.model.AllCSVDataImportProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -24,12 +25,12 @@ public class HomeController {
     private Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     private LocationService locationService;
-    private CsvImporter csvImporter;
+    private AllCSVDataImportProcessor allCSVDataImportProcessor;
 
     @Autowired
-    public HomeController(LocationService locationService, CsvImporter csvImporter) {
+    public HomeController(LocationService locationService, AllCSVDataImportProcessor allCSVDataImportProcessor) {
         this.locationService = locationService;
-        this.csvImporter = csvImporter;
+        this.allCSVDataImportProcessor = allCSVDataImportProcessor;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = {"/admin", "/admin/home"})
@@ -44,19 +45,20 @@ public class HomeController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/admin/location/upload")
-    public ModelAndView uploadLocations(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws IOException {
-        byte[] errors = csvImporter.importLocation(csvUploadRequest.getFileData());
-        if (errors.length > 0) {
-            downloadErrorCsv(httpServletResponse, errors);
+    public ModelAndView uploadLocations(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws Exception {
+        String response = allCSVDataImportProcessor.get(ImportType.Location.name()).processContent(csvUploadRequest.getStringContent());
+        if(response != null) {
+            downloadErrorCsv(httpServletResponse, response);
             return null;
         }
         return new ModelAndView("admin/home").addObject("successMessage", "Locations Uploaded Successfully.");
     }
 
-    private void downloadErrorCsv(HttpServletResponse httpServletResponse, byte[] errors) throws IOException {
-        httpServletResponse.setHeader("Content-Disposition", "attachment; filename=errors.csv");
+    private void downloadErrorCsv(HttpServletResponse httpServletResponse, String errorCsv) throws IOException {
+        String fileName = "location_upload_failures" + DateTime.now().toString("yyyy-MM-dd'T'HH:mm") + ".csv";
+        httpServletResponse.setHeader("Content-Disposition", "attachment; filename=" + fileName);
         OutputStream outputStream = httpServletResponse.getOutputStream();
-        FileCopyUtils.copy(errors, outputStream);
+        outputStream.write(errorCsv.getBytes());
         outputStream.flush();
     }
 

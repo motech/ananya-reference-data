@@ -19,4 +19,8 @@ public class CsvUploadRequest {
     public void setFileData(CommonsMultipartFile fileData) {
         this.fileData = fileData;
     }
+
+    public String getStringContent() {
+        return new String(this.fileData.getBytes());
+    }
 }
