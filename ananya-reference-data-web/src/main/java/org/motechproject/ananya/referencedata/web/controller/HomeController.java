@@ -41,7 +41,11 @@ public class HomeController {
     @RequestMapping(method = RequestMethod.GET, value = "/admin/locationsToBeVerified/download", produces = "text/csv")
     @ResponseBody
     public LocationResponseList getLocationsToBeVerified() throws IOException {
-        return LocationResponseMapper.mapLocationsToBeVerified(locationService.getLocationsToBeVerified());
+        try{
+            return LocationResponseMapper.mapLocationsToBeVerified(locationService.getLocationsToBeVerified());
+        }catch (Exception exception) {
+            throw new LocationFileDownloadException(exception);
+        }
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/admin/location/upload")
@@ -62,7 +66,7 @@ public class HomeController {
         outputStream.flush();
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(LocationFileDownloadException.class)
     @ResponseBody
     public ModelAndView handleException(final Exception exception, HttpServletResponse response) throws IOException {
         logger.error(getExceptionString(exception));
@@ -79,3 +83,4 @@ public class HomeController {
         return sb.toString();
     }
 }
+
