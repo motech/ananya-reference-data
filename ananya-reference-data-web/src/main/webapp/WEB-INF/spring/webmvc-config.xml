@@ -42,8 +42,8 @@
             <property name="useCacheControlNoStore" value="true"/>
             <property name="cacheMappings">
                 <props>
-                    <prop key="/generated/js/**">86400</prop>
-                    <prop key="/generated/js/dynamic/**">0</prop>
+                    <prop key="/js/**">86400</prop>
+                    <prop key="/css/**">86400</prop>
                     <prop key="/admin/**">0</prop>
                 </props>
             </property>

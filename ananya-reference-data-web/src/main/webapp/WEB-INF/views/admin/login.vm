@@ -1,6 +1,6 @@
 <div class="row-fluid">
     <div class="span5">
-        <form action="/ananya-reference-data/security/j_spring_security_check" name="f" method="post" class="form-horizontal">
+        <form action="admin/security/j_spring_security_check" name="f" method="post" class="form-horizontal">
             <fieldset>
                 <legend>$label.page.login.title</legend>
                 #if($error)

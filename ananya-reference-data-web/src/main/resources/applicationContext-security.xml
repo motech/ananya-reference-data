@@ -11,10 +11,10 @@
 
         <form-login login-page="/admin/login"
                     default-target-url="/admin/home"
-                    login-processing-url="/security/j_spring_security_check"
+                    login-processing-url="/admin/security/j_spring_security_check"
                     authentication-failure-url="/admin/login?login_error=t"/>
 
-        <logout logout-url="/security/j_spring_security_logout"
+        <logout logout-url="/admin/security/j_spring_security_logout"
                 invalidate-session="true"
                 logout-success-url="/admin/login"/>
 

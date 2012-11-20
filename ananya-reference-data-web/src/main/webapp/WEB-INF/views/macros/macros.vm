@@ -30,7 +30,7 @@
                     <li><a href="admin/home">$label.topbar.home.link</a></li>
                 </ul>
                 <p class="navbar-text pull-right">
-                    <a href="security/j_spring_security_logout">$label.topbar.app.logout.link</a>
+                    <a href="admin/security/j_spring_security_logout">$label.topbar.app.logout.link</a>
                 </p>
             </div>
         </div>
