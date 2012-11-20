@@ -45,7 +45,7 @@
     <div class="row-fluid">
         <div class="span12">
             <form method="post" action="admin/location/upload"
-                  enctype="multipart/form-data" modelattribute="csvUpload">
+                  enctype="multipart/form-data" modelattribute="csvUpload" id="csvUploadForm">
                 <fieldset>
                     <div class="control-group">
                         <div class="controls">
@@ -54,6 +54,8 @@
 
                         </div>
                     </div>
+
+                    <div id="spinner"></div>
 
                     <input name="upload" id="uploadAction" type="submit" class="input-medium btn-primary"
                            value="Upload"/>
