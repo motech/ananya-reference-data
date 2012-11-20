@@ -9,6 +9,7 @@ import org.motechproject.ananya.referencedata.web.domain.CsvUploadRequest;
 import org.motechproject.ananya.referencedata.web.mapper.LocationResponseMapper;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
 import org.motechproject.importer.model.AllCSVDataImportProcessor;
+import org.motechproject.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,11 @@ public class HomeController {
     @RequestMapping(method = RequestMethod.GET, value = "/admin/locationsToBeVerified/download", produces = "text/csv")
     @ResponseBody
     public LocationResponseList getLocationsToBeVerified() throws IOException {
-        return LocationResponseMapper.mapLocationsToBeVerified(locationService.getLocationsToBeVerified());
+        try {
+            return LocationResponseMapper.mapLocationsToBeVerified(locationService.getLocationsToBeVerified());
+        } catch (Exception e) {
+            throw new RuntimeException("The system is down. Please try after some time.");
+        }
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/admin/location/upload")
@@ -67,7 +72,10 @@ public class HomeController {
     public ModelAndView handleException(final Exception exception, HttpServletResponse response) throws IOException {
         logger.error(getExceptionString(exception));
         response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        return new ModelAndView("admin/home").addObject("errorMessage", "The system is down. Please try after sometime.");
+        String errorMessage = "An error has occurred";
+        if (!StringUtil.isNullOrEmpty(exception.getMessage()))
+            errorMessage += " : " + exception.getMessage();
+        return new ModelAndView("admin/home").addObject("errorMessage", errorMessage);
     }
 
     private String getExceptionString(Exception ex) {

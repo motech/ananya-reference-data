@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $('form').submit(function (event) {
         var form = $(event.target);
-        var result = true;
+        result = true;
 
         form.find('.required').each(function (index, element) {
             element = $(element);

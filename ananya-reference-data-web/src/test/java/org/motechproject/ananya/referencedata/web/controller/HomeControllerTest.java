@@ -61,7 +61,7 @@ public class HomeControllerTest {
 
         MvcResult mvcResult = mockMvc(homeController).perform(get("/admin/locationsToBeVerified/download"))
                 .andExpect(status().is(500)).andReturn();
-        assertEquals("The system is down. Please try after sometime.",mvcResult.getModelAndView().getModelMap().get("errorMessage"));
+        assertEquals("An error has occurred : The system is down. Please try after some time.",mvcResult.getModelAndView().getModelMap().get("errorMessage"));
     }
 
     @Test
@@ -89,7 +89,8 @@ public class HomeControllerTest {
     public void shouldThrowExceptionOnUploadError() throws Exception {
         when(allCSVDataImportProcessor.get(ImportType.Location.name())).thenThrow(new Exception());
 
-        mockMvc(homeController).perform(post("/admin/location/upload").body(new byte[1]))
+        MvcResult mvcResult = mockMvc(homeController).perform(post("/admin/location/upload").body(new byte[1]))
                 .andExpect(status().is(500)).andReturn();
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("An error has occurred"));
     }
 }
