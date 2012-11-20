@@ -41,17 +41,13 @@ public class HomeController {
     @RequestMapping(method = RequestMethod.GET, value = "/admin/locationsToBeVerified/download", produces = "text/csv")
     @ResponseBody
     public LocationResponseList getLocationsToBeVerified() throws IOException {
-        try{
-            return LocationResponseMapper.mapLocationsToBeVerified(locationService.getLocationsToBeVerified());
-        }catch (Exception exception) {
-            throw new LocationFileDownloadException(exception);
-        }
+        return LocationResponseMapper.mapLocationsToBeVerified(locationService.getLocationsToBeVerified());
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/admin/location/upload")
     public ModelAndView uploadLocations(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws Exception {
         String response = allCSVDataImportProcessor.get(ImportType.Location.name()).processContent(csvUploadRequest.getStringContent());
-        if(response != null) {
+        if (response != null) {
             downloadErrorCsv(httpServletResponse, response);
             return null;
         }
@@ -66,12 +62,12 @@ public class HomeController {
         outputStream.flush();
     }
 
-    @ExceptionHandler(LocationFileDownloadException.class)
+    @ExceptionHandler(Exception.class)
     @ResponseBody
     public ModelAndView handleException(final Exception exception, HttpServletResponse response) throws IOException {
         logger.error(getExceptionString(exception));
         response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        return new ModelAndView("admin/home").addObject("errorMessage","The system is down. Please try after sometime.");
+        return new ModelAndView("admin/home").addObject("errorMessage", "The system is down. Please try after sometime.");
     }
 
     private String getExceptionString(Exception ex) {
