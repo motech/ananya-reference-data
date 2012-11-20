@@ -34,7 +34,6 @@
 
     <mvc:interceptors>
         <bean class="org.motechproject.ananya.referencedata.web.interceptors.LogInterceptor"/>
-        <bean class="org.motechproject.ananya.referencedata.web.interceptors.AuthenticationInterceptor"/>
         <bean id="webContentInterceptor" class="org.springframework.web.servlet.mvc.WebContentInterceptor">
             <property name="cacheSeconds" value="86400"/>
             <property name="useExpiresHeader" value="true"/>
