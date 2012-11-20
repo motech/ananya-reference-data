@@ -22,13 +22,19 @@ public class LocationService {
         this.syncService = syncService;
     }
 
-    public Location handleLocation(LocationRequest request) {
+    public Location createAndFetch(LocationRequest request) {
         Location location = getExistingLocation(request);
         if (location == null) {
             location = LocationMapper.mapFrom(request);
             allLocations.add(location);
             syncService.syncLocation(location);
         }
+        return alternateLocation(location);
+    }
+
+    private Location alternateLocation(Location location) {
+        if (location.getStatus() == LocationStatus.INVALID)
+            return location.getAlternateLocation();
         return location;
     }
 

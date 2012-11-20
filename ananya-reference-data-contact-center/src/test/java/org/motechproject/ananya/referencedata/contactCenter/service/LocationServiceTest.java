@@ -41,9 +41,24 @@ public class LocationServiceTest {
         Location expectedLocation = new Location();
         when(allLocations.getFor(district, block, panchayat)).thenReturn(expectedLocation);
 
-        Location actualLocation = locationService.handleLocation(request);
+        Location actualLocation = locationService.createAndFetch(request);
 
         assertEquals(expectedLocation, actualLocation);
+    }
+
+    @Test
+    public void shouldMapToAlternateLocationIfLocationToMapIsInvalid(){
+        String district = "d1";
+        String block = "b1";
+        String panchayat = "p1";
+        Location alternateLocation = new Location("d2", "b2", "p2", LocationStatus.VALID, null);
+        Location locationToMap = new Location(district, block, panchayat, LocationStatus.INVALID, alternateLocation);
+        LocationRequest request = new LocationRequest(district, block, panchayat);
+        when(allLocations.getFor(district,block,panchayat)).thenReturn(locationToMap);
+
+        Location locationToBeMapped = locationService.createAndFetch(request);
+
+        assertEquals(alternateLocation,locationToBeMapped);
     }
 
     @Test
@@ -55,7 +70,7 @@ public class LocationServiceTest {
         Location expectedLocation = new Location(district, block, panchayat, LocationStatus.NOT_VERIFIED, null);
         when(allLocations.getFor(district, block, panchayat)).thenReturn(null);
 
-        Location actualLocation = locationService.handleLocation(request);
+        Location actualLocation = locationService.createAndFetch(request);
 
         verify(allLocations).add(expectedLocation);
         verify(syncService).syncLocation(expectedLocation);

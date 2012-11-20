@@ -67,7 +67,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         assertEquals(reason, actualFrontLineWorker.getReason());
         assertEquals(frontLineWorker.getFlwId(), actualFrontLineWorker.getFlwId());
         assertEquals(frontLineWorker.getMsisdn(), actualFrontLineWorker.getMsisdn());
-        verify(locationService, never()).handleLocation(any(LocationRequest.class));
+        verify(locationService, never()).createAndFetch(any(LocationRequest.class));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class FrontLineWorkerContactCenterServiceTest {
 
         LocationRequest locationRequest = new LocationRequest("district", "block", "panchy");
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
-        when(locationService.handleLocation(locationRequest)).thenReturn(existingLocation);
+        when(locationService.createAndFetch(locationRequest)).thenReturn(existingLocation);
 
         frontLineWorkerContactCenterService.updateVerifiedFlw(successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), "name", Designation.ANM.name(), "district", "block", "panchy"));
 
@@ -108,7 +108,7 @@ public class FrontLineWorkerContactCenterServiceTest {
 
         LocationRequest locationRequest = new LocationRequest("district", "block", "panchy");
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
-        when(locationService.handleLocation(locationRequest)).thenReturn(existingLocation);
+        when(locationService.createAndFetch(locationRequest)).thenReturn(existingLocation);
 
         frontLineWorkerContactCenterService.updateVerifiedFlw(successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), "name", Designation.ANM.name(), "district", "block", "panchy"));
 
@@ -140,7 +140,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         assertEquals(flwId, actualFrontLineWorker.getFlwId());
         assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
         assertEquals(reason, actualFrontLineWorker.getReason());
-        verify(locationService, never()).handleLocation(any(LocationRequest.class));
+        verify(locationService, never()).createAndFetch(any(LocationRequest.class));
         verify(syncService).syncFrontLineWorker(actualFrontLineWorker);
     }
 
@@ -159,7 +159,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         frontLineWorkerContactCenterService.updateVerifiedFlw(failedFrontLineWorkerVerificationWebRequest(flwId.toString(), newMsisdn, verificationStatus.name(), reason));
 
         verify(allFrontLineWorkers, never()).createOrUpdate(any(FrontLineWorker.class));
-        verify(locationService, never()).handleLocation(any(LocationRequest.class));
+        verify(locationService, never()).createAndFetch(any(LocationRequest.class));
     }
 
     @Test
@@ -179,7 +179,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         frontLineWorkerContactCenterService.updateVerifiedFlw(failedFrontLineWorkerVerificationWebRequest(flwId.toString(), newMsisdn, verificationStatus.name(), reason));
 
         verify(allFrontLineWorkers, never()).createOrUpdate(any(FrontLineWorker.class));
-        verify(locationService, never()).handleLocation(any(LocationRequest.class));
+        verify(locationService, never()).createAndFetch(any(LocationRequest.class));
     }
 
     private FrontLineWorkerVerificationWebRequest failedFrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String verificationStatus, String reason) {

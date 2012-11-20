@@ -52,7 +52,7 @@ public class FrontLineWorkerContactCenterService {
         FrontLineWorker frontLineWorker = getFrontLineWorker(request);
         FrontLineWorker updatedFrontLineWorker = FrontLineWorkerMapper.mapFrom(request, frontLineWorker);
         if (VerificationStatus.SUCCESS == request.getVerificationStatus()) {
-            Location location = locationService.handleLocation(request.getLocation());
+            Location location = locationService.createAndFetch(request.getLocation());
             updatedFrontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(frontLineWorker, location);
         }
         return updatedFrontLineWorker;
