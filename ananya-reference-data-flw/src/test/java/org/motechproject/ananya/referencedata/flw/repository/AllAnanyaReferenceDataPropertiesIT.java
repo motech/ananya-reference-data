@@ -17,6 +17,7 @@ public class AllAnanyaReferenceDataPropertiesIT extends SpringIntegrationTest {
 
     @Before
     public void setUp() {
+        template.deleteAll(template.loadAll(AnanyaReferenceDataProperty.class));
         template.save(new AnanyaReferenceDataProperty("syncSwitch", "on"));
         template.save(new AnanyaReferenceDataProperty("dummy", "dum"));
     }
