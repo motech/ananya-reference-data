@@ -7,13 +7,10 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 
 @Repository
-@Transactional
 public class AllLocations {
 
     @Autowired
@@ -39,10 +36,6 @@ public class AllLocations {
 
         List locationList = template.findByCriteria(criteria);
         return locationList.isEmpty() ? null : (Location) locationList.get(0);
-    }
-
-    public void addAll(Set<Location> locations) {
-        template.saveOrUpdateAll(locations);
     }
 
     public List<Location> getForStatuses(LocationStatus... statuses) {

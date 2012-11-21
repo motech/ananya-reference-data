@@ -6,13 +6,11 @@ import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
 @Repository
-@Transactional
 public class AllFrontLineWorkers {
 
     @Autowired
@@ -50,10 +48,6 @@ public class AllFrontLineWorkers {
 
         List frontLineWorkerList = template.findByCriteria(criteria);
         return frontLineWorkerList.size() == 0 ? null : (FrontLineWorker) frontLineWorkerList.get(0);
-    }
-
-    public void addAll(List<FrontLineWorker> frontLineWorkers) {
-        template.saveOrUpdateAll(frontLineWorkers);
     }
 
     public List<FrontLineWorker> getForLocation(Location location) {

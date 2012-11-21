@@ -34,6 +34,7 @@ public class FrontLineWorkerImportService {
         this.syncService = syncService;
     }
 
+    @Transactional
     public void addAllWithoutValidations(List<FrontLineWorkerImportRequest> frontLineWorkerImportRequests) {
         List<FrontLineWorker> frontLineWorkers = new ArrayList<>();
         for (FrontLineWorkerImportRequest frontLineWorkerImportRequest : frontLineWorkerImportRequests) {
@@ -49,7 +50,6 @@ public class FrontLineWorkerImportService {
         syncService.syncAllFrontLineWorkers(frontLineWorkers);
     }
 
-    @Transactional
     private void saveAllFLWToDB(List<FrontLineWorker> frontLineWorkers) {
         allFrontLineWorkers.createOrUpdateAll(frontLineWorkers);
     }

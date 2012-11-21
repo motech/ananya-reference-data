@@ -45,7 +45,7 @@ public class FrontLineWorkerServiceTest {
 
         frontLineWorkerService.updateWithAlternateLocationForFLWsWith(currentLocation);
 
-        verify(allFrontLineWorkers).addAll(captor.capture());
+        verify(allFrontLineWorkers).createOrUpdateAll(captor.capture());
         List<FrontLineWorker> actualFrontLineWorkers = captor.getValue();
         assertEquals(alternateLocation, actualFrontLineWorkers.get(0).getLocation());
     }

@@ -12,6 +12,7 @@ import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -42,6 +43,7 @@ public class FrontLineWorkerContactCenterService {
         saveAndSync(request);
     }
 
+    @Transactional
     private void saveAndSync(FrontLineWorkerVerificationRequest request) {
         FrontLineWorker updatedFrontLineWorker = constructFrontLineWorker(request);
         allFrontLineWorkers.createOrUpdate(updatedFrontLineWorker);

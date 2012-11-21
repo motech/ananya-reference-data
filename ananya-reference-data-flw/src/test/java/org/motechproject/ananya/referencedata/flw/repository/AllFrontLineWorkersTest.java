@@ -47,19 +47,6 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     }
 
     @Test
-    public void shouldAddAllFrontLineWorkers() {
-        List<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>() {{
-            add(new FrontLineWorker(UUID.randomUUID()));
-            add(new FrontLineWorker(UUID.randomUUID()));
-        }};
-
-        allFrontLineWorkers.addAll(frontLineWorkers);
-
-        List<FrontLineWorker> frontLineWorkerList = template.loadAll(FrontLineWorker.class);
-        assertEquals(2, frontLineWorkerList.size());
-    }
-
-    @Test
     public void shouldUpdateFLWToDB() {
         long msisdn = 1234567890L;
         FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);

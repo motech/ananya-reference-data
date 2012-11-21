@@ -9,9 +9,7 @@ import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static junit.framework.Assert.*;
 
@@ -25,19 +23,6 @@ public class AllLocationsTest extends SpringIntegrationTest {
     public void setUp() {
         template.deleteAll(template.loadAll(Location.class));
     }
-
-    @Test
-    public void shouldAddLocationToDB() {
-        Location location = new Location("district", "block", "panchayat", LocationStatus.NOT_VERIFIED, null);
-
-        allLocations.add(location);
-
-        List<Location> locations = template.loadAll(Location.class);
-        assertEquals(1, locations.size());
-        assertTrue(location.equals(locations.get(0)));
-        assertNotNull(locations.get(0).getLastModified());
-    }
-
 
     @Test
     public void shouldReturnLocationWhenLocationForGivenLocationDetailsExists() {
@@ -63,24 +48,6 @@ public class AllLocationsTest extends SpringIntegrationTest {
 
         Location locationFromDB = allLocations.getFor("DistRict", "BLOCK", "panchayat");
         assertNotNull(locationFromDB);
-    }
-
-    @Test
-    public void shouldAddMultipleLocations() {
-        String district = "district";
-        String district1 = "district1";
-        String block = "block";
-        String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat, LocationStatus.NOT_VERIFIED, null);
-        Location location1 = new Location(district1, block, panchayat, LocationStatus.VALID, null);
-        Set<Location> locations = new HashSet<Location>();
-        locations.add(location);
-        locations.add(location1);
-
-        allLocations.addAll(locations);
-
-        List<Location> locationsFromDb = template.loadAll(Location.class);
-        assertEquals(2, locationsFromDb.size());
     }
 
     @Test

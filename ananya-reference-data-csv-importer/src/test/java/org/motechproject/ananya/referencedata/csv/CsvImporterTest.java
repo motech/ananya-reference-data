@@ -2,6 +2,7 @@ package org.motechproject.ananya.referencedata.csv;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.motechproject.ananya.referencedata.csv.exception.FileReadException;
 import org.motechproject.ananya.referencedata.csv.exception.InvalidArgumentException;
@@ -25,6 +26,7 @@ public class CsvImporterTest extends SpringIntegrationTest {
     }
 
     @Test
+    @Ignore
     public void shouldImportLocationData() throws Exception {
         Location location1 = new Location("D2", "B2", "P2", LocationStatus.NOT_VERIFIED, null);
         Location location2 = new Location("D2", "B2", "P4", LocationStatus.NOT_VERIFIED, null);
@@ -59,6 +61,7 @@ public class CsvImporterTest extends SpringIntegrationTest {
     }
 
     @Test
+    @Ignore
     public void shouldImportFlwData() throws Exception {
         Location location = new Location("D1", "B1", "P1", LocationStatus.VALID, null);
         template.save(location);

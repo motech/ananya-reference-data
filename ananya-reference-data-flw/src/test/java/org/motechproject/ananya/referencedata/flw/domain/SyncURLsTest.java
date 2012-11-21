@@ -13,9 +13,13 @@ public class SyncURLsTest {
     @Test
     public void shouldReturnFlwSyncEndpointUrl() {
         Properties clientServicesProperties = new Properties();
-        clientServicesProperties.setProperty("front.line.worker.sync.url", "myUrl");
+        clientServicesProperties.setProperty("front.line.worker.sync.url.flw", "myUrl");
         SyncURLs syncURLs = new SyncURLs(clientServicesProperties);
-        assertEquals("myUrl", syncURLs.getFlwSyncEndpointUrl());
+
+        List<String> flwSyncEndpointUrls = syncURLs.getFlwSyncEndpointUrls();
+
+        assertEquals(1, flwSyncEndpointUrls.size());
+        assertEquals("myUrl", flwSyncEndpointUrls.get(0));
     }
 
     @Test
@@ -27,9 +31,10 @@ public class SyncURLsTest {
         clientServicesProperties.setProperty("location.sync.url", "myUrl4");
         clientServicesProperties.setProperty("location.sync.url.three.four", "myUrl5");
         clientServicesProperties.setProperty("location.sync.five", "myUrl6");
-
         SyncURLs syncURLs = new SyncURLs(clientServicesProperties);
+
         List<String> urls = syncURLs.getLocationSyncEndpointUrls();
+
         assertEquals(4, urls.size());
         assertTrue(urls.contains("myUrl1"));
         assertTrue(urls.contains("myUrl2"));
