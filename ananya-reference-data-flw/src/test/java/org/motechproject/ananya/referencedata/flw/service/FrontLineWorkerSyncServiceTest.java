@@ -42,13 +42,18 @@ public class FrontLineWorkerSyncServiceTest {
         List<FrontLineWorker> frontLineWorkers = new ArrayList();
         frontLineWorkers.add(frontLineWorker);
         String url = "url";
-        when(syncURLs.getFlwSyncEndpointUrl()).thenReturn(url);
+        String url1 = "url1";
+        ArrayList<String> flwSyncUrls = new ArrayList<>();
+        flwSyncUrls.add(url);
+        flwSyncUrls.add(url1);
+        when(syncURLs.getFlwSyncEndpointUrls()).thenReturn(flwSyncUrls);
         when(allFrontLineWorkers.getByMsisdn(msisdn)).thenReturn(frontLineWorkers);
 
         frontLineWorkerSyncService.sync(frontLineWorkers);
 
         FrontLineWorkerSyncRequest frontLineWorkerSyncRequest = FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker);
         verify(httpClientService).post(url, frontLineWorkerSyncRequest);
+        verify(httpClientService).post(url1, frontLineWorkerSyncRequest);
     }
 
     @Test
@@ -64,7 +69,9 @@ public class FrontLineWorkerSyncServiceTest {
         frontLineWorkers.add(frontLineWorker1);
         frontLineWorkers.add(frontLineWorker2);
         String url = "url";
-        when(syncURLs.getFlwSyncEndpointUrl()).thenReturn(url);
+        ArrayList<String> flwSyncUrls = new ArrayList<>();
+        flwSyncUrls.add(url);
+        when(syncURLs.getFlwSyncEndpointUrls()).thenReturn(flwSyncUrls);
         when(allFrontLineWorkers.getByMsisdn(msisdn)).thenReturn(frontLineWorkers);
 
         frontLineWorkerSyncService.sync(frontLineWorkers);
@@ -85,7 +92,9 @@ public class FrontLineWorkerSyncServiceTest {
         frontLineWorkers.add(frontLineWorker1);
         frontLineWorkers.add(frontLineWorker2);
         String url = "url";
-        when(syncURLs.getFlwSyncEndpointUrl()).thenReturn(url);
+        ArrayList<String> flwSyncUrls = new ArrayList<>();
+        flwSyncUrls.add(url);
+        when(syncURLs.getFlwSyncEndpointUrls()).thenReturn(flwSyncUrls);
         when(allFrontLineWorkers.getByMsisdn(msisdn)).thenReturn(frontLineWorkers);
 
         frontLineWorkerSyncService.sync(frontLineWorkers);

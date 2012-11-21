@@ -13,7 +13,7 @@ public class SyncURLsTest {
     @Test
     public void shouldReturnFlwSyncEndpointUrl() {
         Properties clientServicesProperties = new Properties();
-        clientServicesProperties.setProperty("front.line.worker.create.url", "myUrl");
+        clientServicesProperties.setProperty("front.line.worker.sync.url", "myUrl");
         SyncURLs syncURLs = new SyncURLs(clientServicesProperties);
         assertEquals("myUrl", syncURLs.getFlwSyncEndpointUrl());
     }

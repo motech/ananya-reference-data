@@ -28,9 +28,11 @@ public class FrontLineWorkerSyncService {
     public void sync(List<FrontLineWorker> frontLineWorkerList) {
         for (FrontLineWorker frontLineWorker : frontLineWorkerList) {
             logger.info("Raising event to sync for flw: " + frontLineWorker.toString());
-            if (frontLineWorker.hasBeenVerified() || allFrontLineWorkers.getByMsisdn(frontLineWorker.getMsisdn()).size() == 1)
-                httpClientService.post(syncURLs.getFlwSyncEndpointUrl(),
-                        FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker));
+            if (frontLineWorker.hasBeenVerified() || allFrontLineWorkers.getByMsisdn(frontLineWorker.getMsisdn()).size() == 1) {
+                List<String> flwSyncEndpointUrls = syncURLs.getFlwSyncEndpointUrls();
+                for (String flwSyncUrl : flwSyncEndpointUrls)
+                    httpClientService.post(flwSyncUrl, FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker));
+            }
         }
     }
 }

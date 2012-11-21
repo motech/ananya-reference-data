@@ -10,24 +10,33 @@ import java.util.Properties;
 
 @Component
 public class SyncURLs {
-    private static final String FLW_SYNC_ENDPOINT_URL_PROPERTY = "front.line.worker.create.url";
+    private static final String FLW_SYNC_ENDPOINT_URL_PROPERTY_PREFIX = "front.line.worker.sync.url";
     private static final  String LOCATION_SYNC_ENDPOINT_URL_PROPERTY_PREFIX = "location.sync.url.";
 
-    private String flwSyncEndpointUrl;
+    private List<String> flwSyncEndpointUrls;
     private List<String> locationSyncEndpointUrls;
 
     @Autowired
     public SyncURLs(@Qualifier("clientServicesProperties") Properties clientServicesProperties) {
-        flwSyncEndpointUrl = clientServicesProperties.getProperty(FLW_SYNC_ENDPOINT_URL_PROPERTY);
+        parseFLWSyncUrls(clientServicesProperties);
         parseLocationSyncUrls(clientServicesProperties);
     }
 
-    public String getFlwSyncEndpointUrl() {
-        return flwSyncEndpointUrl;
+    public List<String> getFlwSyncEndpointUrls() {
+        return flwSyncEndpointUrls;
     }
 
     public List<String> getLocationSyncEndpointUrls() {
         return locationSyncEndpointUrls;
+    }
+
+    private void parseFLWSyncUrls(Properties clientServicesProperties) {
+        flwSyncEndpointUrls = new ArrayList<>();
+        for(String propertyName: clientServicesProperties.stringPropertyNames()){
+            if(propertyName.startsWith(FLW_SYNC_ENDPOINT_URL_PROPERTY_PREFIX)) {
+                flwSyncEndpointUrls.add(clientServicesProperties.getProperty(propertyName));
+            }
+        }
     }
 
     private void parseLocationSyncUrls(Properties clientServicesProperties) {
