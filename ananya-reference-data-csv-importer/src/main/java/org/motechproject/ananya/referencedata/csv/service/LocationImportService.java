@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -50,94 +51,95 @@ public class LocationImportService {
 
     private void processNewLocationRequests(List<LocationImportCSVRequest> locationImportCSVRequests) {
         CollectionUtils.forAllDo(locationImportCSVRequests,
-                new Predicate() {
-                    @Override
-                    public boolean evaluate(Object object) {
-                        LocationImportCSVRequest csvRequest = (LocationImportCSVRequest) object;
+                hasStatus(Arrays.asList(LocationStatus.NEW)), new Closure() {
+            @Override
+            public void execute(Object input) {
+                LocationImportCSVRequest CSVRequest = (LocationImportCSVRequest) input;
 
-                        LocationStatus status = LocationStatus.from(csvRequest.getStatus());
-                        return status == LocationStatus.NEW;
-                    }
-                }, new Closure() {
-                    @Override
-                    public void execute(Object input) {
-                        LocationImportCSVRequest CSVRequest = (LocationImportCSVRequest) input;
-
-                        Location location = new Location(
-                                CSVRequest.getDistrict(),
-                                CSVRequest.getBlock(),
-                                CSVRequest.getPanchayat(),
-                                LocationStatus.VALID,
-                                null);
-                        allLocations.add(location);
-                        syncService.syncLocation(location);
-                    }
-                }
+                Location location = new Location(
+                        CSVRequest.getDistrict(),
+                        CSVRequest.getBlock(),
+                        CSVRequest.getPanchayat(),
+                        LocationStatus.VALID,
+                        null);
+                allLocations.add(location);
+                syncService.syncLocation(location);
+            }
+        }
         );
     }
 
     private void processValidAndInReviewLocationsRequests(List<LocationImportCSVRequest> locationImportCSVRequests) {
         CollectionUtils.forAllDo(locationImportCSVRequests,
-                new Predicate() {
-                    @Override
-                    public boolean evaluate(Object object) {
-                        LocationImportCSVRequest csvRequest = (LocationImportCSVRequest) object;
+                hasStatus(Arrays.asList(LocationStatus.VALID, LocationStatus.IN_REVIEW)), new Closure() {
+            @Override
+            public void execute(Object input) {
+                LocationImportCSVRequest csvRequest = (LocationImportCSVRequest) input;
 
-                        LocationStatus status = LocationStatus.from(csvRequest.getStatus());
-                        return status.isValidOrInReviewStatus();
-                    }
-                }, new Closure() {
-                    @Override
-                    public void execute(Object input) {
-                        LocationImportCSVRequest csvRequest = (LocationImportCSVRequest) input;
+                Location existingLocationInDB = allLocations.getFor(
+                        csvRequest.getDistrict(),
+                        csvRequest.getBlock(),
+                        csvRequest.getPanchayat()
+                );
 
-                        Location validLocationFromDb = allLocations.getFor(
-                                csvRequest.getDistrict(),
-                                csvRequest.getBlock(),
-                                csvRequest.getPanchayat()
-                        );
-                        validLocationFromDb.setStatus(LocationStatus.from(csvRequest.getStatus()));
-                        allLocations.update(validLocationFromDb);
-                        syncService.syncLocation(validLocationFromDb);
-                    }
-                }
+                if (doesIdenticalLocationExistsInDB(csvRequest, existingLocationInDB, null)) return;
+
+                existingLocationInDB.setStatus(LocationStatus.from(csvRequest.getStatus()));
+                allLocations.update(existingLocationInDB);
+                syncService.syncLocation(existingLocationInDB);
+            }
+        }
         );
     }
 
-    private void processInvalidatingLocationRequests(List<LocationImportCSVRequest> locationImportCSVRequests) {
+       private void processInvalidatingLocationRequests(List<LocationImportCSVRequest> locationImportCSVRequests) {
         CollectionUtils.forAllDo(locationImportCSVRequests,
-                new Predicate() {
-                    @Override
-                    public boolean evaluate(Object object) {
-                        LocationImportCSVRequest CSVRequest = (LocationImportCSVRequest) object;
+                hasStatus(Arrays.asList(LocationStatus.INVALID)), new Closure() {
+            @Override
+            public void execute(Object input) {
+                LocationImportCSVRequest csvRequest = (LocationImportCSVRequest) input;
 
-                        LocationStatus status = LocationStatus.from(CSVRequest.getStatus());
-                        return status == LocationStatus.INVALID;
-                    }
-                }, new Closure() {
-                    @Override
-                    public void execute(Object input) {
-                        LocationImportCSVRequest CSVRequest = (LocationImportCSVRequest) input;
 
-                        Location invalidLocationFromDb = allLocations.getFor(
-                                CSVRequest.getDistrict(),
-                                CSVRequest.getBlock(),
-                                CSVRequest.getPanchayat()
-                        );
-                        Location validLocationFromDb = allLocations.getFor(
-                                CSVRequest.getNewDistrict(),
-                                CSVRequest.getNewBlock(),
-                                CSVRequest.getNewPanchayat()
-                        );
+                Location invalidLocationFromDb = allLocations.getFor(
+                        csvRequest.getDistrict(),
+                        csvRequest.getBlock(),
+                        csvRequest.getPanchayat()
+                );
+                Location validLocationFromDb = allLocations.getFor(
+                        csvRequest.getNewDistrict(),
+                        csvRequest.getNewBlock(),
+                        csvRequest.getNewPanchayat()
+                );
 
-                        invalidLocationFromDb.setStatus(LocationStatus.from(CSVRequest.getStatus()));
-                        invalidLocationFromDb.setAlternateLocation(validLocationFromDb);
-                        allLocations.update(invalidLocationFromDb);
+                if(doesIdenticalLocationExistsInDB(csvRequest, invalidLocationFromDb,validLocationFromDb)) return;
 
-                        frontLineWorkerService.updateWithAlternateLocationForFLWsWith(invalidLocationFromDb);
-                        syncService.syncLocation(invalidLocationFromDb);
-                    }
-                }
+                invalidLocationFromDb.setStatus(LocationStatus.from(csvRequest.getStatus()));
+                invalidLocationFromDb.setAlternateLocation(validLocationFromDb);
+                allLocations.update(invalidLocationFromDb);
+
+                frontLineWorkerService.updateWithAlternateLocationForFLWsWith(invalidLocationFromDb);
+                syncService.syncLocation(invalidLocationFromDb);
+            }
+        }
         );
+    }
+
+    private boolean doesIdenticalLocationExistsInDB(LocationImportCSVRequest csvRequest, Location existingLocationInDb, Location alternateLocationInDb) {
+        Location locationFromCSV = new Location(csvRequest.getDistrict(), csvRequest.getBlock(), csvRequest.getPanchayat(), csvRequest.getStatusEnum(), alternateLocationInDb);
+        if (locationFromCSV.equals(existingLocationInDb)) return true;
+        return false;
+    }
+
+
+
+    private Predicate hasStatus(final List<LocationStatus> statuses) {
+        return new Predicate() {
+            @Override
+            public boolean evaluate(Object object) {
+                LocationImportCSVRequest csvRequest = (LocationImportCSVRequest) object;
+
+                return statuses.contains(LocationStatus.from(csvRequest.getStatus()));
+            }
+        };
     }
 }
