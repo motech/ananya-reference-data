@@ -12,25 +12,25 @@ import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers
 import org.motechproject.http.client.service.HttpClientService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FrontLineWorkerSyncServiceTest {
     @Mock
     private HttpClientService httpClientService;
     @Mock
-    private SyncURLs syncURLs;
+    private SyncEndpointService syncEndpointService;
     @Mock
     private AllFrontLineWorkers allFrontLineWorkers;
     private FrontLineWorkerSyncService frontLineWorkerSyncService;
 
     @Before
     public void setUp() {
-        frontLineWorkerSyncService = new FrontLineWorkerSyncService(httpClientService, syncURLs, allFrontLineWorkers);
+        frontLineWorkerSyncService = new FrontLineWorkerSyncService(httpClientService, syncEndpointService, allFrontLineWorkers);
     }
 
     @Test
@@ -41,19 +41,27 @@ public class FrontLineWorkerSyncServiceTest {
         frontLineWorker.setLastModified(DateTime.now());
         List<FrontLineWorker> frontLineWorkers = new ArrayList();
         frontLineWorkers.add(frontLineWorker);
-        String url = "url";
         String url1 = "url1";
-        ArrayList<String> flwSyncUrls = new ArrayList<>();
-        flwSyncUrls.add(url);
-        flwSyncUrls.add(url1);
-        when(syncURLs.getFlwSyncEndpointUrls()).thenReturn(flwSyncUrls);
+        String url2 = "url2";
+        ArrayList<SyncEndpoint> flwSyncUrls = new ArrayList<>();
+        String apiKey1 = "someAPIKey1";
+        String apiKey2 = "someAPIkey2";
+        flwSyncUrls.add(new SyncEndpoint(url1, apiKey1));
+        flwSyncUrls.add(new SyncEndpoint(url2, apiKey2));
+        Map<String, String> headers1 = new HashMap<>();
+        headers1.put(SyncEndpoint.API_KEY, apiKey1);
+        Map<String, String> headers2 = new HashMap<>();
+        headers2.put(SyncEndpoint.API_KEY, apiKey2);
+
+
+        when(syncEndpointService.getFlwSyncEndpoints()).thenReturn(flwSyncUrls);
         when(allFrontLineWorkers.getByMsisdn(msisdn)).thenReturn(frontLineWorkers);
 
         frontLineWorkerSyncService.sync(frontLineWorkers);
 
         FrontLineWorkerSyncRequest frontLineWorkerSyncRequest = FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker);
-        verify(httpClientService).post(url, frontLineWorkerSyncRequest);
-        verify(httpClientService).post(url1, frontLineWorkerSyncRequest);
+        verify(httpClientService).post(flwSyncUrls.get(0).getUrl(), frontLineWorkerSyncRequest, headers1);
+        verify(httpClientService).post(flwSyncUrls.get(1).getUrl(), frontLineWorkerSyncRequest, headers2);
     }
 
     @Test
@@ -63,21 +71,23 @@ public class FrontLineWorkerSyncServiceTest {
         FrontLineWorker frontLineWorker1 = new FrontLineWorker(msisdn, "name", Designation.ANM, location);
         frontLineWorker1.setVerificationStatus(VerificationStatus.SUCCESS);
         FrontLineWorker frontLineWorker2 = new FrontLineWorker(msisdn, "name", Designation.ANM, location);
-
+        Map<String, String> headers = new HashMap<>();
+        String apiKey = "someAPIKey";
+        headers.put(SyncEndpoint.API_KEY, apiKey);
         frontLineWorker1.setLastModified(DateTime.now());
         List<FrontLineWorker> frontLineWorkers = new ArrayList();
         frontLineWorkers.add(frontLineWorker1);
         frontLineWorkers.add(frontLineWorker2);
-        String url = "url";
-        ArrayList<String> flwSyncUrls = new ArrayList<>();
-        flwSyncUrls.add(url);
-        when(syncURLs.getFlwSyncEndpointUrls()).thenReturn(flwSyncUrls);
+        SyncEndpoint syncEndpoint = new SyncEndpoint("url", apiKey);
+        ArrayList<SyncEndpoint> flwSyncUrls = new ArrayList<>();
+        flwSyncUrls.add(syncEndpoint);
+        when(syncEndpointService.getFlwSyncEndpoints()).thenReturn(flwSyncUrls);
         when(allFrontLineWorkers.getByMsisdn(msisdn)).thenReturn(frontLineWorkers);
 
         frontLineWorkerSyncService.sync(frontLineWorkers);
 
         FrontLineWorkerSyncRequest frontLineWorkerSyncRequest = FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker1);
-        verify(httpClientService).post(url, frontLineWorkerSyncRequest);
+        verify(httpClientService).post(syncEndpoint.getUrl(), frontLineWorkerSyncRequest, headers);
     }
 
     @Test
@@ -91,15 +101,15 @@ public class FrontLineWorkerSyncServiceTest {
         List<FrontLineWorker> frontLineWorkers = new ArrayList();
         frontLineWorkers.add(frontLineWorker1);
         frontLineWorkers.add(frontLineWorker2);
-        String url = "url";
-        ArrayList<String> flwSyncUrls = new ArrayList<>();
-        flwSyncUrls.add(url);
-        when(syncURLs.getFlwSyncEndpointUrls()).thenReturn(flwSyncUrls);
+        SyncEndpoint syncEndpoint = new SyncEndpoint("url", "apiKey");
+        ArrayList<SyncEndpoint> flwSyncUrls = new ArrayList<>();
+        flwSyncUrls.add(syncEndpoint);
+        when(syncEndpointService.getFlwSyncEndpoints()).thenReturn(flwSyncUrls);
         when(allFrontLineWorkers.getByMsisdn(msisdn)).thenReturn(frontLineWorkers);
 
         frontLineWorkerSyncService.sync(frontLineWorkers);
 
         FrontLineWorkerSyncRequest frontLineWorkerSyncRequest = FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker1);
-        verify(httpClientService,times(0)).post(url, frontLineWorkerSyncRequest);
+        verify(httpClientService, times(0)).post(syncEndpoint.getUrl(), frontLineWorkerSyncRequest);
     }
 }

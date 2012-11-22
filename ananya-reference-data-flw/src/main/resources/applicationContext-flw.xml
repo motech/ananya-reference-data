@@ -8,6 +8,7 @@
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
     <util:properties id="clientServicesProperties" location="classpath:/clientServices.properties"/>
+    <util:properties id="apiKeysProperties" location="classpath:/apiKeys.properties"/>
     <util:properties id="referenceDataProperties" location="classpath:/referencedata.properties"/>
 
     <context:property-placeholder location="classpath*:*.properties"/>

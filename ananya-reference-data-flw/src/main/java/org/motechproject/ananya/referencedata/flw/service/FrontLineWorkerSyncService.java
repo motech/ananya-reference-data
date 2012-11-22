@@ -2,26 +2,28 @@ package org.motechproject.ananya.referencedata.flw.service;
 
 import org.apache.log4j.Logger;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
-import org.motechproject.ananya.referencedata.flw.domain.SyncURLs;
+import org.motechproject.ananya.referencedata.flw.domain.SyncEndpoint;
+import org.motechproject.ananya.referencedata.flw.domain.SyncEndpointService;
 import org.motechproject.ananya.referencedata.flw.mapper.FrontLineWorkerSyncRequestMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.http.client.service.HttpClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Service
 public class FrontLineWorkerSyncService {
     private HttpClientService httpClientService;
-    private SyncURLs syncURLs;
+    private SyncEndpointService syncEndpointService;
     private AllFrontLineWorkers allFrontLineWorkers;
     Logger logger = Logger.getLogger(FrontLineWorkerSyncService.class);
 
     @Autowired
-    public FrontLineWorkerSyncService(HttpClientService httpClientService, SyncURLs syncURLs, AllFrontLineWorkers allFrontLineWorkers) {
+    public FrontLineWorkerSyncService(HttpClientService httpClientService, SyncEndpointService syncEndpointService, AllFrontLineWorkers allFrontLineWorkers) {
         this.httpClientService = httpClientService;
-        this.syncURLs = syncURLs;
+        this.syncEndpointService = syncEndpointService;
         this.allFrontLineWorkers = allFrontLineWorkers;
     }
 
@@ -29,9 +31,12 @@ public class FrontLineWorkerSyncService {
         for (FrontLineWorker frontLineWorker : frontLineWorkerList) {
             logger.info("Raising event to sync for flw: " + frontLineWorker.toString());
             if (frontLineWorker.hasBeenVerified() || allFrontLineWorkers.getByMsisdn(frontLineWorker.getMsisdn()).size() == 1) {
-                List<String> flwSyncEndpointUrls = syncURLs.getFlwSyncEndpointUrls();
-                for (String flwSyncUrl : flwSyncEndpointUrls)
-                    httpClientService.post(flwSyncUrl, FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker));
+                List<SyncEndpoint> flwSyncEndpoints = syncEndpointService.getFlwSyncEndpoints();
+                for (SyncEndpoint flwSyncEndpoint : flwSyncEndpoints) {
+                    HashMap<String, String> headers = new HashMap<>();
+                    headers.put(SyncEndpoint.API_KEY, flwSyncEndpoint.getApiKey());
+                    httpClientService.post(flwSyncEndpoint.getUrl(), FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker), headers);
+                }
             }
         }
     }

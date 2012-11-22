@@ -1,0 +1,41 @@
+package org.motechproject.ananya.referencedata.flw.domain;
+
+import org.junit.Test;
+
+import java.util.List;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+
+public class SyncEndpointServiceTest {
+
+    @Test
+    public void shouldReturnFlwSyncEndpointUrl() {
+        Properties clientServicesProperties = new Properties();
+        Properties apiKeysProperties = new Properties();
+        clientServicesProperties.setProperty("front.line.worker.sync.url.flw", "myUrl");
+        apiKeysProperties.setProperty("api.key.flw", "1234");
+        SyncEndpointService syncEndpointService = new SyncEndpointService(clientServicesProperties, apiKeysProperties);
+
+        List<SyncEndpoint> flwSyncEndpointUrls = syncEndpointService.getFlwSyncEndpoints();
+
+        assertEquals(1, flwSyncEndpointUrls.size());
+        assertEquals("myUrl", flwSyncEndpointUrls.get(0).getUrl());
+        assertEquals("1234", flwSyncEndpointUrls.get(0).getApiKey());
+    }
+
+    @Test
+    public void shouldReturnLocationSyncEndpointUrls() {
+        Properties clientServicesProperties = new Properties();
+        Properties apiKeysProperties = new Properties();
+        clientServicesProperties.setProperty("location.sync.url.one", "myUrl1");
+        apiKeysProperties.setProperty("api.key.one", "1234");
+        SyncEndpointService syncEndpointService = new SyncEndpointService(clientServicesProperties, apiKeysProperties);
+
+        List<SyncEndpoint> urls = syncEndpointService.getLocationSyncEndpoints();
+
+        assertEquals(1, urls.size());
+        assertEquals("myUrl1", urls.get(0).getUrl());
+        assertEquals("1234", urls.get(0).getApiKey());
+    }
+}
