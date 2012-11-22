@@ -45,6 +45,7 @@ public class HomeController {
         try {
             return LocationResponseMapper.mapLocationsToBeVerified(locationService.getLocationsToBeVerified());
         } catch (Exception e) {
+            logger.error(getExceptionString(e));
             throw new RuntimeException("The system is down. Please try after some time.");
         }
     }
