@@ -102,7 +102,6 @@ public class FrontLineWorkerContactCenterServiceTest {
     public void shouldUpdateExistingFrontLineWorkerForDummyGuids() {
         String msisdn = "9988776655";
         VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), UUID.fromString("11111111-1111-1111-1111-111111111111"), verificationStatus, null);
         FrontLineWorker frontLineWorker1 = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, null);
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
@@ -114,7 +113,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
         when(locationService.createAndFetch(locationRequest)).thenReturn(existingLocation);
 
-        frontLineWorkerContactCenterService.updateVerifiedFlw(successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), "name", Designation.ANM.name(), "district", "block", "panchy"));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(successfulFrontLineWorkerVerificationWebRequest(UUID.fromString("11111111-1111-1111-1111-111111111111").toString(), msisdn, verificationStatus.name(), "name", Designation.ANM.name(), "district", "block", "panchy"));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
@@ -122,7 +121,37 @@ public class FrontLineWorkerContactCenterServiceTest {
         assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
         assertEquals(frontLineWorker1.getFlwId(), actualFrontLineWorker.getFlwId());
         assertEquals(existingLocation, actualFrontLineWorker.getLocation());
-        assertEquals(frontLineWorker.getMsisdn(), actualFrontLineWorker.getMsisdn());
+        assertEquals(Long.valueOf(msisdn), actualFrontLineWorker.getMsisdn());
+        assertEquals(null, actualFrontLineWorker.getReason());
+        verify(syncService).syncFrontLineWorker(actualFrontLineWorker);
+    }
+
+    @Test
+    public void shouldUpdateExistingFrontLineWorkerWithStatusWhenThereAreMultipleFlwForDummyGuids() {
+        String msisdn = "9988776655";
+        VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
+        FrontLineWorker frontLineWorkerWithStatus = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, null);
+        FrontLineWorker frontLineWorkerWithoutStatus = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location());
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<>();
+        frontLineWorkers.add(frontLineWorkerWithStatus);
+        frontLineWorkers.add(frontLineWorkerWithoutStatus);
+        when(allFrontLineWorkers.getByMsisdn(Long.valueOf(msisdn))).thenReturn(frontLineWorkers);
+        when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
+
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy");
+        Location existingLocation = LocationMapper.mapFrom(locationRequest);
+        when(locationService.createAndFetch(locationRequest)).thenReturn(existingLocation);
+
+        frontLineWorkerContactCenterService.updateVerifiedFlw(successfulFrontLineWorkerVerificationWebRequest(UUID.fromString("11111111-1111-1111-1111-111111111111").toString(), msisdn, verificationStatus.name(), "name", Designation.ANM.name(), "district", "block", "panchy"));
+
+        ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
+        verify(allFrontLineWorkers).createOrUpdate(captor.capture());
+        FrontLineWorker actualFrontLineWorker = captor.getValue();
+        assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
+        assertEquals(frontLineWorkerWithStatus.getFlwId(), actualFrontLineWorker.getFlwId());
+        assertEquals(existingLocation, actualFrontLineWorker.getLocation());
+        assertEquals(Long.valueOf(msisdn), actualFrontLineWorker.getMsisdn());
         assertEquals(null, actualFrontLineWorker.getReason());
         verify(syncService).syncFrontLineWorker(actualFrontLineWorker);
     }

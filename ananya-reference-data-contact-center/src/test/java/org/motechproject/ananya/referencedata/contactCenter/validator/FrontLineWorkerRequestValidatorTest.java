@@ -58,6 +58,23 @@ public class FrontLineWorkerRequestValidatorTest {
     }
 
     @Test
+    public void shouldNotThrowValidationExceptionIfGuidIsDifferentButIncomingGuidIsDummy() {
+        final UUID flwId = UUID.randomUUID();
+        final Long msisdn = 911234567890L;
+        final String name = "name";
+        final Designation anm = Designation.ANM;
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>() {{
+            add(new FrontLineWorker(msisdn, name, anm, new Location(), flwId, VerificationStatus.INVALID, null));
+        }};
+        when(allFrontLineWorkers.getByMsisdnWithStatus(msisdn)).thenReturn(frontLineWorkers);
+        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.fromString("11111111-1111-1111-1111-111111111111"), PhoneNumber.formatPhoneNumber(msisdn.toString()), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("D1", "B1", "P1"), null);
+
+        Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
+
+        assertEquals(0, errors.getCount());
+    }
+
+    @Test
     public void shouldInvalidateSuccessRequestIfNameIsInvalid() {
         FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber("9900504646"), VerificationStatus.SUCCESS, "कुछ", Designation.ASHA, new LocationRequest("district", "block", "panchayat"), null);
         Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);

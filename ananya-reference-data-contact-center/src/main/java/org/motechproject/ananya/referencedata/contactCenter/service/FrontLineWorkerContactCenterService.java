@@ -69,13 +69,31 @@ public class FrontLineWorkerContactCenterService {
         UUID flwId = request.getFlwId();
         FrontLineWorker frontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
         if (request.isDummyFlwId()) {
-            List<FrontLineWorker> frontLineWorkers = allFrontLineWorkers.getByMsisdn(request.getMsisdn());
-            frontLineWorker = frontLineWorkers.size() == 1 ? frontLineWorkers.get(0) : new FrontLineWorker(UUID.randomUUID());
+            frontLineWorker = getMatchingFLWForDummyFLWId(request);
         } else if (frontLineWorker == null) {
             frontLineWorker = new FrontLineWorker(flwId);
         } else
             validateMsisdnMatch(request.getMsisdn(), frontLineWorker.getMsisdn());
         return frontLineWorker;
+    }
+
+    private FrontLineWorker getMatchingFLWForDummyFLWId(FrontLineWorkerVerificationRequest request) {
+        FrontLineWorker frontLineWorker;
+        List<FrontLineWorker> frontLineWorkers = allFrontLineWorkers.getByMsisdn(request.getMsisdn());
+        if (frontLineWorkers.size() == 1) {
+            frontLineWorker = frontLineWorkers.get(0);
+        } else {
+            FrontLineWorker flwWithStatus = getFLWWithStatus(frontLineWorkers);
+            frontLineWorker = flwWithStatus != null ? flwWithStatus : new FrontLineWorker(UUID.randomUUID());
+        }
+        return frontLineWorker;
+    }
+
+    private FrontLineWorker getFLWWithStatus(List<FrontLineWorker> frontLineWorkers) {
+        for (FrontLineWorker frontLineWorker : frontLineWorkers) {
+            if (frontLineWorker.hasBeenVerified()) return frontLineWorker;
+        }
+        return null;
     }
 
     private void validateMsisdnMatch(Long requestMsisdn, Long existingMsisdn) {
