@@ -24,7 +24,7 @@ public class FrontLineWorkerRequestValidator {
     public Errors validate(FrontLineWorkerVerificationRequest request) {
         Errors errors = new Errors();
         if (VerificationStatus.SUCCESS == request.getVerificationStatus())
-            validateSuccessulVerification(request, errors);
+            validateSuccessfulVerification(request, errors);
         else
             validateInvalidOtherRequest(request, errors);
 
@@ -53,7 +53,7 @@ public class FrontLineWorkerRequestValidator {
         }
     }
 
-    private void validateSuccessulVerification(FrontLineWorkerVerificationRequest request, Errors errors) {
+    private void validateSuccessfulVerification(FrontLineWorkerVerificationRequest request, Errors errors) {
         if (request.getDesignation() == null) {
             errors.add("designation field has invalid/blank value");
         }

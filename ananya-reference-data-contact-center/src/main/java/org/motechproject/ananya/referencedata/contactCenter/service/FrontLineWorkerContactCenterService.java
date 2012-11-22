@@ -49,6 +49,8 @@ public class FrontLineWorkerContactCenterService {
 
     private void saveAndSync(FrontLineWorkerVerificationRequest request) {
         FrontLineWorker updatedFrontLineWorker = constructFrontLineWorker(request);
+        if(doesIdenticalFLWexistInDB(updatedFrontLineWorker)) return;
+
         allFrontLineWorkers.createOrUpdate(updatedFrontLineWorker);
         syncService.syncFrontLineWorker(updatedFrontLineWorker);
     }
@@ -86,4 +88,9 @@ public class FrontLineWorkerContactCenterService {
             throw new ValidationException(validationErrors.allMessages());
         }
     }
+
+    private boolean doesIdenticalFLWexistInDB(FrontLineWorker updatedFrontLineWorker) {
+        return updatedFrontLineWorker.equals(allFrontLineWorkers.getByFlwId(updatedFrontLineWorker.getFlwId()));
+    }
+
 }

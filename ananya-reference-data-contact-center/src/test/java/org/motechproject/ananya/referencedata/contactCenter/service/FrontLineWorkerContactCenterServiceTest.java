@@ -9,10 +9,7 @@ import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequest;
 import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequestBuilder;
 import org.motechproject.ananya.referencedata.contactCenter.validator.FrontLineWorkerRequestValidator;
-import org.motechproject.ananya.referencedata.flw.domain.Designation;
-import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
-import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.domain.*;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
@@ -53,18 +50,21 @@ public class FrontLineWorkerContactCenterServiceTest {
     public void shouldUpdateExistingFrontLineWorkerForUnsuccessfulRegistration() {
         String msisdn = "919988776655";
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
-        String reason = "reason";
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, reason);
-        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
+        String oldReason = "oldReason";
+        String newReason = "newReason";
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, oldReason);
+        FrontLineWorker unmodifiedMockFrontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, oldReason);
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker).thenReturn(unmodifiedMockFrontLineWorker);
+
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
-        frontLineWorkerContactCenterService.updateVerifiedFlw(failedFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), reason));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(failedFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), newReason));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
         FrontLineWorker actualFrontLineWorker = captor.getValue();
         assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
-        assertEquals(reason, actualFrontLineWorker.getReason());
+        assertEquals(newReason, actualFrontLineWorker.getReason());
         assertEquals(frontLineWorker.getFlwId(), actualFrontLineWorker.getFlwId());
         assertEquals(frontLineWorker.getMsisdn(), actualFrontLineWorker.getMsisdn());
         verify(locationService, never()).createAndFetch(any(LocationRequest.class));
@@ -74,15 +74,19 @@ public class FrontLineWorkerContactCenterServiceTest {
     public void shouldUpdateExistingFrontLineWorkerForSuccessfulRegistration() {
         String msisdn = "9988776655";
         VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, null);
-        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
+        String oldName = "batman";
+        String newName = "spiderMan";
+
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), oldName, Designation.ANM, new Location(), flwId, verificationStatus, null);
+        FrontLineWorker unmodifiedMockFrontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), oldName, Designation.ANM, new Location(), flwId, verificationStatus, null);
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker).thenReturn(unmodifiedMockFrontLineWorker);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
         LocationRequest locationRequest = new LocationRequest("district", "block", "panchy");
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
         when(locationService.createAndFetch(locationRequest)).thenReturn(existingLocation);
 
-        frontLineWorkerContactCenterService.updateVerifiedFlw(successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), "name", Designation.ANM.name(), "district", "block", "panchy"));
+        frontLineWorkerContactCenterService.updateVerifiedFlw(successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), newName, Designation.ANM.name(), "district", "block", "panchy"));
 
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
@@ -180,6 +184,24 @@ public class FrontLineWorkerContactCenterServiceTest {
 
         verify(allFrontLineWorkers, never()).createOrUpdate(any(FrontLineWorker.class));
         verify(locationService, never()).createAndFetch(any(LocationRequest.class));
+    }
+
+    @Test
+    public void shouldNotMakeSyncRequestForExistingIdenticalFLW(){
+        Long existingMsisdn = 919988776655L;
+        VerificationStatus verificationStatus = VerificationStatus.INVALID;
+        String reason = "reason";
+        String name = "aragorn";
+        Designation designation = Designation.ANM;
+        Location location = new Location("d1","b1","p1", LocationStatus.VALID,null);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(existingMsisdn, name, designation, location, flwId, verificationStatus, reason);
+        when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
+        FrontLineWorkerVerificationWebRequest request = successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), existingMsisdn.toString(), verificationStatus.name(),name,designation.name(),location.getDistrict(),location.getBlock(),location.getPanchayat());
+        frontLineWorkerContactCenterService.updateVerifiedFlw(request);
+        verify(allFrontLineWorkers, never()).createOrUpdate(any(FrontLineWorker.class));
+        verify(syncService, never()).syncFrontLineWorker(any(FrontLineWorker.class));
+
     }
 
     private FrontLineWorkerVerificationWebRequest failedFrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String verificationStatus, String reason) {
