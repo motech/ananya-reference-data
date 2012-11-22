@@ -6,6 +6,7 @@ import org.hibernate.criterion.Restrictions;
 import org.motechproject.ananya.referencedata.flw.domain.AnanyaReferenceDataProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,8 +16,14 @@ public class AllAnanyaReferenceDataProperties {
     @Autowired
     private DataAccessTemplate template;
 
+    @Transactional(readOnly = true)
     public String getForSyncSwitch() {
         return getByName("syncSwitch");
+    }
+
+    @Transactional(readOnly = true)
+    public List<AnanyaReferenceDataProperty> getAllProperties() {
+        return template.loadAll(AnanyaReferenceDataProperty.class);
     }
 
     private String getByName(String name) {
@@ -28,9 +35,5 @@ public class AllAnanyaReferenceDataProperties {
         AnanyaReferenceDataProperty forName = namePropertyList.isEmpty() ? null : (AnanyaReferenceDataProperty) namePropertyList.get(0);
 
         return forName == null ? StringUtils.EMPTY : forName.getValue();
-    }
-
-    public List<AnanyaReferenceDataProperty> getAllProperties() {
-        return template.loadAll(AnanyaReferenceDataProperty.class);
     }
 }

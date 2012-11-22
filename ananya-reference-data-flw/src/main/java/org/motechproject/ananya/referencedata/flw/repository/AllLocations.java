@@ -7,6 +7,7 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class AllLocations {
         template.update(location);
     }
 
+    @Transactional(readOnly = true)
     public Location getFor(String district, String block, String panchayat) {
         DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
 
@@ -38,6 +40,7 @@ public class AllLocations {
         return locationList.isEmpty() ? null : (Location) locationList.get(0);
     }
 
+    @Transactional(readOnly = true)
     public List<Location> getForStatuses(LocationStatus... statuses) {
         DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
         criteria.add(Restrictions.in("status", statuses));
