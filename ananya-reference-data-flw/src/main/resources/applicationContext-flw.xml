@@ -15,6 +15,7 @@
     <context:spring-configured/>
     <context:annotation-config/>
 
+    <import resource="classpath:applicationContext-hibernate.xml"/>
     <import resource="classpath:applicationContextHttpClient.xml"/>
 
     <context:component-scan base-package="org.motechproject.ananya.referencedata.flw"/>
@@ -25,6 +26,5 @@
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
         <property name="cacheManager" ref="defaultEhCacheManager"/>
     </bean>
-    <import resource="classpath:applicationContext-hibernate.xml"/>
 
 </beans>

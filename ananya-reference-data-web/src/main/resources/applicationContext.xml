@@ -16,9 +16,9 @@
     <context:spring-configured/>
     <context:annotation-config/>
 
-    <import resource="classpath:applicationContext-Diagnostics.xml"/>
-    <import resource="classpath:applicationContext-contact-center.xml"/>
     <import resource="classpath:applicationContext-flw.xml"/>
+    <import resource="classpath:applicationContext-contact-center.xml"/>
+    <import resource="classpath:applicationContext-Diagnostics.xml"/>
     <import resource="classpath:applicationContext-security.xml"/>
     <import resource="classpath*:applicationBulkImportContext.xml"/>
 

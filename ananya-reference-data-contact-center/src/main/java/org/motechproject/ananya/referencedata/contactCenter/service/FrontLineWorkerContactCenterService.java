@@ -24,6 +24,9 @@ public class FrontLineWorkerContactCenterService {
     private FrontLineWorkerRequestValidator requestValidator;
     private SyncService syncService;
 
+    public FrontLineWorkerContactCenterService() {
+    }
+
     @Autowired
     public FrontLineWorkerContactCenterService(AllFrontLineWorkers allFrontLineWorkers, LocationService locationService, FrontLineWorkerRequestValidator requestValidator, SyncService syncService) {
         this.allFrontLineWorkers = allFrontLineWorkers;
@@ -32,6 +35,7 @@ public class FrontLineWorkerContactCenterService {
         this.syncService = syncService;
     }
 
+    @Transactional
     public void updateVerifiedFlw(FrontLineWorkerVerificationWebRequest webRequest) {
         FrontLineWorkerVerificationRequest request = webRequest.getVerificationRequest();
         updateVerifiedFlw(request);
@@ -43,7 +47,6 @@ public class FrontLineWorkerContactCenterService {
         saveAndSync(request);
     }
 
-    @Transactional
     private void saveAndSync(FrontLineWorkerVerificationRequest request) {
         FrontLineWorker updatedFrontLineWorker = constructFrontLineWorker(request);
         allFrontLineWorkers.createOrUpdate(updatedFrontLineWorker);
