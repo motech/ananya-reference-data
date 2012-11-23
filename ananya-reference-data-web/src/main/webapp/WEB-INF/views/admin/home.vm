@@ -55,8 +55,6 @@
                         </div>
                     </div>
 
-                    <div id="spinner"></div>
-
                     <input name="upload" id="uploadAction" type="submit" class="input-medium btn-primary"
                            value="Upload"/>
 
