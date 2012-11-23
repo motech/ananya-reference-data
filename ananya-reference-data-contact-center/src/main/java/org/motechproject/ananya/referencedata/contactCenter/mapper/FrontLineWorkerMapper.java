@@ -6,8 +6,10 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 
 public class FrontLineWorkerMapper {
 
-    public static FrontLineWorker mapSuccessfulRegistration(FrontLineWorker existingFrontLineWorker, Location location) {
+    public static FrontLineWorker mapSuccessfulRegistration(FrontLineWorkerVerificationRequest frontLineWorkerVerificationRequest, FrontLineWorker existingFrontLineWorker, Location location) {
         existingFrontLineWorker.setLocation(location);
+        existingFrontLineWorker.setName(frontLineWorkerVerificationRequest.getName());
+        existingFrontLineWorker.setDesignation(frontLineWorkerVerificationRequest.getDesignation());
         return existingFrontLineWorker;
     }
 
@@ -15,8 +17,6 @@ public class FrontLineWorkerMapper {
         existingFrontLineWorker.setMsisdn(frontLineWorkerVerificationRequest.getMsisdn());
         existingFrontLineWorker.setVerificationStatus(frontLineWorkerVerificationRequest.getVerificationStatus());
         existingFrontLineWorker.setReason(frontLineWorkerVerificationRequest.getReason());
-        existingFrontLineWorker.setName(frontLineWorkerVerificationRequest.getName());
-        existingFrontLineWorker.setDesignation(frontLineWorkerVerificationRequest.getDesignation());
         return existingFrontLineWorker;
     }
 }

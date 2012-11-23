@@ -48,19 +48,21 @@ public class FrontLineWorkerContactCenterService {
     }
 
     private void saveAndSync(FrontLineWorkerVerificationRequest request) {
-        FrontLineWorker updatedFrontLineWorker = constructFrontLineWorker(request);
-        if(doesIdenticalFLWexistInDB(updatedFrontLineWorker)) return;
+        FrontLineWorker frontLineWorker = getFrontLineWorker(request);
+        //The clone below is done to avoid checking with the same updated session object.
+        FrontLineWorker flwFromDb = frontLineWorker.clone();
+        FrontLineWorker updatedFrontLineWorker = constructFrontLineWorker(request, frontLineWorker);
+        if (doesIdenticalFLWexistInDB(updatedFrontLineWorker, flwFromDb)) return;
 
         allFrontLineWorkers.createOrUpdate(updatedFrontLineWorker);
         syncService.syncFrontLineWorker(updatedFrontLineWorker);
     }
 
-    private FrontLineWorker constructFrontLineWorker(FrontLineWorkerVerificationRequest request) {
-        FrontLineWorker frontLineWorker = getFrontLineWorker(request);
+    private FrontLineWorker constructFrontLineWorker(FrontLineWorkerVerificationRequest request, FrontLineWorker frontLineWorker) {
         FrontLineWorker updatedFrontLineWorker = FrontLineWorkerMapper.mapFrom(request, frontLineWorker);
         if (VerificationStatus.SUCCESS == request.getVerificationStatus()) {
             Location location = locationService.createAndFetch(request.getLocation());
-            updatedFrontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(frontLineWorker, location);
+            updatedFrontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(request, updatedFrontLineWorker, location);
         }
         return updatedFrontLineWorker;
     }
@@ -107,8 +109,7 @@ public class FrontLineWorkerContactCenterService {
         }
     }
 
-    private boolean doesIdenticalFLWexistInDB(FrontLineWorker updatedFrontLineWorker) {
-        return updatedFrontLineWorker.equals(allFrontLineWorkers.getByFlwId(updatedFrontLineWorker.getFlwId()));
+    private boolean doesIdenticalFLWexistInDB(FrontLineWorker updatedFrontLineWorker, FrontLineWorker flwFromDb) {
+        return updatedFrontLineWorker.equals(flwFromDb);
     }
-
 }

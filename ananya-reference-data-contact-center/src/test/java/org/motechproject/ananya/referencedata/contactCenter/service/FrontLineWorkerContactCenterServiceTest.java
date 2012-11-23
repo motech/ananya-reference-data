@@ -219,15 +219,16 @@ public class FrontLineWorkerContactCenterServiceTest {
     public void shouldNotMakeSyncRequestForExistingIdenticalFLW(){
         Long existingMsisdn = 919988776655L;
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
-        String reason = "reason";
         String name = "aragorn";
         Designation designation = Designation.ANM;
         Location location = new Location("d1","b1","p1", LocationStatus.VALID,null);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(existingMsisdn, name, designation, location, flwId, verificationStatus, reason);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(existingMsisdn, name, designation, location, flwId, verificationStatus, null);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
         FrontLineWorkerVerificationWebRequest request = successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), existingMsisdn.toString(), verificationStatus.name(),name,designation.name(),location.getDistrict(),location.getBlock(),location.getPanchayat());
+
         frontLineWorkerContactCenterService.updateVerifiedFlw(request);
+
         verify(allFrontLineWorkers, never()).createOrUpdate(any(FrontLineWorker.class));
         verify(syncService, never()).syncFrontLineWorker(any(FrontLineWorker.class));
 

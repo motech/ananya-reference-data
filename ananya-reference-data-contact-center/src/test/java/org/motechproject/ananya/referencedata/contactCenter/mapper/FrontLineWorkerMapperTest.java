@@ -2,10 +2,7 @@ package org.motechproject.ananya.referencedata.contactCenter.mapper;
 
 import org.junit.Test;
 import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWorkerVerificationRequest;
-import org.motechproject.ananya.referencedata.flw.domain.Designation;
-import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
-import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.domain.*;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 
@@ -25,6 +22,7 @@ public class FrontLineWorkerMapperTest {
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
         UUID flwId = UUID.randomUUID();
         FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, name, anm, location, flwId, VerificationStatus.OTHER, null);
+
         FrontLineWorker newFrontLineWorker = FrontLineWorkerMapper.mapFrom(new FrontLineWorkerVerificationRequest(flwId, msisdn, verificationStatus, null, null, null, reason), existingFrontLineWorker);
 
         assertEquals(flwId, newFrontLineWorker.getFlwId());
@@ -41,10 +39,15 @@ public class FrontLineWorkerMapperTest {
         UUID flwId = UUID.randomUUID();
         LocationRequest location = new LocationRequest("d", "b", "p", null);
         Location expectedLocation = LocationMapper.mapFrom(location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, designation, new Location("d1", "b1", "p1", LocationStatus.NOT_VERIFIED, null), flwId, VerificationStatus.SUCCESS, null);
+        String newName = "name123";
+        Designation newDesignation = Designation.ASHA;
+        FrontLineWorkerVerificationRequest request = new FrontLineWorkerVerificationRequest(flwId, msisdn, VerificationStatus.SUCCESS, newName, newDesignation, new LocationRequest("d", "b", "p"), null);
 
-        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, designation, expectedLocation, flwId, VerificationStatus.SUCCESS, null);
-        FrontLineWorker actualFrontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(frontLineWorker, expectedLocation);
+        FrontLineWorker actualFrontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(request, frontLineWorker, expectedLocation);
 
-        assertEquals(frontLineWorker,actualFrontLineWorker);
+        assertEquals(newName, actualFrontLineWorker.getName());
+        assertEquals(newDesignation.name(), actualFrontLineWorker.getDesignation());
+        assertEquals(expectedLocation, actualFrontLineWorker.getLocation());
     }
 }

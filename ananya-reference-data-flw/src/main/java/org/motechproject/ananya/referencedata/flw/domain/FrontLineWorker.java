@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "front_line_worker")
-public class FrontLineWorker extends BaseEntity {
+public class FrontLineWorker extends BaseEntity implements Cloneable {
 
     @Column(name = "msisdn")
     private Long msisdn;
@@ -112,6 +112,15 @@ public class FrontLineWorker extends BaseEntity {
 
     public boolean hasBeenVerified() {
         return verificationStatus != null;
+    }
+
+    @Override
+    public FrontLineWorker clone() {
+        try {
+            return (FrontLineWorker) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
