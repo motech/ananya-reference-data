@@ -1,11 +1,13 @@
 package org.motechproject.ananya.referencedata.contactCenter.validator;
 
 import org.junit.Test;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
 import java.util.UUID;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 public class WebRequestValidatorTest {
 
@@ -146,6 +148,34 @@ public class WebRequestValidatorTest {
 
         errors = new Errors();
         validator.validateChannel("contact_center", errors);
+        assertEquals(0, errors.getCount());
+    }
+
+    @Test
+    public void shouldReturnErrorForAnInvalidLocationRequest() {
+        Errors errors = new Errors();
+        validator.validateLocation(new LocationRequest(null, null, null, null), errors);
+
+        assertEquals(3, errors.getCount());
+        assertTrue(errors.hasMessage("district field is blank"));
+        assertTrue(errors.hasMessage("block field is blank"));
+        assertTrue(errors.hasMessage("panchayat field is blank"));
+    }
+
+    @Test
+    public void shouldReturnErrorForANullLocationRequest() {
+        Errors errors = new Errors();
+        validator.validateLocation(null, errors);
+
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("location is missing"));
+    }
+
+    @Test
+    public void shouldNotContainErrorsForAValidLocationRequest() {
+        Errors errors = new Errors();
+        validator.validateLocation(new LocationRequest("district", "block", "panchayat", null), errors);
+
         assertEquals(0, errors.getCount());
     }
 }

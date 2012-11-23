@@ -1,14 +1,10 @@
 package org.motechproject.ananya.referencedata.contactCenter.service;
 
-import org.apache.commons.lang.StringUtils;
-import org.motechproject.ananya.referencedata.contactCenter.validator.LocationWebRequestValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 public class FrontLineWorkerVerificationRequest {
 

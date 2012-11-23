@@ -62,10 +62,9 @@ public class FrontLineWorkerRequestValidator {
         if (StringUtils.isBlank(request.getName()) || !Pattern.matches("[a-zA-Z0-9\\s\\.]*", request.getName())) {
             errors.add("name field has invalid/blank value");
         }
-        errors.addAll(LocationWebRequestValidator.validate(request.getLocation()));
+        new WebRequestValidator().validateLocation(request.getLocation(), errors);
         if (request.getReason() != null) {
             errors.add("reason field should not be a part of the request");
         }
     }
-
 }

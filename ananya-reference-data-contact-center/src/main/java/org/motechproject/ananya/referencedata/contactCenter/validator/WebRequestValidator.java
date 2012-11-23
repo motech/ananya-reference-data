@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.domain.Channel;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
@@ -58,5 +59,19 @@ public class WebRequestValidator {
         if (!Channel.isValid(channel)) {
             errors.add(String.format("invalid channel: %s", channel));
         }
+    }
+
+    public void validateLocation(LocationRequest locationRequest, Errors errors) {
+        if (locationRequest == null) {
+            errors.add("location is missing");
+            return;
+        }
+
+        if (StringUtils.isEmpty(locationRequest.getDistrict()))
+            errors.add("district field is blank");
+        if (StringUtils.isEmpty(locationRequest.getBlock()))
+            errors.add("block field is blank");
+        if (StringUtils.isEmpty(locationRequest.getPanchayat()))
+            errors.add("panchayat field is blank");
     }
 }

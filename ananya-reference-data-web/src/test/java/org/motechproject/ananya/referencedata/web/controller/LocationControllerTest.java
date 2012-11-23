@@ -82,7 +82,7 @@ public class LocationControllerTest {
         verify(locationService).createAndFetch(locationRequest);
         String responseString = result.getResponse().getContentAsString();
         BaseResponse actualResponse = TestUtils.fromJson(BaseResponse.class, responseString);
-        assertEquals(BaseResponse.success("New Location has been synchronized successfully."), actualResponse);
+        assertEquals(BaseResponse.success("New location has been synchronized successfully."), actualResponse);
     }
 
     @Test(expected = ValidationException.class)

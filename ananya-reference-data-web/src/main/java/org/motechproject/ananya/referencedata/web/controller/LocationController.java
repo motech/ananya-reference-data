@@ -1,9 +1,7 @@
 package org.motechproject.ananya.referencedata.web.controller;
 
 import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
-import org.motechproject.ananya.referencedata.contactCenter.validator.LocationWebRequestValidator;
 import org.motechproject.ananya.referencedata.contactCenter.validator.WebRequestValidator;
-import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
 import org.motechproject.ananya.referencedata.flw.validators.CSVRequestValidationException;
@@ -39,9 +37,8 @@ public class LocationController extends BaseController {
     @ResponseBody
     public BaseResponse syncLocation(@RequestBody LocationRequest locationRequest) {
         validateLocation(locationRequest);
-        locationRequest.setStatus(LocationStatus.NOT_VERIFIED.name());
         locationService.createAndFetch(locationRequest);
-        return BaseResponse.success("New Location has been synchronized successfully.");
+        return BaseResponse.success("New location has been synchronized successfully.");
     }
 
     private void validateRequest(String channel) {
@@ -53,8 +50,9 @@ public class LocationController extends BaseController {
     }
 
     private void validateLocation(LocationRequest locationRequest) {
-        Errors errors = LocationWebRequestValidator.validate(locationRequest);
-        if(errors.hasErrors()){
+        Errors errors = new Errors();
+        new WebRequestValidator().validateLocation(locationRequest, errors);
+        if (errors.hasErrors()) {
             throw new ValidationException(errors.allMessages());
         }
     }
