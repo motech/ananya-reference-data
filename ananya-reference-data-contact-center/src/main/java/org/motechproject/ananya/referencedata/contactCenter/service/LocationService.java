@@ -8,6 +8,7 @@ import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.service.SyncService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,12 +17,16 @@ public class LocationService {
     private AllLocations allLocations;
     private SyncService syncService;
 
+    public LocationService() {
+    }
+
     @Autowired
     public LocationService(AllLocations allLocations, SyncService syncService) {
         this.allLocations = allLocations;
         this.syncService = syncService;
     }
 
+    @Transactional
     public Location createAndFetch(LocationRequest request) {
         Location location = getExistingLocation(request);
         if (location == null) {

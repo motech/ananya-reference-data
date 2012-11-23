@@ -1,17 +1,19 @@
 package org.motechproject.ananya.referencedata.web.controller;
 
 import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
+import org.motechproject.ananya.referencedata.contactCenter.validator.LocationWebRequestValidator;
 import org.motechproject.ananya.referencedata.contactCenter.validator.WebRequestValidator;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
 import org.motechproject.ananya.referencedata.flw.validators.CSVRequestValidationException;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
+import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 import org.motechproject.ananya.referencedata.web.mapper.LocationResponseMapper;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -33,11 +35,27 @@ public class LocationController extends BaseController {
         return LocationResponseMapper.mapValidLocations(locationService.getAllValidLocations());
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/location")
+    @ResponseBody
+    public BaseResponse syncLocation(@RequestBody LocationRequest locationRequest) {
+        validateLocation(locationRequest);
+        locationRequest.setStatus(LocationStatus.NOT_VERIFIED.name());
+        locationService.createAndFetch(locationRequest);
+        return BaseResponse.success("New Location has been synchronized successfully.");
+    }
+
     private void validateRequest(String channel) {
         Errors errors = new Errors();
         new WebRequestValidator().validateChannel(channel, errors);
         if (errors.hasErrors()) {
             throw new CSVRequestValidationException(errors.allMessages());
+        }
+    }
+
+    private void validateLocation(LocationRequest locationRequest) {
+        Errors errors = LocationWebRequestValidator.validate(locationRequest);
+        if(errors.hasErrors()){
+            throw new ValidationException(errors.allMessages());
         }
     }
 }
