@@ -1,7 +1,16 @@
 $(document).ready(function () {
-    $('form').submit(function (event) {
+
+    $('#fileData').click(
+        function(){
+                $('#uploadAction').attr('disabled',false);
+        }
+    );
+
+    $('#csvUploadForm').submit(function (event) {
         var form = $(event.target);
         result = true;
+
+        $('#uploadAction').attr('disabled', true);
 
         form.find('.required').each(function (index, element) {
             element = $(element);
