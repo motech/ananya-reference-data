@@ -76,17 +76,18 @@ public class LocationImportService {
             public void execute(Object input) {
                 LocationImportCSVRequest csvRequest = (LocationImportCSVRequest) input;
 
-                Location existingLocationInDB = allLocations.getFor(
+                Location updatedLocation = allLocations.getFor(
                         csvRequest.getDistrict(),
                         csvRequest.getBlock(),
                         csvRequest.getPanchayat()
                 );
 
-                if (doesIdenticalLocationExistsInDB(csvRequest, existingLocationInDB, null)) return;
+                Location unchangedLocationInDb = updatedLocation.clone();
+                updatedLocation.setStatus(LocationStatus.from(csvRequest.getStatus()));
+                if (doesIdenticalLocationExistsInDB(unchangedLocationInDb, updatedLocation)) return;
 
-                existingLocationInDB.setStatus(LocationStatus.from(csvRequest.getStatus()));
-                allLocations.update(existingLocationInDB);
-                syncService.syncLocation(existingLocationInDB);
+                allLocations.update(updatedLocation);
+                syncService.syncLocation(updatedLocation);
             }
         }
         );
@@ -100,7 +101,7 @@ public class LocationImportService {
                 LocationImportCSVRequest csvRequest = (LocationImportCSVRequest) input;
 
 
-                Location invalidLocationFromDb = allLocations.getFor(
+                Location updatedInvalidLocation = allLocations.getFor(
                         csvRequest.getDistrict(),
                         csvRequest.getBlock(),
                         csvRequest.getPanchayat()
@@ -111,26 +112,24 @@ public class LocationImportService {
                         csvRequest.getNewPanchayat()
                 );
 
-                if(doesIdenticalLocationExistsInDB(csvRequest, invalidLocationFromDb,validLocationFromDb)) return;
+                Location unchangedInvalidLocationFromDb = updatedInvalidLocation.clone();
 
-                invalidLocationFromDb.setStatus(LocationStatus.from(csvRequest.getStatus()));
-                invalidLocationFromDb.setAlternateLocation(validLocationFromDb);
-                allLocations.update(invalidLocationFromDb);
+                updatedInvalidLocation.setStatus(LocationStatus.from(csvRequest.getStatus()));
+                updatedInvalidLocation.setAlternateLocation(validLocationFromDb);
 
-                frontLineWorkerService.updateWithAlternateLocationForFLWsWith(invalidLocationFromDb);
-                syncService.syncLocation(invalidLocationFromDb);
+                if(doesIdenticalLocationExistsInDB(unchangedInvalidLocationFromDb, updatedInvalidLocation)) return;
+
+                allLocations.update(updatedInvalidLocation);
+                frontLineWorkerService.updateWithAlternateLocationForFLWsWith(updatedInvalidLocation);
+                syncService.syncLocation(updatedInvalidLocation);
             }
         }
         );
     }
 
-    private boolean doesIdenticalLocationExistsInDB(LocationImportCSVRequest csvRequest, Location existingLocationInDb, Location alternateLocationInDb) {
-        Location locationFromCSV = new Location(csvRequest.getDistrict(), csvRequest.getBlock(), csvRequest.getPanchayat(), csvRequest.getStatusEnum(), alternateLocationInDb);
-        if (locationFromCSV.equals(existingLocationInDb)) return true;
-        return false;
+    private boolean doesIdenticalLocationExistsInDB(Location locationInDb, Location updatedLocation) {
+        return locationInDb.equals(updatedLocation);
     }
-
-
 
     private Predicate hasStatus(final List<LocationStatus> statuses) {
         return new Predicate() {

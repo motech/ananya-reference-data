@@ -53,9 +53,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         String oldReason = "oldReason";
         String newReason = "newReason";
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, oldReason);
-        FrontLineWorker unmodifiedMockFrontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, oldReason);
-        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker).thenReturn(unmodifiedMockFrontLineWorker);
-
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
         frontLineWorkerContactCenterService.updateVerifiedFlw(failedFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, verificationStatus.name(), newReason));

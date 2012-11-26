@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "location")
-public class Location extends BaseEntity {
+public class Location extends BaseEntity implements Cloneable{
     @Column(name = "district")
     private String district;
 
@@ -94,6 +94,16 @@ public class Location extends BaseEntity {
         result = 31 * result + (alternateLocation != null ? alternateLocation.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public Location clone() {
+        try {
+            return (Location) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public String toString() {
