@@ -44,14 +44,16 @@ public class FrontLineWorkerSyncServiceTest {
         String url1 = "url1";
         String url2 = "url2";
         ArrayList<SyncEndpoint> flwSyncUrls = new ArrayList<>();
-        String apiKey1 = "someAPIKey1";
-        String apiKey2 = "someAPIkey2";
-        flwSyncUrls.add(new SyncEndpoint(url1, apiKey1));
-        flwSyncUrls.add(new SyncEndpoint(url2, apiKey2));
+        String apiKeyName1 = "someAPIKeyName1";
+        String apiKeyName2 = "someAPIkeyName2";
+        String apiKeyValue1 = "someAPIKey1";
+        String apiKeyValue2 = "someAPIkey2";
+        flwSyncUrls.add(new SyncEndpoint(url1, apiKeyName1, apiKeyValue1));
+        flwSyncUrls.add(new SyncEndpoint(url2, apiKeyName2, apiKeyValue2));
         Map<String, String> headers1 = new HashMap<>();
-        headers1.put(SyncEndpoint.API_KEY, apiKey1);
+        headers1.put(apiKeyName1, apiKeyValue1);
         Map<String, String> headers2 = new HashMap<>();
-        headers2.put(SyncEndpoint.API_KEY, apiKey2);
+        headers2.put(apiKeyName2, apiKeyValue2);
 
 
         when(syncEndpointService.getFlwSyncEndpoints()).thenReturn(flwSyncUrls);
@@ -72,13 +74,14 @@ public class FrontLineWorkerSyncServiceTest {
         frontLineWorker1.setVerificationStatus(VerificationStatus.SUCCESS);
         FrontLineWorker frontLineWorker2 = new FrontLineWorker(msisdn, "name", Designation.ANM, location);
         Map<String, String> headers = new HashMap<>();
-        String apiKey = "someAPIKey";
-        headers.put(SyncEndpoint.API_KEY, apiKey);
+        String apiKeyName = "someAPIKeyName";
+        String apiKeyValue = "someAPIKeyValue";
+        headers.put(apiKeyName, apiKeyValue);
         frontLineWorker1.setLastModified(DateTime.now());
         List<FrontLineWorker> frontLineWorkers = new ArrayList();
         frontLineWorkers.add(frontLineWorker1);
         frontLineWorkers.add(frontLineWorker2);
-        SyncEndpoint syncEndpoint = new SyncEndpoint("url", apiKey);
+        SyncEndpoint syncEndpoint = new SyncEndpoint("url", apiKeyName, apiKeyValue);
         ArrayList<SyncEndpoint> flwSyncUrls = new ArrayList<>();
         flwSyncUrls.add(syncEndpoint);
         when(syncEndpointService.getFlwSyncEndpoints()).thenReturn(flwSyncUrls);
@@ -101,7 +104,7 @@ public class FrontLineWorkerSyncServiceTest {
         List<FrontLineWorker> frontLineWorkers = new ArrayList();
         frontLineWorkers.add(frontLineWorker1);
         frontLineWorkers.add(frontLineWorker2);
-        SyncEndpoint syncEndpoint = new SyncEndpoint("url", "apiKey");
+        SyncEndpoint syncEndpoint = new SyncEndpoint("url", "apiKeyName", "apiKey");
         ArrayList<SyncEndpoint> flwSyncUrls = new ArrayList<>();
         flwSyncUrls.add(syncEndpoint);
         when(syncEndpointService.getFlwSyncEndpoints()).thenReturn(flwSyncUrls);

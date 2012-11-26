@@ -34,7 +34,7 @@ public class FrontLineWorkerSyncService {
                 List<SyncEndpoint> flwSyncEndpoints = syncEndpointService.getFlwSyncEndpoints();
                 for (SyncEndpoint flwSyncEndpoint : flwSyncEndpoints) {
                     HashMap<String, String> headers = new HashMap<>();
-                    headers.put(SyncEndpoint.API_KEY, flwSyncEndpoint.getApiKey());
+                    headers.put(flwSyncEndpoint.getApiKeyName(), flwSyncEndpoint.getApiKeyValue());
                     httpClientService.post(flwSyncEndpoint.getUrl(), FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker), headers);
                 }
             }

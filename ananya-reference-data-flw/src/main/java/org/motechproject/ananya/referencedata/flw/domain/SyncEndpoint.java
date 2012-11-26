@@ -2,19 +2,24 @@ package org.motechproject.ananya.referencedata.flw.domain;
 
 public class SyncEndpoint {
     private String url;
-    private String apiKey;
-    public static final String API_KEY = "apiKey";
+    private String apiKeyValue;
+    private String apiKeyName;
 
-    public SyncEndpoint(String url, String apiKey) {
+    public SyncEndpoint(String url, String apiKeyName, String apiKeyValue) {
         this.url = url;
-        this.apiKey = apiKey;
+        this.apiKeyName = apiKeyName;
+        this.apiKeyValue = apiKeyValue;
     }
 
     public String getUrl() {
         return url;
     }
 
-    public String getApiKey() {
-        return apiKey;
+    public String getApiKeyValue() {
+        return apiKeyValue;
+    }
+
+    public String getApiKeyName() {
+        return apiKeyName;
     }
 }

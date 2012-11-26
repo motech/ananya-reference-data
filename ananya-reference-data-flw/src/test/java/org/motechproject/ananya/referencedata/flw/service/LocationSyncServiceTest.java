@@ -33,15 +33,17 @@ public class LocationSyncServiceTest {
         final Location locationToBeSynced = new Location("D1", "B1", "P1", LocationStatus.NOT_VERIFIED, null);
         DateTime dateTime = DateTime.now();
         locationToBeSynced.setLastModified(dateTime);
-        String flwApiKey = "flwApiKey";
-        SyncEndpoint flwSyncEndpoint = new SyncEndpoint("flwUrl", flwApiKey);
-        String kilkariApiKey = "kilkariApiKey";
-        SyncEndpoint kilkariSyncEndpoint = new SyncEndpoint("kilkariUrl", kilkariApiKey);
+        String flwApiKeyName = "flwApiKeyName";
+        String flwApiKeyValue = "flwApiKeyValue";
+        SyncEndpoint flwSyncEndpoint = new SyncEndpoint("flwUrl", flwApiKeyName, flwApiKeyValue);
+        String kilkariApiKeyName = "kilkariApiKeyName";
+        String kilkariApiKeyValue = "kilkariApiKey";
+        SyncEndpoint kilkariSyncEndpoint = new SyncEndpoint("kilkariUrl", kilkariApiKeyName, kilkariApiKeyValue);
         when(syncEndpointService.getLocationSyncEndpoints()).thenReturn(Arrays.asList(flwSyncEndpoint, kilkariSyncEndpoint));
         Map<String, String> headers1 = new HashMap<>();
-        headers1.put(SyncEndpoint.API_KEY, flwApiKey);
+        headers1.put(flwApiKeyName, flwApiKeyValue);
         Map<String, String> headers2 = new HashMap<>();
-        headers2.put(SyncEndpoint.API_KEY, kilkariApiKey);
+        headers2.put(kilkariApiKeyName, kilkariApiKeyValue);
 
         locationSyncService.sync(locationToBeSynced);
 

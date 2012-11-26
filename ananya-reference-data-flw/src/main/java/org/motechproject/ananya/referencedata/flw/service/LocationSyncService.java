@@ -33,7 +33,7 @@ public class LocationSyncService {
         List<SyncEndpoint> locationSyncEndpointUrls = syncEndpointService.getLocationSyncEndpoints();
         for (SyncEndpoint locationEndPointUrl : locationSyncEndpointUrls) {
             Map<String, String> headers = new HashMap<>();
-            headers.put(SyncEndpoint.API_KEY, locationEndPointUrl.getApiKey());
+            headers.put(locationEndPointUrl.getApiKeyName(), locationEndPointUrl.getApiKeyValue());
             httpClientService.post(locationEndPointUrl.getUrl(), locationSyncRequest, headers);
         }
     }

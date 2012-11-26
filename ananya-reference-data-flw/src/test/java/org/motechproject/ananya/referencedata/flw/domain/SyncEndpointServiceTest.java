@@ -14,14 +14,16 @@ public class SyncEndpointServiceTest {
         Properties clientServicesProperties = new Properties();
         Properties apiKeysProperties = new Properties();
         clientServicesProperties.setProperty("front.line.worker.sync.url.flw", "myUrl");
-        apiKeysProperties.setProperty("api.key.flw", "1234");
+        apiKeysProperties.setProperty("api.key.name.flw", "apiKey");
+        apiKeysProperties.setProperty("api.key.value.flw", "1234");
         SyncEndpointService syncEndpointService = new SyncEndpointService(clientServicesProperties, apiKeysProperties);
 
         List<SyncEndpoint> flwSyncEndpointUrls = syncEndpointService.getFlwSyncEndpoints();
 
         assertEquals(1, flwSyncEndpointUrls.size());
         assertEquals("myUrl", flwSyncEndpointUrls.get(0).getUrl());
-        assertEquals("1234", flwSyncEndpointUrls.get(0).getApiKey());
+        assertEquals("apiKey", flwSyncEndpointUrls.get(0).getApiKeyName());
+        assertEquals("1234", flwSyncEndpointUrls.get(0).getApiKeyValue());
     }
 
     @Test
@@ -29,13 +31,15 @@ public class SyncEndpointServiceTest {
         Properties clientServicesProperties = new Properties();
         Properties apiKeysProperties = new Properties();
         clientServicesProperties.setProperty("location.sync.url.one", "myUrl1");
-        apiKeysProperties.setProperty("api.key.one", "1234");
+        apiKeysProperties.setProperty("api.key.name.one", "apiKey");
+        apiKeysProperties.setProperty("api.key.value.one", "1234");
         SyncEndpointService syncEndpointService = new SyncEndpointService(clientServicesProperties, apiKeysProperties);
 
         List<SyncEndpoint> urls = syncEndpointService.getLocationSyncEndpoints();
 
         assertEquals(1, urls.size());
         assertEquals("myUrl1", urls.get(0).getUrl());
-        assertEquals("1234", urls.get(0).getApiKey());
+        assertEquals("apiKey", urls.get(0).getApiKeyName());
+        assertEquals("1234", urls.get(0).getApiKeyValue());
     }
 }

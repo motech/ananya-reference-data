@@ -13,7 +13,8 @@ import java.util.Properties;
 public class SyncEndpointService {
     private static final String FLW_SYNC_ENDPOINT_URL_PROPERTY_PREFIX = "front.line.worker.sync.url.";
     private static final String LOCATION_SYNC_ENDPOINT_URL_PROPERTY_PREFIX = "location.sync.url.";
-    private static final String API_KEY_PREFIX = "api.key.";
+    private static final String API_KEY_NAME_PREFIX = "api.key.name.";
+    private static final String API_KEY_VALUE_PREFIX = "api.key.value.";
 
     private List<SyncEndpoint> flwSyncEndpoints;
     private List<SyncEndpoint> locationSyncEndpoints;
@@ -37,8 +38,9 @@ public class SyncEndpointService {
         for (String propertyName : clientServicesProperties.stringPropertyNames()) {
             if (propertyName.startsWith(FLW_SYNC_ENDPOINT_URL_PROPERTY_PREFIX)) {
                 String url = clientServicesProperties.getProperty(propertyName);
-                String apiKey = apiKeysProperties.getProperty(getApiPropertyKey(propertyName, FLW_SYNC_ENDPOINT_URL_PROPERTY_PREFIX));
-                flwSyncEndpoints.add(new SyncEndpoint(url, apiKey));
+                String apiKeyName = apiKeysProperties.getProperty(getApiPropertyKeyName(propertyName, FLW_SYNC_ENDPOINT_URL_PROPERTY_PREFIX));
+                String apiKeyValue = apiKeysProperties.getProperty(getApiPropertyKeyValue(propertyName, FLW_SYNC_ENDPOINT_URL_PROPERTY_PREFIX));
+                flwSyncEndpoints.add(new SyncEndpoint(url, apiKeyName, apiKeyValue));
             }
         }
     }
@@ -48,14 +50,18 @@ public class SyncEndpointService {
         for (String propertyName : clientServicesProperties.stringPropertyNames()) {
             if (propertyName.startsWith(LOCATION_SYNC_ENDPOINT_URL_PROPERTY_PREFIX)) {
                 String url = clientServicesProperties.getProperty(propertyName);
-                String apiKey = apiKeysProperties.getProperty(getApiPropertyKey(propertyName, LOCATION_SYNC_ENDPOINT_URL_PROPERTY_PREFIX));
-                locationSyncEndpoints.add(new SyncEndpoint(url, apiKey));
-
+                String apiKeyName = apiKeysProperties.getProperty(getApiPropertyKeyName(propertyName, LOCATION_SYNC_ENDPOINT_URL_PROPERTY_PREFIX));
+                String apiKeyValue = apiKeysProperties.getProperty(getApiPropertyKeyValue(propertyName, LOCATION_SYNC_ENDPOINT_URL_PROPERTY_PREFIX));
+                locationSyncEndpoints.add(new SyncEndpoint(url, apiKeyName, apiKeyValue));
             }
         }
     }
 
-    private String getApiPropertyKey(String propertyName, String endPointPrefix) {
-        return API_KEY_PREFIX + StringUtils.remove(propertyName, endPointPrefix);
+    private String getApiPropertyKeyValue(String propertyName, String endPointPrefix) {
+        return API_KEY_VALUE_PREFIX + StringUtils.remove(propertyName, endPointPrefix);
+    }
+
+    private String getApiPropertyKeyName(String propertyName, String endPointPrefix) {
+        return API_KEY_NAME_PREFIX + StringUtils.remove(propertyName, endPointPrefix);
     }
 }
