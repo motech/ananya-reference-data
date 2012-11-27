@@ -7,6 +7,7 @@ import org.motechproject.ananya.referencedata.flw.domain.LocationContract;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 
 public class LocationContractMapperTest {
     @Test
@@ -23,5 +24,10 @@ public class LocationContractMapperTest {
         assertEquals(district, locationContract.getDistrict());
         assertEquals(block, locationContract.getBlock());
         assertEquals(panchayat, locationContract.getPanchayat());
+    }
+
+    @Test
+    public void shouldPermitNullLocation() {
+        assertNull(LocationContractMapper.mapFrom(null));
     }
 }
