@@ -3,8 +3,10 @@ $(document).ready(function () {
     $('#fileData').click(
         function(){
                 $('#uploadAction').attr('disabled',false);
+                $('.alert').remove();
         }
     );
+
 
     $('#csvUploadForm').submit(function (event) {
         var form = $(event.target);
