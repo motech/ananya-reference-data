@@ -70,7 +70,8 @@ public class LocationImportValidator {
             return;
         }
         LocationImportCSVRequest alternateLocationFromCSV = getIfPresentInCsv(csvRequest, csvRequests);
-        if (alternateLocationFromCSV != null && !LocationStatus.from(alternateLocationFromCSV.getStatus()).isValidStatusForAlternateLocation()) {
+        LocationStatus statusOfAlternateLocation = alternateLocationFromCSV != null ? LocationStatus.from(alternateLocationFromCSV.getStatus()) : null;
+        if (alternateLocationFromCSV != null && (statusOfAlternateLocation == null || !statusOfAlternateLocation.isValidStatusForAlternateLocation())) {
             validationResponse.forInvalidAlternateLocation();
         }
         if (alternateLocationFromCSV == null && !isAlternateLocationPresentInDbAsValid(csvRequest))

@@ -128,6 +128,20 @@ public class LocationImportValidatorTest {
     }
 
     @Test
+    public void shouldNotCrapUpIfAlternateLocationHasBlankStatus() {
+        ArrayList<LocationImportCSVRequest> locationImportRequestsFromCsv = new ArrayList<>();
+        locationImportRequestsFromCsv.add(locationImportCSVRequest("D1", "B1", "P1", LocationStatus.INVALID.getDescription(), "D2", "B2", "P2"));
+        locationImportRequestsFromCsv.add(locationImportCSVRequest("D2", "B2", "P2", null));
+        LocationImportCSVRequest locationRequest = locationImportCSVRequest("D1", "B1", "P1", LocationStatus.INVALID.getDescription(), "D2", "B2", "P2");
+        when(allLocations.getFor("D2", "B2", "P2")).thenReturn(null);
+
+        LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequestsFromCsv);
+
+        assertFalse(locationValidationResponse.isValid());
+        assertTrue(locationValidationResponse.getMessage().contains("Alternate location is not a valid/new location"));
+    }
+
+    @Test
     public void shouldPassValidationIfAlternateLocationIsPresentInCSVAsValidAndNotInDb() {
         String district = "D2";
         String block = "B2";
