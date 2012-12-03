@@ -8,10 +8,10 @@ public class LocationSyncRequestMapper {
 
     public static LocationSyncRequest map(Location location) {
         Location alternateLocation = location.getAlternateLocation();
-        LocationRequest actualLocation = new LocationRequest(location.getDistrict(), location.getBlock(), location.getPanchayat());
+        LocationRequest existingLocation = new LocationRequest(location.getDistrict(), location.getBlock(), location.getPanchayat());
         LocationRequest newLocation = alternateLocation == null
-                ? actualLocation : new LocationRequest(alternateLocation.getDistrict(), alternateLocation.getBlock(), alternateLocation.getPanchayat());
+                ? existingLocation : new LocationRequest(alternateLocation.getDistrict(), alternateLocation.getBlock(), alternateLocation.getPanchayat());
 
-        return new LocationSyncRequest(actualLocation, newLocation, location.getStatus(), location.getLastModified());
+        return new LocationSyncRequest(existingLocation, newLocation, location.getStatus(), location.getLastModified());
     }
 }

@@ -7,20 +7,20 @@ import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import java.io.Serializable;
 
 public class LocationSyncRequest implements Serializable {
-    private LocationRequest actualLocation;
+    private LocationRequest existingLocation;
     private LocationRequest newLocation;
     private LocationStatus locationStatus;
     private DateTime lastModifiedTime;
 
-    public LocationSyncRequest(LocationRequest actualLocation, LocationRequest newLocation, LocationStatus locationStatus, DateTime lastModifiedTime) {
-        this.actualLocation = actualLocation;
+    public LocationSyncRequest(LocationRequest existingLocation, LocationRequest newLocation, LocationStatus locationStatus, DateTime lastModifiedTime) {
+        this.existingLocation = existingLocation;
         this.newLocation = newLocation;
         this.locationStatus = locationStatus;
         this.lastModifiedTime = lastModifiedTime;
     }
 
-    public LocationRequest getActualLocation() {
-        return actualLocation;
+    public LocationRequest getExistingLocation() {
+        return existingLocation;
     }
 
     public LocationRequest getNewLocation() {
