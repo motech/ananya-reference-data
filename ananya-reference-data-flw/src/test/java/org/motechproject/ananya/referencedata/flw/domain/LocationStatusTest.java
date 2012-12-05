@@ -150,4 +150,14 @@ public class LocationStatusTest {
         assertFalse(LocationStatus.isValid(""));
         assertFalse(LocationStatus.isValid(null));
     }
+
+    @Test
+    public void shouldCheckIfStatusIsInvalid()
+    {
+        assertTrue(LocationStatus.INVALID.isInvalid());
+        assertFalse(LocationStatus.VALID.isInvalid());
+        assertFalse(LocationStatus.IN_REVIEW.isInvalid());
+        assertFalse(LocationStatus.NEW.isInvalid());
+        assertFalse(LocationStatus.NOT_VERIFIED.isInvalid());
+    }
 }

@@ -92,4 +92,8 @@ public enum LocationStatus {
     public boolean isValidOrInReviewStatus() {
         return this == VALID || this == IN_REVIEW;
     }
+
+    public boolean isInvalid() {
+        return this == INVALID;
+    }
 }
