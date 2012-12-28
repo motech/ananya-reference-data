@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.flw.response;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -59,6 +60,11 @@ public class BaseResponse {
         int result = status != null ? status.hashCode() : 0;
         result = 31 * result + (description != null ? description.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 
     public String toJson() {

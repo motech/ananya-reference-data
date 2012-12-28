@@ -1,6 +1,7 @@
 package org.motechproject.ananya.referencedata.flw.domain;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
@@ -55,5 +56,10 @@ public class FrontLineWorkerSyncRequest implements Serializable {
     @Override
     public boolean equals(Object other) {
         return EqualsBuilder.reflectionEquals(this, other);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

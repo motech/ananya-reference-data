@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.flw.request;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
@@ -75,10 +76,6 @@ public class LocationRequest {
         return "\"" + district + "\"" + "," + "\"" + block + "\"" + "," +  "\"" + panchayat + "\"";
     }
 
-//    public boolean isEmpty(){
-//
-//    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -99,5 +96,10 @@ public class LocationRequest {
         result = 31 * result + (block != null ? block.hashCode() : 0);
         result = 31 * result + (panchayat != null ? panchayat.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }
