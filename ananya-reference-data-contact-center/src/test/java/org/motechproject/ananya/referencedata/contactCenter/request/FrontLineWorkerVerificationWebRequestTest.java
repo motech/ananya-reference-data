@@ -10,6 +10,7 @@ import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class FrontLineWorkerVerificationWebRequestTest {
 
@@ -22,12 +23,29 @@ public class FrontLineWorkerVerificationWebRequestTest {
     }
 
     @Test
-    public void shouldValidateValidRequestFields() {
+    public void shouldValidateInvalidValidRequestFields() {
         FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest("invalidflwid", "invalidmsisdn", "invalidverificationstatus", null, "invaliddesignation", null, "Some reason");
         webRequest.setChannel("invalid_channel");
         Errors errors = webRequest.validate();
         assertEquals(5, errors.getCount());
         assertEquals("id field is not in valid UUID format,msisdn field has invalid value,verificationStatus field has invalid value,invalid channel: invalid_channel,designation field has invalid value", errors.allMessages());
+    }
+
+    @Test
+    public void shouldValidateValidRequest() {
+        FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(UUID.randomUUID().toString(), "9900502341", "SUCCESS", "name", "ASHA", null, null);
+        webRequest.setChannel("contact_center");
+        assertFalse(webRequest.validate().hasErrors());
+    }
+
+
+    @Test
+    public void shouldNotAllowPrefixForMsisdn() {
+        FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(UUID.randomUUID().toString(), "009900502341", "SUCCESS", "name", "ASHA", null, null);
+        webRequest.setChannel("contact_center");
+        Errors errors = webRequest.validate();
+        assertEquals(1, errors.getCount());
+        assertEquals("msisdn field has invalid value", errors.allMessages());
     }
 
     @Test
@@ -40,11 +58,28 @@ public class FrontLineWorkerVerificationWebRequestTest {
         FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(flwId.toString(), Long.toString(msisdn), "INVALID", name, Designation.ASHA.name(), locationRequest, reason);
         FrontLineWorkerVerificationRequest verificationRequest = webRequest.getVerificationRequest();
 
+        Long expectedMsisdn = 919900503456L;
+
         assertEquals(flwId, verificationRequest.getFlwId());
-        assertEquals(msisdn, verificationRequest.getMsisdn());
+        assertEquals(expectedMsisdn, verificationRequest.getMsisdn());
         assertEquals(Designation.ASHA, verificationRequest.getDesignation());
         assertEquals(VerificationStatus.INVALID, verificationRequest.getVerificationStatus());
         assertEquals(locationRequest, verificationRequest.getLocation());
         assertEquals(name, verificationRequest.getName());
     }
+
+    @Test
+    public void shouldReturnVerificationRequestForMsisdnHaving91AsPrefix() {
+        UUID flwId = UUID.randomUUID();
+        Long msisdn = new Long("919900503456");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat");
+        String name = "fwlName";
+        String reason = "reason";
+        FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(flwId.toString(), Long.toString(msisdn), "INVALID", name, Designation.ASHA.name(), locationRequest, reason);
+        FrontLineWorkerVerificationRequest verificationRequest = webRequest.getVerificationRequest();
+
+        Long expectedMsisdn = 919900503456L;
+        assertEquals(expectedMsisdn, verificationRequest.getMsisdn());
+    }
+
 }

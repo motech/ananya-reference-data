@@ -18,7 +18,7 @@ public class FrontLineWorkerImportRequestValidator {
     }
 
     private void validateMsisdn(FrontLineWorkerImportValidationResponse frontLineWorkerImportValidationResponse, String msisdn) {
-        if (PhoneNumber.isNotValidWithBlanksAllowed(msisdn)) {
+        if (!PhoneNumber.isValidWithBlanksAllowed(msisdn)) {
             frontLineWorkerImportValidationResponse.forInvalidMsisdn();
         }
     }

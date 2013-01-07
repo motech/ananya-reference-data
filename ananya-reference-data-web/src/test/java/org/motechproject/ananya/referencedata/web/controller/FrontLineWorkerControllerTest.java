@@ -45,7 +45,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldUpdateTheStatusForAValidFLWRequestXml() throws Exception {
-        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.INVALID.name(), "Invalid User");
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId, "1234567890", VerificationStatus.INVALID.name(), "Invalid User");
 
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success("The FLW has been updated successfully"), status().isOk(), channel);
 
@@ -56,8 +56,17 @@ public class FrontLineWorkerControllerTest {
     }
 
     @Test
+    public void shouldInvalidateTheRequestIfMsisdnIsNot10DigitNumber() throws Exception {
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.INVALID.name(), "Invalid User");
+
+        postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.failure("msisdn field has invalid value"), status().isBadRequest(), channel);
+
+        verify(frontLineWorkerContactCenterService, never()).updateVerifiedFlw(any(FrontLineWorkerVerificationWebRequest.class));
+    }
+
+    @Test
     public void shouldReturnValidationErrorForAnInvalidFLWRequestXml() throws Exception {
-        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId, "911234567890", null, "Invalid User");
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId, "1234567890", null, "Invalid User");
 
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field is missing"), status().isBadRequest(), "contact_center");
 
@@ -66,7 +75,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldUpdateTheStatusForAValidFLWRequestJson() throws Exception {
-        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.INVALID.name(), "Invalid User");
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId, "1234567890", VerificationStatus.INVALID.name(), "Invalid User");
 
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success("The FLW has been updated successfully"), status().isOk());
 
@@ -79,7 +88,7 @@ public class FrontLineWorkerControllerTest {
     @Test
     public void shouldReturnValidationErrorForAnInvalidFLWRequestJson() throws Exception {
         String reason = "Invalid User";
-        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId, "911234567890", null, reason);
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId, "1234567890", null, reason);
 
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.failure("verificationStatus field is missing"), status().isBadRequest());
 
@@ -88,7 +97,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldUpdateTheStatusForAValidSuccessfulFLWRequestJson() throws Exception {
-        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), "district", "block", "panchayat");
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "1234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), "district", "block", "panchayat");
 
         postFlwRequestJson(frontLineWorkerWebRequest, BaseResponse.success("The FLW has been updated successfully"), status().isOk());
 
@@ -100,7 +109,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldReturnValidationErrorForAnInvalidSuccessfulFLWRequestJson() throws Exception {
-        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), null, null, null);
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "1234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), null, null, null);
         BaseResponse expectedResponse = BaseResponse.failure("some validation failed");
         doThrow(new ValidationException("some validation failed")).when(frontLineWorkerContactCenterService).updateVerifiedFlw(frontLineWorkerWebRequest);
 
@@ -114,7 +123,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldUpdateTheStatusForAValidSuccessfulFLWRequestXml() throws Exception {
-        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), "district", "block", "panchayat");
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "1234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), "district", "block", "panchayat");
 
         postFLWRequestXml(frontLineWorkerWebRequest, BaseResponse.success("The FLW has been updated successfully"), status().isOk(), "contact_center");
 
@@ -126,7 +135,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldReturnValidationErrorForAnInvalidSuccessfulFLWRequestXml() throws Exception {
-        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), null, null, null);
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "1234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), null, null, null);
         BaseResponse expectedResponse = BaseResponse.failure("some validation failed");
         doThrow(new ValidationException("some validation failed")).when(frontLineWorkerContactCenterService).updateVerifiedFlw(frontLineWorkerWebRequest);
 
@@ -140,7 +149,7 @@ public class FrontLineWorkerControllerTest {
 
     @Test
     public void shouldValidateChannelParam() throws Exception {
-        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "911234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), "district", "block", "panchayat");
+        FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "1234567890", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), "district", "block", "panchayat");
         BaseResponse expectedResponse = BaseResponse.failure("invalid channel: comedy_central");
 
         postFLWRequestXml(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest(), "comedy_central");

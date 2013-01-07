@@ -27,7 +27,7 @@ public class WebRequestValidator {
             errors.add("msisdn field is missing");
             return;
         }
-        if (PhoneNumber.isNotValid(msisdn)) {
+        if (!PhoneNumber.isValid(msisdn, false, false)) {
             errors.add("msisdn field has invalid value");
         }
     }

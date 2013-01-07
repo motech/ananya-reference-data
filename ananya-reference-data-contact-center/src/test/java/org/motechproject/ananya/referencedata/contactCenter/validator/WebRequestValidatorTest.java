@@ -38,6 +38,11 @@ public class WebRequestValidatorTest {
         assertEquals("msisdn field has invalid value", errors.allMessages());
 
         errors = new Errors();
+        validator.validateMsisdn("919900503246", errors);
+        assertEquals(1, errors.getCount());
+        assertEquals("msisdn field has invalid value", errors.allMessages());
+
+        errors = new Errors();
         validator.validateMsisdn("9900503246", errors);
         assertEquals(0, errors.getCount());
     }

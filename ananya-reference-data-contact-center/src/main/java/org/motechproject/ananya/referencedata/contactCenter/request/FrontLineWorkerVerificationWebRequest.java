@@ -8,6 +8,7 @@ import org.motechproject.ananya.referencedata.contactCenter.validator.WebRequest
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -117,7 +118,7 @@ public class FrontLineWorkerVerificationWebRequest {
     @JsonIgnore
     public FrontLineWorkerVerificationRequest getVerificationRequest() {
         Designation designationEnum = designation == null ? null: Designation.from(designation);
-        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.fromString(flwId), Long.parseLong(msisdn), VerificationStatus.from(verificationStatus),
+        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.fromString(flwId), PhoneNumber.formatPhoneNumber(msisdn), VerificationStatus.from(verificationStatus),
                 name, designationEnum, location, reason);
         return verificationRequest;
     }

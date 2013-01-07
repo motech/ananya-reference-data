@@ -7,7 +7,11 @@ public class PhoneNumber {
     private Long phoneNumber;
 
     public PhoneNumber(String phoneNumber) {
-        if (isNotValid(phoneNumber)) this.phoneNumber = null;
+        this(phoneNumber, true);
+    }
+
+    public PhoneNumber(String phoneNumber, boolean allowPrefix) {
+        if (!isValid(phoneNumber, false, allowPrefix)) this.phoneNumber = null;
         this.phoneNumber = formatPhoneNumber(phoneNumber);
     }
 
@@ -15,20 +19,16 @@ public class PhoneNumber {
         return phoneNumber;
     }
 
-    public static boolean isValidWithBlanksAllowed(String phoneNumber) {
-        return validate(phoneNumber, true);
-    }
-
-    public static boolean isNotValidWithBlanksAllowed(String phoneNumber) {
-        return !validate(phoneNumber, true);
-    }
-
     public static boolean isValid(String phoneNumber) {
-        return validate(phoneNumber, false);
+        return validate(phoneNumber, false, true);
     }
 
-    public static boolean isNotValid(String phoneNumber) {
-        return !validate(phoneNumber, false);
+    public static boolean isValidWithBlanksAllowed(String phoneNumber) {
+        return validate(phoneNumber, true, true);
+    }
+
+    public static boolean isValid(String phoneNumber, boolean allowBlanks, boolean allowPrefix) {
+        return validate(phoneNumber, allowBlanks, allowPrefix);
     }
 
     public static Long formatPhoneNumber(String phoneNumber) {
@@ -40,9 +40,10 @@ public class PhoneNumber {
         return returnValue;
     }
 
-    private static boolean validate(String phoneNumber, boolean allowBlanks) {
+    private static boolean validate(String phoneNumber, boolean allowBlanks, boolean allowPrefix) {
         if (allowBlanks && StringUtils.isBlank(phoneNumber)) return true;
         return StringUtils.isNotBlank(phoneNumber) && StringUtils.isNumeric(phoneNumber) &&
-                (phoneNumber.length() == 10 || (phoneNumber.length() == 12 && (phoneNumber.startsWith("91") || phoneNumber.startsWith("00"))));
+                (phoneNumber.length() == 10 || (allowPrefix && phoneNumber.length() == 12 && (phoneNumber.startsWith("91") || phoneNumber.startsWith("00"))));
     }
+
 }
