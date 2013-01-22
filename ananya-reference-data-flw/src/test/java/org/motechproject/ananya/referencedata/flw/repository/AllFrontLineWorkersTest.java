@@ -46,7 +46,6 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest{
         List<FrontLineWorker> frontLineWorkerList = template.loadAll(FrontLineWorker.class);
         assertEquals(1, frontLineWorkerList.size());
         assertNotNull(frontLineWorkerList.get(0).getLastModified());
-        assertNotNull(frontLineWorkerList.get(0).getFlwId());
     }
 
     @Test
