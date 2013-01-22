@@ -34,7 +34,5 @@ public class FrontLineWorkerContractMapperTest {
         assertEquals(block, locationContract.getBlock());
         assertEquals(district, locationContract.getDistrict());
         assertEquals(panchayat, locationContract.getPanchayat());
-
-        assertEquals(frontLineWorker.getFlwGuid(), frontLineWorkerContract.getFlwGuid());
     }
 }
