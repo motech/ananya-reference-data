@@ -68,16 +68,11 @@
     </changeSet>
 
     <changeSet context="setup" author="ThoughtWorks" id="8">
-        <!-- Following extension required to generate UUIDs. Assuming Postgres9.1 -->
         <sql splitStatements="false">
-            CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-        </sql>
-
-        <sql splitStatements="false">
-            ALTER TABLE ananya_reference_data.front_line_worker ADD COLUMN flw_guid VARCHAR(36);
-            UPDATE ananya_reference_data.front_line_worker SET flw_guid = ((SELECT uuid_generate_v4() WHERE id=id));
-            ALTER TABLE ananya_reference_data.front_line_worker ADD CONSTRAINT flw_guid_unique UNIQUE(flw_guid);
-            ALTER TABLE ananya_reference_data.front_line_worker ALTER flw_guid SET NOT NULL;
+            ALTER TABLE ananya_reference_data.front_line_worker ADD COLUMN flw_id VARCHAR(36);
+            UPDATE ananya_reference_data.front_line_worker SET flw_id = ((SELECT uuid_generate_v4() WHERE id=id));
+            ALTER TABLE ananya_reference_data.front_line_worker ADD CONSTRAINT flw_id_unique UNIQUE(flw_id);
+            ALTER TABLE ananya_reference_data.front_line_worker ALTER flw_id SET NOT NULL;
         </sql>
     </changeSet>
 
