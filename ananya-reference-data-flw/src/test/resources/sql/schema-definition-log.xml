@@ -114,4 +114,11 @@
         </sql>
     </changeSet>
 
+    <changeSet context="setup" author="ThoughtWorks" id="14">
+        <sql splitStatements="false">
+            update ananya_reference_data.location set district = initcap(district), block = initcap(block),
+            panchayat=initcap(panchayat);
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
