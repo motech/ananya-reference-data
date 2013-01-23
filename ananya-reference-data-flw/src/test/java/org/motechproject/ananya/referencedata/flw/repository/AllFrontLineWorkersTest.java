@@ -52,7 +52,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
         FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
         String newName = "new_name";
         Designation newDesignation = Designation.ANM;
-        String newDistrict = "district1";
+        String newDistrict = "District1";
         existingFrontLineWorker.setName(newName);
         LocationStatus status = LocationStatus.VALID;
         Location newLocation = new Location(newDistrict, "block1", "panchayat1", status, null);
@@ -77,7 +77,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
         FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
         String newName = "new_name";
         Designation newDesignation = Designation.ANM;
-        String newDistrict = "district1";
+        String newDistrict = "District1";
         existingFrontLineWorker.setName(newName);
         LocationStatus status = LocationStatus.VALID;
         Location newLocation = new Location(newDistrict, "block1", "panchayat1", status, null);

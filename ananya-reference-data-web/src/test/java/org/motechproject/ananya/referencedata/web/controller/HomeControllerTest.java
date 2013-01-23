@@ -44,7 +44,7 @@ public class HomeControllerTest {
 
     @Test
     public void shouldReturnLocationsToBeVerifiedAsCSV() throws Exception {
-        Location location = new Location("d", "b", "p", LocationStatus.NOT_VERIFIED, null);
+        Location location = new Location("D", "B", "P", LocationStatus.NOT_VERIFIED, null);
         when(locationService.getLocationsToBeVerified()).thenReturn(Arrays.asList(location));
 
         MvcResult mvcResult = mockMvc(homeController).perform(get("/admin/locationsToBeVerified/download"))
@@ -52,7 +52,7 @@ public class HomeControllerTest {
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
         assertTrue(contentAsString.contains("district,block,panchayat,status,newDistrict,newBlock,newPanchayat"));
-        assertTrue(contentAsString.contains("d,b,p,NOT VERIFIED,,"));
+        assertTrue(contentAsString.contains("D,B,P,NOT VERIFIED,,"));
     }
 
     @Test

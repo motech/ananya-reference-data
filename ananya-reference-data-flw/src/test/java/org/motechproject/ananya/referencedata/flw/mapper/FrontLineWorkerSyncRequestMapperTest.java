@@ -9,9 +9,9 @@ import static org.junit.Assert.assertEquals;
 public class FrontLineWorkerSyncRequestMapperTest {
     @Test
     public void shouldMapFromFlwToFlwContract() {
-        String district = "district1";
-        String block = "block1";
-        String panchayat = "panchayat1";
+        String district = "District1";
+        String block = "Block1";
+        String panchayat = "Panchayat1";
         DateTime now = DateTime.now();
         LocationStatus status = LocationStatus.VALID;
         Location location = new Location(district, block, panchayat, status, null);

@@ -1,13 +1,14 @@
 package org.motechproject.ananya.referencedata.flw.domain;
 
 import liquibase.util.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "location")
-public class Location extends BaseEntity implements Cloneable{
+public class Location extends BaseEntity implements Cloneable {
     @Column(name = "district")
     private String district;
 
@@ -30,9 +31,9 @@ public class Location extends BaseEntity implements Cloneable{
 
     public Location(String district, String block, String panchayat, LocationStatus status, Location alternateLocation) {
         this.alternateLocation = alternateLocation;
-        this.district = StringUtils.trimToEmpty(district);
-        this.block = StringUtils.trimToEmpty(block);
-        this.panchayat = StringUtils.trimToEmpty(panchayat);
+        this.district = WordUtils.capitalizeFully(StringUtils.trimToEmpty(district));
+        this.block = WordUtils.capitalizeFully(StringUtils.trimToEmpty(block));
+        this.panchayat = WordUtils.capitalizeFully(StringUtils.trimToEmpty(panchayat));
         this.status = status;
     }
 
@@ -79,7 +80,8 @@ public class Location extends BaseEntity implements Cloneable{
             return false;
         if (block != null ? !block.equalsIgnoreCase(location.block) : location.block != null) return false;
         if (district != null ? !district.equalsIgnoreCase(location.district) : location.district != null) return false;
-        if (panchayat != null ? !panchayat.equalsIgnoreCase(location.panchayat) : location.panchayat != null) return false;
+        if (panchayat != null ? !panchayat.equalsIgnoreCase(location.panchayat) : location.panchayat != null)
+            return false;
         if (status != null ? !status.equals(location.status) : location.status != null) return false;
 
         return true;

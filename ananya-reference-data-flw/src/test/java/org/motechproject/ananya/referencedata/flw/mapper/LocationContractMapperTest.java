@@ -12,9 +12,9 @@ import static junit.framework.Assert.assertNull;
 public class LocationContractMapperTest {
     @Test
     public void shouldMapFromLocationToLocationContract() {
-        String panchayat = "panchayat1";
-        String block = "block1";
-        String district = "district1";
+        String panchayat = "Panchayat1";
+        String block = "Block1";
+        String district = "District1";
 
         Location location = new Location(district, block, panchayat, LocationStatus.VALID, null);
         DateTime lastModified = DateTime.now();

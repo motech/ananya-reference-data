@@ -11,9 +11,9 @@ public class LocationMapperTest {
 
     @Test
     public void shouldMapLocationRequestToLocation() {
-        String district = "district";
-        String block = "block";
-        String panchayat = "panchayat";
+        String district = "District";
+        String block = "Block";
+        String panchayat = "Panchayat";
 
         Location location = LocationMapper.mapFrom(new LocationRequest(district, block, panchayat));
 
