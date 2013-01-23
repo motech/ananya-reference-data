@@ -37,7 +37,7 @@ public class FrontLineWorkerRequestValidator {
         if (flwWithSameMsisdnAndWithSomeStatus.size() == 1
                 && !flwWithSameMsisdnAndWithSomeStatus.get(0).getFlwId().equals(request.getFlwId())
                 && !request.isDummyFlwId())
-            errors.add("flw of same msisdn with status already exists");
+            errors.add("Conflicting flw record exists. Please try again later.");
     }
 
     private void validateInvalidOtherRequest(FrontLineWorkerVerificationRequest request, Errors errors) {

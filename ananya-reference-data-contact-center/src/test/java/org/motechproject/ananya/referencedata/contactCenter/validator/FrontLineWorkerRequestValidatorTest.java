@@ -145,6 +145,6 @@ public class FrontLineWorkerRequestValidatorTest {
         Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
 
         assertEquals(1, errors.getCount());
-        assertEquals("flw of same msisdn with status already exists", errors.allMessages());
+        assertEquals("Conflicting flw record exists. Please try again later.", errors.allMessages());
     }
 }

@@ -43,9 +43,7 @@ public abstract class BaseController {
     private String getExceptionString(Exception ex) {
         StringBuilder sb = new StringBuilder();
         sb.append(ExceptionUtils.getMessage(ex));
-        sb.append(ExceptionUtils.getStackTrace(ex));
-        sb.append(ExceptionUtils.getRootCauseMessage(ex));
-        sb.append(ExceptionUtils.getRootCauseStackTrace(ex));
+        sb.append(ExceptionUtils.getFullStackTrace(ex));
         return sb.toString();
     }
 }
