@@ -38,9 +38,7 @@ public class LocationService {
     }
 
     private Location alternateLocation(Location location) {
-        if (location.getStatus() == LocationStatus.INVALID)
-            return location.getAlternateLocation();
-        return location;
+        return location.isInvalid() ? location.getAlternateLocation() : location;
     }
 
     public List<Location> getAllValidLocations() {
