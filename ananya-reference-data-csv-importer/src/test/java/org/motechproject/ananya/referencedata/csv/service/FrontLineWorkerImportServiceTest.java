@@ -119,6 +119,26 @@ public class FrontLineWorkerImportServiceTest {
     }
 
     @Test
+    public void shouldAddRecordsWithValidLocationIfTheyComeInWithInvalidLocation() throws Exception {
+        String district = "district";
+        String block = "block";
+        String panchayat = "panchayat";
+        String msisdn = "12344545";
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest1 = new FrontLineWorkerImportRequest(msisdn, "name", "ASHA", new LocationRequest(district, block, panchayat, "INVALID"));
+        Location validLocation = new Location("d1", "b1", "p1", LocationStatus.VALID, null);
+        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat, LocationStatus.INVALID, validLocation));
+        ArrayList<FrontLineWorkerImportRequest> frontLineWorkerImportRequests = new ArrayList<>();
+        frontLineWorkerImportRequests.add(frontLineWorkerImportRequest1);
+
+        frontLineWorkerImportService.addAllWithoutValidations(frontLineWorkerImportRequests);
+
+        verify(allFrontLineWorkers).createOrUpdateAll(captor.capture());
+        List<FrontLineWorker> actualFLWs = captor.getValue();
+        assertEquals(1, actualFLWs.size());
+        assertEquals(validLocation, actualFLWs.get(0).getLocation());
+    }
+
+    @Test
     public void shouldGetFrontLineWorkerById() {
         Long msisdn = 12L;
 

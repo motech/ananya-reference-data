@@ -39,7 +39,7 @@ public class FrontLineWorkerImportService {
         List<FrontLineWorker> frontLineWorkers = new ArrayList<>();
         for (FrontLineWorkerImportRequest frontLineWorkerImportRequest : frontLineWorkerImportRequests) {
             LocationRequest locationRequest = frontLineWorkerImportRequest.getLocation();
-            Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
+            Location location = getExistingLocation(locationRequest);
 
             FrontLineWorker frontLineWorkerToBeSaved = constructFrontLineWorkerForBulkImport(frontLineWorkerImportRequest, location, frontLineWorkerImportRequests);
 
@@ -48,6 +48,11 @@ public class FrontLineWorkerImportService {
 
         saveAllFLWToDB(frontLineWorkers);
         syncService.syncAllFrontLineWorkers(frontLineWorkers);
+    }
+
+    private Location getExistingLocation(LocationRequest locationRequest) {
+        Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
+        return location.isInvalid() ? location.getAlternateLocation() : location;
     }
 
     private void saveAllFLWToDB(List<FrontLineWorker> frontLineWorkers) {

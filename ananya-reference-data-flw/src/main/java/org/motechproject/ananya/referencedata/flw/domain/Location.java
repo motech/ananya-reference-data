@@ -69,6 +69,10 @@ public class Location extends BaseEntity implements Cloneable {
         return status == LocationStatus.VALID;
     }
 
+    public boolean isInvalid() {
+        return status == LocationStatus.INVALID;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
