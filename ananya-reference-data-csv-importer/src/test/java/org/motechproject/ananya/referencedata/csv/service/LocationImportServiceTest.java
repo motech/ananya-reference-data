@@ -48,9 +48,9 @@ public class LocationImportServiceTest {
         locationImportCSVRequests.add(locationImportCSVRequest("D3", "B3", "P3", LocationStatus.INVALID.getDescription(), "D2", "B2", "P2"));
         locationImportCSVRequests.add(locationImportCSVRequest("D4", "B4", "P4", LocationStatus.INVALID.getDescription(), "D2", "B2", "P2"));
 
-        when(allLocations.getFor("D2", "B2", "P2")).thenReturn(new Location("D2", "B2", "P2", LocationStatus.VALID, null));
-        when(allLocations.getFor("D3", "B3", "P3")).thenReturn(new Location("D3", "B3", "P3", LocationStatus.INVALID, new Location("D2", "B2", "P2", LocationStatus.VALID, null)));
-        when(allLocations.getFor("D4", "B4", "P4")).thenReturn(new Location("D4", "B4", "P4", LocationStatus.INVALID, new Location("D2", "B2", "P2", LocationStatus.VALID, null)));
+        when(allLocations.getFor("D2", "B2", "P2")).thenReturn(new Location("D2", "B2", "P2", "state", LocationStatus.VALID, null));
+        when(allLocations.getFor("D3", "B3", "P3")).thenReturn(new Location("D3", "B3", "P3", "state", LocationStatus.INVALID, new Location("D2", "B2", "P2", "state", LocationStatus.VALID, null)));
+        when(allLocations.getFor("D4", "B4", "P4")).thenReturn(new Location("D4", "B4", "P4", "state", LocationStatus.INVALID, new Location("D2", "B2", "P2", "state", LocationStatus.VALID, null)));
 
         locationImportService.addAllWithoutValidations(locationImportCSVRequests);
         verify(allLocations,never()).update(any(Location.class));
@@ -67,11 +67,11 @@ public class LocationImportServiceTest {
         locationImportCSVRequests.add(locationImportCSVRequest("D4", "B4", "P4", LocationStatus.IN_REVIEW.getDescription()));
         locationImportCSVRequests.add(locationImportCSVRequest("D5", "B5", "P5", LocationStatus.INVALID.getDescription(), "D2", "B2", "P2"));
 
-        Location validLocation = new Location("D2", "B2", "P2", LocationStatus.IN_REVIEW, null);
+        Location validLocation = new Location("D2", "B2", "P2", "state", LocationStatus.IN_REVIEW, null);
         when(allLocations.getFor("D2", "B2", "P2")).thenReturn(validLocation);
-        when(allLocations.getFor("D3", "B3", "P3")).thenReturn(new Location("D3", "B3", "P3", LocationStatus.IN_REVIEW, null));
-        when(allLocations.getFor("D4", "B4", "P4")).thenReturn(new Location("D4", "B4", "P4", LocationStatus.NOT_VERIFIED, null));
-        Location identicalExistingLocationInDb = new Location("D5", "B5", "P5", LocationStatus.INVALID, validLocation);
+        when(allLocations.getFor("D3", "B3", "P3")).thenReturn(new Location("D3", "B3", "P3", "state", LocationStatus.IN_REVIEW, null));
+        when(allLocations.getFor("D4", "B4", "P4")).thenReturn(new Location("D4", "B4", "P4", "state", LocationStatus.NOT_VERIFIED, null));
+        Location identicalExistingLocationInDb = new Location("D5", "B5", "P5", "state", LocationStatus.INVALID, validLocation);
         when(allLocations.getFor("D5", "B5", "P5")).thenReturn(identicalExistingLocationInDb);
 
         locationImportService.addAllWithoutValidations(locationImportCSVRequests);
@@ -113,7 +113,7 @@ public class LocationImportServiceTest {
 
     @Test
     public void shouldGetLocationForASpecificDistrictBlockAndPanchayat() {
-        Location location = new Location("District", "Block", "Panchayat", LocationStatus.VALID, null);
+        Location location = new Location("District", "Block", "Panchayat", "state", LocationStatus.VALID, null);
         when(allLocations.getFor("district", "block", "panchayat")).thenReturn(location);
 
         Location actualLocation = locationImportService.getFor("district", "block", "panchayat");

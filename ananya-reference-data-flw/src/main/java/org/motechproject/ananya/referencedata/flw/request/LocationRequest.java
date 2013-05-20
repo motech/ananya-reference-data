@@ -19,6 +19,9 @@ public class LocationRequest {
     @XmlElement
     @JsonProperty
     private String panchayat;
+    @XmlElement
+    @JsonProperty
+    private String state;
 
     @JsonIgnore
     @XmlTransient
@@ -27,16 +30,18 @@ public class LocationRequest {
     public LocationRequest() {
     }
 
-    public LocationRequest(String district, String block, String panchayat) {
+    public LocationRequest(String district, String block, String panchayat, String state) {
         this.district = district;
         this.block = block;
         this.panchayat = panchayat;
+        this.state = state;
     }
 
-    public LocationRequest(String district, String block, String panchayat, String status) {
+    public LocationRequest(String district, String block, String panchayat, String state, String status) {
         this.district = district;
         this.block = block;
         this.panchayat = panchayat;
+        this.state = state;
         this.status = status;
     }
 
@@ -72,8 +77,16 @@ public class LocationRequest {
         this.status = status;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
     public String toCSV() {
-        return "\"" + district + "\"" + "," + "\"" + block + "\"" + "," +  "\"" + panchayat + "\"";
+        return "\"" + state + "\"" + district + "\"" + "," + "\"" + block + "\"" + "," +  "\"" + panchayat + "\"";
     }
 
     @Override
@@ -86,6 +99,7 @@ public class LocationRequest {
         if (block != null ? !block.equals(that.block) : that.block != null) return false;
         if (district != null ? !district.equals(that.district) : that.district != null) return false;
         if (panchayat != null ? !panchayat.equals(that.panchayat) : that.panchayat != null) return false;
+        if (state != null ? !state.equals(that.state) : that.state != null) return false;
 
         return true;
     }
@@ -95,6 +109,7 @@ public class LocationRequest {
         int result = district != null ? district.hashCode() : 0;
         result = 31 * result + (block != null ? block.hashCode() : 0);
         result = 31 * result + (panchayat != null ? panchayat.hashCode() : 0);
+        result = 31 * result + (state != null ? state.hashCode() : 0);
         return result;
     }
 

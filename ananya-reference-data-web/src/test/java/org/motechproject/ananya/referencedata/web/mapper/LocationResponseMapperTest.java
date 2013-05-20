@@ -17,8 +17,8 @@ public class LocationResponseMapperTest {
     @Test
     public void shouldMapToLocationResponseWithoutStatus(){
         List<Location> locationList = new ArrayList();
-        Location location1 = new Location("D1", "B1", "P1", LocationStatus.IN_REVIEW, null);
-        Location location2 = new Location("D2", "B2", "P2", LocationStatus.VALID, null);
+        Location location1 = new Location("D1", "B1", "P1", "state", LocationStatus.IN_REVIEW, null);
+        Location location2 = new Location("D2", "B2", "P2", "state", LocationStatus.VALID, null);
         locationList.add(location1);
         locationList.add(location2);
 
@@ -31,8 +31,8 @@ public class LocationResponseMapperTest {
     @Test
     public void shouldMapToLocationResponseWithStatus(){
         List<Location> locationList = new ArrayList();
-        Location location1 = new Location("D1", "B1", "P1", LocationStatus.IN_REVIEW, null);
-        Location location2 = new Location("D2", "B2", "P2", LocationStatus.VALID, null);
+        Location location1 = new Location("D1", "B1", "P1", "state", LocationStatus.IN_REVIEW, null);
+        Location location2 = new Location("D2", "B2", "P2", "state", LocationStatus.VALID, null);
         locationList.add(location1);
         locationList.add(location2);
 

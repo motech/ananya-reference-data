@@ -60,7 +60,7 @@ public class LocationImportService {
                         CSVRequest.getDistrict(),
                         CSVRequest.getBlock(),
                         CSVRequest.getPanchayat(),
-                        LocationStatus.VALID,
+                        null, LocationStatus.VALID,
                         null);
                 allLocations.add(location);
                 syncService.syncLocation(location);

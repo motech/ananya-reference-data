@@ -46,7 +46,7 @@ public class LocationControllerTest {
 
     @Test
     public void shouldGetLocationMasterCsv() throws Exception {
-        final Location validLocation = new Location("d1", "b1", "p1", LocationStatus.VALID, null);
+        final Location validLocation = new Location("d1", "b1", "p1", "state", LocationStatus.VALID, null);
         String channel = "contact_center";
         when(locationService.getAllValidLocations()).thenReturn(new ArrayList<Location>() {{
             add(validLocation);
@@ -70,7 +70,7 @@ public class LocationControllerTest {
 
     @Test
     public void shouldSyncAValidLocation() throws Exception {
-        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "state");
 
         MvcResult result = mockMvc(locationController)
                 .perform(post("/location")

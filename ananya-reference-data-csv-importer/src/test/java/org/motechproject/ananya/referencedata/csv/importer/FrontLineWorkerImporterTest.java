@@ -47,9 +47,9 @@ public class FrontLineWorkerImporterTest {
     @Test
     public void shouldValidateFLWRequests() {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
-        Location location = new Location("D1", "B1", "P1", LocationStatus.VALID, null);
+        Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
         when(locationImportService.getFor("D1", "B1", "P1")).thenReturn(location);
-        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1234567890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1", "VALID")));
+        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1234567890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
 
         ValidationResponse validationResponse = frontLineWorkerImporter.validate(frontLineWorkerWebRequests);
 
@@ -61,9 +61,9 @@ public class FrontLineWorkerImporterTest {
     @Test
     public void shouldFailValidationIfFLWDoesNotHaveAllTheDetails() {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
-        Location location = new Location("D1", "B1", "P1", LocationStatus.VALID, null);
+        Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
         when(locationImportService.getFor("D1", "B1", "P1")).thenReturn(location);
-        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1asdf67890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1", "VALID")));
+        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1asdf67890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
 
         ValidationResponse validationResponse = frontLineWorkerImporter.validate(frontLineWorkerWebRequests);
 
@@ -76,7 +76,7 @@ public class FrontLineWorkerImporterTest {
     public void shouldSaveFLW() throws IOException {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         String msisdn = "1234567890";
-        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest(msisdn, "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1", "VALID")));
+        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest(msisdn, "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
 
         frontLineWorkerImporter.postData(frontLineWorkerWebRequests);
 

@@ -44,7 +44,7 @@ public class HomeControllerTest {
 
     @Test
     public void shouldReturnLocationsToBeVerifiedAsCSV() throws Exception {
-        Location location = new Location("D", "B", "P", LocationStatus.NOT_VERIFIED, null);
+        Location location = new Location("D", "B", "P", "state", LocationStatus.NOT_VERIFIED, null);
         when(locationService.getLocationsToBeVerified()).thenReturn(Arrays.asList(location));
 
         MvcResult mvcResult = mockMvc(homeController).perform(get("/admin/locationsToBeVerified/download"))

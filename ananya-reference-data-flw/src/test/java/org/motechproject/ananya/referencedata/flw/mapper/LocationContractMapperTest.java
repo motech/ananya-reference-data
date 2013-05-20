@@ -15,8 +15,9 @@ public class LocationContractMapperTest {
         String panchayat = "Panchayat1";
         String block = "Block1";
         String district = "District1";
+        String state = "state";
 
-        Location location = new Location(district, block, panchayat, LocationStatus.VALID, null);
+        Location location = new Location(district, block, panchayat, state, LocationStatus.VALID, null);
         DateTime lastModified = DateTime.now();
         location.setLastModified(lastModified);
         LocationContract locationContract = LocationContractMapper.mapFrom(location);

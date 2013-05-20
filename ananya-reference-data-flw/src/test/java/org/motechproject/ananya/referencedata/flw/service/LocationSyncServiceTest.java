@@ -30,7 +30,7 @@ public class LocationSyncServiceTest {
     @Test
     public void shouldSyncAllLocations() {
         LocationSyncService locationSyncService = new LocationSyncService(httpClientService, syncEndpointService);
-        final Location locationToBeSynced = new Location("D1", "B1", "P1", LocationStatus.NOT_VERIFIED, null);
+        final Location locationToBeSynced = new Location("D1", "B1", "P1", "state", LocationStatus.NOT_VERIFIED, null);
         DateTime dateTime = DateTime.now();
         locationToBeSynced.setLastModified(dateTime);
         String flwApiKeyName = "flwApiKeyName";

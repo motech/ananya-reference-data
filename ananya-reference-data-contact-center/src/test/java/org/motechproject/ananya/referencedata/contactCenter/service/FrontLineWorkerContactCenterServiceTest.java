@@ -81,7 +81,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker).thenReturn(unmodifiedMockFrontLineWorker);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
-        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy", "state");
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
         when(locationService.createAndFetch(locationRequest)).thenReturn(existingLocation);
 
@@ -110,7 +110,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         when(allFrontLineWorkers.getByMsisdn(msisdnWithPrefix)).thenReturn(frontLineWorkers);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
-        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy", "state");
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
         when(locationService.createAndFetch(locationRequest)).thenReturn(existingLocation);
 
@@ -142,7 +142,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         when(allFrontLineWorkers.getByMsisdn(msisdnWithPrefix)).thenReturn(frontLineWorkers);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
-        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy", "state");
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
         when(locationService.createAndFetch(locationRequest)).thenReturn(existingLocation);
 
@@ -225,7 +225,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
         String name = "aragorn";
         Designation designation = Designation.ANM;
-        Location location = new Location("d1","b1","p1", LocationStatus.VALID,null);
+        Location location = new Location("d1","b1","p1", name, LocationStatus.VALID,null);
         FrontLineWorker frontLineWorker = new FrontLineWorker(existingMsisdn, name, designation, location, flwId, verificationStatus, null);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);

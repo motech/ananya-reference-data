@@ -35,7 +35,7 @@ public class FrontLineWorkerSyncServiceTest {
 
     @Test
     public void shouldSyncListOfFLW() {
-        Location location = new Location("D1", "B1", "P1", LocationStatus.VALID, null);
+        Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
         long msisdn = 1L;
         final FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, "name", Designation.ANM, location);
         frontLineWorker.setLastModified(DateTime.now());
@@ -68,7 +68,7 @@ public class FrontLineWorkerSyncServiceTest {
 
     @Test
     public void shouldSyncFLWIfThereAreMultipleFLWsInDBButThisHasAStatus() {
-        Location location = new Location("D1", "B1", "P1", LocationStatus.VALID, null);
+        Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
         long msisdn = 1L;
         FrontLineWorker frontLineWorker1 = new FrontLineWorker(msisdn, "name", Designation.ANM, location);
         frontLineWorker1.setVerificationStatus(VerificationStatus.SUCCESS);
@@ -95,7 +95,7 @@ public class FrontLineWorkerSyncServiceTest {
 
     @Test
     public void shouldNotSyncFLWIfThereAreMultipleFLWsInDBButWithoutStatus() {
-        Location location = new Location("D1", "B1", "P1", LocationStatus.VALID, null);
+        Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
         long msisdn = 1L;
         FrontLineWorker frontLineWorker1 = new FrontLineWorker(msisdn, "name", Designation.ANM, location);
         FrontLineWorker frontLineWorker2 = new FrontLineWorker(msisdn, "name", Designation.ANM, location);
