@@ -38,7 +38,7 @@ public class LocationImportValidatorTest {
         LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequests);
 
         assertFalse(locationValidationResponse.isValid());
-        assertTrue(locationValidationResponse.getMessage().contains("Blank district, block or panchayat"));
+        assertTrue(locationValidationResponse.getMessage().contains("Blank state, district, block or panchayat"));
         assertTrue(locationValidationResponse.getMessage().contains("Blank or Invalid status"));
     }
 

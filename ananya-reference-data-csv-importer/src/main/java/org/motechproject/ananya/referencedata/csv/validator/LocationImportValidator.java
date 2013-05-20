@@ -80,7 +80,7 @@ public class LocationImportValidator {
 
     private LocationImportCSVRequest getIfPresentInCsv(LocationImportCSVRequest locationCSVRequest, List<LocationImportCSVRequest> locationImportCSVRequests) {
         for (LocationImportCSVRequest locationCSVRequestFromCsv : locationImportCSVRequests) {
-            if (locationCSVRequestFromCsv.matchesLocation(locationCSVRequest.getNewDistrict(),
+            if (locationCSVRequestFromCsv.matchesLocation(locationCSVRequest.getNewState(), locationCSVRequest.getNewDistrict(),
                     locationCSVRequest.getNewBlock(), locationCSVRequest.getNewPanchayat()))
                 return locationCSVRequestFromCsv;
         }

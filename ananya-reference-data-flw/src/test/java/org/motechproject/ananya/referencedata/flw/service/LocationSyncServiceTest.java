@@ -47,7 +47,7 @@ public class LocationSyncServiceTest {
 
         locationSyncService.sync(locationToBeSynced);
 
-        LocationRequest actualLocation = new LocationRequest(locationToBeSynced.getDistrict(), locationToBeSynced.getBlock(), locationToBeSynced.getPanchayat());
+        LocationRequest actualLocation = new LocationRequest(locationToBeSynced.getState(), locationToBeSynced.getDistrict(), locationToBeSynced.getBlock(), locationToBeSynced.getPanchayat());
         LocationSyncRequest expectedLocationSyncRequest = new LocationSyncRequest(actualLocation, actualLocation, locationToBeSynced.getStatus(), locationToBeSynced.getLastModified());
         verify(httpClientService).post(flwSyncEndpoint.getUrl(), expectedLocationSyncRequest, headers1);
         verify(httpClientService).post(kilkariSyncEndpoint.getUrl(), expectedLocationSyncRequest, headers2);

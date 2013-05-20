@@ -19,8 +19,8 @@ public class LocationSyncRequestMapperTest {
 
         LocationSyncRequest syncRequest = LocationSyncRequestMapper.map(location);
 
-        assertEquals(new LocationRequest(location.getDistrict(), location.getBlock(), location.getPanchayat()), syncRequest.getExistingLocation());
-        assertEquals(new LocationRequest(alternateLocation.getDistrict(), alternateLocation.getBlock(), alternateLocation.getPanchayat()), syncRequest.getNewLocation());
+        assertEquals(new LocationRequest(location.getState(), location.getDistrict(), location.getBlock(), location.getPanchayat()), syncRequest.getExistingLocation());
+        assertEquals(new LocationRequest(location.getState(), alternateLocation.getDistrict(), alternateLocation.getBlock(), alternateLocation.getPanchayat()), syncRequest.getNewLocation());
         assertEquals(location.getStatus(), syncRequest.getLocationStatus());
         assertEquals(location.getLastModified(), syncRequest.getLastModifiedTime());
     }
@@ -32,7 +32,7 @@ public class LocationSyncRequestMapperTest {
 
         LocationSyncRequest syncRequest = LocationSyncRequestMapper.map(location);
 
-        LocationRequest expectedLocationRequest = new LocationRequest(location.getDistrict(), location.getBlock(), location.getPanchayat());
+        LocationRequest expectedLocationRequest = new LocationRequest(location.getState(), location.getDistrict(), location.getBlock(), location.getPanchayat());
         assertEquals(location.getStatus(), syncRequest.getLocationStatus());
         assertEquals(location.getLastModified(), syncRequest.getLastModifiedTime());
         assertEquals(expectedLocationRequest, syncRequest.getExistingLocation());

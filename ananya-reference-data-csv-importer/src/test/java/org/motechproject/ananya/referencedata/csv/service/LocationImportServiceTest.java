@@ -80,21 +80,21 @@ public class LocationImportServiceTest {
         ArgumentCaptor<Location> locationArgumentCaptor = ArgumentCaptor.forClass(Location.class);
         orderedExecution.verify(allLocations, times(1)).add(locationArgumentCaptor.capture());
         Location location1 = locationArgumentCaptor.getValue();
-        assertLocationDetails(location1, "D1", LocationStatus.VALID);
+        assertLocationDetails(location1, "D1", LocationStatus.VALID, "S1");
 
         locationArgumentCaptor = ArgumentCaptor.forClass(Location.class);
         orderedExecution.verify(allLocations).update(locationArgumentCaptor.capture());
         Location location2 = locationArgumentCaptor.getValue();
-        assertLocationDetails(location2, "D2", LocationStatus.VALID);
+        assertLocationDetails(location2, "D2", LocationStatus.VALID, "S2");
 
         orderedExecution.verify(allLocations).update(locationArgumentCaptor.capture());
         Location location3 = locationArgumentCaptor.getValue();
-        assertLocationDetails(location3, "D4", LocationStatus.IN_REVIEW);
+        assertLocationDetails(location3, "D4", LocationStatus.IN_REVIEW, "S4");
 
         orderedExecution.verify(allLocations).update(locationArgumentCaptor.capture());
 
         Location location4 = locationArgumentCaptor.getValue();
-        assertLocationDetails(location4, "D3", LocationStatus.INVALID);
+        assertLocationDetails(location4, "D3", LocationStatus.INVALID, "S3");
 
         assertEquals(location2.getDistrict(), location4.getAlternateLocation().getDistrict());
 
@@ -106,9 +106,10 @@ public class LocationImportServiceTest {
         verifySync(location1, location2, location3, location4,identicalExistingLocationInDb);
     }
 
-    private void assertLocationDetails(Location location, String expectedDistrictName, LocationStatus expectedStatus) {
+    private void assertLocationDetails(Location location, String expectedDistrictName, LocationStatus expectedStatus, String expectedState) {
         assertEquals(expectedDistrictName, location.getDistrict());
         assertEquals(expectedStatus, location.getStatus());
+        assertEquals(expectedState, location.getState());
     }
 
     @Test

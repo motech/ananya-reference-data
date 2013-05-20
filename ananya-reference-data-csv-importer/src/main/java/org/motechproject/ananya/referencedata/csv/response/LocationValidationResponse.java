@@ -9,7 +9,7 @@ public class LocationValidationResponse {
 
     public void forBlankFieldsInLocation() {
         isValid = false;
-        this.message.add("Blank district, block or panchayat");
+        this.message.add("Blank state, district, block or panchayat");
     }
 
     public void forDuplicateLocation() {

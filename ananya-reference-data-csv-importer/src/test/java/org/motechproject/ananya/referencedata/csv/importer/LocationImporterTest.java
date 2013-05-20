@@ -51,7 +51,7 @@ public class LocationImporterTest {
 
         assertTrue(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("district,block,panchayat,status,newDistrict,newBlock,newPanchayat,error", validationResponse.getErrors().get(0).getMessage());
+        assertEquals("state,district,block,panchayat,status,newState,newDistrict,newBlock,newPanchayat,error", validationResponse.getErrors().get(0).getMessage());
     }
 
     @Test
@@ -68,7 +68,7 @@ public class LocationImporterTest {
 
         assertFalse(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        String expectedErrorFileRecord = new CSVRecordBuilder().appendColumn("D1", "B1", null, "VALID", null, null, null, "[Blank district, block or panchayat]").toString();
+        String expectedErrorFileRecord = new CSVRecordBuilder().appendColumn("S1","D1", "B1", null, "VALID",null, null, null, null, "[Blank state, district, block or panchayat]").toString();
         assertEquals(expectedErrorFileRecord, validationResponse.getErrors().get(1).getMessage());
     }
 
@@ -82,6 +82,7 @@ public class LocationImporterTest {
         verify(locationImportService).addAllWithoutValidations(captor.capture());
         List<LocationImportCSVRequest> locationRequestsToSaveCSV = captor.getValue();
         assertEquals(1, locationRequestsToSaveCSV.size());
+        assertEquals("S1", locationRequestsToSaveCSV.get(0).getState());
         assertEquals("D1", locationRequestsToSaveCSV.get(0).getDistrict());
         assertEquals("B1", locationRequestsToSaveCSV.get(0).getBlock());
         assertEquals("P1", locationRequestsToSaveCSV.get(0).getPanchayat());

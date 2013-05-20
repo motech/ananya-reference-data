@@ -16,6 +16,8 @@ public class LocationImportCSVRequestTest {
 
         CSVRequest = locationImportCSVRequest("s", "d", "b", "p", LocationStatus.INVALID.name(), "d1", "b1", "p1", "s1");
         assertTrue(CSVRequest.hasAlternateLocation());
+        CSVRequest = locationImportCSVRequest("s", "d", "b", "p", LocationStatus.INVALID.name(), "d1", "b1", "p1", null);
+        assertFalse(CSVRequest.hasAlternateLocation());
     }
 
     @Test
@@ -26,12 +28,13 @@ public class LocationImportCSVRequestTest {
         String state = "s";
         LocationImportCSVRequest CSVRequest = locationImportCSVRequest(state, district, block, panchayat, LocationStatus.INVALID.getDescription());
 
-        assertTrue(CSVRequest.matchesLocation(district, block, panchayat));
-        assertFalse(CSVRequest.matchesLocation("d1", "b1", "p1"));
+        assertTrue(CSVRequest.matchesLocation(state, district, block, panchayat));
+        assertFalse(CSVRequest.matchesLocation("s1", district, block, panchayat));
+        assertFalse(CSVRequest.matchesLocation("s1", "d1", "b1", "p1"));
     }
 
     @Test
-    public void shouldChangeToUpperCase() {
+    public void shouldCheckEqualityWithCaseInsensitiveMatch() {
         LocationImportCSVRequest CSVRequest1 = locationImportCSVRequest("state", "district", "block", "panchayat", "status1", "newdistrict1", "newblock1", "newpanchayat1", "newstate1");
         LocationImportCSVRequest CSVRequest2 = locationImportCSVRequest("State", "District", "BlocK", "PanchaYat", "status2", "newdistrict2", "newblock2", "newpanchayat2", "newstate2");
 
@@ -57,7 +60,7 @@ public class LocationImportCSVRequestTest {
         locationImportCSVRequest.validate(locationValidationResponse);
 
         assertTrue(locationValidationResponse.isInValid());
-        assertTrue(locationValidationResponse.getMessage().contains("Blank district, block or panchayat"));
+        assertTrue(locationValidationResponse.getMessage().contains("Blank state, district, block or panchayat"));
         assertTrue(locationValidationResponse.getMessage().contains("Blank or Invalid status"));
     }
 
@@ -73,9 +76,18 @@ public class LocationImportCSVRequestTest {
     public void shouldReturnHeaderRowWithErrorsColumn() {
         String headerRowForErrors = new LocationImportCSVRequest().getHeaderRowForErrors();
 
-        assertEquals("district,block,panchayat,status,newDistrict,newBlock,newPanchayat,error", headerRowForErrors);
+        assertEquals("state,district,block,panchayat,status,newState,newDistrict,newBlock,newPanchayat,error", headerRowForErrors);
     }
 
+    @Test
+    public void shouldConvertToCSV() {
+        LocationImportCSVRequest locationImportCSVRequest = locationImportCSVRequest("state", "district", "block", "panchayat", "status1","newdistrict1", "newblock1", "newpanchayat1", "newstate1");
+        String expected = "\"state\",\"district\",\"block\",\"panchayat\",\"status1\"," +
+                "\"newstate1\",\"newdistrict1\",\"newblock1\",\"newpanchayat1\"";
+
+        assertEquals(expected, locationImportCSVRequest.toCSV());
+    }
+    
     private LocationImportCSVRequest locationImportCSVRequest(String state, String district, String block, String panchayat, String status, String newDistrict, String newBlock, String newPanchayat, String newState) {
         return new LocationImportCSVRequestBuilder().withDefaults().buildWith(state, district, block, panchayat, status, newState, newDistrict, newBlock, newPanchayat);
     }

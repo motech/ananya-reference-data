@@ -54,13 +54,13 @@ public class LocationImportService {
                 hasStatus(Arrays.asList(LocationStatus.NEW)), new Closure() {
             @Override
             public void execute(Object input) {
-                LocationImportCSVRequest CSVRequest = (LocationImportCSVRequest) input;
+                LocationImportCSVRequest csvRequest = (LocationImportCSVRequest) input;
 
                 Location location = new Location(
-                        CSVRequest.getDistrict(),
-                        CSVRequest.getBlock(),
-                        CSVRequest.getPanchayat(),
-                        null, LocationStatus.VALID,
+                        csvRequest.getDistrict(),
+                        csvRequest.getBlock(),
+                        csvRequest.getPanchayat(),
+                        csvRequest.getState(), LocationStatus.VALID,
                         null);
                 allLocations.add(location);
                 syncService.syncLocation(location);
