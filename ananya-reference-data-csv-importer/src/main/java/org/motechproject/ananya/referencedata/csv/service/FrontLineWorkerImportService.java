@@ -51,7 +51,7 @@ public class FrontLineWorkerImportService {
     }
 
     private Location getExistingLocation(LocationRequest locationRequest) {
-        Location location = allLocations.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
+        Location location = allLocations.getFor(locationRequest.getState(), locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
         return location.isInvalid() ? location.getAlternateLocation() : location;
     }
 

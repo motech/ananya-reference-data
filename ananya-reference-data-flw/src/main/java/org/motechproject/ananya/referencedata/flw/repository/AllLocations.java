@@ -39,9 +39,10 @@ public class AllLocations {
     }
 
     @Transactional(readOnly = true)
-    public Location getFor(String district, String block, String panchayat) {
+    public Location getFor(String state, String district, String block, String panchayat) {
         DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
 
+        criteria.add(Restrictions.eq("state", state).ignoreCase());
         criteria.add(Restrictions.eq("district", district).ignoreCase());
         criteria.add(Restrictions.eq("block", block).ignoreCase());
         criteria.add(Restrictions.eq("panchayat", panchayat).ignoreCase());

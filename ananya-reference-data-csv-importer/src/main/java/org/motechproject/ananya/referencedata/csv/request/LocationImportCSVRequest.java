@@ -8,15 +8,33 @@ import org.motechproject.ananya.referencedata.csv.utils.CSVRecordBuilder;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 
 public class LocationImportCSVRequest {
+    private String state;
     private String district;
     private String block;
     private String panchayat;
+    private String newState;
     private String newDistrict;
     private String newBlock;
     private String newPanchayat;
     private String status;
 
     public LocationImportCSVRequest() {
+    }
+
+    public String getNewState() {
+        return newState;
+    }
+
+    public void setNewState(String newState) {
+        this.newState = newState;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getDistrict() {

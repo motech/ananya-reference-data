@@ -36,8 +36,8 @@ public class LocationImportService {
     }
 
     @Cacheable(value = "locationSearchCache")
-    public Location getFor(String district, String block, String panchayat) {
-        return allLocations.getFor(district, block, panchayat);
+    public Location getFor(String state, String district, String block, String panchayat) {
+        return allLocations.getFor(state, district, block, panchayat);
     }
 
     @Transactional
@@ -77,7 +77,7 @@ public class LocationImportService {
                 LocationImportCSVRequest csvRequest = (LocationImportCSVRequest) input;
 
                 Location updatedLocation = allLocations.getFor(
-                        csvRequest.getDistrict(),
+                        csvRequest.getState(), csvRequest.getDistrict(),
                         csvRequest.getBlock(),
                         csvRequest.getPanchayat()
                 );
@@ -102,12 +102,12 @@ public class LocationImportService {
 
 
                 Location updatedInvalidLocation = allLocations.getFor(
-                        csvRequest.getDistrict(),
+                        csvRequest.getState(), csvRequest.getDistrict(),
                         csvRequest.getBlock(),
                         csvRequest.getPanchayat()
                 );
                 Location validLocationFromDb = allLocations.getFor(
-                        csvRequest.getNewDistrict(),
+                        csvRequest.getNewState(), csvRequest.getNewDistrict(),
                         csvRequest.getNewBlock(),
                         csvRequest.getNewPanchayat()
                 );

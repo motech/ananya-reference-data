@@ -50,6 +50,6 @@ public class LocationService {
     }
 
     private Location getExistingLocation(LocationRequest request) {
-        return allLocations.getFor(request.getDistrict(), request.getBlock(), request.getPanchayat());
+        return allLocations.getFor(request.getState(), request.getDistrict(), request.getBlock(), request.getPanchayat());
     }
 }

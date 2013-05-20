@@ -71,7 +71,7 @@ public class FrontLineWorkerImporter {
     }
 
     private Location getLocationFor(LocationRequest locationRequest) {
-        return locationImportService.getFor(locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
+        return locationImportService.getFor(locationRequest.getState(), locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
     }
 
     private void addHeader(List<Error> errors) {

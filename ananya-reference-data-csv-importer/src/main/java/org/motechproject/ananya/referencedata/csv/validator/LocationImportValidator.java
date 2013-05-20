@@ -40,7 +40,7 @@ public class LocationImportValidator {
 
     private void validateExistenceInDb(LocationImportCSVRequest csvRequest, LocationValidationResponse validationResponse) {
         LocationStatus status = LocationStatus.from(csvRequest.getStatus());
-        Location alreadyPresentLocation = getLocationFormDb(csvRequest.getDistrict(), csvRequest.getBlock(), csvRequest.getPanchayat());
+        Location alreadyPresentLocation = getLocationFormDb(csvRequest.getState(), csvRequest.getDistrict(), csvRequest.getBlock(), csvRequest.getPanchayat());
         if (status == LocationStatus.NEW && alreadyPresentLocation != null)
             validationResponse.forLocationExisting();
         if (status != LocationStatus.NEW) {
@@ -88,11 +88,11 @@ public class LocationImportValidator {
     }
 
     private boolean isAlternateLocationPresentInDbAsValid(LocationImportCSVRequest locationCSVRequest) {
-        Location alternateLocationFormDb = getLocationFormDb(locationCSVRequest.getNewDistrict(), locationCSVRequest.getNewBlock(), locationCSVRequest.getNewPanchayat());
+        Location alternateLocationFormDb = getLocationFormDb(locationCSVRequest.getNewState(), locationCSVRequest.getNewDistrict(), locationCSVRequest.getNewBlock(), locationCSVRequest.getNewPanchayat());
         return alternateLocationFormDb != null && alternateLocationFormDb.isValidatedLocation();
     }
 
-    private Location getLocationFormDb(String district, String block, String panchayat) {
-        return allLocations.getFor(district, block, panchayat);
+    private Location getLocationFormDb(String state, String district, String block, String panchayat) {
+        return allLocations.getFor(state, district, block, panchayat);
     }
 }

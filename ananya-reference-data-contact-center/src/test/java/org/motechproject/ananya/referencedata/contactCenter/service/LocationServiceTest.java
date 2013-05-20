@@ -37,9 +37,10 @@ public class LocationServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        LocationRequest request = new LocationRequest(district, block, panchayat, "state", "VALID");
+        String state = "state";
+        LocationRequest request = new LocationRequest(district, block, panchayat, state, "VALID");
         Location expectedLocation = new Location();
-        when(allLocations.getFor(district, block, panchayat)).thenReturn(expectedLocation);
+        when(allLocations.getFor(state, district, block, panchayat)).thenReturn(expectedLocation);
 
         Location actualLocation = locationService.createAndFetch(request);
 
@@ -55,7 +56,7 @@ public class LocationServiceTest {
         Location alternateLocation = new Location("d2", "b2", "p2", state, LocationStatus.VALID, null);
         Location locationToMap = new Location(district, block, panchayat, state, LocationStatus.INVALID, alternateLocation);
         LocationRequest request = new LocationRequest(district, block, panchayat, state);
-        when(allLocations.getFor(district,block,panchayat)).thenReturn(locationToMap);
+        when(allLocations.getFor(state, district,block,panchayat)).thenReturn(locationToMap);
 
         Location locationToBeMapped = locationService.createAndFetch(request);
 
@@ -70,7 +71,7 @@ public class LocationServiceTest {
         String state = "state";
         LocationRequest request = new LocationRequest(district, block, panchayat, state, "VALID");
         Location expectedLocation = new Location(district, block, panchayat, state, LocationStatus.NOT_VERIFIED, null);
-        when(allLocations.getFor(district, block, panchayat)).thenReturn(null);
+        when(allLocations.getFor(state, district, block, panchayat)).thenReturn(null);
 
         Location actualLocation = locationService.createAndFetch(request);
 

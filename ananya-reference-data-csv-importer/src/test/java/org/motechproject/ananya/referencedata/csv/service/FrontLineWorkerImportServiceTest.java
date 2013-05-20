@@ -57,8 +57,8 @@ public class FrontLineWorkerImportServiceTest {
         String msisdn2 = "911234454623";
         FrontLineWorkerImportRequest frontLineWorkerImportRequest1 = new FrontLineWorkerImportRequest(msisdn1, "name", "ASHA", new LocationRequest(district, block, panchayat, "state", "VALID"));
         FrontLineWorkerImportRequest frontLineWorkerImportRequest2 = new FrontLineWorkerImportRequest(msisdn2, "name", "ASHA", new LocationRequest(district, block, panchayat, "state", "VALID"));
-        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.VALID, null));
-        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.VALID, null));
+        when(allLocations.getFor("state", district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.VALID, null));
+        when(allLocations.getFor("state", district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.VALID, null));
 
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerImportRequests = new ArrayList<>();
         frontLineWorkerImportRequests.add(frontLineWorkerImportRequest1);
@@ -79,7 +79,7 @@ public class FrontLineWorkerImportServiceTest {
         String panchayat = "panchayat";
         String msisdn1 = "911234454545";
         FrontLineWorkerImportRequest frontLineWorkerImportRequest1 = new FrontLineWorkerImportRequest(msisdn1, "name", "ASHA", new LocationRequest(district, block, panchayat, "state", "VALID"));
-        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.VALID, null));
+        when(allLocations.getFor("state", district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.VALID, null));
         FrontLineWorker expectedFLW = new FrontLineWorker();
         List<FrontLineWorker> frontLineWorkers = new ArrayList<>();
         frontLineWorkers.add(expectedFLW);
@@ -106,7 +106,7 @@ public class FrontLineWorkerImportServiceTest {
         String msisdn = "12344545";
         FrontLineWorkerImportRequest frontLineWorkerImportRequest1 = new FrontLineWorkerImportRequest(msisdn, "name", "ASHA", new LocationRequest(district, block, panchayat, "state", "VALID"));
         FrontLineWorkerImportRequest frontLineWorkerImportRequest2 = new FrontLineWorkerImportRequest(msisdn, "name", "ASHA", new LocationRequest(district, block, panchayat, "state", "VALID"));
-        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.VALID, null));
+        when(allLocations.getFor("state", district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.VALID, null));
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerImportRequests = new ArrayList<>();
         frontLineWorkerImportRequests.add(frontLineWorkerImportRequest1);
         frontLineWorkerImportRequests.add(frontLineWorkerImportRequest2);
@@ -126,7 +126,7 @@ public class FrontLineWorkerImportServiceTest {
         String msisdn = "12344545";
         FrontLineWorkerImportRequest frontLineWorkerImportRequest1 = new FrontLineWorkerImportRequest(msisdn, "name", "ASHA", new LocationRequest(district, block, panchayat, "state", "INVALID"));
         Location validLocation = new Location("d1", "b1", "p1", "state", LocationStatus.VALID, null);
-        when(allLocations.getFor(district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.INVALID, validLocation));
+        when(allLocations.getFor("state", district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.INVALID, validLocation));
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerImportRequests = new ArrayList<>();
         frontLineWorkerImportRequests.add(frontLineWorkerImportRequest1);
 

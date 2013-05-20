@@ -35,9 +35,8 @@ public class AllLocationsTest extends SpringIntegrationTest {
 
         allLocations.add(location);
 
-        Location locationFromDB = allLocations.getFor(district, block, panchayat);
+        Location locationFromDB = allLocations.getFor(state, district, block, panchayat);
         assertNotNull(locationFromDB);
-        assertEquals(state, locationFromDB.getState());
     }
 
     @Test
@@ -50,7 +49,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
 
         allLocations.add(location);
 
-        Location locationFromDB = allLocations.getFor("DistRict", "BLOCK", "panchayat");
+        Location locationFromDB = allLocations.getFor(state, "DistRict", "BLOCK", "panchayat");
         assertNotNull(locationFromDB);
     }
 
@@ -77,7 +76,7 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String block = "block";
         String panchayat = "panchayat";
 
-        Location locationInDB = allLocations.getFor(district, block, panchayat);
+        Location locationInDB = allLocations.getFor("state", district, block, panchayat);
         assertNull(locationInDB);
     }
 
@@ -98,10 +97,10 @@ public class AllLocationsTest extends SpringIntegrationTest {
 
        allLocations.update(givenLocation);
 
-       Location updatedLocation = allLocations.getFor(givenLocation.getDistrict(), givenLocation.getBlock(), givenLocation.getPanchayat());
+       Location updatedLocation = allLocations.getFor("state", givenLocation.getDistrict(), givenLocation.getBlock(), givenLocation.getPanchayat());
        assertEquals(givenLocation, updatedLocation);
-       Location locationWithNewAlternateLocation1 = allLocations.getFor(existingInvalidLocations.get(0).getDistrict(), existingInvalidLocations.get(0).getBlock(), existingInvalidLocations.get(0).getPanchayat());
-       Location locationWithNewAlternateLocation2 = allLocations.getFor(existingInvalidLocations.get(1).getDistrict(), existingInvalidLocations.get(1).getBlock(), existingInvalidLocations.get(1).getPanchayat());
+       Location locationWithNewAlternateLocation1 = allLocations.getFor("state", existingInvalidLocations.get(0).getDistrict(), existingInvalidLocations.get(0).getBlock(), existingInvalidLocations.get(0).getPanchayat());
+       Location locationWithNewAlternateLocation2 = allLocations.getFor("state", existingInvalidLocations.get(1).getDistrict(), existingInvalidLocations.get(1).getBlock(), existingInvalidLocations.get(1).getPanchayat());
        assertEquals(alternateLocation, locationWithNewAlternateLocation1.getAlternateLocation());
        assertEquals(alternateLocation, locationWithNewAlternateLocation2.getAlternateLocation());
     }
@@ -116,9 +115,9 @@ public class AllLocationsTest extends SpringIntegrationTest {
 
         allLocations.update(givenLocation);
 
-        Location updatedLocation = allLocations.getFor(givenLocation.getDistrict(), givenLocation.getBlock(), givenLocation.getPanchayat());
+        Location updatedLocation = allLocations.getFor("state", givenLocation.getDistrict(), givenLocation.getBlock(), givenLocation.getPanchayat());
         assertEquals(givenLocation, updatedLocation);
-        Location existingLocationNotUpdated = allLocations.getFor(existingLocation.getDistrict(), existingLocation.getBlock(), existingLocation.getPanchayat());
+        Location existingLocationNotUpdated = allLocations.getFor("state", existingLocation.getDistrict(), existingLocation.getBlock(), existingLocation.getPanchayat());
         assertEquals(existingLocation, existingLocationNotUpdated);
     }
 }
