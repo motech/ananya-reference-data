@@ -159,12 +159,13 @@ public class WebRequestValidatorTest {
     @Test
     public void shouldReturnErrorForAnInvalidLocationRequest() {
         Errors errors = new Errors();
-        validator.validateLocation(new LocationRequest(null, null, null, "state", null), errors);
+        validator.validateLocation(new LocationRequest(null, null, null, null, null), errors);
 
-        assertEquals(3, errors.getCount());
+        assertEquals(4, errors.getCount());
         assertTrue(errors.hasMessage("district field is blank"));
         assertTrue(errors.hasMessage("block field is blank"));
         assertTrue(errors.hasMessage("panchayat field is blank"));
+        assertTrue(errors.hasMessage("state field is blank"));
     }
 
     @Test

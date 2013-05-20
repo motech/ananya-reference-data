@@ -73,5 +73,7 @@ public class WebRequestValidator {
             errors.add("block field is blank");
         if (StringUtils.isEmpty(locationRequest.getPanchayat()))
             errors.add("panchayat field is blank");
+        if (StringUtils.isEmpty(locationRequest.getState()))
+            errors.add("state field is blank");
     }
 }
