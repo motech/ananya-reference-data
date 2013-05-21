@@ -16,7 +16,7 @@ public class LocationResponseMapper {
             @Override
             public Object transform(Object input) {
                 Location request = (Location) input;
-                return new LocationResponse(request.getDistrict(), request.getBlock(), request.getPanchayat());
+                return new LocationResponse(request.getState(), request.getDistrict(), request.getBlock(), request.getPanchayat());
             }
         });
         return new LocationResponseList(locationResponses,LocationResponse.class);
@@ -27,7 +27,7 @@ public class LocationResponseMapper {
             @Override
             public Object transform(Object input) {
                 Location request = (Location) input;
-                return new LocationsToBeVerifiedResponse(request.getDistrict(), request.getBlock(), request.getPanchayat(),request.getStatus().getDescription());
+                return new LocationsToBeVerifiedResponse(request.getState(), request.getDistrict(), request.getBlock(), request.getPanchayat(),request.getStatus().getDescription());
             }
         });
         return new LocationResponseList(locationResponses,LocationsToBeVerifiedResponse.class);
