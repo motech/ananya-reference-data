@@ -12,6 +12,7 @@ public class LocationRequest implements Serializable {
     private String panchayat;
 
     public LocationRequest(String state, String district, String block, String panchayat) {
+        this.state = state;
         this.district = district;
         this.block = block;
         this.panchayat = panchayat;

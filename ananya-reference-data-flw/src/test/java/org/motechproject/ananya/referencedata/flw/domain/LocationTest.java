@@ -40,4 +40,13 @@ public class LocationTest {
         assertFalse(location3.isInvalid());
         assertFalse(location4.isInvalid());
     }
+
+    @Test
+    public void shouldCapitalizeLocationDetails() {
+        Location location = new Location("d1", "b1", "p1", "state", LocationStatus.VALID, null);
+        assertEquals("D1", location.getDistrict());
+        assertEquals("B1", location.getBlock());
+        assertEquals("P1", location.getPanchayat());
+        assertEquals("State", location.getState());
+    }
 }
