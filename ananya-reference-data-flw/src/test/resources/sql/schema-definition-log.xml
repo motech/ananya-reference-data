@@ -123,7 +123,7 @@
 
     <changeSet context="setup" author="ThoughtWorks" id="15">
         <sql splitStatements="false">
-            ALTER TABLE ananya_reference_data.location ADD COLUMN state VARCHAR(255) DEFAULT 'BIHAR';
+            ALTER TABLE ananya_reference_data.location ADD COLUMN state VARCHAR(255);
             UPDATE ananya_reference_data.location set state = 'BIHAR';
             ALTER TABLE ananya_reference_data.location alter COLUMN state set NOT NULL;
         </sql>
