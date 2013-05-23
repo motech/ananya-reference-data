@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.*;
 @XmlRootElement(name = "location")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LocationRequest {
-    @XmlElement
+    @XmlElement(required = false)
     @JsonProperty
     private String state;
     @XmlElement

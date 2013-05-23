@@ -9,6 +9,7 @@ import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 import org.motechproject.ananya.referencedata.web.mapper.LocationResponseMapper;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
+import org.motechproject.ananya.referencedata.web.service.DefaultRequestValues;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +20,13 @@ import java.io.IOException;
 public class LocationController extends BaseController {
 
     private LocationService locationService;
+    private DefaultRequestValues defaultRequestValues;
 
     @Autowired
-    public LocationController(LocationService locationService) {
+    public LocationController(LocationService locationService,
+                              DefaultRequestValues defaultRequestValues) {
         this.locationService = locationService;
+        this.defaultRequestValues = defaultRequestValues;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/alllocations", produces = "text/csv")
@@ -36,6 +40,7 @@ public class LocationController extends BaseController {
     @RequestMapping(method = RequestMethod.POST, value = "/location")
     @ResponseBody
     public BaseResponse syncLocation(@RequestBody LocationRequest locationRequest) {
+        defaultRequestValues.update(locationRequest);
         validateLocation(locationRequest);
         locationService.createAndFetch(locationRequest);
         return BaseResponse.success("New location has been synchronized successfully.");

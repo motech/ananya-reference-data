@@ -61,6 +61,10 @@ public class FrontLineWorkerVerificationWebRequest {
         this.reason = reason;
     }
 
+    public LocationRequest getLocation() {
+        return location;
+    }
+
     public void setChannel(String channel) {
         this.channel = channel;
     }

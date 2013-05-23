@@ -37,7 +37,7 @@ public class LocationImporter {
     public ValidationResponse validate(List<LocationImportCSVRequest> locationImportCSVRequests) {
         boolean isFileValid = true;
         int recordCounter = 1;
-        List<Error> errors = new ArrayList<Error>();
+        List<Error> errors = new ArrayList<>();
 
         addHeader(errors);
         logger.info("Started validating location csv records");
