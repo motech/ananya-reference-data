@@ -12,6 +12,9 @@ import javax.xml.bind.annotation.*;
 public class LocationRequest {
     @XmlElement
     @JsonProperty
+    private String state;
+    @XmlElement
+    @JsonProperty
     private String district;
     @XmlElement
     @JsonProperty
@@ -19,9 +22,6 @@ public class LocationRequest {
     @XmlElement
     @JsonProperty
     private String panchayat;
-    @XmlElement
-    @JsonProperty
-    private String state;
 
     @JsonIgnore
     @XmlTransient
@@ -30,14 +30,14 @@ public class LocationRequest {
     public LocationRequest() {
     }
 
-    public LocationRequest(String district, String block, String panchayat, String state) {
+    public LocationRequest(String state, String district, String block, String panchayat) {
         this.district = district;
         this.block = block;
         this.panchayat = panchayat;
         this.state = state;
     }
 
-    public LocationRequest(String district, String block, String panchayat, String state, String status) {
+    public LocationRequest(String state, String district, String block, String panchayat, String status) {
         this.district = district;
         this.block = block;
         this.panchayat = panchayat;

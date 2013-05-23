@@ -12,7 +12,7 @@ public class FrontLineWorkerSyncRequestMapperTest {
         String district = "District1";
         String block = "Block1";
         String panchayat = "Panchayat1";
-        String state = "state";
+        String state = "State";
         DateTime now = DateTime.now();
         LocationStatus status = LocationStatus.VALID;
         Location location = new Location(district, block, panchayat, state, status, null);
@@ -36,6 +36,7 @@ public class FrontLineWorkerSyncRequestMapperTest {
         assertEquals(block, locationContract.getBlock());
         assertEquals(district, locationContract.getDistrict());
         assertEquals(panchayat, locationContract.getPanchayat());
+        assertEquals(state, locationContract.getState());
         assertEquals(frontLineWorker.getFlwId().toString(), frontLineWorkerSyncRequest.getFlwId());
         assertEquals(VerificationStatus.SUCCESS.name(), frontLineWorker.getVerificationStatus());
     }

@@ -7,14 +7,20 @@ import java.io.Serializable;
 
 public class LocationContract implements Serializable {
 
+    private String state;
     private String district;
     private String block;
     private String panchayat;
 
-    public LocationContract(String district, String block, String panchayat) {
+    public LocationContract(String state, String district, String block, String panchayat) {
+        this.state = state;
         this.district = district;
         this.block = block;
         this.panchayat = panchayat;
+    }
+
+    public String getState() {
+        return state;
     }
 
     public String getDistrict() {

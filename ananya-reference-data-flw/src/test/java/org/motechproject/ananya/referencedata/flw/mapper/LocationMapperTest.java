@@ -16,7 +16,7 @@ public class LocationMapperTest {
         String panchayat = "Panchayat";
         String state = "State";
 
-        Location location = LocationMapper.mapFrom(new LocationRequest(district, block, panchayat, state));
+        Location location = LocationMapper.mapFrom(new LocationRequest(state, district, block, panchayat));
 
         assertEquals(district, location.getDistrict());
         assertEquals(block, location.getBlock());

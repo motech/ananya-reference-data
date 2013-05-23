@@ -15,13 +15,14 @@ public class LocationContractMapperTest {
         String panchayat = "Panchayat1";
         String block = "Block1";
         String district = "District1";
-        String state = "state";
+        String state = "State";
 
         Location location = new Location(district, block, panchayat, state, LocationStatus.VALID, null);
         DateTime lastModified = DateTime.now();
         location.setLastModified(lastModified);
         LocationContract locationContract = LocationContractMapper.mapFrom(location);
 
+        assertEquals(state, locationContract.getState());
         assertEquals(district, locationContract.getDistrict());
         assertEquals(block, locationContract.getBlock());
         assertEquals(panchayat, locationContract.getPanchayat());
