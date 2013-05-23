@@ -32,7 +32,7 @@ public class Location extends BaseEntity implements Cloneable {
     public Location() {
     }
 
-    public Location(String district, String block, String panchayat, String state, LocationStatus status, Location alternateLocation) {
+    public Location(String state, String district, String block, String panchayat, LocationStatus status, Location alternateLocation) {
         this.alternateLocation = alternateLocation;
         this.district = WordUtils.capitalizeFully(StringUtils.trimToEmpty(district));
         this.block = WordUtils.capitalizeFully(StringUtils.trimToEmpty(block));

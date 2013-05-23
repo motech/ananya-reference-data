@@ -47,7 +47,7 @@ public class FrontLineWorkerImporterTest {
     @Test
     public void shouldValidateFLWRequests() {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
-        Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
+        Location location = new Location("state", "D1", "B1", "P1", LocationStatus.VALID, null);
         when(locationImportService.getFor("state", "D1", "B1", "P1")).thenReturn(location);
         frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1234567890", "name", Designation.ANM.name(), new LocationRequest("state", "D1", "B1", "P1", "VALID")));
 
@@ -55,21 +55,21 @@ public class FrontLineWorkerImporterTest {
 
         assertTrue(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("msisdn,name,designation,district,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
+        assertEquals("msisdn,name,designation,state,district,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
     }
 
     @Test
     public void shouldFailValidationIfFLWDoesNotHaveAllTheDetails() {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
-        Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
-        when(locationImportService.getFor("state", "D1", "B1", "P1")).thenReturn(location);
-        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1asdf67890", "name", Designation.ANM.name(), new LocationRequest("state", "D1", "B1", "P1", "VALID")));
+        Location location = new Location("S1", "D1", "B1", "P1", LocationStatus.VALID, null);
+        when(locationImportService.getFor("S1", "D1", "B1", "P1")).thenReturn(location);
+        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1asdf67890", "name", Designation.ANM.name(), new LocationRequest("S1", "D1", "B1", "P1", "VALID")));
 
         ValidationResponse validationResponse = frontLineWorkerImporter.validate(frontLineWorkerWebRequests);
 
         assertFalse(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("\"1asdf67890\",\"name\",\"ANM\",\"D1\",\"B1\",\"P1\",\"[Invalid msisdn]\"", validationResponse.getErrors().get(1).getMessage());
+        assertEquals("\"1asdf67890\",\"name\",\"ANM\",\"S1\",\"D1\",\"B1\",\"P1\",\"[Invalid msisdn]\"", validationResponse.getErrors().get(1).getMessage());
     }
 
     @Test
