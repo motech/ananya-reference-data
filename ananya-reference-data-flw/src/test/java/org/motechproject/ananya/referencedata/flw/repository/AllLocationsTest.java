@@ -71,6 +71,23 @@ public class AllLocationsTest extends SpringIntegrationTest {
     }
 
     @Test
+    public void shouldLoadLocationsBasedOnStatusAndState() {
+        Location location1 = new Location("S1", "district", "block", "panchayat", LocationStatus.VALID, null);
+        Location location2 = new Location("S2", "district3", "block3", "panchayat3", LocationStatus.VALID, null);
+        Location location3 = new Location("S3", "district1", "block1", "panchayat1", LocationStatus.VALID, null);
+        Location location4 = new Location("S4", "district2", "block2", "panchayat2", LocationStatus.INVALID, null);
+        Location location5 = new Location("S1", "district4", "block2", "panchayat2", LocationStatus.INVALID, null);
+
+        template.saveOrUpdateAll(Arrays.asList(location1, location3, location2, location4, location5));
+
+        List<Location> locationsList = allLocations.getForStatusesInAGivenState("S1", LocationStatus.VALID, LocationStatus.INVALID);
+
+        assertEquals(2, locationsList.size());
+        assertTrue(locationsList.contains(location1));
+        assertTrue(locationsList.contains(location5));
+    }
+
+    @Test
     public void shouldReturnNullWhenALocationDoesNotExistInDB() {
         String district = "district";
         String block = "block";

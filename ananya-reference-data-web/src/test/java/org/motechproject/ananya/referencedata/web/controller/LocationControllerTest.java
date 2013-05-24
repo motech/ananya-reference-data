@@ -44,24 +44,42 @@ public class LocationControllerTest {
 
     @Before
     public void setUp() {
-        DEFAULT_STATE = "BIHAR";
+        DEFAULT_STATE = "Bihar";
         defaultRequestValues = new DefaultRequestValues(DEFAULT_STATE);
         locationController = new LocationController(locationService, defaultRequestValues);
     }
 
     @Test
     public void shouldGetLocationMasterCsv() throws Exception {
-        final Location validLocation = new Location("state", "d1", "b1", "p1", LocationStatus.VALID, null);
+        final Location validLocation = new Location("State", "d1", "b1", "p1", LocationStatus.VALID, null);
         String channel = "contact_center";
-        when(locationService.getAllValidLocations()).thenReturn(new ArrayList<Location>() {{
+
+        when(locationService.getAllValidLocations("State")).thenReturn(new ArrayList<Location>() {{
             add(validLocation);
         }});
 
-        LocationResponseList responses = locationController.getLocationMaster(channel);
+        LocationResponseList responses = locationController.getLocationMaster(channel, "state");
 
         assertEquals(1, responses.size());
         assertLocationResponse(validLocation, responses.get(0));
         assertNotNull(responses.getFileName());
+    }
+
+    @Test
+    public void shouldGetLocationMasterCsvForDefaultState() throws Exception {
+        String state = "state";
+        final Location validLocation = new Location(state, "d1", "b1", "p1", LocationStatus.VALID, null);
+        String channel = "contact_center";
+        when(locationService.getAllValidLocations(DEFAULT_STATE)).thenReturn(new ArrayList<Location>() {{
+            add(validLocation);
+        }});
+
+        mockMvc(locationController)
+                .perform(get("/alllocations").param("channel", channel).accept(new MediaType("text", "csv", Charset.defaultCharset())))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        verify(locationService).getAllValidLocations(DEFAULT_STATE);
     }
 
     @Test

@@ -62,4 +62,9 @@ public class DefaultRequestValuesTest {
         assertEquals("ORISSA", request.getLocation().getState());
     }
 
+    @Test
+    public void shouldReturnDefaultState() {
+        assertEquals(DEFAULT_STATE, defaultRequestValues.getState());
+    }
+
 }

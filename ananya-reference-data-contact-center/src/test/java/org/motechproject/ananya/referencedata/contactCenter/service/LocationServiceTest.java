@@ -11,12 +11,12 @@ import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.service.SyncService;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -82,10 +82,11 @@ public class LocationServiceTest {
 
     @Test
     public void shouldGetAllValidLocation() {
-        ArrayList<Location> expectedLocationList = new ArrayList<>();
-        when(allLocations.getForStatuses(LocationStatus.VALID)).thenReturn(expectedLocationList);
+        List<Location> expectedLocationList = mock(List.class);
+        String state = "state";
+        when(allLocations.getForStatusesInAGivenState(state, LocationStatus.VALID)).thenReturn(expectedLocationList);
 
-        List<Location> actualLocationList = locationService.getAllValidLocations();
+        List<Location> actualLocationList = locationService.getAllValidLocations(state);
 
         assertEquals(expectedLocationList, actualLocationList);
     }
