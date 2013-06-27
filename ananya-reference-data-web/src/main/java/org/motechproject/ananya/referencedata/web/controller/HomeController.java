@@ -50,18 +50,27 @@ public class HomeController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/admin/location/upload")
-    public ModelAndView uploadLocations(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws Exception {
-        String response = allCSVDataImportProcessor.get(ImportType.Location.name()).processContent(csvUploadRequest.getStringContent());
-        if (response != null) {
-            downloadErrorCsv(httpServletResponse, response);
-            return null;
-        }
-        return new ModelAndView("admin/home").addObject("successMessage", "Locations Uploaded Successfully.");
+    @RequestMapping(method = RequestMethod.POST, value = "/admin/flw/upload")
+    public ModelAndView uploadFrontLineWorkers(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws Exception {
+        return uploadFile(csvUploadRequest, httpServletResponse, ImportType.FrontLineWorker);
     }
 
-    private void downloadErrorCsv(HttpServletResponse httpServletResponse, String errorCsv) throws IOException {
-        String fileName = "location_upload_failures" + DateTime.now().toString("yyyy-MM-dd'T'HH:mm") + ".csv";
+    @RequestMapping(method = RequestMethod.POST, value = "/admin/location/upload")
+    public ModelAndView uploadLocations(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws Exception {
+        return uploadFile(csvUploadRequest, httpServletResponse, ImportType.Location);
+    }
+
+    private ModelAndView uploadFile(CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse, ImportType entity) throws Exception {
+        String response = allCSVDataImportProcessor.get(entity.name()).processContent(csvUploadRequest.getStringContent());
+        if (response != null) {
+            downloadErrorCsv(httpServletResponse, response, entity.responseFilePrefix());
+            return null;
+        }
+        return new ModelAndView("admin/home").addObject("successMessage", entity.successMessage());
+    }
+
+    private void downloadErrorCsv(HttpServletResponse httpServletResponse, String errorCsv, String responseFilePrefix) throws IOException {
+        String fileName = responseFilePrefix + DateTime.now().toString("yyyy-MM-dd'T'HH:mm") + ".csv";
         httpServletResponse.setHeader("Content-Disposition", "attachment; filename=" + fileName);
         OutputStream outputStream = httpServletResponse.getOutputStream();
         outputStream.write(errorCsv.getBytes());
