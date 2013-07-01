@@ -1,6 +1,7 @@
 package org.motechproject.ananya.referencedata.contactCenter.service;
 
 
+import org.apache.commons.lang.WordUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static junit.framework.Assert.assertEquals;
+import static org.apache.commons.lang.WordUtils.capitalizeFully;
 
 public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest {
 
@@ -33,7 +35,7 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
 
     @Test
     public void shouldUpdateAnExistingFlwDuringUnsuccessfulRegistration() {
-        String msisdn = "1234567890";
+        String msisdn = "911234567890";
         Location location = new Location("d", "b", "p", msisdn, LocationStatus.VALID, null);
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), null, null, location, flwId, VerificationStatus.INVALID, "reason");
         allLocations.add(location);
@@ -69,7 +71,7 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
 
     @Test
     public void shouldUpdateAnExistingFlwDuringSuccessfulRegistration() {
-        String msisdn = "1234567890";
+        String msisdn = "911234567890";
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "Shahrukh", null, null, flwId, VerificationStatus.INVALID, "reason");
         String name = "New Name";
         LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "state");
@@ -95,12 +97,13 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
     @Test
     public void shouldAddNewLocationCorrespondingToFLWAndSaveToDb() {
         String name = "name";
-        String msisdn = "1234567890";
+        String msisdn = "911234567890";
         Designation designation = Designation.ANM;
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location("d", "b", "p", "state", LocationStatus.VALID, null);
+        String state = "state";
+        Location location = new Location("d", "b", "p", state, LocationStatus.VALID, null);
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), name, designation, location, flwId, VerificationStatus.OTHER, "Random reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
@@ -108,9 +111,10 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
         frontLineWorkerContactCenterService.updateVerifiedFlw(successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, VerificationStatus.SUCCESS.name(), name, designation.name(), district, block, panchayat));
 
         FrontLineWorker updatedFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
-        assertEquals(district, updatedFrontLineWorker.getLocation().getDistrict());
-        assertEquals(block, updatedFrontLineWorker.getLocation().getBlock());
-        assertEquals(panchayat,updatedFrontLineWorker.getLocation().getPanchayat());
+        assertEquals(capitalizeFully(district), updatedFrontLineWorker.getLocation().getDistrict());
+        assertEquals(capitalizeFully(block), updatedFrontLineWorker.getLocation().getBlock());
+        assertEquals(capitalizeFully(panchayat),updatedFrontLineWorker.getLocation().getPanchayat());
+        assertEquals(capitalizeFully(state),updatedFrontLineWorker.getLocation().getState());
         assertEquals(LocationStatus.NOT_VERIFIED, updatedFrontLineWorker.getLocation().getStatus());
     }
 
