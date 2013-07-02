@@ -2,6 +2,7 @@ package org.motechproject.ananya.referencedata.contactCenter.service;
 
 import org.junit.Test;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 
 import java.util.UUID;

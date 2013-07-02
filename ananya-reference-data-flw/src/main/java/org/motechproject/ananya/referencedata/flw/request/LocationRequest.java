@@ -117,4 +117,8 @@ public class LocationRequest {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
+    public void handleMissingState() {
+        if (state == null) state = "Bihar";
+    }
 }

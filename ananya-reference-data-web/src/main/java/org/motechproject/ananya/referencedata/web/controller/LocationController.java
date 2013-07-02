@@ -36,6 +36,7 @@ public class LocationController extends BaseController {
     @RequestMapping(method = RequestMethod.POST, value = "/location")
     @ResponseBody
     public BaseResponse syncLocation(@RequestBody LocationRequest locationRequest) {
+        locationRequest.handleMissingState();
         validateLocation(locationRequest);
         locationService.createAndFetch(locationRequest);
         return BaseResponse.success("New location has been synchronized successfully.");

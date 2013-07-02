@@ -66,6 +66,11 @@ public class FrontLineWorkerImportRequest {
         location.setPanchayat(panchayat);
     }
 
+    @ColumnName(name = "state")
+    public void setState(String state) {
+        location.setState(state);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

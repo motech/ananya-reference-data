@@ -37,6 +37,8 @@ public class LocationControllerTest {
     @Mock
     private LocationService locationService;
     @Mock
+    private LocationRequest locationRequest;
+    @Mock
     private CsvUploadRequest mockLocationsCsvRequest;
 
     @Before
@@ -99,6 +101,16 @@ public class LocationControllerTest {
                 .body(TestUtils.toJson(new LocationRequest()).getBytes()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
+    }
+
+    @Test
+    public void sychShouldHandleMissingState() {
+        when(locationRequest.getBlock()).thenReturn("foo");
+        when(locationRequest.getDistrict()).thenReturn("foo");
+        when(locationRequest.getPanchayat()).thenReturn("foo");
+        when(locationRequest.getState()).thenReturn("foo");
+        locationController.syncLocation(locationRequest);
+        verify(locationRequest).handleMissingState();
     }
 
     private void assertLocationResponse(Location expectedLocation, LocationResponse response) {

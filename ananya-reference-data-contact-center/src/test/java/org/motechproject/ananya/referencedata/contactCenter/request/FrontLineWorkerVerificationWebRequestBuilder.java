@@ -1,6 +1,9 @@
 package org.motechproject.ananya.referencedata.contactCenter.request;
 
+import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+
+import java.util.UUID;
 
 public class FrontLineWorkerVerificationWebRequestBuilder {
     String flwId;
@@ -13,6 +16,7 @@ public class FrontLineWorkerVerificationWebRequestBuilder {
     String block;
     String panchayat;
     private boolean failedVerification;
+    private String state = "state";
 
     public FrontLineWorkerVerificationWebRequestBuilder withFlwId(String flwId) {
         this.flwId = flwId;
@@ -54,6 +58,11 @@ public class FrontLineWorkerVerificationWebRequestBuilder {
         return this;
     }
 
+    public FrontLineWorkerVerificationWebRequestBuilder withState(String state) {
+        this.state = state;
+        return this;
+    }
+
     public FrontLineWorkerVerificationWebRequestBuilder withPanchayat(String panchayat) {
         this.panchayat = panchayat;
         return this;
@@ -64,11 +73,19 @@ public class FrontLineWorkerVerificationWebRequestBuilder {
     }
 
     public FrontLineWorkerVerificationWebRequest build() {
-        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, verificationStatus, name, designation, failedVerification ? null : new LocationRequest(district, block, panchayat, "state"), reason);
+        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, verificationStatus, name, designation, failedVerification ? null : new LocationRequest(district, block, panchayat, state), reason);
     }
 
     public FrontLineWorkerVerificationWebRequestBuilder withFailedVerification(boolean failedVerification) {
         this.failedVerification = failedVerification;
         return this;
+    }
+
+    static FrontLineWorkerVerificationWebRequest requestWithState(String state) {
+        return new FrontLineWorkerVerificationWebRequestBuilder().
+                withState(state).
+                withFlwId(UUID.randomUUID().toString()).
+                withVerificationStatus(VerificationStatus.SUCCESS.name()).
+                withMsisdn("1111111111").build();
     }
 }
