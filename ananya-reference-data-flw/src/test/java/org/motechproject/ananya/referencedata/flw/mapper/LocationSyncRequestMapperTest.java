@@ -20,7 +20,7 @@ public class LocationSyncRequestMapperTest {
         LocationSyncRequest syncRequest = LocationSyncRequestMapper.map(location);
 
         assertEquals(new LocationRequest(location.getState(), location.getDistrict(), location.getBlock(), location.getPanchayat()), syncRequest.getExistingLocation());
-        assertEquals(new LocationRequest(location.getState(), alternateLocation.getDistrict(), alternateLocation.getBlock(), alternateLocation.getPanchayat()), syncRequest.getNewLocation());
+        assertEquals(new LocationRequest(alternateLocation.getState(), alternateLocation.getDistrict(), alternateLocation.getBlock(), alternateLocation.getPanchayat()), syncRequest.getNewLocation());
         assertEquals(location.getStatus(), syncRequest.getLocationStatus());
         assertEquals(location.getLastModified(), syncRequest.getLastModifiedTime());
     }
@@ -37,5 +37,19 @@ public class LocationSyncRequestMapperTest {
         assertEquals(location.getLastModified(), syncRequest.getLastModifiedTime());
         assertEquals(expectedLocationRequest, syncRequest.getExistingLocation());
         assertEquals(expectedLocationRequest, syncRequest.getNewLocation());
+    }
+
+    @Test
+    public void shouldMapLocationWithAlternateLocationWithDifferentState() {
+        Location alternateLocation = new Location("D1", "B1", "P1", "s1", LocationStatus.VALID, null);
+        Location location = new Location("D2", "B2", "P2", "s2", LocationStatus.NOT_VERIFIED, alternateLocation);
+        location.setLastModified(DateTime.now());
+
+        LocationSyncRequest syncRequest = LocationSyncRequestMapper.map(location);
+
+        assertEquals(new LocationRequest(location.getState(), location.getDistrict(), location.getBlock(), location.getPanchayat()), syncRequest.getExistingLocation());
+        assertEquals(new LocationRequest(alternateLocation.getState(), alternateLocation.getDistrict(), alternateLocation.getBlock(), alternateLocation.getPanchayat()), syncRequest.getNewLocation());
+        assertEquals(location.getStatus(), syncRequest.getLocationStatus());
+        assertEquals(location.getLastModified(), syncRequest.getLastModifiedTime());
     }
 }
