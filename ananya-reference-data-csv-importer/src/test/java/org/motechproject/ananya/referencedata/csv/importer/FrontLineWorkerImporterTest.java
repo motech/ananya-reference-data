@@ -55,7 +55,7 @@ public class FrontLineWorkerImporterTest {
 
         assertTrue(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("msisdn,name,designation,district,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
+        assertEquals("msisdn,name,designation,state,district,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
     }
 
     @Test
@@ -69,7 +69,7 @@ public class FrontLineWorkerImporterTest {
 
         assertFalse(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("\"1asdf67890\",\"name\",\"ANM\",\"D1\",\"B1\",\"P1\",\"[Invalid msisdn]\"", validationResponse.getErrors().get(1).getMessage());
+        assertEquals("\"1asdf67890\",\"name\",\"ANM\",\"state\",\"D1\",\"B1\",\"P1\",\"[Invalid msisdn]\"", validationResponse.getErrors().get(1).getMessage());
     }
 
     @Test

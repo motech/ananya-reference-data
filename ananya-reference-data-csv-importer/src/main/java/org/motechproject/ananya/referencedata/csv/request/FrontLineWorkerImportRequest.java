@@ -89,7 +89,9 @@ public class FrontLineWorkerImportRequest {
     }
 
     public String toCSV() {
-        return "\"" + msisdn + "\"" +  "," + "\"" +  name + "\"" +  "," + "\"" +  designation + "\"" +  "," + "\"" +  location.getDistrict() + "\"" +  "," + "\"" +  location.getBlock() + "\"" +  "," + "\"" +  location.getPanchayat() + "\"";
+        return String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"",
+                msisdn, name, designation, location.getState(),
+                location.getDistrict(), location.getBlock(), location.getPanchayat());
     }
 
 }
