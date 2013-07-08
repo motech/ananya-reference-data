@@ -9,10 +9,40 @@ public enum ImportType {
         void performAction(String importFile, CSVDataImporter csvDataImporter) {
             csvDataImporter.importData(ImportType.FrontLineWorker.name(), importFile);
         }
+
+        @Override
+        public String successMessage() {
+            return "FLWs Uploaded Successfully.";
+        }
+
+        @Override
+        public String errorMessage() {
+            return "FLW file can have a maximum of 5000 records.";
+        }
+
+        @Override
+        public String responseFilePrefix() {
+            return "flw_upload_failures";
+        }
     }, Location {
         @Override
         void performAction(String importFile, CSVDataImporter csvDataImporter) {
             csvDataImporter.importData(ImportType.Location.name(), importFile);
+        }
+
+        @Override
+        public String successMessage() {
+            return "Locations Uploaded Successfully.";
+        }
+
+        @Override
+        public String errorMessage() {
+            return "Location file can have a maximum of 5000 records.";
+        }
+
+        @Override
+        public String responseFilePrefix() {
+            return "location_upload_failures";
         }
     };
 
@@ -30,4 +60,7 @@ public enum ImportType {
     }
 
     abstract void performAction(String importFile, CSVDataImporter csvDataImporter);
+    public abstract String successMessage();
+    public abstract String errorMessage();
+    public abstract String responseFilePrefix();
 }

@@ -1,0 +1,468 @@
+From beb25e0b2ca8e4fa2dd09d69f3032c60fa426562 Mon Sep 17 00:00:00 2001
+From: Mewanbanjop <mewanm@thoughtworks.com>
+Date: Mon, 8 Jul 2013 12:10:28 +0530
+Subject: [PATCH] Mewan, Vinod |#2310| Adding the FLW CSV UPLOAD UI: 1. Added
+ the view and client side javaScript validations 2. Added
+ the controller action to handle the request. 3. Added csv
+ upload limit validations
+
+---
+ .../ananya/referencedata/csv/ImportType.java       | 33 ++++++++
+ .../web/controller/HomeController.java             | 36 ++++++--
+ .../src/main/resources/applicationContext.xml      |  4 +-
+ .../src/main/resources/labels.properties           |  3 +-
+ .../src/main/webapp/WEB-INF/views/admin/home.vm    | 45 +++++++++-
+ .../src/main/webapp/js/validation.js               | 49 ++++++-----
+ .../web/controller/HomeControllerTest.java         | 98 +++++++++++++++++++---
+ 7 files changed, 225 insertions(+), 43 deletions(-)
+
+diff --git a/ananya-reference-data-csv-importer/src/main/java/org/motechproject/ananya/referencedata/csv/ImportType.java b/ananya-reference-data-csv-importer/src/main/java/org/motechproject/ananya/referencedata/csv/ImportType.java
+index 69d24e8..b01e288 100644
+--- a/ananya-reference-data-csv-importer/src/main/java/org/motechproject/ananya/referencedata/csv/ImportType.java
++++ b/ananya-reference-data-csv-importer/src/main/java/org/motechproject/ananya/referencedata/csv/ImportType.java
+@@ -9,11 +9,41 @@ public enum ImportType {
+         void performAction(String importFile, CSVDataImporter csvDataImporter) {
+             csvDataImporter.importData(ImportType.FrontLineWorker.name(), importFile);
+         }
++
++        @Override
++        public String successMessage() {
++            return "FLWs Uploaded Successfully.";
++        }
++
++        @Override
++        public String errorMessage() {
++            return "FLW file can have a maximum of 5000 records.";
++        }
++
++        @Override
++        public String responseFilePrefix() {
++            return "flw_upload_failures";
++        }
+     }, Location {
+         @Override
+         void performAction(String importFile, CSVDataImporter csvDataImporter) {
+             csvDataImporter.importData(ImportType.Location.name(), importFile);
+         }
++
++        @Override
++        public String successMessage() {
++            return "Locations Uploaded Successfully.";
++        }
++
++        @Override
++        public String errorMessage() {
++            return "Location file can have a maximum of 5000 records.";
++        }
++
++        @Override
++        public String responseFilePrefix() {
++            return "location_upload_failures";
++        }
+     };
+ 
+     public static boolean isInValid(String entity) {
+@@ -30,4 +60,7 @@ public enum ImportType {
+     }
+ 
+     abstract void performAction(String importFile, CSVDataImporter csvDataImporter);
++    public abstract String successMessage();
++    public abstract String errorMessage();
++    public abstract String responseFilePrefix();
+ }
+diff --git a/ananya-reference-data-web/src/main/java/org/motechproject/ananya/referencedata/web/controller/HomeController.java b/ananya-reference-data-web/src/main/java/org/motechproject/ananya/referencedata/web/controller/HomeController.java
+index 339bd35..5042fdc 100644
+--- a/ananya-reference-data-web/src/main/java/org/motechproject/ananya/referencedata/web/controller/HomeController.java
++++ b/ananya-reference-data-web/src/main/java/org/motechproject/ananya/referencedata/web/controller/HomeController.java
+@@ -20,9 +20,14 @@ import org.springframework.web.servlet.ModelAndView;
+ import javax.servlet.http.HttpServletResponse;
+ import java.io.IOException;
+ import java.io.OutputStream;
++import java.util.regex.Matcher;
++import java.util.regex.Pattern;
+ 
+ @Controller
+ public class HomeController {
++    public static final String NEW_LINE = "\r\n|\r|\n";
++    public static final Pattern NEW_LINE_PATTERN = Pattern.compile(NEW_LINE);
++    public static final int MAXIMUM_NUMBER_OF_RECORDS = 5000;
+     private Logger logger = LoggerFactory.getLogger(HomeController.class);
+ 
+     private LocationService locationService;
+@@ -50,18 +55,39 @@ public class HomeController {
+         }
+     }
+ 
++    @RequestMapping(method = RequestMethod.POST, value = "/admin/flw/upload")
++    public ModelAndView uploadFrontLineWorkers(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws Exception {
++        return uploadFile(csvUploadRequest, httpServletResponse, ImportType.FrontLineWorker);
++    }
++
+     @RequestMapping(method = RequestMethod.POST, value = "/admin/location/upload")
+     public ModelAndView uploadLocations(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws Exception {
+-        String response = allCSVDataImportProcessor.get(ImportType.Location.name()).processContent(csvUploadRequest.getStringContent());
++        return uploadFile(csvUploadRequest, httpServletResponse, ImportType.Location);
++    }
++
++    private ModelAndView uploadFile(CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse, ImportType entity) throws Exception {
++        String csvContent = csvUploadRequest.getStringContent();
++        if (exceedsMaximumNumberOfRecordsLimit(csvContent)) {
++            return new ModelAndView("admin/home").addObject("errorMessage", entity.errorMessage());
++        }
++        String response = allCSVDataImportProcessor.get(entity.name()).processContent(csvContent);
+         if (response != null) {
+-            downloadErrorCsv(httpServletResponse, response);
++            downloadErrorCsv(httpServletResponse, response, entity.responseFilePrefix());
+             return null;
+         }
+-        return new ModelAndView("admin/home").addObject("successMessage", "Locations Uploaded Successfully.");
++        return new ModelAndView("admin/home").addObject("successMessage", entity.successMessage());
++    }
++
++    private boolean exceedsMaximumNumberOfRecordsLimit(String csvContent) {
++        int count = 0;
++        Matcher matcher = NEW_LINE_PATTERN.matcher(csvContent);
++        while (matcher.find())
++            count++;
++        return count > MAXIMUM_NUMBER_OF_RECORDS;
+     }
+ 
+-    private void downloadErrorCsv(HttpServletResponse httpServletResponse, String errorCsv) throws IOException {
+-        String fileName = "location_upload_failures" + DateTime.now().toString("yyyy-MM-dd'T'HH:mm") + ".csv";
++    private void downloadErrorCsv(HttpServletResponse httpServletResponse, String errorCsv, String responseFilePrefix) throws IOException {
++        String fileName = responseFilePrefix + DateTime.now().toString("yyyy-MM-dd'T'HH:mm") + ".csv";
+         httpServletResponse.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+         OutputStream outputStream = httpServletResponse.getOutputStream();
+         outputStream.write(errorCsv.getBytes());
+diff --git a/ananya-reference-data-web/src/main/resources/applicationContext.xml b/ananya-reference-data-web/src/main/resources/applicationContext.xml
+index 64496fc..8ff88fb 100644
+--- a/ananya-reference-data-web/src/main/resources/applicationContext.xml
++++ b/ananya-reference-data-web/src/main/resources/applicationContext.xml
+@@ -16,11 +16,11 @@
+     <context:spring-configured/>
+     <context:annotation-config/>
+ 
+-    <import resource="classpath:applicationContext-flw.xml"/>
+-    <import resource="classpath:applicationContext-contact-center.xml"/>
+     <import resource="classpath:applicationContext-Diagnostics.xml"/>
+     <import resource="classpath:applicationContext-security.xml"/>
+     <import resource="classpath*:applicationBulkImportContext.xml"/>
++    <import resource="classpath:applicationContext-flw.xml"/>
++    <import resource="classpath:applicationContext-contact-center.xml"/>
+ 
+     <bean id="configurationDiagnostic" class="org.motechproject.diagnostics.diagnostics.ConfigurationDiagnostic">
+         <constructor-arg>
+diff --git a/ananya-reference-data-web/src/main/resources/labels.properties b/ananya-reference-data-web/src/main/resources/labels.properties
+index 72921e7..83a05b3 100644
+--- a/ananya-reference-data-web/src/main/resources/labels.properties
++++ b/ananya-reference-data-web/src/main/resources/labels.properties
+@@ -14,4 +14,5 @@ page.login.password=Password
+ page.login.error=Error in credentials
+ 
+ page.location.download=Download locations to be verified
+-page.location.master.upload=Upload verified location master csv
+\ No newline at end of file
++page.location.master.upload=Upload verified location master csv
++page.flw.master.upload=Upload verified front line worker master csv
+\ No newline at end of file
+diff --git a/ananya-reference-data-web/src/main/webapp/WEB-INF/views/admin/home.vm b/ananya-reference-data-web/src/main/webapp/WEB-INF/views/admin/home.vm
+index dc24780..d90be4f 100644
+--- a/ananya-reference-data-web/src/main/webapp/WEB-INF/views/admin/home.vm
++++ b/ananya-reference-data-web/src/main/webapp/WEB-INF/views/admin/home.vm
+@@ -1,4 +1,5 @@
+ <div>
++
+     <div class="row-fluid">
+         <div class="span12">
+             <div class="page-header">
+@@ -45,17 +46,54 @@
+     <div class="row-fluid">
+         <div class="span12">
+             <form method="post" action="admin/location/upload"
+-                  enctype="multipart/form-data" modelattribute="csvUpload" id="csvUploadForm">
++                  enctype="multipart/form-data" modelattribute="csvUpload" class="csvUploadForm">
+                 <fieldset>
+                     <div class="control-group">
+                         <div class="controls">
+                             <label for="fileData">$label.page.location.master.upload</label>
+-                            <input name="fileData" id="fileData" type="file" class="required"/>
++                            <input name="fileData" type="file" class="required fileData"/>
++
++                        </div>
++                    </div>
++
++                    <input name="upload" type="submit" class="input-medium btn-primary uploadAction"
++                           value="Upload"/>
++
++                </fieldset>
++            </form>
++        </div>
++    </div>
++
++</div>
++<div>
++    <div class="row-fluid">
++        <div class="span12">
++            <div class="page-header">
++                <h2>Manage Front Line Workers</h2>
++            </div>
++        </div>
++    </div>
++
++    <div class="row-fluid">
++        <div class="well well-small">
++            <strong>Upload Front Line Workers</strong>
++        </div>
++    </div>
++
++    <div class="row-fluid">
++        <div class="span12">
++            <form method="post" action="admin/flw/upload"
++                  enctype="multipart/form-data" modelattribute="csvUpload" class="csvUploadForm">
++                <fieldset>
++                    <div class="control-group">
++                        <div class="controls">
++                            <label for="fileData">$label.page.flw.master.upload</label>
++                            <input name="fileData" type="file" class="required fileData"/>
+ 
+                         </div>
+                     </div>
+ 
+-                    <input name="upload" id="uploadAction" type="submit" class="input-medium btn-primary"
++                    <input name="upload" type="submit" class="input-medium btn-primary uploadAction"
+                            value="Upload"/>
+ 
+                 </fieldset>
+@@ -64,3 +102,4 @@
+     </div>
+ 
+ </div>
++
+diff --git a/ananya-reference-data-web/src/main/webapp/js/validation.js b/ananya-reference-data-web/src/main/webapp/js/validation.js
+index dda0bb9..8c09ae2 100644
+--- a/ananya-reference-data-web/src/main/webapp/js/validation.js
++++ b/ananya-reference-data-web/src/main/webapp/js/validation.js
+@@ -1,18 +1,40 @@
+ $(document).ready(function () {
+ 
+-    $('#fileData').click(
++    $('.fileData').click(
+         function(){
+-                $('#uploadAction').attr('disabled',false);
++                $('.uploadAction').attr('disabled',false);
+                 $('.alert').remove();
+         }
+     );
+ 
+ 
+-    $('#csvUploadForm').submit(function (event) {
++    $('.csvUploadForm').submit(function (event) {
++               result =  validate(event);
++               return result;
++    })
++
++    var removeErrorMsgOnChange = function () {
++        var elements = arguments;
++        $(elements).each(function (i, targetEle) {
++            $(targetEle).change(function () {
++                $(elements).each(function (j, ele) {
++                    removeErrorMsg($(ele));
++                });
++            });
++        });
++    }
++
++    var removeErrorMsg = function (element) {
++        element = $(element);
++        element.parents('.control-group').removeClass('error');
++        element.parents('.controls').children('.error-help').remove();
++    }
++
++    function validate(event){
+         var form = $(event.target);
+         result = true;
+ 
+-        $('#uploadAction').attr('disabled', true);
++        $('.uploadAction').attr('disabled', true);
+ 
+         form.find('.required').each(function (index, element) {
+             element = $(element);
+@@ -25,7 +47,7 @@ $(document).ready(function () {
+             }
+         });
+ 
+-        form.find('#fileData').each(function(index, element){
++        form.find('.fileData').each(function(index, element){
+             element = $(element);
+             var fileName = element.val();
+             var fileNameArray = fileName.split(".");
+@@ -40,22 +62,5 @@ $(document).ready(function () {
+         });
+ 
+         return result;
+-    })
+-
+-    var removeErrorMsgOnChange = function () {
+-        var elements = arguments;
+-        $(elements).each(function (i, targetEle) {
+-            $(targetEle).change(function () {
+-                $(elements).each(function (j, ele) {
+-                    removeErrorMsg($(ele));
+-                });
+-            });
+-        });
+-    }
+-
+-    var removeErrorMsg = function (element) {
+-        element = $(element);
+-        element.parents('.control-group').removeClass('error');
+-        element.parents('.controls').children('.error-help').remove();
+     }
+ })
+\ No newline at end of file
+diff --git a/ananya-reference-data-web/src/test/java/org/motechproject/ananya/referencedata/web/controller/HomeControllerTest.java b/ananya-reference-data-web/src/test/java/org/motechproject/ananya/referencedata/web/controller/HomeControllerTest.java
+index dac613a..87fad92 100644
+--- a/ananya-reference-data-web/src/test/java/org/motechproject/ananya/referencedata/web/controller/HomeControllerTest.java
++++ b/ananya-reference-data-web/src/test/java/org/motechproject/ananya/referencedata/web/controller/HomeControllerTest.java
+@@ -14,9 +14,11 @@ import org.motechproject.importer.model.AllCSVDataImportProcessor;
+ import org.motechproject.importer.model.CSVDataImportProcessor;
+ import org.springframework.test.web.server.MvcResult;
+ import org.springframework.web.multipart.commons.CommonsMultipartFile;
++import org.springframework.web.servlet.ModelAndView;
+ 
+ import javax.servlet.ServletOutputStream;
+ import javax.servlet.http.HttpServletResponse;
++import java.io.IOException;
+ import java.util.Arrays;
+ 
+ import static junit.framework.Assert.assertEquals;
+@@ -36,6 +38,10 @@ public class HomeControllerTest {
+     private AllCSVDataImportProcessor allCSVDataImportProcessor;
+ 
+     private HomeController homeController;
++    private CommonsMultipartFile fileData;
++    private HttpServletResponse response;
++    private ServletOutputStream outputStream;
++    private CSVDataImportProcessor csvDataImportProcessor;
+ 
+     @Before
+     public void setup() {
+@@ -61,20 +67,13 @@ public class HomeControllerTest {
+ 
+         MvcResult mvcResult = mockMvc(homeController).perform(get("/admin/locationsToBeVerified/download"))
+                 .andExpect(status().is(500)).andReturn();
+-        assertEquals("An error has occurred : The system is down. Please try after some time.",mvcResult.getModelAndView().getModelMap().get("errorMessage"));
++        assertEquals("An error has occurred : The system is down. Please try after some time.", mvcResult.getModelAndView().getModelMap().get("errorMessage"));
+     }
+ 
+     @Test
+     public void shouldUploadLocationsFile() throws Exception {
+-        CommonsMultipartFile fileData = mock(CommonsMultipartFile.class);
+-        HttpServletResponse response = mock(HttpServletResponse.class);
+-        ServletOutputStream outputStream = mock(ServletOutputStream.class);
+-        CSVDataImportProcessor csvDataImportProcessor = mock(CSVDataImportProcessor.class);
+-        CsvUploadRequest csvFileRequest = new CsvUploadRequest(fileData);
++        CsvUploadRequest csvFileRequest = mockCSVFileRequest(ImportType.Location.name());
+         String errorCsv = "response";
+-        when(response.getOutputStream()).thenReturn(outputStream);
+-        when(fileData.getBytes()).thenReturn(new byte[1]);
+-        when(allCSVDataImportProcessor.get(ImportType.Location.name())).thenReturn(csvDataImportProcessor);
+         when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent())).thenReturn(errorCsv);
+ 
+         homeController.uploadLocations(csvFileRequest, response);
+@@ -85,12 +84,91 @@ public class HomeControllerTest {
+         verify(outputStream).flush();
+     }
+ 
++    @Test
++    public void shouldRespondWithSuccessMessageOnLocationsUpload() throws Exception {
++        CsvUploadRequest csvFileRequest = mockCSVFileRequest(ImportType.Location.name());
++        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent())).thenReturn(null);
++        ModelAndView modelAndView = homeController.uploadLocations(csvFileRequest, response);
++        assertEquals("admin/home", modelAndView.getViewName());
++        assertEquals("Locations Uploaded Successfully.", modelAndView.getModel().get("successMessage"));
++    }
++
++    @Test
++    public void shouldUploadFLWFile() throws Exception {
++        CsvUploadRequest csvFileRequest = mockCSVFileRequest(ImportType.FrontLineWorker.name());
++        String errorCsv = "response";
++        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent())).thenReturn(errorCsv);
++
++        homeController.uploadFrontLineWorkers(csvFileRequest, response);
++
++        verify(outputStream).write(errorCsv.getBytes());
++        verify(response).setHeader(eq("Content-Disposition"), matches(
++                "attachment; filename=flw_upload_failures\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}.csv"));
++        verify(outputStream).flush();
++    }
++
++    @Test
++    public void shouldRespondWithSuccessMessageOnFLWUpload() throws Exception {
++        CsvUploadRequest csvFileRequest = mockCSVFileRequest(ImportType.FrontLineWorker.name());
++        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent())).thenReturn(null);
++        ModelAndView modelAndView = homeController.uploadFrontLineWorkers(csvFileRequest, response);
++        assertEquals("admin/home", modelAndView.getViewName());
++        assertEquals("FLWs Uploaded Successfully.", modelAndView.getModel().get("successMessage"));
++    }
++
++    @Test
++    public void shouldRespondWithErrorMessageOnUploadOfMoreThan5000FLWRecords() throws Exception {
++        String csvWith5001Records = createCSVWith5001Records();
++        CsvUploadRequest csvFileRequest = mock(CsvUploadRequest.class);
++        when(csvFileRequest.getStringContent()).thenReturn(csvWith5001Records);
++        ModelAndView modelAndView = homeController.uploadFrontLineWorkers(csvFileRequest, response);
++        assertEquals("admin/home", modelAndView.getViewName());
++        assertEquals("FLW file can have a maximum of 5000 records.", modelAndView.getModel().get("errorMessage"));
++    }
++
++    @Test
++    public void shouldRespondWithErrorMessageOnUploadOfMoreThan5000LocationRecords() throws Exception {
++        String csvWith5001Records = createCSVWith5001Records();
++        CsvUploadRequest csvFileRequest = mock(CsvUploadRequest.class);
++        when(csvFileRequest.getStringContent()).thenReturn(csvWith5001Records);
++        ModelAndView modelAndView = homeController.uploadLocations(csvFileRequest, response);
++        assertEquals("admin/home", modelAndView.getViewName());
++        assertEquals("Location file can have a maximum of 5000 records.", modelAndView.getModel().get("errorMessage"));
++    }
++
++    private String createCSVWith5001Records() {
++        String csv = "header1,header2\n";
++        for(int i =0;i<5001;i++)
++            csv += "recordA,recordB\n";
++        return csv;
++    }
++
++    private CsvUploadRequest mockCSVFileRequest(String entity) throws IOException {
++        fileData = mock(CommonsMultipartFile.class);
++        response = mock(HttpServletResponse.class);
++        outputStream = mock(ServletOutputStream.class);
++        csvDataImportProcessor = mock(CSVDataImportProcessor.class);
++        when(response.getOutputStream()).thenReturn(outputStream);
++        when(fileData.getBytes()).thenReturn(new byte[1]);
++        when(allCSVDataImportProcessor.get(entity)).thenReturn(csvDataImportProcessor);
++        return new CsvUploadRequest(fileData);
++    }
++
+     @Test(expected = Exception.class)
+-    public void shouldThrowExceptionOnUploadError() throws Exception {
++    public void shouldThrowExceptionOnLocationUploadError() throws Exception {
+         when(allCSVDataImportProcessor.get(ImportType.Location.name())).thenThrow(new Exception());
+ 
+         MvcResult mvcResult = mockMvc(homeController).perform(post("/admin/location/upload").body(new byte[1]))
+                 .andExpect(status().is(500)).andReturn();
+         assertTrue(mvcResult.getResponse().getContentAsString().contains("An error has occurred"));
+     }
++
++    @Test(expected = Exception.class)
++    public void shouldThrowExceptionOnFLWUploadError() throws Exception {
++        when(allCSVDataImportProcessor.get(ImportType.Location.name())).thenThrow(new Exception());
++
++        MvcResult mvcResult = mockMvc(homeController).perform(post("/admin/flw/upload").body(new byte[1]))
++                .andExpect(status().is(500)).andReturn();
++        assertTrue(mvcResult.getResponse().getContentAsString().contains("An error has occurred"));
++    }
+ }
+-- 
+1.7.12.4 (Apple Git-37)
+
