@@ -16,8 +16,8 @@ public enum ImportType {
         }
 
         @Override
-        public String errorMessage() {
-            return "FLW file can have a maximum of 5000 records.";
+        public String errorMessage(int maximumNumberOfRecords) {
+            return String.format("FLW file can have a maximum of %d records.", maximumNumberOfRecords);
         }
 
         @Override
@@ -36,8 +36,8 @@ public enum ImportType {
         }
 
         @Override
-        public String errorMessage() {
-            return "Location file can have a maximum of 5000 records.";
+        public String errorMessage(int maximumNumberOfRecords) {
+            return "";
         }
 
         @Override
@@ -61,6 +61,6 @@ public enum ImportType {
 
     abstract void performAction(String importFile, CSVDataImporter csvDataImporter);
     public abstract String successMessage();
-    public abstract String errorMessage();
+    public abstract String errorMessage(int maximumNumberOfRecords);
     public abstract String responseFilePrefix();
 }

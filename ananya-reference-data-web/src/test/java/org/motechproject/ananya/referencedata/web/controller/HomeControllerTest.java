@@ -20,6 +20,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -42,10 +43,13 @@ public class HomeControllerTest {
     private HttpServletResponse response;
     private ServletOutputStream outputStream;
     private CSVDataImportProcessor csvDataImportProcessor;
+    private Properties properties;
 
     @Before
     public void setup() {
-        homeController = new HomeController(locationService, allCSVDataImportProcessor);
+        properties = new Properties();
+        properties.setProperty("flw.csv.max.records", "50");
+        homeController = new HomeController(locationService, allCSVDataImportProcessor, properties);
     }
 
     @Test
@@ -118,28 +122,22 @@ public class HomeControllerTest {
 
     @Test
     public void shouldRespondWithErrorMessageOnUploadOfMoreThan5000FLWRecords() throws Exception {
-        String csvWith5001Records = createCSVWith5001Records();
+        String csvWith5001Records = createCSVRecordsWith(51);
         CsvUploadRequest csvFileRequest = mock(CsvUploadRequest.class);
         when(csvFileRequest.getStringContent()).thenReturn(csvWith5001Records);
         ModelAndView modelAndView = homeController.uploadFrontLineWorkers(csvFileRequest, response);
         assertEquals("admin/home", modelAndView.getViewName());
-        assertEquals("FLW file can have a maximum of 5000 records.", modelAndView.getModel().get("errorMessage"));
+        assertEquals("FLW file can have a maximum of 50 records.", modelAndView.getModel().get("errorMessage"));
     }
 
-    @Test
-    public void shouldRespondWithErrorMessageOnUploadOfMoreThan5000LocationRecords() throws Exception {
-        String csvWith5001Records = createCSVWith5001Records();
-        CsvUploadRequest csvFileRequest = mock(CsvUploadRequest.class);
-        when(csvFileRequest.getStringContent()).thenReturn(csvWith5001Records);
-        ModelAndView modelAndView = homeController.uploadLocations(csvFileRequest, response);
-        assertEquals("admin/home", modelAndView.getViewName());
-        assertEquals("Location file can have a maximum of 5000 records.", modelAndView.getModel().get("errorMessage"));
-    }
-
-    private String createCSVWith5001Records() {
-        String csv = "header1,header2\n";
-        for(int i =0;i<5001;i++)
-            csv += "recordA,recordB\n";
+    static String createCSVRecordsWith(int count) {
+        String csv = "header1,header2\r";
+        for (int i = 0; i < count; i++)
+            if (i % 2 == 0) {
+                csv += "recordA,recordB\r\n";
+            } else {
+                csv += "recordA,recordB\n";
+            }
         return csv;
     }
 
