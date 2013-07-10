@@ -15,6 +15,8 @@ import org.motechproject.importer.domain.ValidationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -53,6 +55,7 @@ public class FrontLineWorkerImporter {
             errors.add(new Error(frontLineWorkerImportRequest.toCSV() + "," + "\"" + responseImport.getMessage() + "\""));
         }
         logger.info("Completed validating FLW csv records");
+        locationImportService.invalidateCache();
         return constructValidationResponse(isValid, errors);
     }
 
