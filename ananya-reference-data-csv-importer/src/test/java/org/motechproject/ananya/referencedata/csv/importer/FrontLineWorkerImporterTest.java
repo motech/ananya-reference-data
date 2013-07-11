@@ -10,6 +10,7 @@ import org.motechproject.ananya.referencedata.csv.service.FrontLineWorkerImportS
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
+import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
 import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 import static junit.framework.Assert.*;
 import static org.mockito.Mockito.verify;
@@ -49,13 +51,13 @@ public class FrontLineWorkerImporterTest {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
         when(locationImportService.getFor("state", "D1", "B1", "P1")).thenReturn(location);
-        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1234567890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
+        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest(UUID.randomUUID().toString(), "1234567890", "1234567891", "name", Designation.ANM.name(), VerificationStatus.SUCCESS.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
 
         ValidationResponse validationResponse = frontLineWorkerImporter.validate(frontLineWorkerWebRequests);
 
         assertTrue(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("msisdn,name,designation,state,district,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
+        assertEquals("id,msisdn,alternate_contact_number,name,designation,verification_status,state,district,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
         verify(locationImportService).invalidateCache();
     }
 
@@ -64,7 +66,7 @@ public class FrontLineWorkerImporterTest {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
         when(locationImportService.getFor("state", "D1", "B1", "P1")).thenReturn(location);
-        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest("1asdf67890", "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
+        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest(UUID.randomUUID().toString(), "1asdf67890", "1234567891", "name", Designation.ANM.name(), VerificationStatus.SUCCESS.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
 
         ValidationResponse validationResponse = frontLineWorkerImporter.validate(frontLineWorkerWebRequests);
 
@@ -78,7 +80,7 @@ public class FrontLineWorkerImporterTest {
     public void shouldSaveFLW() throws IOException {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         String msisdn = "1234567890";
-        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest(msisdn, "name", Designation.ANM.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
+        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest(UUID.randomUUID().toString(), msisdn, "1234567891", "name", Designation.ANM.name(), VerificationStatus.SUCCESS.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
 
         frontLineWorkerImporter.postData(frontLineWorkerWebRequests);
 

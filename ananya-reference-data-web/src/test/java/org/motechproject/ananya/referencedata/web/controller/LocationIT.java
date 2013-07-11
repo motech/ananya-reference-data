@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata.web.functional.contoller;
+package org.motechproject.ananya.referencedata.web.controller;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
-public class LocationTest extends SpringIntegrationTestCase {
+public class LocationIT extends SpringIntegrationTestCase {
     @Autowired
     private LocationController locationController;
     @Autowired

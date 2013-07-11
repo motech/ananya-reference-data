@@ -78,6 +78,6 @@ public class FrontLineWorkerImporter {
     }
 
     private void addHeader(List<Error> errors) {
-        errors.add(new Error("msisdn,name,designation,state,district,block,panchayat,error"));
+        errors.add(new Error("id,msisdn,alternate_contact_number,name,designation,verification_status,state,district,block,panchayat,error"));
     }
 }

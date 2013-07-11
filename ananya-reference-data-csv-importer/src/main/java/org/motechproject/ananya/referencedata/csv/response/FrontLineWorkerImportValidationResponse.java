@@ -22,6 +22,21 @@ public class FrontLineWorkerImportValidationResponse {
         this.message.add("Invalid msisdn");
     }
 
+    public void forInvalidAlternateContactNumber() {
+        isValid = false;
+        this.message.add("Invalid alternate contact number");
+    }
+
+    public void forInvalidId() {
+        isValid = false;
+        this.message.add("Invalid id");
+    }
+
+    public void forInvalidVerificationStatus() {
+        isValid = false;
+        this.message.add("Invalid verification status");
+    }
+
     public void forInvalidLocation() {
         isValid = false;
         this.message.add("Invalid location");

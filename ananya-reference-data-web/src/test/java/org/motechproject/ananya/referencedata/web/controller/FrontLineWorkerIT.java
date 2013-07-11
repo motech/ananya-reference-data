@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata.web.functional.contoller;
+package org.motechproject.ananya.referencedata.web.controller;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 
-public class FrontLineWorkerTest extends SpringIntegrationTestCase {
+public class FrontLineWorkerIT extends SpringIntegrationTestCase {
 
     @Autowired
     private FrontLineWorkerController frontLineWorkerController;

@@ -10,6 +10,7 @@ import java.util.UUID;
 @Table(name = "front_line_worker")
 public class FrontLineWorker extends BaseEntity implements Cloneable {
 
+    public static final String FLW_ID_FORMAT = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
     @Column(name = "msisdn")
     private Long msisdn;
 

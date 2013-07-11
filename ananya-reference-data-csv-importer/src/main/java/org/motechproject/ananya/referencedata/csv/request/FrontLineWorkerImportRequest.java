@@ -8,15 +8,21 @@ public class FrontLineWorkerImportRequest {
     private String name;
     private String designation;
     private LocationRequest location = new LocationRequest();
+    private String verificationStatus;
+    private String id;
+    private String alternateContactNumber;
 
     public FrontLineWorkerImportRequest() {
     }
 
-    public FrontLineWorkerImportRequest(String msisdn, String name, String designation, LocationRequest location) {
+    public FrontLineWorkerImportRequest(String id, String msisdn, String alternateContactNumber, String name, String designation, String verificationStatus, LocationRequest location) {
         this.msisdn = msisdn;
         this.name = name;
         this.designation = designation;
         this.location = location;
+        this.id = id;
+        this.alternateContactNumber = alternateContactNumber;
+        this.verificationStatus = verificationStatus;
     }
 
     public String getMsisdn() {
@@ -35,6 +41,18 @@ public class FrontLineWorkerImportRequest {
         return location;
     }
 
+    public String getVerificationStatus() {
+        return verificationStatus;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getAlternateContactNumber() {
+        return alternateContactNumber;
+    }
+
     public void setMsisdn(String msisdn) {
         this.msisdn = msisdn;
     }
@@ -49,6 +67,10 @@ public class FrontLineWorkerImportRequest {
 
     public void setLocation(LocationRequest location) {
         this.location = location;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @ColumnName(name = "district")
@@ -69,6 +91,16 @@ public class FrontLineWorkerImportRequest {
     @ColumnName(name = "state")
     public void setState(String state) {
         location.setState(state);
+    }
+
+    @ColumnName(name= "verification_status")
+    public void setVerificationStatus(String verificationStatus) {
+        this.verificationStatus = verificationStatus;
+    }
+
+    @ColumnName(name= "alternate_contact_number")
+    public void setAlternateContactNumber(String alternateContactNumber) {
+        this.alternateContactNumber = alternateContactNumber;
     }
 
     @Override
