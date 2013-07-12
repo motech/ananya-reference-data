@@ -47,7 +47,7 @@ public class FrontLineWorkerRequestValidatorTest {
         final String name = "name";
         final Designation anm = Designation.ANM;
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>() {{
-            add(new FrontLineWorker(msisdn, name, anm, new Location(), flwId, VerificationStatus.INVALID, null));
+            add(new FrontLineWorker(msisdn, name, anm, new Location(), VerificationStatus.INVALID.name(), flwId, null));
         }};
         when(allFrontLineWorkers.getByMsisdnWithStatus(msisdn)).thenReturn(frontLineWorkers);
         FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(flwId, PhoneNumber.formatPhoneNumber(msisdn.toString()), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("D1", "B1", "P1", "state"), null);
@@ -64,7 +64,7 @@ public class FrontLineWorkerRequestValidatorTest {
         final String name = "name";
         final Designation anm = Designation.ANM;
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>() {{
-            add(new FrontLineWorker(msisdn, name, anm, new Location(), flwId, VerificationStatus.INVALID, null));
+            add(new FrontLineWorker(msisdn, name, anm, new Location(), VerificationStatus.INVALID.name(), flwId, null));
         }};
         when(allFrontLineWorkers.getByMsisdnWithStatus(msisdn)).thenReturn(frontLineWorkers);
         FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.fromString("11111111-1111-1111-1111-111111111111"), PhoneNumber.formatPhoneNumber(msisdn.toString()), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("D1", "B1", "P1", "state"), null);
@@ -137,7 +137,7 @@ public class FrontLineWorkerRequestValidatorTest {
         final String name = "name";
         final Designation anm = Designation.ANM;
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>() {{
-            add(new FrontLineWorker(msisdn, name, anm, new Location(), flwId, VerificationStatus.INVALID, null));
+            add(new FrontLineWorker(msisdn, name, anm, new Location(), VerificationStatus.INVALID.name(), flwId, null));
         }};
         when(allFrontLineWorkers.getByMsisdnWithStatus(msisdn)).thenReturn(frontLineWorkers);
         FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber(msisdn.toString()), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("D1", "B1", "P1", "state"), null);

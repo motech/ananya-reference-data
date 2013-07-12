@@ -11,6 +11,7 @@ import java.util.UUID;
 public class FrontLineWorker extends BaseEntity implements Cloneable {
 
     public static final String FLW_ID_FORMAT = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
+    public final static UUID DEFAULT_UUID = UUID.fromString("11111111-1111-1111-1111-111111111111");
     @Column(name = "msisdn")
     private Long msisdn;
 
@@ -41,21 +42,17 @@ public class FrontLineWorker extends BaseEntity implements Cloneable {
         this.flwId = flwId;
     }
 
-    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location) {
-        this.msisdn = msisdn;
-        this.name = name;
-        this.designation = designation == null ? null : designation.name();
-        this.location = location;
-        this.flwId = UUID.randomUUID();
+    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location, String verificationStatus) {
+        this(msisdn, name, designation, location, verificationStatus, UUID.randomUUID(), null);
     }
 
-    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location, UUID flwId, VerificationStatus verificationStatus, String reason) {
+    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location, String verificationStatus, UUID flwId, String reason) {
         this.flwId = flwId;
         this.msisdn = msisdn;
         this.name = name;
         this.designation = designation == null ? null : designation.name();
         this.location = location;
-        this.verificationStatus = verificationStatus.name();
+        this.verificationStatus = verificationStatus;
         this.reason = reason;
     }
 

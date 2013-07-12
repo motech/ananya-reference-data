@@ -12,7 +12,7 @@ public class FrontLineWorkerTest {
         String name = "flwname";
         Location location = new Location();
 
-        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, Designation.ANM, location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, Designation.ANM, location, VerificationStatus.SUCCESS.name());
 
         assertNotNull(frontLineWorker.getFlwId());
         assertEquals(msisdn, (long) frontLineWorker.getMsisdn());

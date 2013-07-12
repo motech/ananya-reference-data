@@ -37,7 +37,7 @@ public class FrontLineWorkerSyncServiceTest {
     public void shouldSyncListOfFLW() {
         Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
         long msisdn = 1L;
-        final FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, "name", Designation.ANM, location);
+        final FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, "name", Designation.ANM, location, VerificationStatus.SUCCESS.name());
         frontLineWorker.setLastModified(DateTime.now());
         List<FrontLineWorker> frontLineWorkers = new ArrayList();
         frontLineWorkers.add(frontLineWorker);
@@ -70,9 +70,9 @@ public class FrontLineWorkerSyncServiceTest {
     public void shouldSyncFLWIfThereAreMultipleFLWsInDBButThisHasAStatus() {
         Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
         long msisdn = 1L;
-        FrontLineWorker frontLineWorker1 = new FrontLineWorker(msisdn, "name", Designation.ANM, location);
+        FrontLineWorker frontLineWorker1 = new FrontLineWorker(msisdn, "name", Designation.ANM, location, VerificationStatus.SUCCESS.name());
         frontLineWorker1.setVerificationStatus(VerificationStatus.SUCCESS);
-        FrontLineWorker frontLineWorker2 = new FrontLineWorker(msisdn, "name", Designation.ANM, location);
+        FrontLineWorker frontLineWorker2 = new FrontLineWorker(msisdn, "name", Designation.ANM, location, VerificationStatus.SUCCESS.name());
         Map<String, String> headers = new HashMap<>();
         String apiKeyName = "someAPIKeyName";
         String apiKeyValue = "someAPIKeyValue";
@@ -97,8 +97,8 @@ public class FrontLineWorkerSyncServiceTest {
     public void shouldNotSyncFLWIfThereAreMultipleFLWsInDBButWithoutStatus() {
         Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
         long msisdn = 1L;
-        FrontLineWorker frontLineWorker1 = new FrontLineWorker(msisdn, "name", Designation.ANM, location);
-        FrontLineWorker frontLineWorker2 = new FrontLineWorker(msisdn, "name", Designation.ANM, location);
+        FrontLineWorker frontLineWorker1 = new FrontLineWorker(msisdn, "name", Designation.ANM, location, VerificationStatus.SUCCESS.name());
+        FrontLineWorker frontLineWorker2 = new FrontLineWorker(msisdn, "name", Designation.ANM, location, VerificationStatus.SUCCESS.name());
 
         frontLineWorker1.setLastModified(DateTime.now());
         List<FrontLineWorker> frontLineWorkers = new ArrayList();

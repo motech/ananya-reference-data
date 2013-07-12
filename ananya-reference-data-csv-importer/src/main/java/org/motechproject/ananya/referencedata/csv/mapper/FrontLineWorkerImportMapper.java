@@ -5,19 +5,21 @@ import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportR
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 
 public class FrontLineWorkerImportMapper {
     public static FrontLineWorker mapToNewFlw(FrontLineWorkerImportRequest frontLineWorkerImportRequest, Location location) {
         Long msisdn = StringUtils.isBlank(frontLineWorkerImportRequest.getMsisdn()) ? null : formatMsisdn(frontLineWorkerImportRequest.getMsisdn());
 
-        return new FrontLineWorker(msisdn, trim(frontLineWorkerImportRequest.getName()), Designation.from(frontLineWorkerImportRequest.getDesignation()), location);
+        return new FrontLineWorker(msisdn, trim(frontLineWorkerImportRequest.getName()), Designation.from(frontLineWorkerImportRequest.getDesignation()), location, frontLineWorkerImportRequest.getVerificationStatus());
     }
 
-    public static FrontLineWorker mapToExistingFlw(FrontLineWorker existingFrontLineWorker, FrontLineWorkerImportRequest frontLineWorkerImportRequest, Location location) {
-        existingFrontLineWorker.setName(trim(frontLineWorkerImportRequest.getName()));
-        existingFrontLineWorker.setDesignation(getDesignation(frontLineWorkerImportRequest.getDesignation()));
+    public static FrontLineWorker mapToExistingFlw(FrontLineWorker existingFrontLineWorker, FrontLineWorkerImportRequest request, Location location) {
+        existingFrontLineWorker.setName(trim(request.getName()));
+        existingFrontLineWorker.setDesignation(getDesignation(request.getDesignation()));
         existingFrontLineWorker.setLocation(location);
+        existingFrontLineWorker.setVerificationStatus(VerificationStatus.from(request.getVerificationStatus()));
 
         return existingFrontLineWorker;
     }

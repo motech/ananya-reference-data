@@ -9,7 +9,7 @@ import com.eclipsesource.restfuse.annotation.HttpTest;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.runner.RunWith;
-import org.motechproject.ananya.referencedata.web.functional.framework.FunctionalTestCase;
+import org.motechproject.ananya.referencedata.web.FunctionalTest;
 
 import java.io.IOException;
 
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 @RunWith(HttpJUnitRunner.class)
-public class LocationTest extends FunctionalTestCase {
+public class LocationApiTest extends FunctionalTest {
     public static final String LOCATION_WITHOUT_STATE = "" +
             "{ " +
             "\"district\" :\"Koraput\", " +

@@ -1,4 +1,4 @@
-package org.motechproject.ananya.referencedata.web.functional.framework;
+package org.motechproject.ananya.referencedata.web;
 
 import org.junit.runner.RunWith;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
@@ -13,5 +13,5 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration("classpath:applicationContext.xml")
 @Transactional
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
-public abstract class SpringIntegrationTestCase {
+public abstract class SpringIntegrationTest {
 }

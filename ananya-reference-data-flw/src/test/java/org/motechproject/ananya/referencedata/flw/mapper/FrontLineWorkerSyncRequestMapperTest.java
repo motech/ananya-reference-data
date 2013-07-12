@@ -22,7 +22,7 @@ public class FrontLineWorkerSyncRequestMapperTest {
         String name = "name1";
         Designation designation = Designation.ANM;
 
-        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, designation, location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, designation, location, VerificationStatus.SUCCESS.name());
         frontLineWorker.setVerificationStatus(VerificationStatus.SUCCESS);
         frontLineWorker.setLastModified(now);
         FrontLineWorkerSyncRequest frontLineWorkerSyncRequest = FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker);

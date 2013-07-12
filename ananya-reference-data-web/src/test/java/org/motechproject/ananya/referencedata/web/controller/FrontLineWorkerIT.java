@@ -7,15 +7,14 @@ import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.web.controller.FrontLineWorkerController;
-import org.motechproject.ananya.referencedata.web.functional.framework.SpringIntegrationTestCase;
+import org.motechproject.ananya.referencedata.web.SpringIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 
-public class FrontLineWorkerIT extends SpringIntegrationTestCase {
+public class FrontLineWorkerIT extends SpringIntegrationTest {
 
     @Autowired
     private FrontLineWorkerController frontLineWorkerController;

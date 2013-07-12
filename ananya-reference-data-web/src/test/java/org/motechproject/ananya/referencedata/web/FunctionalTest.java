@@ -1,9 +1,9 @@
-package org.motechproject.ananya.referencedata.web.functional.framework;
+package org.motechproject.ananya.referencedata.web;
 
 import com.eclipsesource.restfuse.Destination;
 import org.junit.Rule;
 
-public class FunctionalTestCase {
+public abstract class FunctionalTest {
     @Rule
     public Destination destination = getDestination();
 

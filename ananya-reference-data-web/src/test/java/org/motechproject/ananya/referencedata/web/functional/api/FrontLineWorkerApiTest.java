@@ -9,7 +9,7 @@ import com.eclipsesource.restfuse.annotation.HttpTest;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.runner.RunWith;
-import org.motechproject.ananya.referencedata.web.functional.framework.FunctionalTestCase;
+import org.motechproject.ananya.referencedata.web.FunctionalTest;
 
 import java.io.IOException;
 
@@ -17,7 +17,7 @@ import static com.eclipsesource.restfuse.Assert.assertOk;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(HttpJUnitRunner.class)
-public class FrontLineWorkerTest extends FunctionalTestCase {
+public class FrontLineWorkerApiTest extends FunctionalTest {
     public static final String FLW_DETAILS_WITHOUT_STATE = "" +
             "<flw>" +
             "    <id>e883939c-7872-434d-bc51-4087fc2e60d8</id>" +

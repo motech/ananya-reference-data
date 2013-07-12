@@ -5,13 +5,12 @@ import org.junit.Test;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.web.controller.LocationController;
-import org.motechproject.ananya.referencedata.web.functional.framework.SpringIntegrationTestCase;
+import org.motechproject.ananya.referencedata.web.SpringIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
-public class LocationIT extends SpringIntegrationTestCase {
+public class LocationIT extends SpringIntegrationTest {
     @Autowired
     private LocationController locationController;
     @Autowired
