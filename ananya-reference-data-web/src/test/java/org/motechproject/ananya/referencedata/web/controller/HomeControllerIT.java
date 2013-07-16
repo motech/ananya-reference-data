@@ -45,14 +45,10 @@ public class HomeControllerIT extends SpringIntegrationTest {
 
     @Test
     public void shouldCreateNewFLW() throws Exception {
+
         givenNoDuplicateFLWs();
 
-        homeController.uploadFrontLineWorkers(new CsvUploadRequest() {
-            @Override
-            public String getStringContent() {
-                return getCsvContent("", VALID_MSISDN, SUCCESS_VERIFICATION);
-            }
-        }, null);
+        homeController.uploadFrontLineWorkers(getCsvUploadRequestWithCustomCsvContents("", VALID_MSISDN, SUCCESS_VERIFICATION), null);
 
         List<FrontLineWorker> flwInDb = allFrontLineWorkers.getByMsisdn(formatPhoneNumber(VALID_MSISDN));
         assertEquals(1, flwInDb.size());
@@ -61,20 +57,25 @@ public class HomeControllerIT extends SpringIntegrationTest {
 
     @Test
     public void shouldCreateNewFlwWithDefaultGuid() throws Exception {
+
         givenNoDuplicateFLWs();
 
-        homeController.uploadFrontLineWorkers(new CsvUploadRequest() {
-            @Override
-            public String getStringContent() {
-                return getCsvContent(FrontLineWorker.DEFAULT_UUID.toString(), VALID_MSISDN, SUCCESS_VERIFICATION);
-            }
-        }, null);
+        homeController.uploadFrontLineWorkers(getCsvUploadRequestWithCustomCsvContents(FrontLineWorker.DEFAULT_UUID.toString(), VALID_MSISDN, SUCCESS_VERIFICATION), null);
 
         List<FrontLineWorker> flwInDb = allFrontLineWorkers.getByMsisdn(formatPhoneNumber(VALID_MSISDN));
         assertEquals(1, flwInDb.size());
         FrontLineWorker frontLineWorker = flwInDb.get(0);
         assertEquals(SUCCESS_VERIFICATION, frontLineWorker.getVerificationStatus());
         assertNotEquals(FrontLineWorker.DEFAULT_UUID.toString(),frontLineWorker.getFlwId());
+    }
+
+    private CsvUploadRequest getCsvUploadRequestWithCustomCsvContents(final String guid, final String msisdn, final String verificationStatus) {
+        return new CsvUploadRequest() {
+            @Override
+            public String getStringContent() {
+                return getCsvContent(guid, msisdn, verificationStatus);
+            }
+        };
     }
 
     private void givenNoDuplicateFLWs() {
