@@ -31,4 +31,16 @@ public class FrontLineWorkerTest {
         assertFalse(frontLineWorker2.hasBeenVerified());
 
     }
+
+    @Test
+    public void shouldSetVerificationStatusToNullIfNullOrEmpty() {
+        FrontLineWorker frontLineWorker1= new FrontLineWorker();
+        frontLineWorker1.setVerificationStatus(null);
+        FrontLineWorker frontLineWorker2 = new FrontLineWorker();
+        frontLineWorker1.setVerificationStatus(VerificationStatus.from(""));
+
+        assertTrue(frontLineWorker1.getVerificationStatus() == null);
+        assertTrue(frontLineWorker2.getVerificationStatus() == null);
+
+    }
 }

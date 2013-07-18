@@ -8,16 +8,15 @@ public enum VerificationStatus {
     OTHER;
 
     public static VerificationStatus from(String string) {
+        if(StringUtils.isBlank(string))return null;
         return VerificationStatus.valueOf(StringUtils.trimToEmpty(string).toUpperCase());
     }
 
     public static boolean isValid(String status) {
         try {
-            from(status);
+            return from(status) != null;
         } catch (Exception e) {
             return false;
         }
-        return true;
-
     }
 }

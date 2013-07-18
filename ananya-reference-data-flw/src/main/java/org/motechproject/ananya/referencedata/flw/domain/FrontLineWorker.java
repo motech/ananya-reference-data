@@ -89,7 +89,7 @@ public class FrontLineWorker extends BaseEntity implements Cloneable {
     }
 
     public void setVerificationStatus(VerificationStatus verificationStatus) {
-        this.verificationStatus = verificationStatus.name();
+        this.verificationStatus = verificationStatus == null? null : verificationStatus.name();
     }
 
     public void setName(String name) {
