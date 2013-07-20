@@ -11,7 +11,8 @@ import java.util.UUID;
 public class FrontLineWorker extends BaseEntity implements Cloneable {
 
     public static final String FLW_ID_FORMAT = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
-    public final static UUID DEFAULT_UUID = UUID.fromString("11111111-1111-1111-1111-111111111111");
+    public final static String DEFAULT_UUID_STRING = "11111111-1111-1111-1111-111111111111";
+    public final static UUID DEFAULT_UUID = UUID.fromString(DEFAULT_UUID_STRING);
     @Column(name = "msisdn")
     private Long msisdn;
 

@@ -6,61 +6,118 @@ import org.motechproject.ananya.referencedata.csv.response.FrontLineWorkerImport
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
-import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
+import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.utils.ValidationUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.UUID;
 import java.util.regex.Pattern;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
+import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValidWithBlanksAllowed;
+
 public class FrontLineWorkerImportRequestValidator {
-    public FrontLineWorkerImportValidationResponse validate(FrontLineWorkerImportRequest frontLineWorkerImportRequest, Location location) {
-        FrontLineWorkerImportValidationResponse frontLineWorkerImportValidationResponse = new FrontLineWorkerImportValidationResponse();
+    private AllFrontLineWorkers allFrontLineWorkers;
 
-        validateMsisdn(frontLineWorkerImportValidationResponse, frontLineWorkerImportRequest.getMsisdn());
-        validateLocation(location, frontLineWorkerImportValidationResponse);
-        validateName(frontLineWorkerImportRequest, frontLineWorkerImportValidationResponse);
-        validateId(frontLineWorkerImportRequest, frontLineWorkerImportValidationResponse);
-        validateAlternateContactNumber(frontLineWorkerImportRequest, frontLineWorkerImportValidationResponse);
-        validateVerificationStatus(frontLineWorkerImportRequest, frontLineWorkerImportValidationResponse);
-
-        return frontLineWorkerImportValidationResponse;
+    @Autowired
+    public FrontLineWorkerImportRequestValidator(AllFrontLineWorkers allFrontLineWorkers) {
+        this.allFrontLineWorkers = allFrontLineWorkers;
     }
 
-    private void validateVerificationStatus(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
+    public FrontLineWorkerImportValidationResponse validate(FrontLineWorkerImportRequest request, Location location) {
+        FrontLineWorkerImportValidationResponse response = new FrontLineWorkerImportValidationResponse();
+
+        validateMsisdn(request, response);
+        validateLocation(location, response);
+        validateName(request, response);
+        validateId(request, response);
+        validateAlternateContactNumber(request, response);
+        validateVerificationStatus(request, response);
+
+        return response;
+    }
+
+    public void validateVerificationStatus(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
         String verificationStatus = request.getVerificationStatus();
-        if (StringUtils.isNotBlank(verificationStatus) && !VerificationStatus.isValid(verificationStatus)){
-            response.forInvalidVerificationStatus();
+        if (isBlank(verificationStatus)) {
+            validateWithFLWWithNonBlankVerificationStatusFromDB(request, response);
+
+        } else {
+            if (!VerificationStatus.isValid(verificationStatus)) {
+                response.forInvalidVerificationStatus();
+            }
         }
     }
 
-    private void validateAlternateContactNumber(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
-        if (!PhoneNumber.isValidWithBlanksAllowed(request.getAlternateContactNumber())) {
+    public void validateAlternateContactNumber(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
+        if (!isValidWithBlanksAllowed(request.getAlternateContactNumber())) {
             response.forInvalidAlternateContactNumber();
         }
     }
 
-    private void validateId(FrontLineWorkerImportRequest frontLineWorkerImportRequest, FrontLineWorkerImportValidationResponse frontLineWorkerImportValidationResponse) {
-        String id = frontLineWorkerImportRequest.getId();
-        if (StringUtils.isNotBlank(id) && !Pattern.matches(FrontLineWorker.FLW_ID_FORMAT, id)) {
-            frontLineWorkerImportValidationResponse.forInvalidId();
+    public void validateId(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
+        String id = request.getId();
+        if (isBlank(id) || StringUtils.equals(FrontLineWorker.DEFAULT_UUID_STRING, id))
+            return;
+        else {
+            if (!Pattern.matches(FrontLineWorker.FLW_ID_FORMAT, id)) {
+                response.forInvalidId();
+            } else {
+                validateFlwIdWithFlwFromDB(request, response);
+            }
+        }
+
+    }
+
+    public void validateMsisdn(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
+        if (!isValidWithBlanksAllowed(request.getMsisdn())) {
+            response.forInvalidMsisdn();
         }
     }
 
-    private void validateMsisdn(FrontLineWorkerImportValidationResponse frontLineWorkerImportValidationResponse, String msisdn) {
-        if (!PhoneNumber.isValidWithBlanksAllowed(msisdn)) {
-            frontLineWorkerImportValidationResponse.forInvalidMsisdn();
-        }
-    }
-
-    private void validateLocation(Location location, FrontLineWorkerImportValidationResponse frontLineWorkerImportValidationResponse) {
+    public void validateLocation(Location location, FrontLineWorkerImportValidationResponse response) {
         if (location == null) {
-            frontLineWorkerImportValidationResponse.forInvalidLocation();
+            response.forInvalidLocation();
         }
     }
 
-    private void validateName(FrontLineWorkerImportRequest frontLineWorkerWebRequest, FrontLineWorkerImportValidationResponse frontLineWorkerImportValidationResponse) {
-        String name = frontLineWorkerWebRequest.getName();
+    public void validateName(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
+        String name = request.getName();
         if (ValidationUtils.isInvalidNameWithBlankAllowed(name)) {
-            frontLineWorkerImportValidationResponse.forInvalidName();
+            response.forInvalidName();
         }
     }
+
+    private void validateFlwIdWithFlwFromDB(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
+        FrontLineWorker byFlwId = allFrontLineWorkers.getByFlwId(UUID.fromString(request.getId()));
+        if (byFlwId == null) {
+            response.forMissingFLW();
+        } else {
+            try {
+                Long requestMsisdn = formatPhoneNumber(request.getMsisdn());
+                if (!requestMsisdn.equals(byFlwId.getMsisdn())) {
+                    response.forNonMatchingMsisdn();
+                } else if (isNotBlank(byFlwId.getVerificationStatus()) && isBlank(request.getVerificationStatus())) {
+                    response.forInvalidBlankVerificationStatus();
+                }
+            } catch (NumberFormatException e) {
+                response.forInvalidMsisdn();
+            }
+
+        }
+    }
+
+    private void validateWithFLWWithNonBlankVerificationStatusFromDB(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
+        try {
+            int size = allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(request.getMsisdn())).size();
+            if (size != 0)
+                response.forInvalidBlankVerificationStatus();
+        } catch (NumberFormatException e) {
+            response.forInvalidMsisdn();
+        }
+
+    }
+
 }

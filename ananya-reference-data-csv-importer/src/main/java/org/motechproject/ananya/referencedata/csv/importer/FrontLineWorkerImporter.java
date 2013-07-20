@@ -5,6 +5,7 @@ import org.motechproject.ananya.referencedata.csv.response.FrontLineWorkerImport
 import org.motechproject.ananya.referencedata.csv.service.FrontLineWorkerImportService;
 import org.motechproject.ananya.referencedata.csv.validator.FrontLineWorkerImportRequestValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
 import org.motechproject.importer.annotation.CSVImporter;
@@ -29,11 +30,13 @@ public class FrontLineWorkerImporter {
     private FrontLineWorkerImportService frontLineWorkerImportService;
     private LocationImportService locationImportService;
     private Logger logger = LoggerFactory.getLogger(FrontLineWorkerImporter.class);
+    private AllFrontLineWorkers allFrontLineWorkers;
 
     @Autowired
-    public FrontLineWorkerImporter(FrontLineWorkerImportService frontLineWorkerImportService, LocationImportService locationImportService) {
+    public FrontLineWorkerImporter(FrontLineWorkerImportService frontLineWorkerImportService, LocationImportService locationImportService,AllFrontLineWorkers allFrontLineWorkers) {
         this.frontLineWorkerImportService = frontLineWorkerImportService;
         this.locationImportService = locationImportService;
+        this.allFrontLineWorkers = allFrontLineWorkers;
     }
 
     @Validate
@@ -42,7 +45,7 @@ public class FrontLineWorkerImporter {
         int recordCounter = 0;
         List<Error> errors = new ArrayList<Error>();
 
-        FrontLineWorkerImportRequestValidator frontLineWorkerValidator = new FrontLineWorkerImportRequestValidator();
+        FrontLineWorkerImportRequestValidator frontLineWorkerValidator = new FrontLineWorkerImportRequestValidator(allFrontLineWorkers);
         addHeader(errors);
         logger.info("Started validating FLW csv records");
         for (FrontLineWorkerImportRequest frontLineWorkerImportRequest : frontLineWorkerImportRequests) {

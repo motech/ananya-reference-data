@@ -2,23 +2,18 @@ package org.motechproject.ananya.referencedata.csv.importer;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportRequest;
 import org.motechproject.ananya.referencedata.csv.service.FrontLineWorkerImportService;
-import org.motechproject.ananya.referencedata.flw.domain.Designation;
-import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
-import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
-import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.service.JsonHttpClient;
 import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
+import org.motechproject.ananya.referencedata.flw.domain.*;
+import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 import org.motechproject.importer.domain.ValidationResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -33,25 +28,25 @@ public class FrontLineWorkerImporterTest {
     @Mock
     private FrontLineWorkerImportService frontLineWorkerImportService;
     @Mock
-    private JsonHttpClient jsonHttpClient;
-    @Mock
     private Properties clientServicesProperties;
-    @Captor
-    private ArgumentCaptor<List<FrontLineWorkerImportRequest>> captor;
+    @Mock
+    private AllFrontLineWorkers allFrontLineWorkers;
     private FrontLineWorkerImporter frontLineWorkerImporter;
 
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerImporter = new FrontLineWorkerImporter(frontLineWorkerImportService, locationImportService);
+        frontLineWorkerImporter = new FrontLineWorkerImporter(frontLineWorkerImportService, locationImportService,allFrontLineWorkers);
     }
 
     @Test
     public void shouldValidateFLWRequests() {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
+        UUID uuid = UUID.randomUUID();
         when(locationImportService.getFor("state", "D1", "B1", "P1")).thenReturn(location);
-        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest(UUID.randomUUID().toString(), "1234567890", "1234567891", "name", Designation.ANM.name(), VerificationStatus.SUCCESS.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
+        when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(new FrontLineWorker(PhoneNumber.formatPhoneNumber("1234567890"),"name",Designation.ANM, null, null));
+        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest(uuid.toString(), "1234567890", "1234567891", "name", Designation.ANM.name(), VerificationStatus.SUCCESS.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
 
         ValidationResponse validationResponse = frontLineWorkerImporter.validate(frontLineWorkerWebRequests);
 
@@ -66,7 +61,10 @@ public class FrontLineWorkerImporterTest {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
         when(locationImportService.getFor("state", "D1", "B1", "P1")).thenReturn(location);
-        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest(UUID.randomUUID().toString(), "1asdf67890", "1234567891", "name", Designation.ANM.name(), VerificationStatus.SUCCESS.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
+        UUID uuid = UUID.randomUUID();
+        when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(new FrontLineWorker(PhoneNumber.formatPhoneNumber("1234567890"),"name",Designation.ANM, null, null));
+
+        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest(uuid.toString(), "1asdf67890", "1234567891", "name", Designation.ANM.name(), VerificationStatus.SUCCESS.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
 
         ValidationResponse validationResponse = frontLineWorkerImporter.validate(frontLineWorkerWebRequests);
 

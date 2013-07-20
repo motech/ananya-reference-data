@@ -9,42 +9,58 @@ public class FrontLineWorkerImportValidationResponse {
 
     public void forBlankFieldsInLocation() {
         isValid = false;
-        this.message.add("Blank district, block or panchayat");
+        addMessage("Blank district, block or panchayat");
     }
 
     public void forDuplicateLocation() {
         isValid = false;
-        this.message.add("Location already present");
+        addMessage("Location already present");
     }
 
     public void forInvalidMsisdn() {
         isValid = false;
-        this.message.add("Invalid msisdn");
+        addMessage("Invalid msisdn");
+    }
+
+    public void forNonMatchingMsisdn() {
+        isValid = false;
+        addMessage("Msisdn do not match");
+    }
+
+
+    public void forMissingFLW() {
+        isValid = false;
+        addMessage("FLW not found");
     }
 
     public void forInvalidAlternateContactNumber() {
         isValid = false;
-        this.message.add("Invalid alternate contact number");
+        addMessage("Invalid alternate contact number");
     }
 
     public void forInvalidId() {
         isValid = false;
-        this.message.add("Invalid id");
+        addMessage("Invalid id");
     }
 
     public void forInvalidVerificationStatus() {
         isValid = false;
-        this.message.add("Invalid verification status");
+        addMessage("Invalid verification status");
+    }
+
+    public void forInvalidBlankVerificationStatus() {
+        isValid = false;
+        addMessage("Cannot update existing verification status to blank");
     }
 
     public void forInvalidLocation() {
         isValid = false;
-        this.message.add("Invalid location");
+        addMessage("Invalid location");
     }
 
     public void forInvalidName() {
         isValid = false;
-        this.message.add("Invalid name");
+        addMessage("Invalid name");
     }
 
     public boolean isValid() {
@@ -62,5 +78,10 @@ public class FrontLineWorkerImportValidationResponse {
 
     public boolean isInValid() {
         return !isValid;
+    }
+
+    private void addMessage(String message) {
+        if(!this.message.contains(message))
+            this.message.add(message);
     }
 }
