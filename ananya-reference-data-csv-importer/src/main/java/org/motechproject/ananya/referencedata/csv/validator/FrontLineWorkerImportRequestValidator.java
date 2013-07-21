@@ -10,6 +10,7 @@ import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers
 import org.motechproject.ananya.referencedata.flw.utils.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -91,7 +92,8 @@ public class FrontLineWorkerImportRequestValidator {
     }
 
     private void validateFlwIdWithFlwFromDB(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
-        FrontLineWorker byFlwId = allFrontLineWorkers.getByFlwId(UUID.fromString(request.getId()));
+        String id = request.getId();
+        FrontLineWorker byFlwId = allFrontLineWorkers.getByFlwId(UUID.fromString(id));
         if (byFlwId == null) {
             response.forMissingFLW();
         } else {
@@ -101,6 +103,11 @@ public class FrontLineWorkerImportRequestValidator {
                     response.forNonMatchingMsisdn();
                 } else if (isNotBlank(byFlwId.getVerificationStatus()) && isBlank(request.getVerificationStatus())) {
                     response.forInvalidBlankVerificationStatus();
+                } else {
+                    List<FrontLineWorker> byMsisdnWithStatus = allFrontLineWorkers.getByMsisdnWithStatus(requestMsisdn);
+                    if ((byMsisdnWithStatus.size() > 1)) {
+                        response.forDuplicateRecordWithStatus();
+                    }
                 }
             } catch (NumberFormatException e) {
                 response.forInvalidMsisdn();

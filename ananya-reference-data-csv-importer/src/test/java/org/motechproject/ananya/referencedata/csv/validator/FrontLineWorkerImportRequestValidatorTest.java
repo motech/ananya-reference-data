@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
 
 public class FrontLineWorkerImportRequestValidatorTest {
 
@@ -70,7 +71,7 @@ public class FrontLineWorkerImportRequestValidatorTest {
 
     @Test
     public void shouldValidateName() {
-       response = new FrontLineWorkerImportValidationResponse();
+        response = new FrontLineWorkerImportValidationResponse();
         validator.validateName(new FrontLineWorkerImportRequest(randomUUID().toString(), "1234567890", "1234567891", "Mr. Valid", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);
         assertTrue(response.isValid());
 
@@ -109,7 +110,7 @@ public class FrontLineWorkerImportRequestValidatorTest {
 
         response = new FrontLineWorkerImportValidationResponse();
         UUID uuid = randomUUID();
-        when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(new FrontLineWorker(PhoneNumber.formatPhoneNumber("1234567890"),"Valid. Name",Designation.ANM, null, null));
+        when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(new FrontLineWorker(formatPhoneNumber("1234567890"), "Valid. Name", Designation.ANM, null, null));
         validator.validateId(new FrontLineWorkerImportRequest(uuid.toString(), "1234567890", "1234567891", "Valid. Name", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);
         assertTrue(response.isValid());
 
@@ -123,7 +124,7 @@ public class FrontLineWorkerImportRequestValidatorTest {
     public void shouldValidateIdWhenMsisdnAreNotMatching() {
         response = new FrontLineWorkerImportValidationResponse();
         UUID uuid = randomUUID();
-        when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(new FrontLineWorker(PhoneNumber.formatPhoneNumber("1234567891"),"Valid. Name",Designation.ANM, null, null));
+        when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(new FrontLineWorker(formatPhoneNumber("1234567891"), "Valid. Name", Designation.ANM, null, null));
         validator.validateId(new FrontLineWorkerImportRequest(uuid.toString(), "1234567890", null, "Valid. Name", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);
         assertFalse(response.isValid());
         assertEquals("[Msisdn do not match]", response.getMessage().toString());
@@ -140,10 +141,30 @@ public class FrontLineWorkerImportRequestValidatorTest {
     }
 
     @Test
+    public void shouldValidateIdWhenDuplicateFLWIsPresentInDB() {
+        response = new FrontLineWorkerImportValidationResponse();
+        UUID uuid = randomUUID();
+        String msisdn = "1234567890";
+        String name = "name";
+        Long number = formatPhoneNumber(msisdn);
+
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
+
+        FrontLineWorker worker = new FrontLineWorker(number, name, Designation.ANM, null, "SUCCESS");
+        frontLineWorkers.add(worker);
+        frontLineWorkers.add(worker);
+        when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(worker);
+        when(allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber("1234567890"))).thenReturn(frontLineWorkers);
+        validator.validateId(new FrontLineWorkerImportRequest(uuid.toString(), "1234567890", null, "Valid. Name", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);
+        assertFalse(response.isValid());
+        assertEquals("[Flw with same Msisdn having non blank verification status already present.]", response.getMessage().toString());
+    }
+
+    @Test
     public void shouldValidateIdWhenFLWInDBHasVerificationStatusAndRequestDoesNot() {
         response = new FrontLineWorkerImportValidationResponse();
         UUID uuid = randomUUID();
-        when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(new FrontLineWorker(PhoneNumber.formatPhoneNumber("1234567890"),"Valid. Name",Designation.ANM, null, "SUCCESS"));
+        when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(new FrontLineWorker(formatPhoneNumber("1234567890"), "Valid. Name", Designation.ANM, null, "SUCCESS"));
         validator.validateId(new FrontLineWorkerImportRequest(uuid.toString(), "1234567890", null, "Valid. Name", "ANM", null, new LocationRequest()), response);
         assertFalse(response.isValid());
         assertEquals("[Cannot update existing verification status to blank]", response.getMessage().toString());
@@ -216,7 +237,7 @@ public class FrontLineWorkerImportRequestValidatorTest {
     public void shouldAddErrorIfRequestHasBlankVerificationStatusAndMatchingFLWFromDBIsNonBlank() {
         String msisdn = "1234567891";
         String name = "name";
-        Long number = PhoneNumber.formatPhoneNumber(msisdn);
+        Long number = formatPhoneNumber(msisdn);
 
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         FrontLineWorker worker = new FrontLineWorker(number, name, Designation.ANM, null, "SUCCESS");
