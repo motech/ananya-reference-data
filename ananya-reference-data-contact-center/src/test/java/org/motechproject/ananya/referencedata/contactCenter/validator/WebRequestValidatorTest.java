@@ -67,7 +67,7 @@ public class WebRequestValidatorTest {
         errors = new Errors();
         validator.validateVerificationStatus("  ", errors);
         assertEquals(1, errors.getCount());
-        assertEquals("verificationStatus field has invalid value", errors.allMessages());
+        assertEquals("verificationStatus field is missing", errors.allMessages());
 
         errors = new Errors();
         validator.validateVerificationStatus("SUCCESS", errors);

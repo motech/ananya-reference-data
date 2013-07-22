@@ -1,6 +1,7 @@
 package org.motechproject.ananya.referencedata.csv.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.csv.mapper.FrontLineWorkerImportMapper;
 import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportRequest;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @Service
 public class FrontLineWorkerImportService {
@@ -50,6 +53,15 @@ public class FrontLineWorkerImportService {
         syncService.syncAllFrontLineWorkers(frontLineWorkers);
     }
 
+    private Predicate flwWithVerificationStatus() {
+        return new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                return isNotBlank(((FrontLineWorker) o).getVerificationStatus());
+            }
+        };
+    }
+
     private Location getExistingLocation(LocationRequest locationRequest) {
         Location location = allLocations.getFor(locationRequest.getState(), locationRequest.getDistrict(), locationRequest.getBlock(), locationRequest.getPanchayat());
         return location.isInvalid() ? location.getAlternateLocation() : location;
@@ -64,11 +76,20 @@ public class FrontLineWorkerImportService {
     }
 
     private FrontLineWorker constructFrontLineWorkerForBulkImport(FrontLineWorkerImportRequest frontLineWorkerRequest, Location location, List<FrontLineWorkerImportRequest> frontLineWorkerRequests) {
-        List<FrontLineWorker> frontLineWorkersWithSameMsisdn = existingFLW(frontLineWorkerRequest);
-        if (frontLineWorkersWithSameMsisdn.size() != 1 || hasDuplicatesInCSV(frontLineWorkerRequest, frontLineWorkerRequests)) {
+        if (hasDuplicatesInCSV(frontLineWorkerRequest, frontLineWorkerRequests)) {
             return FrontLineWorkerImportMapper.mapToNewFlw(frontLineWorkerRequest, location);
         }
-        return FrontLineWorkerImportMapper.mapToExistingFlw(frontLineWorkersWithSameMsisdn.get(0), frontLineWorkerRequest, location);
+        FrontLineWorker flwToBeUpdated = flwToBeUpdated(frontLineWorkerRequest);
+        if (flwToBeUpdated != null)
+            return FrontLineWorkerImportMapper.mapToExistingFlw(flwToBeUpdated, frontLineWorkerRequest, location);
+        return FrontLineWorkerImportMapper.mapToNewFlw(frontLineWorkerRequest, location);
+    }
+
+    private FrontLineWorker flwToBeUpdated(FrontLineWorkerImportRequest frontLineWorkerRequest) {
+        List<FrontLineWorker> frontLineWorkersWithSameMsisdn = existingFLW(frontLineWorkerRequest);
+        if(frontLineWorkersWithSameMsisdn.size() == 1)
+            return frontLineWorkersWithSameMsisdn.get(0);
+        return (FrontLineWorker) CollectionUtils.find(frontLineWorkersWithSameMsisdn, flwWithVerificationStatus());
     }
 
     private boolean hasDuplicatesInCSV(FrontLineWorkerImportRequest frontLineWorkerRequest, List<FrontLineWorkerImportRequest> frontLineWorkerRequests) {

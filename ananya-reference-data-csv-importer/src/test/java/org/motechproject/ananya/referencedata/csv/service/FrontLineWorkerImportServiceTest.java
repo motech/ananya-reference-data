@@ -14,14 +14,14 @@ import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.service.SyncService;
+import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
+import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -147,5 +147,23 @@ public class FrontLineWorkerImportServiceTest {
         frontLineWorkerImportService.getAllByMsisdn(msisdn);
 
         verify(allFrontLineWorkers).getByMsisdn(msisdn);
+    }
+
+    @Test
+    public void shouldMapToExistingFLWWithVerificationStatusIncaseOfDuplicates() {
+        String msisdn = "1234567890";
+        FrontLineWorkerImportRequest request = new FrontLineWorkerImportRequest(null, msisdn, "1234567891", "name", "ASHA", VerificationStatus.SUCCESS.name(), new LocationRequest());
+        UUID flwId = UUID.randomUUID();
+        FrontLineWorker frontLineWorkerWithStatus = new FrontLineWorker(null, null, null, null, VerificationStatus.INVALID.name(), flwId,null);
+        FrontLineWorker otherFrontLineWorker = new FrontLineWorker();
+        when(allFrontLineWorkers.getByMsisdn(PhoneNumber.formatPhoneNumber(msisdn))).thenReturn(asList(otherFrontLineWorker, frontLineWorkerWithStatus));
+        when(allLocations.getFor(anyString(),anyString(),anyString(),anyString())).thenReturn(new Location());
+
+        frontLineWorkerImportService.addAllWithoutValidations(asList(request));
+
+        verify(allFrontLineWorkers).createOrUpdateAll(captor.capture());
+        List<FrontLineWorker> actualFlws = captor.getValue();
+        assertEquals(1, actualFlws.size());
+        assertEquals(flwId, actualFlws.get(0).getFlwId());
     }
 }

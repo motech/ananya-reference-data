@@ -34,7 +34,7 @@ public class WebRequestValidator {
     }
 
     public void validateVerificationStatus(String verificationStatus, Errors errors) {
-        if (StringUtils.isEmpty(verificationStatus)) {
+        if (StringUtils.isBlank(verificationStatus)) {
             errors.add("verificationStatus field is missing");
             return;
         }

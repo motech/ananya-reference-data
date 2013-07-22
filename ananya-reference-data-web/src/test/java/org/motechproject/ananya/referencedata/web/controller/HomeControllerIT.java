@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.apache.commons.lang.StringUtils.*;
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
 
 public class HomeControllerIT extends SpringIntegrationTest {
@@ -49,88 +49,124 @@ public class HomeControllerIT extends SpringIntegrationTest {
 
     @Test
     public void shouldCreateNewFLW() throws Exception {
-
         givenNoDuplicateFLWs();
 
         homeController.uploadFrontLineWorkers(createCsvUploadRequestWithBlankGuid(VALID_MSISDN), null);
 
-        assertThatItIsSuccessfullyUploadedWithSuccessVerificationStatusAndIsTheOnlyRecord(VALID_MSISDN);
+        verifySuccessfulUpload(VALID_MSISDN, SUCCESS_VERIFICATION);
     }
 
 
     @Test
     public void shouldCreateNewFlwWithDefaultGuid() throws Exception {
-
         givenNoDuplicateFLWs();
 
-        homeController.uploadFrontLineWorkers(createCsvUploadRequestWithDefaultGUID(VALID_MSISDN, SUCCESS_VERIFICATION), null);
+        homeController.uploadFrontLineWorkers(createCsvUploadRequest(VALID_MSISDN, SUCCESS_VERIFICATION, FrontLineWorker.DEFAULT_UUID.toString()), null);
 
-        FrontLineWorker frontLineWorker = assertThatItIsSuccessfullyUploadedWithSuccessVerificationStatusAndIsTheOnlyRecord(VALID_MSISDN);
-        assertNotEquals(FrontLineWorker.DEFAULT_UUID.toString(),frontLineWorker.getFlwId());
+        verifySuccessfulUpload(VALID_MSISDN, SUCCESS_VERIFICATION);
     }
 
 
     @Test
-    public void shouldUpdateFlWWithBlankVerificationStatusIfOnlyOneRecordIsPresentInDB() throws Exception {
-        FrontLineWorker frontLineWorkerInDb1 = new FrontLineWorker(formatPhoneNumber(VALID_MSISDN), VALID_NAME, Designation.ANM, null,null);
+    public void shouldUpdateStatusOfTheSingleFlWWithBlankVerificationStatusInDB() throws Exception {
+        FrontLineWorker frontLineWorkerInDb1 = new FrontLineWorker(formatPhoneNumber(VALID_MSISDN), VALID_NAME, Designation.ANM, null, null);
         allFrontLineWorkers.add(frontLineWorkerInDb1);
 
-        homeController.uploadFrontLineWorkers(createCsvUploadRequestWithDefaultGUID(VALID_MSISDN, SUCCESS_VERIFICATION),null);
+        homeController.uploadFrontLineWorkers(createCsvUploadRequest(VALID_MSISDN, SUCCESS_VERIFICATION, FrontLineWorker.DEFAULT_UUID.toString()), null);
 
-        assertThatItIsSuccessfullyUploadedWithSuccessVerificationStatusAndIsTheOnlyRecord(VALID_MSISDN);
-        FrontLineWorker frontLineWorker = allFrontLineWorkers.getByFlwId(frontLineWorkerInDb1.getFlwId());
-        assertNotNull(frontLineWorker);
-        assertEquals(SUCCESS_VERIFICATION, frontLineWorker.getVerificationStatus());
-        assertEquals(location,frontLineWorker.getLocation());
+        verifySuccessfulUpload(VALID_MSISDN, SUCCESS_VERIFICATION);
 
         String otherMSISDN = "1231231231";
-        FrontLineWorker frontLineWorkerInDb2 = new FrontLineWorker(formatPhoneNumber(otherMSISDN), "OtherName", Designation.ANM, null,"SUCCESS");
+        FrontLineWorker frontLineWorkerInDb2 = new FrontLineWorker(formatPhoneNumber(otherMSISDN), "OtherName", Designation.ANM, null, "SUCCESS");
         allFrontLineWorkers.add(frontLineWorkerInDb2);
 
-        homeController.uploadFrontLineWorkers(createCsvUploadRequestWithBlankGuid(otherMSISDN),null);
+        homeController.uploadFrontLineWorkers(createCsvUploadRequestWithBlankGuid(otherMSISDN), null);
 
-        assertThatItIsSuccessfullyUploadedWithSuccessVerificationStatusAndIsTheOnlyRecord(otherMSISDN);
-        FrontLineWorker frontLineWorker2 = allFrontLineWorkers.getByFlwId(frontLineWorkerInDb2.getFlwId());
-        assertNotNull(frontLineWorker);
-        assertEquals(SUCCESS_VERIFICATION, frontLineWorker2.getVerificationStatus());
-        assertEquals(location,frontLineWorker2.getLocation());
+        verifySuccessfulUpload(otherMSISDN, SUCCESS_VERIFICATION);
     }
-
 
     @Test
-    public void shouldUpdateFlWWithBlankVerificationStatusIfOnlyOneRecordIsPresentInDBWhenRequestHaveBlankVerificationStatus() throws Exception {
-        FrontLineWorker frontLineWorkerInDb = new FrontLineWorker(formatPhoneNumber(VALID_MSISDN), VALID_NAME, Designation.ANM, null,null);
+    public void shouldUpdateTheSingleFlWWithBlankVerificationStatusInDB() throws Exception {
+        FrontLineWorker frontLineWorkerInDb = new FrontLineWorker(formatPhoneNumber(VALID_MSISDN), VALID_NAME, Designation.ANM, null, null);
         allFrontLineWorkers.add(frontLineWorkerInDb);
 
-        homeController.uploadFrontLineWorkers(createCsvUploadRequestWithDefaultGUID(VALID_MSISDN, ""),null);
+        homeController.uploadFrontLineWorkers(createCsvUploadRequest(VALID_MSISDN, "", FrontLineWorker.DEFAULT_UUID.toString()), null);
 
-        FrontLineWorker frontLineWorker = allFrontLineWorkers.getByFlwId(frontLineWorkerInDb.getFlwId());
-        assertNotNull(frontLineWorker);
-        assertTrue(isBlank(frontLineWorker.getVerificationStatus()));
-        assertEquals(location,frontLineWorker.getLocation());
+        verifySuccessfulUpload(VALID_MSISDN, null);
     }
 
-    private CsvUploadRequest createCsvUploadRequestWithDefaultGUID(String validMsisdn, String verificationStatus) {
-        return getCsvUploadRequestWithCustomCsvContents(FrontLineWorker.DEFAULT_UUID.toString(), validMsisdn, verificationStatus);
+    @Test
+    public void shouldUpdateVerifiedFLWIncaseOfDuplicatesInDb() throws Exception {
+        FrontLineWorker frontLineWorkerInDb = new FrontLineWorker(formatPhoneNumber(VALID_MSISDN), VALID_NAME, Designation.ANM, null, null);
+        FrontLineWorker verifiedFrontLineWorkerInDb = new FrontLineWorker(formatPhoneNumber(VALID_MSISDN), VALID_NAME, Designation.ANM, null, "INVALID");
+        allFrontLineWorkers.add(frontLineWorkerInDb);
+        allFrontLineWorkers.add(verifiedFrontLineWorkerInDb);
+
+        homeController.uploadFrontLineWorkers(createCsvUploadRequest(VALID_MSISDN, SUCCESS_VERIFICATION, FrontLineWorker.DEFAULT_UUID.toString()), null);
+
+        List<FrontLineWorker> flwsInDb = allFrontLineWorkers.getByMsisdn(formatPhoneNumber(VALID_MSISDN));
+        assertEquals(2, flwsInDb.size());
+        FrontLineWorker flwInDb = allFrontLineWorkers.getByFlwId(verifiedFrontLineWorkerInDb.getFlwId());
+        assertEquals(SUCCESS_VERIFICATION, flwInDb.getVerificationStatus());
     }
 
-    private FrontLineWorker assertThatItIsSuccessfullyUploadedWithSuccessVerificationStatusAndIsTheOnlyRecord(String validMsisdn) {
-        List<FrontLineWorker> flwInDb = allFrontLineWorkers.getByMsisdn(formatPhoneNumber(validMsisdn));
-        assertEquals(1, flwInDb.size());
-        FrontLineWorker frontLineWorker = flwInDb.get(0);
-        assertEquals(SUCCESS_VERIFICATION, frontLineWorker.getVerificationStatus());
-        return frontLineWorker;
+    @Test
+    public void shouldUpdateFLWIncaseOfNonVerifiedFLWInDb() throws Exception {
+        FrontLineWorker verifiedFrontLineWorkerInDb = new FrontLineWorker(formatPhoneNumber(VALID_MSISDN), VALID_NAME, Designation.ANM, null, null);
+        allFrontLineWorkers.add(verifiedFrontLineWorkerInDb);
+        String guid = verifiedFrontLineWorkerInDb.getFlwId().toString();
+
+        homeController.uploadFrontLineWorkers(createCsvUploadRequest(VALID_MSISDN, SUCCESS_VERIFICATION, guid), null);
+
+        verifySuccessfulUpload(VALID_MSISDN, SUCCESS_VERIFICATION);
+    }
+
+    @Test
+    public void shouldUpdateFLWIncaseOfVerifiedFLWInDb() throws Exception {
+        FrontLineWorker verifiedFrontLineWorkerInDb = new FrontLineWorker(formatPhoneNumber(VALID_MSISDN), VALID_NAME, Designation.ANM, null, "INVALID");
+        allFrontLineWorkers.add(verifiedFrontLineWorkerInDb);
+        String guid = verifiedFrontLineWorkerInDb.getFlwId().toString();
+
+        homeController.uploadFrontLineWorkers(createCsvUploadRequest(VALID_MSISDN, SUCCESS_VERIFICATION, guid), null);
+
+        verifySuccessfulUpload(VALID_MSISDN, SUCCESS_VERIFICATION);
+    }
+
+    @Test
+    public void shouldCreateNewFLWIncaseOfDuplicatesInCSV() throws Exception {
+        String rows = getCsvRows("", VALID_MSISDN, "") + getCsvRows("", VALID_MSISDN, "");
+        CsvUploadRequest request = getCsvUploadRequestWithCustomCsvContents(getCsvContent(rows));
+
+        homeController.uploadFrontLineWorkers(request, null);
+
+        List<FrontLineWorker> flwsInDb = allFrontLineWorkers.getByMsisdn(formatPhoneNumber(VALID_MSISDN));
+        assertEquals(2, flwsInDb.size());
+    }
+
+    private CsvUploadRequest createCsvUploadRequest(String validMsisdn, String verificationStatus, String guid) {
+        String csvContent = getCsvContent(getCsvRows(guid, validMsisdn, verificationStatus));
+        return getCsvUploadRequestWithCustomCsvContents(csvContent);
+    }
+
+    private void verifySuccessfulUpload(String validMsisdn, String verificationStatus) {
+        List<FrontLineWorker> flwsInDb = allFrontLineWorkers.getByMsisdn(formatPhoneNumber(validMsisdn));
+        assertEquals(1, flwsInDb.size());
+        FrontLineWorker frontLineWorker = flwsInDb.get(0);
+        assertEquals(verificationStatus, frontLineWorker.getVerificationStatus());
+        assertEquals(frontLineWorker.getLocation(), location);
+        assertNotEquals(FrontLineWorker.DEFAULT_UUID.toString(), frontLineWorker.getFlwId());
     }
 
     private CsvUploadRequest createCsvUploadRequestWithBlankGuid(String msisdn) {
-        return getCsvUploadRequestWithCustomCsvContents("", msisdn, SUCCESS_VERIFICATION);
+        String csvContent = getCsvContent(getCsvRows("", msisdn, SUCCESS_VERIFICATION));
+        return getCsvUploadRequestWithCustomCsvContents(csvContent);
     }
 
-    private CsvUploadRequest getCsvUploadRequestWithCustomCsvContents(final String guid, final String msisdn, final String verificationStatus) {
+    private CsvUploadRequest getCsvUploadRequestWithCustomCsvContents(final String csvContent) {
         return new CsvUploadRequest() {
             @Override
             public String getStringContent() {
-                return getCsvContent(guid, msisdn, verificationStatus);
+                return csvContent;
             }
         };
     }
@@ -139,9 +175,13 @@ public class HomeControllerIT extends SpringIntegrationTest {
         assertEquals(0, allFrontLineWorkers.getByMsisdn(formatPhoneNumber(VALID_MSISDN)).size());
     }
 
-    private String getCsvContent(String guid, String msisdn, String verificationStatus) {
-        return String.format(CSV_HEADER +
-                "%s,%s,1234567893," + VALID_NAME + "," + VALID_DESIGNATION + ",%s,State,District,Block,Panchayat",
+    private String getCsvContent(String rows) {
+        return String.format(CSV_HEADER + "%s",rows);
+    }
+
+    private String getCsvRows(String guid, String msisdn, String verificationStatus) {
+        return String.format(
+                "%s,%s,1234567893," + VALID_NAME + "," + VALID_DESIGNATION + ",%s,State,District,Block,Panchayat\n",
                 guid, msisdn, verificationStatus);
     }
 

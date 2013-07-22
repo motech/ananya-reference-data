@@ -127,7 +127,7 @@ public class FrontLineWorkerImportRequestValidatorTest {
         when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(new FrontLineWorker(formatPhoneNumber("1234567891"), "Valid. Name", Designation.ANM, null, null));
         validator.validateId(new FrontLineWorkerImportRequest(uuid.toString(), "1234567890", null, "Valid. Name", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);
         assertFalse(response.isValid());
-        assertEquals("[Msisdn do not match]", response.getMessage().toString());
+        assertEquals("[Msisdn is not matching with the record in DB for the given FLW ID]", response.getMessage().toString());
     }
 
     @Test
@@ -137,7 +137,7 @@ public class FrontLineWorkerImportRequestValidatorTest {
         when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(null);
         validator.validateId(new FrontLineWorkerImportRequest(uuid.toString(), "1234567890", null, "Valid. Name", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);
         assertFalse(response.isValid());
-        assertEquals("[FLW not found]", response.getMessage().toString());
+        assertEquals("[FLW with given id not found in DB]", response.getMessage().toString());
     }
 
     @Test
@@ -147,27 +147,17 @@ public class FrontLineWorkerImportRequestValidatorTest {
         String msisdn = "1234567890";
         String name = "name";
         Long number = formatPhoneNumber(msisdn);
-
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
-
-        FrontLineWorker worker = new FrontLineWorker(number, name, Designation.ANM, null, "SUCCESS");
-        frontLineWorkers.add(worker);
-        frontLineWorkers.add(worker);
-        when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(worker);
+        FrontLineWorker matchingFLWWithBlankVerificationStatus = new FrontLineWorker(number, name, Designation.ANM, null, null);
+        FrontLineWorker matchingFLWWithNonBlankVerificationStatus = new FrontLineWorker(number, name, Designation.ANM, null, "SUCCESS");
+        frontLineWorkers.add(matchingFLWWithNonBlankVerificationStatus);
+        when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(matchingFLWWithBlankVerificationStatus);
         when(allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber("1234567890"))).thenReturn(frontLineWorkers);
-        validator.validateId(new FrontLineWorkerImportRequest(uuid.toString(), "1234567890", null, "Valid. Name", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);
-        assertFalse(response.isValid());
-        assertEquals("[Flw with same Msisdn having non blank verification status already present.]", response.getMessage().toString());
-    }
 
-    @Test
-    public void shouldValidateIdWhenFLWInDBHasVerificationStatusAndRequestDoesNot() {
-        response = new FrontLineWorkerImportValidationResponse();
-        UUID uuid = randomUUID();
-        when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(new FrontLineWorker(formatPhoneNumber("1234567890"), "Valid. Name", Designation.ANM, null, "SUCCESS"));
-        validator.validateId(new FrontLineWorkerImportRequest(uuid.toString(), "1234567890", null, "Valid. Name", "ANM", null, new LocationRequest()), response);
+        validator.validateId(new FrontLineWorkerImportRequest(uuid.toString(), "1234567890", null, "Valid. Name", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);
+
         assertFalse(response.isValid());
-        assertEquals("[Cannot update existing verification status to blank]", response.getMessage().toString());
+        assertEquals("[Flw with same Msisdn having non blank verification status already present]", response.getMessage().toString());
     }
 
     @Test
@@ -247,7 +237,7 @@ public class FrontLineWorkerImportRequestValidatorTest {
         response = new FrontLineWorkerImportValidationResponse();
         validator.validateVerificationStatus(new FrontLineWorkerImportRequest(randomUUID().toString(), msisdn, null, name, "ANM", null, new LocationRequest()), response);
         assertFalse(response.isValid());
-        assertEquals("[Cannot update existing verification status to blank]", response.getMessage().toString());
+        assertEquals("[Cannot update non blank verification status to blank]", response.getMessage().toString());
 
     }
 }
