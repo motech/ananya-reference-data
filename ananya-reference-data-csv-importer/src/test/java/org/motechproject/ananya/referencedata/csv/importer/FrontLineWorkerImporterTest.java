@@ -70,13 +70,15 @@ public class FrontLineWorkerImporterTest {
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerWebRequests = new ArrayList<>();
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(new FrontLineWorker(formatPhoneNumber("1234567890"), "name", Designation.ANM, null, null));
 
-        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest(flwId.toString(), "1asdf67890", "1234567891", "name", Designation.ANM.name(), VerificationStatus.SUCCESS.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
+        String fwlId = flwId.toString();
+        frontLineWorkerWebRequests.add(new FrontLineWorkerImportRequest(fwlId, "1asdf67890", "1234567891", "name", Designation.ANM.name(), VerificationStatus.SUCCESS.name(), new LocationRequest("D1", "B1", "P1", "state", "VALID")));
 
         ValidationResponse validationResponse = frontLineWorkerImporter.validate(frontLineWorkerWebRequests);
 
         assertFalse(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("\"1asdf67890\",\"name\",\"ANM\",\"state\",\"D1\",\"B1\",\"P1\",\"[Invalid msisdn]\"", validationResponse.getErrors().get(1).getMessage());
+        String fwlIdInQuotes = String.format("\"%s\",", flwId);
+        assertEquals(fwlIdInQuotes + "\"1asdf67890\",\"name\",\"ANM\",\"SUCCESS\",\"state\",\"D1\",\"B1\",\"P1\",\"[Invalid msisdn]\"", validationResponse.getErrors().get(1).getMessage());
         verify(locationImportService).invalidateCache();
     }
 

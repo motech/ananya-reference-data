@@ -116,8 +116,8 @@ public class FrontLineWorkerImportRequest {
     }
 
     public String toCSV() {
-        return String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"",
-                msisdn, name, designation, location.getState(),
+        return String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"",
+                id,msisdn, name, designation, verificationStatus,location.getState(),
                 location.getDistrict(), location.getBlock(), location.getPanchayat());
     }
 

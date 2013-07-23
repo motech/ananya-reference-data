@@ -16,8 +16,9 @@ public class FrontLineWorkerImportMapper {
 
     public static FrontLineWorker mapToNewFlw(FrontLineWorkerImportRequest request, Location location) {
         Long msisdn = StringUtils.isBlank(request.getMsisdn()) ? null : formatMsisdn(request.getMsisdn());
+        String verificationStatus = StringUtils.isBlank(request.getVerificationStatus())? null :request.getVerificationStatus();
         return new FrontLineWorker(msisdn, trim(request.getName()), Designation.from(request.getDesignation()),
-                location, request.getVerificationStatus(), UUID.randomUUID(), FLW_CSV_UPLOAD_REASON);
+                location, verificationStatus, UUID.randomUUID(), FLW_CSV_UPLOAD_REASON);
     }
 
     public static FrontLineWorker mapToExistingFlw(FrontLineWorker existingFrontLineWorker, FrontLineWorkerImportRequest request, Location location) {
