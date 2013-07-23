@@ -98,11 +98,6 @@ public class FrontLineWorkerImportRequest {
         this.verificationStatus = verificationStatus;
     }
 
-    @ColumnName(name= "alternate_contact_number")
-    public void setAlternateContactNumber(String alternateContactNumber) {
-        this.alternateContactNumber = alternateContactNumber;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

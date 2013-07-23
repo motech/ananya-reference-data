@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
 
 public class HomeControllerIT extends SpringIntegrationTest {
-    public static final String CSV_HEADER = "id,msisdn,alternate_contact_number,name,designation,verification_status,state,district,block,panchayat\n";
+    public static final String CSV_HEADER = "id,msisdn,name,designation,verification_status,state,district,block,panchayat\n";
     public static final String SUCCESS_VERIFICATION = "SUCCESS";
     public static final String VALID_NAME = "Kumari Manju";
     public static final String VALID_DESIGNATION = "ANM";
@@ -182,7 +182,7 @@ public class HomeControllerIT extends SpringIntegrationTest {
 
     private String getCsvRows(String guid, String msisdn, String verificationStatus) {
         return String.format(
-                "%s,%s,1234567893," + VALID_NAME + "," + VALID_DESIGNATION + ",%s,State,District,Block,Panchayat\n",
+                "%s,%s," + VALID_NAME + "," + VALID_DESIGNATION + ",%s,State,District,Block,Panchayat\n",
                 guid, msisdn, verificationStatus);
     }
 
