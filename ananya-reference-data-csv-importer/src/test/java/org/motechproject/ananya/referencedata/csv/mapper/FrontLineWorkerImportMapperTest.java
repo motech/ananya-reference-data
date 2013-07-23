@@ -30,6 +30,7 @@ public class FrontLineWorkerImportMapperTest {
         assertEquals(location, frontLineWorker.getLocation());
         assertNotNull(frontLineWorker.getFlwId());
         assertEquals(verificationStatus, frontLineWorker.getVerificationStatus());
+        assertEquals("via CSV Upload", frontLineWorker.getReason());
     }
 
     @Test
@@ -47,7 +48,7 @@ public class FrontLineWorkerImportMapperTest {
         assertEquals(location, frontLineWorker.getLocation());
         assertNull(frontLineWorker.getFlwId());
         assertNull(frontLineWorker.getMsisdn());
-        assertNull(frontLineWorker.getReason());
         assertEquals(verificationStatus, frontLineWorker.getVerificationStatus());
+        assertEquals("via CSV Upload", frontLineWorker.getReason());
     }
 }

@@ -41,25 +41,7 @@ public class FrontLineWorkerImportRequestValidator {
         validateId(request, response);
         validateAlternateContactNumber(request, response);
         validateVerificationStatus(request, response);
-
         return response;
-    }
-
-    private void validateDuplicates(List<FrontLineWorkerImportRequest> requests, FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
-        Collection flwsByMsisdn = predicatedCollection(requests, new FLWPredicate(request.getMsisdn()));
-        if (flwsByMsisdn.size() > 1) {
-            if (find(flwsByMsisdn, flwWithVerificationStatus()) != null)
-                response.forInvalidDuplicatesInCSV();
-        }
-    }
-
-    private Predicate flwWithVerificationStatus() {
-        return new Predicate() {
-            @Override
-            public boolean evaluate(Object o) {
-                return isNotBlank(((FrontLineWorkerImportRequest) o).getVerificationStatus());
-            }
-        };
     }
 
     void validateVerificationStatus(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
@@ -100,13 +82,13 @@ public class FrontLineWorkerImportRequestValidator {
         }
     }
 
-    public void validateLocation(Location location, FrontLineWorkerImportValidationResponse response) {
+    void validateLocation(Location location, FrontLineWorkerImportValidationResponse response) {
         if (location == null) {
             response.forInvalidLocation();
         }
     }
 
-    public void validateName(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
+    void validateName(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
         String name = request.getName();
         if (ValidationUtils.isInvalidNameWithBlankAllowed(name)) {
             response.forInvalidName();
@@ -154,6 +136,23 @@ public class FrontLineWorkerImportRequestValidator {
         } catch (NumberFormatException e) {
             response.forInvalidMsisdn();
         }
+    }
+
+    private void validateDuplicates(List<FrontLineWorkerImportRequest> requests, FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
+        Collection flwsByMsisdn = predicatedCollection(requests, new FLWPredicate(request.getMsisdn()));
+        if (flwsByMsisdn.size() > 1) {
+            if (find(flwsByMsisdn, flwWithVerificationStatus()) != null)
+                response.forInvalidDuplicatesInCSV();
+        }
+    }
+
+    private Predicate flwWithVerificationStatus() {
+        return new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                return isNotBlank(((FrontLineWorkerImportRequest) o).getVerificationStatus());
+            }
+        };
     }
 
     class FLWPredicate implements Predicate {

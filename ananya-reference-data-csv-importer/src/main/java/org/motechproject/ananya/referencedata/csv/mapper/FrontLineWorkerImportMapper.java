@@ -8,11 +8,16 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 
-public class FrontLineWorkerImportMapper {
-    public static FrontLineWorker mapToNewFlw(FrontLineWorkerImportRequest frontLineWorkerImportRequest, Location location) {
-        Long msisdn = StringUtils.isBlank(frontLineWorkerImportRequest.getMsisdn()) ? null : formatMsisdn(frontLineWorkerImportRequest.getMsisdn());
+import java.util.UUID;
 
-        return new FrontLineWorker(msisdn, trim(frontLineWorkerImportRequest.getName()), Designation.from(frontLineWorkerImportRequest.getDesignation()), location, frontLineWorkerImportRequest.getVerificationStatus());
+public class FrontLineWorkerImportMapper {
+
+    public static final String FLW_CSV_UPLOAD_REASON = "via CSV Upload";
+
+    public static FrontLineWorker mapToNewFlw(FrontLineWorkerImportRequest request, Location location) {
+        Long msisdn = StringUtils.isBlank(request.getMsisdn()) ? null : formatMsisdn(request.getMsisdn());
+        return new FrontLineWorker(msisdn, trim(request.getName()), Designation.from(request.getDesignation()),
+                location, request.getVerificationStatus(), UUID.randomUUID(), FLW_CSV_UPLOAD_REASON);
     }
 
     public static FrontLineWorker mapToExistingFlw(FrontLineWorker existingFrontLineWorker, FrontLineWorkerImportRequest request, Location location) {
@@ -20,6 +25,7 @@ public class FrontLineWorkerImportMapper {
         existingFrontLineWorker.setDesignation(getDesignation(request.getDesignation()));
         existingFrontLineWorker.setLocation(location);
         existingFrontLineWorker.setVerificationStatus(VerificationStatus.from(request.getVerificationStatus()));
+        existingFrontLineWorker.setReason(FLW_CSV_UPLOAD_REASON);
 
         return existingFrontLineWorker;
     }

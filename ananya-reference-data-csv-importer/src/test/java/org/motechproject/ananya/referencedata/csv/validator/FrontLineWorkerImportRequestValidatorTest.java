@@ -7,11 +7,9 @@ import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportR
 import org.motechproject.ananya.referencedata.csv.response.FrontLineWorkerImportValidationResponse;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
-import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -40,7 +38,6 @@ public class FrontLineWorkerImportRequestValidatorTest {
 
     @Test
     public void shouldValidateMSISDN() {
-
         response = new FrontLineWorkerImportValidationResponse();
         validator.validateMsisdn(new FrontLineWorkerImportRequest(randomUUID().toString(), "msisdn", "1234567891", "name", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);
         assertFalse(response.isValid());
@@ -238,6 +235,5 @@ public class FrontLineWorkerImportRequestValidatorTest {
         validator.validateVerificationStatus(new FrontLineWorkerImportRequest(randomUUID().toString(), msisdn, null, name, "ANM", null, new LocationRequest()), response);
         assertFalse(response.isValid());
         assertEquals("[Cannot update non blank verification status to blank]", response.getMessage().toString());
-
     }
 }

@@ -154,6 +154,7 @@ public class HomeControllerIT extends SpringIntegrationTest {
         FrontLineWorker frontLineWorker = flwsInDb.get(0);
         assertEquals(verificationStatus, frontLineWorker.getVerificationStatus());
         assertEquals(frontLineWorker.getLocation(), location);
+        assertEquals(frontLineWorker.getReason(), "via CSV Upload");
         assertNotEquals(FrontLineWorker.DEFAULT_UUID.toString(), frontLineWorker.getFlwId());
     }
 

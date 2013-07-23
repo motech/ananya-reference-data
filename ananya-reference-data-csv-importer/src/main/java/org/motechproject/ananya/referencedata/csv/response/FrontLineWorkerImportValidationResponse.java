@@ -7,16 +7,6 @@ public class FrontLineWorkerImportValidationResponse {
     private List<String> message = new ArrayList<String>();
     private boolean isValid = true;
 
-    public void forBlankFieldsInLocation() {
-        isValid = false;
-        addMessage("Blank district, block or panchayat");
-    }
-
-    public void forDuplicateLocation() {
-        isValid = false;
-        addMessage("Location already present");
-    }
-
     public void forInvalidMsisdn() {
         isValid = false;
         addMessage("Invalid msisdn");
