@@ -3,6 +3,7 @@ package org.motechproject.ananya.referencedata.flw.domain;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class FrontLineWorkerTest {
 
@@ -41,6 +42,12 @@ public class FrontLineWorkerTest {
 
         assertTrue(frontLineWorker1.getVerificationStatus() == null);
         assertTrue(frontLineWorker2.getVerificationStatus() == null);
+    }
 
+    @Test
+    public void shouldSetAlternateContactNumber() {
+        Long alternateContactNumber = 1234567890L;
+        FrontLineWorker frontLineWorker = new FrontLineWorker(null, alternateContactNumber, null, null, null, null, null, null);
+        assertEquals(alternateContactNumber, frontLineWorker.getAlternateContactNumber());
     }
 }

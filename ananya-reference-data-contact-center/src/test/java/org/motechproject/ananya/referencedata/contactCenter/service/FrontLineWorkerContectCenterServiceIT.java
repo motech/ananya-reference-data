@@ -36,7 +36,7 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
     public void shouldUpdateAnExistingFlwDuringUnsuccessfulRegistration() {
         String msisdn = "911234567890";
         Location location = new Location("d", "b", "p", msisdn, LocationStatus.VALID, null);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), null, null, location, VerificationStatus.INVALID.name(), flwId, "reason");
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.parseLong(msisdn), null, null, null, location, VerificationStatus.INVALID.name(), flwId, "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
         String newReason = "Out of town";
@@ -58,7 +58,7 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
         String msisdn = "1234567890";
 
         Location location = new Location("d", "b", "p", msisdn, LocationStatus.VALID, null);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "name", Designation.ANM, location, VerificationStatus.INVALID.name(), UUID.randomUUID(), "reason");
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), null, "name", Designation.ANM, location, VerificationStatus.INVALID.name(), UUID.randomUUID(), "reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
         FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = failedFrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn, VerificationStatus.OTHER.name(), "Out of town");
@@ -71,7 +71,7 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
     @Test
     public void shouldUpdateAnExistingFlwDuringSuccessfulRegistration() {
         String msisdn = "911234567890";
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "Shahrukh", null, null, VerificationStatus.INVALID.name(), flwId, "reason");
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), null, "Shahrukh", null, null, VerificationStatus.INVALID.name(), flwId, "reason");
         String name = "New Name";
         LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "state");
         Location location = LocationMapper.mapFrom(locationRequest);
@@ -103,7 +103,7 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
         String panchayat = "panchayat";
         String state = "state";
         Location location = new Location("d", "b", "p", state, LocationStatus.VALID, null);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), name, designation, location, VerificationStatus.OTHER.name(), flwId, "Random reason");
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), null, name, designation, location, VerificationStatus.OTHER.name(), flwId, "Random reason");
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);
 

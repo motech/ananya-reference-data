@@ -4,6 +4,8 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.motechproject.ananya.referencedata.flw.domain.*;
 
+import java.util.UUID;
+
 import static org.junit.Assert.assertEquals;
 
 public class FrontLineWorkerSyncRequestMapperTest {
@@ -19,15 +21,16 @@ public class FrontLineWorkerSyncRequestMapperTest {
         location.setLastModified(now);
 
         Long msisdn = 1234567890L;
+        Long alternateContactNumber = 1234567890L;
         String name = "name1";
         Designation designation = Designation.ANM;
 
-        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, designation, location, VerificationStatus.SUCCESS.name());
-        frontLineWorker.setVerificationStatus(VerificationStatus.SUCCESS);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, alternateContactNumber,name, designation, location, VerificationStatus.SUCCESS.name(), UUID.randomUUID(),null);
         frontLineWorker.setLastModified(now);
         FrontLineWorkerSyncRequest frontLineWorkerSyncRequest = FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker);
 
         assertEquals(msisdn.toString(), frontLineWorkerSyncRequest.getMsisdn());
+        assertEquals(alternateContactNumber.toString(), frontLineWorkerSyncRequest.getAlternateContactNumber());
         assertEquals(name, frontLineWorkerSyncRequest.getName());
         assertEquals(designation.name(), frontLineWorkerSyncRequest.getDesignation());
         assertEquals(now, frontLineWorkerSyncRequest.getLastModified());

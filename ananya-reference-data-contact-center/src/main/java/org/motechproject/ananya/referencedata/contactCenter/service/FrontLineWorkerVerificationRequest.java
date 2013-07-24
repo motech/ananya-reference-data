@@ -11,17 +11,19 @@ public class FrontLineWorkerVerificationRequest {
 
     private VerificationStatus verificationStatus;
     private Long msisdn;
+    private Long alternateContactNumber;
     private UUID flwId;
     private String name;
     private Designation designation;
     private LocationRequest location;
     private String reason;
 
-    public FrontLineWorkerVerificationRequest(UUID flwId, Long msisdn, VerificationStatus verificationStatus, String name, Designation designation, LocationRequest location, String reason) {
+    public FrontLineWorkerVerificationRequest(UUID flwId, Long msisdn, Long alternateContactNumber, VerificationStatus verificationStatus, String name, Designation designation, LocationRequest location, String reason) {
         this.verificationStatus = verificationStatus;
         if (verificationStatus == VerificationStatus.SUCCESS && location != null)
             location.handleMissingState();
         this.msisdn = msisdn;
+        this.alternateContactNumber = alternateContactNumber;
         this.flwId = flwId;
         this.name = name;
         this.designation = designation;
@@ -35,6 +37,10 @@ public class FrontLineWorkerVerificationRequest {
 
     public Long getMsisdn() {
         return msisdn;
+    }
+
+    public Long getAlternateContactNumber() {
+        return alternateContactNumber;
     }
 
     public UUID getFlwId() {

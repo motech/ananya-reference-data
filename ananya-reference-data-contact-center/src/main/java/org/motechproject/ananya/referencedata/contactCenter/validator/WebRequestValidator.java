@@ -28,8 +28,12 @@ public class WebRequestValidator {
             errors.add("msisdn field is missing");
             return;
         }
+        validateMsisdnFormat(msisdn, "msisdn", errors);
+    }
+
+    void validateMsisdnFormat(String msisdn, final String fieldName, Errors errors) {
         if (!PhoneNumber.isValid(msisdn, false, false)) {
-            errors.add("msisdn field has invalid value");
+            errors.add(fieldName + " field has invalid value");
         }
     }
 
@@ -47,15 +51,15 @@ public class WebRequestValidator {
             errors.add("designation field is missing");
             return;
         }
-        if(!Designation.isValid(designation)) {
+        if (!Designation.isValid(designation)) {
             errors.add("designation field has invalid value");
         }
     }
 
     public void validateChannel(String channel, Errors errors) {
-        if(StringUtils.isEmpty(channel)) {
+        if (StringUtils.isEmpty(channel)) {
             errors.add("channel is missing");
-            return ;
+            return;
         }
         if (!Channel.isValid(channel)) {
             errors.add(String.format("invalid channel: %s", channel));
@@ -76,5 +80,10 @@ public class WebRequestValidator {
             errors.add("panchayat field is blank");
         if (StringUtils.isEmpty(locationRequest.getState()))
             errors.add("state field is blank");
+    }
+
+    public void validateAlternateContactNumber(String alternateContactNumber, Errors errors) {
+        if (StringUtils.isNotBlank(alternateContactNumber))
+            validateMsisdnFormat(alternateContactNumber, "alternate_contact_number", errors);
     }
 }

@@ -10,6 +10,7 @@ public class FrontLineWorkerMapper {
         existingFrontLineWorker.setLocation(location);
         existingFrontLineWorker.setName(frontLineWorkerVerificationRequest.getName());
         existingFrontLineWorker.setDesignation(frontLineWorkerVerificationRequest.getDesignation());
+        existingFrontLineWorker.setAlternateContactNumber(frontLineWorkerVerificationRequest.getAlternateContactNumber());
         return existingFrontLineWorker;
     }
 

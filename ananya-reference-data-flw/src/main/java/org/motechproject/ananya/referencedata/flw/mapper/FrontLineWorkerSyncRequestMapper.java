@@ -6,7 +6,9 @@ import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorkerSyncRequ
 public class FrontLineWorkerSyncRequestMapper {
 
     public static FrontLineWorkerSyncRequest mapFrom(FrontLineWorker frontLineWorker) {
-        return new FrontLineWorkerSyncRequest(frontLineWorker.getMsisdn().toString(),
+        return new FrontLineWorkerSyncRequest(
+                frontLineWorker.getMsisdn().toString(),
+                frontLineWorker.getAlternateContactNumber(),
                 frontLineWorker.getName(),
                 frontLineWorker.getDesignation(),
                 frontLineWorker.getLastModified(),

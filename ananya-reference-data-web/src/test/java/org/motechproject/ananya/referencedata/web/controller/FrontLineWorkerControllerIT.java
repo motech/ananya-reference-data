@@ -174,7 +174,7 @@ public class FrontLineWorkerControllerIT extends SpringIntegrationTest {
     }
 
     private FrontLineWorkerVerificationWebRequest createFrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String verification, LocationRequest locRequest, String name) {
-        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, verification, name, "ANM", locRequest, null);
+        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, null, verification, name, "ANM", locRequest, null);
     }
 
     private void givenNoDuplicateFLWs() {

@@ -53,6 +53,9 @@ public class FrontLineWorkerRequestValidator {
         if (request.getDesignation() != null) {
             errors.add("designation field should not be a part of the request");
         }
+        if (request.getAlternateContactNumber() != null) {
+            errors.add("alternate_contact_number should not be a part of the request");
+        }
     }
 
     private void validateSuccessfulVerification(FrontLineWorkerVerificationRequest request, Errors errors) {

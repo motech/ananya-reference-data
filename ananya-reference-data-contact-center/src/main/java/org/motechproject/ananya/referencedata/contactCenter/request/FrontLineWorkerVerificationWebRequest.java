@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.contactCenter.request;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -15,6 +16,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.UUID;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.*;
+
 @XmlRootElement(name = "flw")
 public class FrontLineWorkerVerificationWebRequest {
     @JsonProperty(value = "id")
@@ -24,6 +28,10 @@ public class FrontLineWorkerVerificationWebRequest {
     @XmlElement
     @JsonProperty
     protected String msisdn;
+
+    @XmlElement
+    @JsonProperty
+    protected String alternateContactNumber;
 
     @XmlElement
     @JsonProperty
@@ -51,9 +59,10 @@ public class FrontLineWorkerVerificationWebRequest {
     public FrontLineWorkerVerificationWebRequest() {
     }
 
-    public FrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String verificationStatus, String name, String designation, LocationRequest location, String reason) {
+    public FrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String alternateContactNumber, String verificationStatus, String name, String designation, LocationRequest location, String reason) {
         this.flwId = flwId;
         this.msisdn = msisdn;
+        this.alternateContactNumber = alternateContactNumber;
         this.verificationStatus = verificationStatus;
         this.name = name;
         this.designation = designation;
@@ -74,6 +83,7 @@ public class FrontLineWorkerVerificationWebRequest {
 
         if (flwId != null ? !flwId.equals(that.flwId) : that.flwId != null) return false;
         if (msisdn != null ? !msisdn.equals(that.msisdn) : that.msisdn != null) return false;
+        if (alternateContactNumber != null ? !alternateContactNumber.equals(that.alternateContactNumber) : that.alternateContactNumber != null) return false;
         if (verificationStatus != null ? !verificationStatus.equals(that.verificationStatus) : that.verificationStatus != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (designation != null ? !designation.equals(that.designation) : that.designation != null) return false;
@@ -87,6 +97,7 @@ public class FrontLineWorkerVerificationWebRequest {
     public int hashCode() {
         int result = flwId != null ? flwId.hashCode() : 0;
         result = 31 * result + (msisdn != null ? msisdn.hashCode() : 0);
+        result = 31 * result + (alternateContactNumber != null ? alternateContactNumber.hashCode() : 0);
         result = 31 * result + (verificationStatus != null ? verificationStatus.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (designation != null ? designation.hashCode() : 0);
@@ -105,6 +116,7 @@ public class FrontLineWorkerVerificationWebRequest {
         WebRequestValidator validator = new WebRequestValidator();
         validator.validateFlwId(flwId, errors);
         validator.validateMsisdn(msisdn, errors);
+        validator.validateAlternateContactNumber(alternateContactNumber, errors);
         validator.validateVerificationStatus(verificationStatus, errors);
         validator.validateChannel(channel, errors);
 
@@ -118,7 +130,9 @@ public class FrontLineWorkerVerificationWebRequest {
     @JsonIgnore
     public FrontLineWorkerVerificationRequest getVerificationRequest() {
         Designation designationEnum = designation == null ? null: Designation.from(designation);
-        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.fromString(flwId), PhoneNumber.formatPhoneNumber(msisdn), VerificationStatus.from(verificationStatus),
+        Long altNumber = isBlank(alternateContactNumber) ? null: formatPhoneNumber(alternateContactNumber);
+        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.fromString(flwId),
+                formatPhoneNumber(msisdn), altNumber, VerificationStatus.from(verificationStatus),
                 name, designationEnum, location, reason);
         return verificationRequest;
     }

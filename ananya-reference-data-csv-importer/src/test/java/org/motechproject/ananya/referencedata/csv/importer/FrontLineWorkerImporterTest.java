@@ -131,7 +131,7 @@ public class FrontLineWorkerImporterTest {
 
     @Test
     public void shouldFailIfUnverifiedFlwIsPresentInDBWithDuplicateVerifiedFlw() {
-        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(new FrontLineWorker(formatPhoneNumber(msisdn), null, null, null, null, flwId, null));
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(new FrontLineWorker(formatPhoneNumber(msisdn), null, null, null, null, null, flwId, null));
         FrontLineWorker flwInDB = new FrontLineWorker(parseLong(msisdn), null, null, location, VerificationStatus.SUCCESS.name());
         when(allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn))).thenReturn(Arrays.asList(flwInDB));
         FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(flwId.toString(), msisdn, null, null, null, VerificationStatus.SUCCESS.name(), locationRequest);

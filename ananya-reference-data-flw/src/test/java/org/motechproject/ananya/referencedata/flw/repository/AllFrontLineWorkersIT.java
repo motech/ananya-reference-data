@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
-public class AllFrontLineWorkersTest extends SpringIntegrationTest {
+public class AllFrontLineWorkersIT extends SpringIntegrationTest {
 
     @Autowired
     AllFrontLineWorkers allFrontLineWorkers;
@@ -36,14 +36,34 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     @Test
     public void shouldAddFLWToDB() {
         template.save(location);
+        long alternateContactNumber = 9234567890L;
+        String reason = "reason";
+        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, alternateContactNumber, "name", Designation.AWW, location, VerificationStatus.SUCCESS.name(), UUID.randomUUID(), reason);
+
+        allFrontLineWorkers.add(frontLineWorker);
+
+        List<FrontLineWorker> frontLineWorkerList = template.loadAll(FrontLineWorker.class);
+        assertEquals(1, frontLineWorkerList.size());
+        FrontLineWorker flw = frontLineWorkerList.get(0);
+        assertEquals(alternateContactNumber, flw.getAlternateContactNumber().longValue());
+        assertEquals(reason, flw.getReason());
+        assertNotNull(flw.getLastModified());
+        assertNotNull(flw.getFlwId());
+    }
+
+    @Test
+    public void shouldAllowNullAlternateContactNumber() {
+        template.save(location);
         FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "name", Designation.AWW, location, VerificationStatus.SUCCESS.name());
 
         allFrontLineWorkers.add(frontLineWorker);
 
         List<FrontLineWorker> frontLineWorkerList = template.loadAll(FrontLineWorker.class);
         assertEquals(1, frontLineWorkerList.size());
-        assertNotNull(frontLineWorkerList.get(0).getLastModified());
-        assertNotNull(frontLineWorkerList.get(0).getFlwId());
+        FrontLineWorker flw = frontLineWorkerList.get(0);
+        assertNull(flw.getAlternateContactNumber());
+        assertNotNull(flw.getFlwId());
+
     }
 
     @Test
@@ -138,7 +158,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
         Long msisdn = 1234567890L;
         String name = "name";
         Designation anm = Designation.ANM;
-        allFrontLineWorkers.add(new FrontLineWorker(msisdn, name, anm, location, VerificationStatus.INVALID.name(), flwId, null));
+        allFrontLineWorkers.add(new FrontLineWorker(msisdn, null, name, anm, location, VerificationStatus.INVALID.name(), flwId, null));
 
         FrontLineWorker actualFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
 
@@ -170,7 +190,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     public void shouldGetByMsisdnWithNoStatus() {
         final long msisdn = 1234567890L;
         List<FrontLineWorker> flwWithStatus = new ArrayList<FrontLineWorker>() {{
-            add(new FrontLineWorker(msisdn, "name", Designation.ANM, location, VerificationStatus.SUCCESS.name(), UUID.randomUUID(), "reason"));
+            add(new FrontLineWorker(msisdn, null, "name", Designation.ANM, location, VerificationStatus.SUCCESS.name(), UUID.randomUUID(), "reason"));
         }};
         ArrayList<FrontLineWorker> flwWithoutStatus = new ArrayList<FrontLineWorker>() {{
             add(new FrontLineWorker(msisdn, "name", Designation.ANM, location, null));
