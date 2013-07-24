@@ -61,7 +61,7 @@ public class FrontLineWorkerImporterTest {
 
         assertTrue(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("id,msisdn,name,designation,verification_status,state,district,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
+        assertEquals("id,msisdn,alternate_contact_number,name,designation,verification_status,state,district,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
         verify(locationImportService).invalidateCache();
     }
 
