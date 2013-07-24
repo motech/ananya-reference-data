@@ -164,4 +164,14 @@ public class FrontLineWorkerImporterTest {
         assertTrue(result.getErrors().get(1).getMessage().contains("[Duplicate with verification status found in CSV]"));
     }
 
+    @Test
+    public void csvCanHaveMultipleFlwRecords() {
+        FrontLineWorkerImportRequest request1 = new FrontLineWorkerImportRequest(null, msisdn, null, null, null, null, locationRequest);
+        FrontLineWorkerImportRequest request2 = new FrontLineWorkerImportRequest("", "1234567891", null, null, null, VerificationStatus.SUCCESS.name(), locationRequest);
+
+        ValidationResponse result = frontLineWorkerImporter.validate(asList(request1, request2));
+
+        assertFalse(result.getErrors().get(1).getMessage().contains("[Duplicate with verification status found in CSV]"));
+    }
+
 }

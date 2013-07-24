@@ -11,18 +11,19 @@ import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers
 import org.motechproject.ananya.referencedata.flw.utils.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import static org.apache.commons.collections.CollectionUtils.*;
+import static org.apache.commons.collections.CollectionUtils.find;
+import static org.apache.commons.collections.CollectionUtils.select;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValidWithBlanksAllowed;
+
 @Component
 public class FrontLineWorkerImportRequestValidator {
     private AllFrontLineWorkers allFrontLineWorkers;
@@ -139,7 +140,7 @@ public class FrontLineWorkerImportRequestValidator {
     }
 
     private void validateDuplicates(List<FrontLineWorkerImportRequest> requests, FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
-        Collection flwsByMsisdn = predicatedCollection(requests, new FLWPredicate(request.getMsisdn()));
+        Collection flwsByMsisdn = select(requests, new FLWPredicate(request.getMsisdn()));
         if (flwsByMsisdn.size() > 1) {
             if (find(flwsByMsisdn, flwWithVerificationStatus()) != null)
                 response.forInvalidDuplicatesInCSV();
