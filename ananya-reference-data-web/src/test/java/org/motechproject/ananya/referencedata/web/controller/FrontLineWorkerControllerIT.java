@@ -30,7 +30,6 @@ public class FrontLineWorkerControllerIT extends SpringIntegrationTest {
     public static final String NAME = "Name";
     public static final String DEFAULT_GUID = FrontLineWorker.DEFAULT_UUID.toString();
 
-
     @Autowired
     FrontLineWorkerController frontLineWorkerController;
 
@@ -174,7 +173,7 @@ public class FrontLineWorkerControllerIT extends SpringIntegrationTest {
     }
 
     private FrontLineWorkerVerificationWebRequest createFrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String verification, LocationRequest locRequest, String name) {
-        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, null, verification, name, "ANM", locRequest, null);
+        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, "", verification, name, "ANM", locRequest, null);
     }
 
     private void givenNoDuplicateFLWs() {

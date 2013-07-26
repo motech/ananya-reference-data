@@ -35,7 +35,7 @@ public class FrontLineWorkerVerificationWebRequestTest {
 
     @Test
     public void shouldValidateValidRequest() {
-        FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(UUID.randomUUID().toString(), "9900502341", null, "SUCCESS", "name", "ASHA", null, null);
+        FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(UUID.randomUUID().toString(), "9900502341", "9900502342", "SUCCESS", "name", "ASHA", null, null);
         webRequest.setChannel("contact_center");
         assertFalse(webRequest.validate().hasErrors());
     }
@@ -43,7 +43,7 @@ public class FrontLineWorkerVerificationWebRequestTest {
 
     @Test
     public void shouldNotAllowPrefixForMsisdn() {
-        FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(UUID.randomUUID().toString(), "009900502341", null, "SUCCESS", "name", "ASHA", null, null);
+        FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(UUID.randomUUID().toString(), "009900502341", "9900502341", "SUCCESS", "name", "ASHA", null, null);
         webRequest.setChannel("contact_center");
         Errors errors = webRequest.validate();
         assertEquals(1, errors.getCount());
@@ -65,6 +65,15 @@ public class FrontLineWorkerVerificationWebRequestTest {
         webRequest.setChannel("contact_center");
         Errors errors = webRequest.validate();
         assertEquals(0, errors.getCount());
+    }
+
+    @Test
+    public void shouldNotAllowNullAlternateContactNumberWhenVerificationStatusIsSuccess() {
+        FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(UUID.randomUUID().toString(), "9900502341",null, "SUCCESS", "name", "ASHA", null, null);
+        webRequest.setChannel("contact_center");
+        Errors errors = webRequest.validate();
+        assertEquals(1, errors.getCount());
+        assertEquals("alternate contact number field is mandatory", errors.allMessages());
     }
 
     @Test

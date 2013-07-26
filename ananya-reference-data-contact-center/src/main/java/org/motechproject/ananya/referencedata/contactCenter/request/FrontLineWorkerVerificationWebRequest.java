@@ -116,7 +116,7 @@ public class FrontLineWorkerVerificationWebRequest {
         WebRequestValidator validator = new WebRequestValidator();
         validator.validateFlwId(flwId, errors);
         validator.validateMsisdn(msisdn, errors);
-        validator.validateAlternateContactNumber(alternateContactNumber, errors);
+        validator.validateAlternateContactNumber(alternateContactNumber, verificationStatus, errors);
         validator.validateVerificationStatus(verificationStatus, errors);
         validator.validateChannel(channel, errors);
 

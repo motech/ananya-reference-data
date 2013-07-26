@@ -22,6 +22,7 @@ public class FrontLineWorkerApiTest extends FunctionalTest {
             "<flw>" +
             "    <id>e883939c-7872-434d-bc51-4087fc2e60d8</id>" +
             "    <msisdn>7250098574</msisdn>" +
+            "    <alternateContactNumber></alternateContactNumber>" +
             "    <verificationStatus>SUCCESS</verificationStatus>" +
             "    <name>Sunita Devi6</name>" +
             "    <designation>AWW</designation>" +
@@ -36,6 +37,7 @@ public class FrontLineWorkerApiTest extends FunctionalTest {
             "<flw>" +
             "    <id>e983939c-7872-434d-bc51-4087fc2e60d8</id>" +
             "    <msisdn>1234567890</msisdn>" +
+            "    <alternateContactNumber>1234567891</alternateContactNumber>" +
             "    <verificationStatus>SUCCESS</verificationStatus>" +
             "    <name>Sunita Devi</name>" +
             "    <designation>AWW</designation>" +

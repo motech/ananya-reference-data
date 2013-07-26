@@ -82,8 +82,11 @@ public class WebRequestValidator {
             errors.add("state field is blank");
     }
 
-    public void validateAlternateContactNumber(String alternateContactNumber, Errors errors) {
+    public void validateAlternateContactNumber(String alternateContactNumber, String verificationStatus, Errors errors) {
         if (StringUtils.isNotBlank(alternateContactNumber))
             validateMsisdnFormat(alternateContactNumber, "alternate_contact_number", errors);
+        if (alternateContactNumber == null && VerificationStatus.SUCCESS.name().equals(verificationStatus)) {
+            errors.add("alternate contact number field is mandatory");
+        }
     }
 }

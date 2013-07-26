@@ -195,7 +195,7 @@ public class FrontLineWorkerControllerTest {
         FrontLineWorkerVerificationWebRequestBuilder builder = new FrontLineWorkerVerificationWebRequestBuilder();
         builder.withDefaults().withFlwId(flwId).withMsisdn(msisdn).withVerificationStatus(verificationStatus);
         builder.withName(name).withDesignation(designation).withDistrict(district).withBlock(block).withPanchayat(panchayat)
-        .withState(state);
+        .withState(state).withAlternateContactNumber("");
         return builder.build();
     }
 }

@@ -15,6 +15,7 @@ public class FrontLineWorkerVerificationWebRequestBuilder {
     String panchayat;
     String state;
     private boolean failedVerification;
+    private String alternateContactNumber;
 
     public FrontLineWorkerVerificationWebRequestBuilder withFlwId(String flwId) {
         this.flwId = flwId;
@@ -23,6 +24,11 @@ public class FrontLineWorkerVerificationWebRequestBuilder {
 
     public FrontLineWorkerVerificationWebRequestBuilder withMsisdn(String msisdn) {
         this.msisdn = msisdn;
+        return this;
+    }
+
+    public FrontLineWorkerVerificationWebRequestBuilder withAlternateContactNumber(String alternateContactNumber) {
+        this.alternateContactNumber = alternateContactNumber;
         return this;
     }
 
@@ -71,7 +77,7 @@ public class FrontLineWorkerVerificationWebRequestBuilder {
     }
 
     public FrontLineWorkerVerificationWebRequest build() {
-        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, null, verificationStatus, name, designation, failedVerification ? null : new LocationRequest(district, block, panchayat, state), reason);
+        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, alternateContactNumber, verificationStatus, name, designation, failedVerification ? null : new LocationRequest(district, block, panchayat, state), reason);
     }
 
     public FrontLineWorkerVerificationWebRequestBuilder withFailedVerification(boolean failedVerification) {
