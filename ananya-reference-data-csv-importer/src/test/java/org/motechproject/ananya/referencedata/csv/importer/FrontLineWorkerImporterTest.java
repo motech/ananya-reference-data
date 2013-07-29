@@ -95,7 +95,7 @@ public class FrontLineWorkerImporterTest {
 
     @Test
     public void nonBlankVerificationStatusInDBCannotBeBlanked() {
-        FrontLineWorker flwInDB = new FrontLineWorker(parseLong(msisdn), null, null, location, VerificationStatus.SUCCESS.name(), UUID.randomUUID(), "");
+        FrontLineWorker flwInDB = new FrontLineWorker(parseLong(msisdn), null, null, null, location, VerificationStatus.SUCCESS.name(), UUID.randomUUID(), "");
         when(allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn))).thenReturn(asList(flwInDB));
         FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest("", msisdn, null, null, null, null, locationRequest);
 
