@@ -21,9 +21,7 @@ import static org.apache.commons.collections.CollectionUtils.find;
 import static org.apache.commons.collections.CollectionUtils.select;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
-import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValid;
-import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValidWithBlanksAllowed;
+import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.*;
 
 @Component
 public class FrontLineWorkerImportRequestValidator {
@@ -49,7 +47,7 @@ public class FrontLineWorkerImportRequestValidator {
     void validateVerificationStatus(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
         String verificationStatus = request.getVerificationStatus();
         if (isBlank(verificationStatus)) {
-            nonBlankVerificationStatusCannotBeBlanked(response, request.getMsisdn());
+            nonBlankVerificationStatusCannotBeBlanked(response, request.getMsisdn(), request.getId());
         } else {
             if (!VerificationStatus.isValid(verificationStatus)) {
                 response.forInvalidVerificationStatus();
@@ -130,14 +128,19 @@ public class FrontLineWorkerImportRequestValidator {
         }
     }
 
-    private void nonBlankVerificationStatusCannotBeBlanked(FrontLineWorkerImportValidationResponse response, String msisdn) {
+    private void nonBlankVerificationStatusCannotBeBlanked(FrontLineWorkerImportValidationResponse response, String msisdn, String flwId) {
         try {
-            int size = allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn)).size();
-            if (size != 0)
+            List<FrontLineWorker> byMsisdnWithStatus = allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn));
+            if (byMsisdnWithStatus.size() != 0 && idsAreDifferent(flwId, byMsisdnWithStatus))
                 response.forUpdatingVerificationStatusToBlank();
         } catch (NumberFormatException e) {
             response.forInvalidMsisdn();
         }
+    }
+
+    private boolean idsAreDifferent(String flwIdInRequest, List<FrontLineWorker> byMsisdnWithStatus) {
+        String idForVerifiedFlwInDB = byMsisdnWithStatus.get(0).getFlwId().toString();
+        return !idForVerifiedFlwInDB.equals(flwIdInRequest);
     }
 
     private void validateDuplicates(List<FrontLineWorkerImportRequest> requests, FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {

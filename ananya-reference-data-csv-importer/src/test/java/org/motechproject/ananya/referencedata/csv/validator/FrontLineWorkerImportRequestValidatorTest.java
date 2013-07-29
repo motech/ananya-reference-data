@@ -18,6 +18,7 @@ import static java.util.UUID.randomUUID;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
 
@@ -240,5 +241,23 @@ public class FrontLineWorkerImportRequestValidatorTest {
         validator.validateVerificationStatus(new FrontLineWorkerImportRequest(randomUUID().toString(), msisdn, null, name, "ANM", null, new LocationRequest()), response);
         assertFalse(response.isValid());
         assertEquals("[Cannot update non blank verification status to blank]", response.getMessage().toString());
+    }
+
+    @Test
+    public void shouldNotAddErrorIfRequestHasBlankVerificationStatusAndMatchingFLWFromDBIsNonBlank() {
+        String msisdn = "1234567891";
+        String name = "name";
+        Long number = formatPhoneNumber(msisdn);
+
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
+        UUID flwId = randomUUID();
+        FrontLineWorker worker = new FrontLineWorker(number, name, Designation.ANM, null, "SUCCESS", flwId, "");
+        frontLineWorkers.add(worker);
+        when(allFrontLineWorkers.getByMsisdnWithStatus(number)).thenReturn(frontLineWorkers);
+
+        response = new FrontLineWorkerImportValidationResponse();
+        validator.validateVerificationStatus(new FrontLineWorkerImportRequest(flwId.toString(), msisdn, null, name, "ANM", "", new LocationRequest()), response);
+        verify(allFrontLineWorkers).getByMsisdnWithStatus(number);
+        assertTrue(response.isValid());
     }
 }

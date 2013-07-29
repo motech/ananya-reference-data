@@ -27,6 +27,7 @@ import static junit.framework.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
+
 @RunWith(MockitoJUnitRunner.class)
 public class FrontLineWorkerImporterTest {
     @Mock
@@ -39,7 +40,7 @@ public class FrontLineWorkerImporterTest {
     private AllFrontLineWorkers allFrontLineWorkers;
     private FrontLineWorkerImporter frontLineWorkerImporter;
     private Location location;
-    private LocationRequest locationRequest= new LocationRequest("D1", "B1", "P1", "state");
+    private LocationRequest locationRequest = new LocationRequest("D1", "B1", "P1", "state");
     private String msisdn = "1234567890";
     private UUID flwId = UUID.randomUUID();
 
@@ -94,7 +95,7 @@ public class FrontLineWorkerImporterTest {
 
     @Test
     public void nonBlankVerificationStatusInDBCannotBeBlanked() {
-        FrontLineWorker flwInDB = new FrontLineWorker(parseLong(msisdn), null, null, location, VerificationStatus.SUCCESS.name());
+        FrontLineWorker flwInDB = new FrontLineWorker(parseLong(msisdn), null, null, location, VerificationStatus.SUCCESS.name(), UUID.randomUUID(), "");
         when(allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn))).thenReturn(asList(flwInDB));
         FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest("", msisdn, null, null, null, null, locationRequest);
 
