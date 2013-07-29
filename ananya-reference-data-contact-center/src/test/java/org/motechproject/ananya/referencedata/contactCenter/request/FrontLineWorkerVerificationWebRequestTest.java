@@ -69,11 +69,31 @@ public class FrontLineWorkerVerificationWebRequestTest {
 
     @Test
     public void shouldNotAllowNullAlternateContactNumberWhenVerificationStatusIsSuccess() {
-        FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(UUID.randomUUID().toString(), "9900502341",null, "SUCCESS", "name", "ASHA", null, null);
+        FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(UUID.randomUUID().toString(), "9900502341", null, "SUCCESS", "name", "ASHA", null, null);
         webRequest.setChannel("contact_center");
         Errors errors = webRequest.validate();
         assertEquals(1, errors.getCount());
         assertEquals("alternate contact number field is mandatory", errors.allMessages());
+    }
+
+    @Test
+    public void alternateContactNumberShouldNotBePresentWhenVerificationStatusOther() {
+        FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(UUID.randomUUID().toString(), "9900502341", "", "OTHER", "name", "ASHA", null, null);
+        webRequest.setChannel("contact_center");
+        Errors errors = webRequest.validate();
+        assertEquals(1, errors.getCount());
+        assertEquals("alternate contact number should not be a part of the request", errors.allMessages());
+
+    }
+
+    @Test
+    public void alternateContactNumberShouldNotBePresentWhenVerificationStatusInvalid() {
+        FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(UUID.randomUUID().toString(), "9900502341", "", "Invalid", "name", "ASHA", null, null);
+        webRequest.setChannel("contact_center");
+        Errors errors = webRequest.validate();
+        assertEquals(1, errors.getCount());
+        assertEquals("alternate contact number should not be a part of the request", errors.allMessages());
+
     }
 
     @Test

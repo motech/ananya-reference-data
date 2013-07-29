@@ -110,8 +110,8 @@ public class FrontLineWorkerRequestValidatorTest {
     public void shouldInvalidateInvalidRequestIfExtraFieldsAreFound() {
         FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber("9900504646"), Long.MIN_VALUE, VerificationStatus.INVALID, "name", Designation.ASHA, new LocationRequest(), "some reason");
         Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
-        assertEquals(4, errors.getCount());
-        assertEquals("name field should not be a part of the request,location field should not be a part of the request,designation field should not be a part of the request,alternate_contact_number should not be a part of the request", errors.allMessages());
+        assertEquals(3, errors.getCount());
+        assertEquals("name field should not be a part of the request,location field should not be a part of the request,designation field should not be a part of the request", errors.allMessages());
     }
 
     @Test

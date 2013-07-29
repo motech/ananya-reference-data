@@ -83,10 +83,31 @@ public class WebRequestValidator {
     }
 
     public void validateAlternateContactNumber(String alternateContactNumber, String verificationStatus, Errors errors) {
+        if (verificationSuccess(verificationStatus) && alternateContactNumberMissing(alternateContactNumber)) {
+            errors.add("alternate contact number field is mandatory");
+            return;
+        }
+        if (verificationNotSuccess(verificationStatus) && alternateContactNumberPresent(alternateContactNumber)) {
+            errors.add("alternate contact number should not be a part of the request");
+            return;
+        }
         if (StringUtils.isNotBlank(alternateContactNumber))
             validateMsisdnFormat(alternateContactNumber, "alternate_contact_number", errors);
-        if (alternateContactNumber == null && VerificationStatus.SUCCESS.name().equals(verificationStatus)) {
-            errors.add("alternate contact number field is mandatory");
-        }
+    }
+
+    private boolean alternateContactNumberMissing(String alternateContactNumber) {
+        return alternateContactNumber == null;
+    }
+
+    private boolean alternateContactNumberPresent(String alternateContactNumber) {
+        return !alternateContactNumberMissing(alternateContactNumber);
+    }
+
+    private boolean verificationNotSuccess(String verificationStatus) {
+        return !verificationSuccess(verificationStatus);
+    }
+
+    private boolean verificationSuccess(String verificationStatus) {
+        return VerificationStatus.SUCCESS.name().equals(verificationStatus);
     }
 }
