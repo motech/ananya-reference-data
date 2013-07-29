@@ -227,7 +227,23 @@ public class FrontLineWorkerImportRequestValidatorTest {
     }
 
     @Test
-    public void shouldAddErrorIfRequestHasBlankVerificationStatusAndMatchingFLWFromDBIsNonBlank() {
+    public void canUpdateAnUnverifiedFlwByIdInThePresenceOfVerifiedFLW() {
+        String msisdn = "1234567891";
+        String name = "name";
+        Long number = formatPhoneNumber(msisdn);
+
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
+        FrontLineWorker worker = new FrontLineWorker(number, name, Designation.ANM, null, "SUCCESS", UUID.randomUUID(),"");
+        frontLineWorkers.add(worker);
+        when(allFrontLineWorkers.getByMsisdnWithStatus(number)).thenReturn(frontLineWorkers);
+
+        response = new FrontLineWorkerImportValidationResponse();
+        validator.validateVerificationStatus(new FrontLineWorkerImportRequest(randomUUID().toString(), msisdn, null, name, "ANM", null, new LocationRequest()), response);
+        assertTrue(response.isValid());
+    }
+
+    @Test
+    public void shouldAddErrorIfRequestHasBlankVerificationStatusAndDefaultIdAndVerifiedFlwIsInDB() {
         String msisdn = "1234567891";
         String name = "name";
         Long number = formatPhoneNumber(msisdn);
@@ -238,13 +254,30 @@ public class FrontLineWorkerImportRequestValidatorTest {
         when(allFrontLineWorkers.getByMsisdnWithStatus(number)).thenReturn(frontLineWorkers);
 
         response = new FrontLineWorkerImportValidationResponse();
-        validator.validateVerificationStatus(new FrontLineWorkerImportRequest(randomUUID().toString(), msisdn, null, name, "ANM", null, new LocationRequest()), response);
+        validator.validateVerificationStatus(new FrontLineWorkerImportRequest(FrontLineWorker.DEFAULT_UUID_STRING, msisdn, null, name, "ANM", null, new LocationRequest()), response);
         assertFalse(response.isValid());
         assertEquals("[Cannot update non blank verification status to blank]", response.getMessage().toString());
     }
 
     @Test
-    public void shouldNotAddErrorIfRequestHasBlankVerificationStatusAndMatchingFLWFromDBIsNonBlank() {
+    public void shouldAddErrorIfRequestHasBlankVerificationStatusAndIdAndVerifiedFlwIsInDB() {
+        String msisdn = "1234567891";
+        String name = "name";
+        Long number = formatPhoneNumber(msisdn);
+
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
+        FrontLineWorker worker = new FrontLineWorker(number, name, Designation.ANM, null, "SUCCESS");
+        frontLineWorkers.add(worker);
+        when(allFrontLineWorkers.getByMsisdnWithStatus(number)).thenReturn(frontLineWorkers);
+
+        response = new FrontLineWorkerImportValidationResponse();
+        validator.validateVerificationStatus(new FrontLineWorkerImportRequest("", msisdn, null, name, "ANM", null, new LocationRequest()), response);
+        assertFalse(response.isValid());
+        assertEquals("[Cannot update non blank verification status to blank]", response.getMessage().toString());
+    }
+
+    @Test
+    public void shouldNotUpdateAVerifiedFlwToUnVerifiedWhenUpdatedByFlwId() {
         String msisdn = "1234567891";
         String name = "name";
         Long number = formatPhoneNumber(msisdn);
@@ -258,6 +291,7 @@ public class FrontLineWorkerImportRequestValidatorTest {
         response = new FrontLineWorkerImportValidationResponse();
         validator.validateVerificationStatus(new FrontLineWorkerImportRequest(flwId.toString(), msisdn, null, name, "ANM", "", new LocationRequest()), response);
         verify(allFrontLineWorkers).getByMsisdnWithStatus(number);
-        assertTrue(response.isValid());
+        assertFalse(response.isValid());
+        assertEquals("[Cannot update non blank verification status to blank]", response.getMessage().toString());
     }
 }

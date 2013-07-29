@@ -128,18 +128,25 @@ public class FrontLineWorkerImportRequestValidator {
         }
     }
 
-    private void nonBlankVerificationStatusCannotBeBlanked(FrontLineWorkerImportValidationResponse response, String msisdn, String flwId) {
+    private void nonBlankVerificationStatusCannotBeBlanked(FrontLineWorkerImportValidationResponse response, String msisdn, String requestFlwId) {
         try {
-            List<FrontLineWorker> byMsisdnWithStatus = allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn));
-            if (byMsisdnWithStatus.size() != 0 && idsAreDifferent(flwId, byMsisdnWithStatus))
+            List<FrontLineWorker> flwsWithMsisdnAndStatusInDb = allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn));
+            if (flwsWithMsisdnAndStatusInDb.size() != 0) {
+                if (updateByFlwId(requestFlwId) && idsAreDifferent(requestFlwId, flwsWithMsisdnAndStatusInDb.get(0)))
+                    return;
                 response.forUpdatingVerificationStatusToBlank();
+            }
         } catch (NumberFormatException e) {
             response.forInvalidMsisdn();
         }
     }
 
-    private boolean idsAreDifferent(String flwIdInRequest, List<FrontLineWorker> byMsisdnWithStatus) {
-        String idForVerifiedFlwInDB = byMsisdnWithStatus.get(0).getFlwId().toString();
+    private boolean updateByFlwId(String flwId) {
+        return Pattern.matches(FrontLineWorker.FLW_ID_FORMAT, flwId) && !FrontLineWorker.DEFAULT_UUID_STRING.equals(flwId);
+    }
+
+    private boolean idsAreDifferent(String flwIdInRequest, FrontLineWorker flwWithMsisdnAndStatusInDb) {
+        String idForVerifiedFlwInDB = flwWithMsisdnAndStatusInDb.getFlwId().toString();
         return !idForVerifiedFlwInDB.equals(flwIdInRequest);
     }
 
