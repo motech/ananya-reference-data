@@ -21,8 +21,7 @@ import static org.apache.commons.collections.CollectionUtils.find;
 import static org.apache.commons.collections.CollectionUtils.select;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
-import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValidWithBlanksAllowed;
+import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.*;
 
 @Component
 public class FrontLineWorkerImportRequestValidator {
@@ -48,7 +47,7 @@ public class FrontLineWorkerImportRequestValidator {
     void validateVerificationStatus(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
         String verificationStatus = request.getVerificationStatus();
         if (isBlank(verificationStatus)) {
-            nonBlankVerificationStatusCannotBeBlanked(response, request.getMsisdn());
+            nonBlankVerificationStatusCannotBeBlanked(response, request.getMsisdn(), request.getId());
         } else {
             if (!VerificationStatus.isValid(verificationStatus)) {
                 response.forInvalidVerificationStatus();
@@ -78,7 +77,7 @@ public class FrontLineWorkerImportRequestValidator {
     }
 
     void validateMsisdn(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
-        if (!isValidWithBlanksAllowed(request.getMsisdn())) {
+        if (!isValid(request.getMsisdn())) {
             response.forInvalidMsisdn();
         }
     }
@@ -129,14 +128,26 @@ public class FrontLineWorkerImportRequestValidator {
         }
     }
 
-    private void nonBlankVerificationStatusCannotBeBlanked(FrontLineWorkerImportValidationResponse response, String msisdn) {
+    private void nonBlankVerificationStatusCannotBeBlanked(FrontLineWorkerImportValidationResponse response, String msisdn, String requestFlwId) {
         try {
-            int size = allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn)).size();
-            if (size != 0)
+            List<FrontLineWorker> flwsWithMsisdnAndStatusInDb = allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn));
+            if (flwsWithMsisdnAndStatusInDb.size() != 0) {
+                if (updateByFlwId(requestFlwId) && idsAreDifferent(requestFlwId, flwsWithMsisdnAndStatusInDb.get(0)))
+                    return;
                 response.forUpdatingVerificationStatusToBlank();
+            }
         } catch (NumberFormatException e) {
             response.forInvalidMsisdn();
         }
+    }
+
+    private boolean updateByFlwId(String flwId) {
+        return Pattern.matches(FrontLineWorker.FLW_ID_FORMAT, flwId) && !FrontLineWorker.DEFAULT_UUID_STRING.equals(flwId);
+    }
+
+    private boolean idsAreDifferent(String flwIdInRequest, FrontLineWorker flwWithMsisdnAndStatusInDb) {
+        String idForVerifiedFlwInDB = flwWithMsisdnAndStatusInDb.getFlwId().toString();
+        return !idForVerifiedFlwInDB.equals(flwIdInRequest);
     }
 
     private void validateDuplicates(List<FrontLineWorkerImportRequest> requests, FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
