@@ -22,6 +22,7 @@ import static org.apache.commons.collections.CollectionUtils.select;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
+import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValid;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValidWithBlanksAllowed;
 
 @Component
@@ -78,7 +79,7 @@ public class FrontLineWorkerImportRequestValidator {
     }
 
     void validateMsisdn(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
-        if (!isValidWithBlanksAllowed(request.getMsisdn())) {
+        if (!isValid(request.getMsisdn())) {
             response.forInvalidMsisdn();
         }
     }
