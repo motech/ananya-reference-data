@@ -28,6 +28,7 @@ public class FrontLineWorkerImportRequestValidatorTest {
 
     private AllFrontLineWorkers allFrontLineWorkers;
     private FrontLineWorkerImportValidationResponse response;
+    private FrontLineWorkerImportRequest request;
 
     @Before
     public void setUp() throws Exception {
@@ -35,6 +36,8 @@ public class FrontLineWorkerImportRequestValidatorTest {
         validator = new FrontLineWorkerImportRequestValidator(allFrontLineWorkers);
         when(allFrontLineWorkers.getByMsisdnWithStatus(anyLong())).thenReturn(new ArrayList<FrontLineWorker>());
         when(allFrontLineWorkers.getByFlwId(Matchers.<UUID>any())).thenReturn(null);
+        response = new FrontLineWorkerImportValidationResponse();
+        request = new FrontLineWorkerImportRequest();
     }
 
     @Test
@@ -293,5 +296,36 @@ public class FrontLineWorkerImportRequestValidatorTest {
         verify(allFrontLineWorkers).getByMsisdnWithStatus(number);
         assertFalse(response.isValid());
         assertEquals("[Cannot update non blank verification status to blank]", response.getMessage().toString());
+    }
+
+    @Test
+    public void designationMustBePresent() {
+        request.setDesignation(null);
+        validator.validateDesignation(request, response);
+        assertFalse(response.isValid());
+        assertEquals("[Designation field is missing]", response.getMessage().toString());
+    }
+
+    @Test
+    public void designationCannotBeEmpty() {
+        request.setDesignation("");
+        validator.validateDesignation(request, response);
+        assertFalse(response.isValid());
+        assertEquals("[Designation field is missing]", response.getMessage().toString());
+    }
+
+    @Test
+    public void designationCannotAcceptInvalid() {
+        request.setDesignation("foo");
+        validator.validateDesignation(request, response);
+        assertFalse(response.isValid());
+        assertEquals("[Designation field has invalid value]", response.getMessage().toString());
+    }
+
+    @Test
+    public void shouldAcceptValidDesignation() {
+        request.setDesignation("ANM");
+        validator.validateDesignation(request, response);
+        assertTrue(response.isValid());
     }
 }

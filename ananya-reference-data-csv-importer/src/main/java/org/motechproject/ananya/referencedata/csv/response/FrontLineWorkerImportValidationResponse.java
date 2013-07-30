@@ -89,4 +89,14 @@ public class FrontLineWorkerImportValidationResponse {
         if(!this.message.contains(message))
             this.message.add(message);
     }
+
+    public void forInvalidDesignation() {
+        isValid = false;
+        addMessage("Designation field has invalid value");
+    }
+
+    public void forBlankDesignation() {
+        isValid = false;
+        addMessage("Designation field is missing");
+    }
 }
