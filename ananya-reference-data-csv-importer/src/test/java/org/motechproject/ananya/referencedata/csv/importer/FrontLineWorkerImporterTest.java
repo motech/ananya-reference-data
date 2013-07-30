@@ -79,7 +79,7 @@ public class FrontLineWorkerImporterTest {
         assertFalse(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
         String fwlIdInQuotes = String.format("\"%s\",", flwId);
-        assertEquals(fwlIdInQuotes + "\"1asdf67890\",\"name\",\"ANM\",\"SUCCESS\",\"state\",\"D1\",\"B1\",\"P1\",\"[Invalid msisdn]\"", validationResponse.getErrors().get(1).getMessage());
+        assertEquals(fwlIdInQuotes + "\"1asdf67890\",\"1234567891\",\"name\",\"ANM\",\"SUCCESS\",\"state\",\"D1\",\"B1\",\"P1\",\"[Invalid msisdn]\"", validationResponse.getErrors().get(1).getMessage());
         verify(locationImportService).invalidateCache();
     }
 
