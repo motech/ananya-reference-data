@@ -4,11 +4,13 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportRequest;
 import org.motechproject.ananya.referencedata.csv.response.FrontLineWorkerImportValidationResponse;
+import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.utils.ValidationUtils;
+import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,8 +43,21 @@ public class FrontLineWorkerImportRequestValidator {
         validateId(request, response);
         validateAlternateContactNumber(request, response);
         validateVerificationStatus(request, response);
+        validateDesignation(request, response);
         return response;
     }
+
+    void validateDesignation(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
+        String designation = request.getDesignation();
+        if (StringUtils.isEmpty(designation)) {
+            response.forBlankDesignation();
+            return;
+        }
+        if(!Designation.isValid(designation)) {
+            response.forInvalidDesignation();
+        }
+    }
+
 
     void validateVerificationStatus(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
         String verificationStatus = request.getVerificationStatus();

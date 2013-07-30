@@ -97,7 +97,7 @@ public class FrontLineWorkerImporterTest {
     public void nonBlankVerificationStatusInDBCannotBeBlanked() {
         FrontLineWorker flwInDB = new FrontLineWorker(parseLong(msisdn), null, null, null, location, VerificationStatus.SUCCESS.name(), UUID.randomUUID(), "");
         when(allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn))).thenReturn(asList(flwInDB));
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest("", msisdn, null, null, null, null, locationRequest);
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest("", msisdn, null, null, Designation.ANM.name(), null, locationRequest);
 
         ValidationResponse result = frontLineWorkerImporter.validate(asList(frontLineWorkerImportRequest));
 
@@ -109,7 +109,7 @@ public class FrontLineWorkerImporterTest {
     @Test
     public void multipleFlwInDBWithBlankVerificationIsValid() {
         when(allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn))).thenReturn(EMPTY_LIST);
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest("", msisdn, null, null, null, null, locationRequest);
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest("", msisdn, null, null, Designation.ANM.name(), null, locationRequest);
 
         ValidationResponse result = frontLineWorkerImporter.validate(asList(frontLineWorkerImportRequest));
 
@@ -121,7 +121,7 @@ public class FrontLineWorkerImporterTest {
     @Test
     public void shouldHaveFlwWithGivenIdInDB() {
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(flwId.toString(), msisdn, null, null, null, VerificationStatus.SUCCESS.name(), locationRequest);
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(flwId.toString(), msisdn, null, null, Designation.ANM.name(), VerificationStatus.SUCCESS.name(), locationRequest);
 
         ValidationResponse result = frontLineWorkerImporter.validate(asList(frontLineWorkerImportRequest));
 
@@ -135,7 +135,7 @@ public class FrontLineWorkerImporterTest {
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(new FrontLineWorker(formatPhoneNumber(msisdn), null, null, null, null, null, flwId, null));
         FrontLineWorker flwInDB = new FrontLineWorker(parseLong(msisdn), null, null, location, VerificationStatus.SUCCESS.name());
         when(allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn))).thenReturn(Arrays.asList(flwInDB));
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(flwId.toString(), msisdn, null, null, null, VerificationStatus.SUCCESS.name(), locationRequest);
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(flwId.toString(), msisdn, null, null, Designation.ANM.name(), VerificationStatus.SUCCESS.name(), locationRequest);
 
         ValidationResponse result = frontLineWorkerImporter.validate(asList(frontLineWorkerImportRequest));
 
@@ -147,7 +147,7 @@ public class FrontLineWorkerImporterTest {
 
     @Test
     public void shouldFailWhenGUIDIsPresentAndVerificationStatusIsBlank() {
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(flwId.toString(), msisdn, null, null, null, null, locationRequest);
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(flwId.toString(), msisdn, null, null, Designation.ANM.name(), null, locationRequest);
 
         ValidationResponse result = frontLineWorkerImporter.validate(asList(frontLineWorkerImportRequest));
 
@@ -157,7 +157,7 @@ public class FrontLineWorkerImporterTest {
 
     @Test
     public void csvShouldNotHaveDuplicateFlw() {
-        FrontLineWorkerImportRequest request1 = new FrontLineWorkerImportRequest(null, msisdn, null, null, null, null, locationRequest);
+        FrontLineWorkerImportRequest request1 = new FrontLineWorkerImportRequest(null, msisdn, null, null, Designation.ANM.name(), null, locationRequest);
         FrontLineWorkerImportRequest request2 = new FrontLineWorkerImportRequest("", msisdn, null, null, null, VerificationStatus.SUCCESS.name(), locationRequest);
 
         ValidationResponse result = frontLineWorkerImporter.validate(asList(request1, request2));
