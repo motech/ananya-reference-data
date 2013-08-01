@@ -172,6 +172,26 @@ public class FrontLineWorkerImportRequestValidatorTest {
     }
 
     @Test
+    public void shouldValidateIdWhenMsisdnIsMissingAndIdIsGiven() {
+        response = new FrontLineWorkerImportValidationResponse();
+        UUID uuid = randomUUID();
+        String msisdn = "1234567890";
+        String name = "name";
+        Long number = formatPhoneNumber(msisdn);
+        ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
+        FrontLineWorker matchingFLWWithBlankVerificationStatus = new FrontLineWorker(number, name, Designation.ANM, null, null);
+        FrontLineWorker matchingFLWWithNonBlankVerificationStatus = new FrontLineWorker(number, name, Designation.ANM, null, "SUCCESS");
+        frontLineWorkers.add(matchingFLWWithNonBlankVerificationStatus);
+        when(allFrontLineWorkers.getByFlwId(uuid)).thenReturn(matchingFLWWithBlankVerificationStatus);
+        when(allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber("1234567890"))).thenReturn(frontLineWorkers);
+
+        validator.validateId(new FrontLineWorkerImportRequest(uuid.toString(), "", null, "Valid. Name", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);
+
+        assertFalse(response.isValid());
+        assertEquals("[Missing Msisdn]", response.getMessage().toString());
+    }
+
+    @Test
     public void shouldValidateAlternateContactNumber() {
         response = new FrontLineWorkerImportValidationResponse();
         validator.validateAlternateContactNumber(new FrontLineWorkerImportRequest(randomUUID().toString(), "1234567891", "msisdn", "name", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);

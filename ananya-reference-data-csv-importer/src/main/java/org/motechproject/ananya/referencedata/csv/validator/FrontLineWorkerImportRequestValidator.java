@@ -132,6 +132,11 @@ public class FrontLineWorkerImportRequestValidator {
             return;
         }
 
+        if(isBlank(request.getMsisdn())){
+            response.forMissingMsisdn();
+            return;
+        }
+
         if (!requestMsisdn.equals(byFlwId.getMsisdn())) {
             response.forNonMatchingMsisdn();
             return;
