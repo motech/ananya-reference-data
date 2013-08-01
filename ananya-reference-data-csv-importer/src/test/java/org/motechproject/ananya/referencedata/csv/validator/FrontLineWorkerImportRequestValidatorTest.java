@@ -55,7 +55,12 @@ public class FrontLineWorkerImportRequestValidatorTest {
         response = new FrontLineWorkerImportValidationResponse();
         validator.validateMsisdn(new FrontLineWorkerImportRequest(randomUUID().toString(), "", "1234567891", "name", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);
         assertFalse(response.isValid());
-        assertEquals("[Invalid msisdn]", response.getMessage().toString());
+        assertEquals("[Missing Msisdn]", response.getMessage().toString());
+
+        response = new FrontLineWorkerImportValidationResponse();
+        validator.validateMsisdn(new FrontLineWorkerImportRequest(randomUUID().toString(), null, "1234567891", "name", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);
+        assertFalse(response.isValid());
+        assertEquals("[Missing Msisdn]", response.getMessage().toString());
 
         response = new FrontLineWorkerImportValidationResponse();
         validator.validateMsisdn(new FrontLineWorkerImportRequest(randomUUID().toString(), "123456789012", "1234567891", "name", "ANM", VerificationStatus.SUCCESS.name(), new LocationRequest()), response);
