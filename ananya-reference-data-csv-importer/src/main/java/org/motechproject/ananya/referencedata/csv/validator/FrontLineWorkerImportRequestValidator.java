@@ -92,6 +92,11 @@ public class FrontLineWorkerImportRequestValidator {
     }
 
     void validateMsisdn(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
+        if(isBlank(request.getMsisdn())){
+            response.forMissingMsisdn();
+            return;
+        }
+
         if (!isValid(request.getMsisdn())) {
             response.forInvalidMsisdn();
         }
@@ -124,6 +129,11 @@ public class FrontLineWorkerImportRequestValidator {
             requestMsisdn = formatPhoneNumber(request.getMsisdn());
         } catch (NumberFormatException e) {
             response.forInvalidMsisdn();
+            return;
+        }
+
+        if(isBlank(request.getMsisdn())){
+            response.forMissingMsisdn();
             return;
         }
 
