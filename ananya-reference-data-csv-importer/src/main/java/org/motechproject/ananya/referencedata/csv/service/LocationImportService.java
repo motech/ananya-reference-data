@@ -57,10 +57,10 @@ public class LocationImportService {
                 LocationImportCSVRequest csvRequest = (LocationImportCSVRequest) input;
 
                 Location location = new Location(
-                        csvRequest.getState(), csvRequest.getDistrict(),
+                        csvRequest.getDistrict(),
                         csvRequest.getBlock(),
                         csvRequest.getPanchayat(),
-                        LocationStatus.VALID,
+                        csvRequest.getState(), LocationStatus.VALID,
                         null);
                 allLocations.add(location);
                 syncService.syncLocation(location);

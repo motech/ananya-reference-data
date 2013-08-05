@@ -13,8 +13,8 @@ public class LocationSyncRequestMapperTest {
 
     @Test
     public void shouldMapLocationWithAlternateLocation() {
-        Location alternateLocation = new Location("state", "D1", "B1", "P1", LocationStatus.VALID, null);
-        Location location = new Location("state", "D2", "B2", "P2", LocationStatus.NOT_VERIFIED, alternateLocation);
+        Location alternateLocation = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
+        Location location = new Location("D2", "B2", "P2", "state", LocationStatus.NOT_VERIFIED, alternateLocation);
         location.setLastModified(DateTime.now());
 
         LocationSyncRequest syncRequest = LocationSyncRequestMapper.map(location);
@@ -27,7 +27,7 @@ public class LocationSyncRequestMapperTest {
 
     @Test
     public void shouldMapLocationWithoutAlternateLocation() {
-        Location location = new Location("state", "D2", "B2", "P2", LocationStatus.NOT_VERIFIED, null);
+        Location location = new Location("D2", "B2", "P2", "state", LocationStatus.NOT_VERIFIED, null);
         location.setLastModified(DateTime.now());
 
         LocationSyncRequest syncRequest = LocationSyncRequestMapper.map(location);

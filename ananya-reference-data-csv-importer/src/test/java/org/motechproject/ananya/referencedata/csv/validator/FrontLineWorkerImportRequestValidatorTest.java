@@ -60,13 +60,4 @@ public class FrontLineWorkerImportRequestValidatorTest {
         assertFalse(frontLineWorkerImportValidationResponse.isValid());
         assertEquals("[Invalid location]", frontLineWorkerImportValidationResponse.getMessage().toString());
     }
-
-    @Test
-    public void shouldUpdateLocationState() {
-        FrontLineWorkerImportRequest request = new FrontLineWorkerImportRequest();
-        String state = "Bihar";
-        request.setState(state);
-
-        assertEquals(state, request.getLocation().getState());
-    }
 }

@@ -51,11 +51,6 @@ public class FrontLineWorkerImportRequest {
         this.location = location;
     }
 
-    @ColumnName(name = "state")
-    public void setState(String state) {
-        location.setState(state);
-    }
-
     @ColumnName(name = "district")
     public void setDistrict(String district) {
         location.setDistrict(district);
@@ -89,7 +84,7 @@ public class FrontLineWorkerImportRequest {
     }
 
     public String toCSV() {
-        return "\"" + msisdn + "\"" +  "," + "\"" +  name + "\"" +  "," + "\"" +  designation + "\"" +  "," + "\"" +  location.getState()  + "\"" +  "," + "\"" +  location.getDistrict() + "\"" +  "," + "\"" +  location.getBlock() + "\"" +  "," + "\"" +  location.getPanchayat() + "\"";
+        return "\"" + msisdn + "\"" +  "," + "\"" +  name + "\"" +  "," + "\"" +  designation + "\"" +  "," + "\"" +  location.getDistrict() + "\"" +  "," + "\"" +  location.getBlock() + "\"" +  "," + "\"" +  location.getPanchayat() + "\"";
     }
 
 }
