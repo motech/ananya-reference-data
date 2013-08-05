@@ -5,7 +5,6 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.web.response.LocationResponse;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
-import org.motechproject.ananya.referencedata.web.response.LocationResponseWithoutState;
 import org.motechproject.ananya.referencedata.web.response.LocationsToBeVerifiedResponse;
 
 import java.util.ArrayList;
@@ -25,9 +24,8 @@ public class LocationResponseMapperTest {
 
         LocationResponseList locationResponses = LocationResponseMapper.mapValidLocations(locationList);
 
-        assertEquals(LocationResponseWithoutState.class, locationResponses.getType());
-        assertLocationResponseWithoutState(location1, locationResponses.get(0));
-        assertLocationResponseWithoutState(location2, locationResponses.get(1));
+        assertLocationResponse(location1,locationResponses.get(0));
+        assertLocationResponse(location2,locationResponses.get(1));
     }
 
     @Test
@@ -44,21 +42,16 @@ public class LocationResponseMapperTest {
         LocationsToBeVerifiedResponse response2 = (LocationsToBeVerifiedResponse)locationResponses.get(1);
         assertLocationResponse(location1, response1);
         assertEquals(location1.getStatus().getDescription(), response1.getStatus());
-        assertLocationResponse(location2, response2);
+        assertLocationResponse(location2,response2);
         assertEquals(location2.getStatus().getDescription(), response2.getStatus());
-        assertEquals(LocationsToBeVerifiedResponse.class, locationResponses.getType());
+
     }
 
     private void assertLocationResponse(Location expectedLocation, LocationResponse response) {
         LocationResponse locationResponse = response;
-        assertLocationResponseWithoutState(expectedLocation, response);
-        assertEquals(expectedLocation.getState(), locationResponse.getState());
-    }
-
-    private void assertLocationResponseWithoutState(Location expectedLocation, LocationResponse response) {
-        LocationResponse locationResponse = response;
         assertEquals(expectedLocation.getBlock(), locationResponse.getBlock());
         assertEquals(expectedLocation.getDistrict(), locationResponse.getDistrict());
         assertEquals(expectedLocation.getPanchayat(), locationResponse.getPanchayat());
+        assertEquals(expectedLocation.getState(), locationResponse.getState());
     }
 }

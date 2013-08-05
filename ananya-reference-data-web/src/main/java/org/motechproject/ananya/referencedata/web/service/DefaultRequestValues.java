@@ -28,8 +28,4 @@ public class DefaultRequestValues {
         if(location != null)
             update(location);
     }
-
-    public String getState() {
-        return defaultState;
-    }
 }

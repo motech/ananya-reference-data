@@ -41,8 +41,8 @@ public class LocationService {
         return location.isInvalid() ? location.getAlternateLocation() : location;
     }
 
-    public List<Location> getAllValidLocations(String state) {
-        return allLocations.getForStatusesInAGivenState(state, LocationStatus.VALID);
+    public List<Location> getAllValidLocations() {
+        return allLocations.getForStatuses(LocationStatus.VALID);
     }
 
     public List<Location> getLocationsToBeVerified() {

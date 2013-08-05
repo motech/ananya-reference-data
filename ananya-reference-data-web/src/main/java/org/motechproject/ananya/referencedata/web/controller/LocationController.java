@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-import static org.apache.commons.lang.WordUtils.capitalizeFully;
-
 @Controller
 public class LocationController extends BaseController {
 
@@ -34,10 +32,9 @@ public class LocationController extends BaseController {
     @RequestMapping(method = RequestMethod.GET, value = "/alllocations", produces = "text/csv")
     public
     @ResponseBody
-    LocationResponseList getLocationMaster(@RequestParam String channel, @RequestParam(required = false) String state) throws IOException {
-        if(state == null) state = defaultRequestValues.getState();
+    LocationResponseList getLocationMaster(@RequestParam String channel) throws IOException {
         validateRequest(channel);
-        return LocationResponseMapper.mapValidLocations(locationService.getAllValidLocations(capitalizeFully(state)));
+        return LocationResponseMapper.mapValidLocations(locationService.getAllValidLocations());
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/location")
