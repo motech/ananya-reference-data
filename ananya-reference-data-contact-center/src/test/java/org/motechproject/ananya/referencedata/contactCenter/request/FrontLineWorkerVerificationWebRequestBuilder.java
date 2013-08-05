@@ -64,7 +64,7 @@ public class FrontLineWorkerVerificationWebRequestBuilder {
     }
 
     public FrontLineWorkerVerificationWebRequest build() {
-        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, verificationStatus, name, designation, failedVerification ? null : new LocationRequest("state", district, block, panchayat), reason);
+        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, verificationStatus, name, designation, failedVerification ? null : new LocationRequest(district, block, panchayat, "state"), reason);
     }
 
     public FrontLineWorkerVerificationWebRequestBuilder withFailedVerification(boolean failedVerification) {

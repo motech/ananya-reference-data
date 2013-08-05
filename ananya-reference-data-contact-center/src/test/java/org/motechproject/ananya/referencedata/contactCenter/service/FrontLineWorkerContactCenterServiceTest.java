@@ -81,7 +81,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker).thenReturn(unmodifiedMockFrontLineWorker);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
-        LocationRequest locationRequest = new LocationRequest("state", "district", "block", "panchy");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy", "state");
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
         when(locationService.createAndFetch(locationRequest)).thenReturn(existingLocation);
 
@@ -110,7 +110,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         when(allFrontLineWorkers.getByMsisdn(msisdnWithPrefix)).thenReturn(frontLineWorkers);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
-        LocationRequest locationRequest = new LocationRequest("state", "district", "block", "panchy");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy", "state");
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
         when(locationService.createAndFetch(locationRequest)).thenReturn(existingLocation);
 
@@ -142,7 +142,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         when(allFrontLineWorkers.getByMsisdn(msisdnWithPrefix)).thenReturn(frontLineWorkers);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
-        LocationRequest locationRequest = new LocationRequest("state", "district", "block", "panchy");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchy", "state");
         Location existingLocation = LocationMapper.mapFrom(locationRequest);
         when(locationService.createAndFetch(locationRequest)).thenReturn(existingLocation);
 

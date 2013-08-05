@@ -52,7 +52,7 @@ public class FrontLineWorkerVerificationWebRequestTest {
     public void shouldReturnVerificationRequest() {
         UUID flwId = UUID.randomUUID();
         Long msisdn = new Long("9900503456");
-        LocationRequest locationRequest = new LocationRequest("state", "district", "block", "panchayat");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "state");
         String name = "fwlName";
         String reason = "reason";
         FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(flwId.toString(), Long.toString(msisdn), "INVALID", name, Designation.ASHA.name(), locationRequest, reason);
@@ -72,7 +72,7 @@ public class FrontLineWorkerVerificationWebRequestTest {
     public void shouldReturnVerificationRequestForMsisdnHaving91AsPrefix() {
         UUID flwId = UUID.randomUUID();
         Long msisdn = new Long("919900503456");
-        LocationRequest locationRequest = new LocationRequest("state", "district", "block", "panchayat");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "state");
         String name = "fwlName";
         String reason = "reason";
         FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(flwId.toString(), Long.toString(msisdn), "INVALID", name, Designation.ASHA.name(), locationRequest, reason);

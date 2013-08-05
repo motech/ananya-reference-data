@@ -50,7 +50,7 @@ public class FrontLineWorkerRequestValidatorTest {
             add(new FrontLineWorker(msisdn, name, anm, new Location(), flwId, VerificationStatus.INVALID, null));
         }};
         when(allFrontLineWorkers.getByMsisdnWithStatus(msisdn)).thenReturn(frontLineWorkers);
-        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(flwId, PhoneNumber.formatPhoneNumber(msisdn.toString()), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("state", "D1", "B1", "P1"), null);
+        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(flwId, PhoneNumber.formatPhoneNumber(msisdn.toString()), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("D1", "B1", "P1", "state"), null);
 
         Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
 
@@ -67,7 +67,7 @@ public class FrontLineWorkerRequestValidatorTest {
             add(new FrontLineWorker(msisdn, name, anm, new Location(), flwId, VerificationStatus.INVALID, null));
         }};
         when(allFrontLineWorkers.getByMsisdnWithStatus(msisdn)).thenReturn(frontLineWorkers);
-        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.fromString("11111111-1111-1111-1111-111111111111"), PhoneNumber.formatPhoneNumber(msisdn.toString()), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("state", "D1", "B1", "P1"), null);
+        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.fromString("11111111-1111-1111-1111-111111111111"), PhoneNumber.formatPhoneNumber(msisdn.toString()), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("D1", "B1", "P1", "state"), null);
 
         Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
 
@@ -76,7 +76,7 @@ public class FrontLineWorkerRequestValidatorTest {
 
     @Test
     public void shouldInvalidateSuccessRequestIfNameIsInvalid() {
-        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber("9900504646"), VerificationStatus.SUCCESS, "कुछ", Designation.ASHA, new LocationRequest("state", "district", "block", "panchayat"), null);
+        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber("9900504646"), VerificationStatus.SUCCESS, "कुछ", Designation.ASHA, new LocationRequest("district", "block", "panchayat", "state"), null);
         Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
         assertEquals(1, errors.getCount());
         assertEquals("name field has invalid/blank value", errors.allMessages());
@@ -84,7 +84,7 @@ public class FrontLineWorkerRequestValidatorTest {
 
     @Test
     public void shouldInvalidateSuccessRequestIfLocationIsInvalid() {
-        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber("9900504646"), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("state", null, null, null), null);
+        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber("9900504646"), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest(null, null, null, "state"), null);
         Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
         assertEquals(3, errors.getCount());
         assertEquals("district field is blank,block field is blank,panchayat field is blank", errors.allMessages());
@@ -92,7 +92,7 @@ public class FrontLineWorkerRequestValidatorTest {
 
     @Test
     public void shouldInvalidateSuccessRequestIfReasonIsFound() {
-        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber("9900504646"), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("state", "district", "block", "panchayat"), "");
+        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber("9900504646"), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("district", "block", "panchayat", "state"), "");
         Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
         assertEquals(1, errors.getCount());
         assertEquals("reason field should not be a part of the request", errors.allMessages());
@@ -140,7 +140,7 @@ public class FrontLineWorkerRequestValidatorTest {
             add(new FrontLineWorker(msisdn, name, anm, new Location(), flwId, VerificationStatus.INVALID, null));
         }};
         when(allFrontLineWorkers.getByMsisdnWithStatus(msisdn)).thenReturn(frontLineWorkers);
-        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber(msisdn.toString()), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("state", "D1", "B1", "P1"), null);
+        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber(msisdn.toString()), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("D1", "B1", "P1", "state"), null);
 
         Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
 

@@ -72,7 +72,7 @@ public class FrontLineWorkerContectCenterServiceIT extends SpringIntegrationTest
         String msisdn = "1234567890";
         FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "Shahrukh", null, null, flwId, VerificationStatus.INVALID, "reason");
         String name = "New Name";
-        LocationRequest locationRequest = new LocationRequest("state", "district", "block", "panchayat");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "state");
         Location location = LocationMapper.mapFrom(locationRequest);
         allLocations.add(location);
         allFrontLineWorkers.add(frontLineWorker);

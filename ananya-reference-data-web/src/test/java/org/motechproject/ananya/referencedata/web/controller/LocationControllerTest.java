@@ -70,7 +70,7 @@ public class LocationControllerTest {
 
     @Test
     public void shouldSyncAValidLocation() throws Exception {
-        LocationRequest locationRequest = new LocationRequest("state", "district", "block", "panchayat");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "state");
 
         MvcResult result = mockMvc(locationController)
                 .perform(post("/location")

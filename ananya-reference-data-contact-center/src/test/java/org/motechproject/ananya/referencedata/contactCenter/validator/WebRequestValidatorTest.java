@@ -180,7 +180,7 @@ public class WebRequestValidatorTest {
     @Test
     public void shouldNotContainErrorsForAValidLocationRequest() {
         Errors errors = new Errors();
-        validator.validateLocation(new LocationRequest("state", "district", "block", "panchayat", null), errors);
+        validator.validateLocation(new LocationRequest("district", "block", "panchayat", "state", null), errors);
 
         assertEquals(0, errors.getCount());
     }
