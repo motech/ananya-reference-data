@@ -6,28 +6,33 @@ public class LocationsToBeVerifiedResponse extends LocationResponse{
 
     private String status;
 
-    public LocationsToBeVerifiedResponse(String district, String block, String panchayat, String status) {
-        super(district,block,panchayat);
+    public LocationsToBeVerifiedResponse(String state, String district, String block, String panchayat, String status) {
+        super(state, district,block,panchayat);
         this.status = status;
     }
 
-    @ExportValue(column="status", index = 3)
+    @ExportValue(column="status", index = 4)
     public String getStatus() {
         return status;
     }
 
-    @ExportValue(column="newDistrict", index = 4)
+    @ExportValue(column="newState", index = 5)
+    public String getNewStateHeader() {
+        return null;
+    }
+
+    @ExportValue(column="newDistrict", index = 6)
     public String getNewDistrictHeader() {
         return null;
     }
 
 
-    @ExportValue(column="newBlock", index = 5)
+    @ExportValue(column="newBlock", index = 7)
     public String getNewBlockHeader() {
         return null;
     }
 
-    @ExportValue(column="newPanchayat", index = 6)
+    @ExportValue(column="newPanchayat", index = 8)
     public String getNewPanchayatHeader() {
         return null;
     }

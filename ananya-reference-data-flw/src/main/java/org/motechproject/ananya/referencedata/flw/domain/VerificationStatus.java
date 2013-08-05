@@ -2,13 +2,17 @@ package org.motechproject.ananya.referencedata.flw.domain;
 
 import org.apache.commons.lang.StringUtils;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.trimToEmpty;
+
 public enum VerificationStatus {
     SUCCESS,
     INVALID,
     OTHER;
 
-    public static VerificationStatus from(String string) {
-        return VerificationStatus.valueOf(StringUtils.trimToEmpty(string).toUpperCase());
+    public static VerificationStatus from(String status) {
+        if (isBlank(status)) return null;
+        return VerificationStatus.valueOf(trimToEmpty(status).toUpperCase());
     }
 
     public static boolean isValid(String status) {
@@ -18,6 +22,5 @@ public enum VerificationStatus {
             return false;
         }
         return true;
-
     }
 }

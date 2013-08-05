@@ -30,11 +30,12 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat, LocationStatus.NOT_VERIFIED, null);
+        String state = "state";
+        Location location = new Location(district, block, panchayat, state, LocationStatus.NOT_VERIFIED, null);
 
         allLocations.add(location);
 
-        Location locationFromDB = allLocations.getFor(district, block, panchayat);
+        Location locationFromDB = allLocations.getFor(state, district, block, panchayat);
         assertNotNull(locationFromDB);
     }
 
@@ -43,20 +44,21 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        Location location = new Location(district, block, panchayat, LocationStatus.NOT_VERIFIED, null);
+        String state = "state";
+        Location location = new Location(district, block, panchayat, state, LocationStatus.NOT_VERIFIED, null);
 
         allLocations.add(location);
 
-        Location locationFromDB = allLocations.getFor("DistRict", "BLOCK", "panchayat");
+        Location locationFromDB = allLocations.getFor(state, "DistRict", "BLOCK", "panchayat");
         assertNotNull(locationFromDB);
     }
 
     @Test
     public void shouldLoadLocationsBasedOnStatus() {
-        Location validLocation1 = new Location("district", "block", "panchayat", LocationStatus.VALID, null);
-        Location validLocation2 = new Location("district3", "block3", "panchayat3", LocationStatus.VALID, null);
-        Location unverifiedLocation = new Location("district1", "block1", "panchayat1", LocationStatus.NOT_VERIFIED, null);
-        Location invalidLocation = new Location("district2", "block2", "panchayat2", LocationStatus.INVALID, null);
+        Location validLocation1 = new Location("district", "block", "panchayat", "state", LocationStatus.VALID, null);
+        Location validLocation2 = new Location("district3", "block3", "panchayat3", "state", LocationStatus.VALID, null);
+        Location unverifiedLocation = new Location("district1", "block1", "panchayat1", "state", LocationStatus.NOT_VERIFIED, null);
+        Location invalidLocation = new Location("district2", "block2", "panchayat2", "state", LocationStatus.INVALID, null);
 
         template.saveOrUpdateAll(Arrays.asList(validLocation1, unverifiedLocation, validLocation2, invalidLocation));
 
@@ -74,20 +76,20 @@ public class AllLocationsTest extends SpringIntegrationTest {
         String block = "block";
         String panchayat = "panchayat";
 
-        Location locationInDB = allLocations.getFor(district, block, panchayat);
+        Location locationInDB = allLocations.getFor("state", district, block, panchayat);
         assertNull(locationInDB);
     }
 
     @Test
     public void shouldUpdateGivenLocation_AndAllLocationsWhichHasGivenInvalidLocationAsAlternateLocation() {
-        final Location givenLocation = new Location("district", "block", "panchyat", LocationStatus.IN_REVIEW, null);
+        final Location givenLocation = new Location("district", "block", "panchyat", "state", LocationStatus.IN_REVIEW, null);
         List<Location> existingInvalidLocations = new ArrayList<Location>(){{
-            add(new Location("d1", "b1", "p1", LocationStatus.INVALID, givenLocation));
-            add(new Location("d2", "b2", "p2", LocationStatus.INVALID, givenLocation));
+            add(new Location("d1", "b1", "p1", "state", LocationStatus.INVALID, givenLocation));
+            add(new Location("d2", "b2", "p2", "state", LocationStatus.INVALID, givenLocation));
         }};
        template.save(givenLocation);
        template.saveOrUpdateAll(existingInvalidLocations);
-       Location alternateLocation = new Location("district2", "block2", "panchayat2", LocationStatus.VALID, null);
+       Location alternateLocation = new Location("district2", "block2", "panchayat2", "state", LocationStatus.VALID, null);
        givenLocation.setStatus(LocationStatus.INVALID);
        givenLocation.setAlternateLocation(alternateLocation);
        template.save(alternateLocation);
@@ -95,27 +97,27 @@ public class AllLocationsTest extends SpringIntegrationTest {
 
        allLocations.update(givenLocation);
 
-       Location updatedLocation = allLocations.getFor(givenLocation.getDistrict(), givenLocation.getBlock(), givenLocation.getPanchayat());
+       Location updatedLocation = allLocations.getFor("state", givenLocation.getDistrict(), givenLocation.getBlock(), givenLocation.getPanchayat());
        assertEquals(givenLocation, updatedLocation);
-       Location locationWithNewAlternateLocation1 = allLocations.getFor(existingInvalidLocations.get(0).getDistrict(), existingInvalidLocations.get(0).getBlock(), existingInvalidLocations.get(0).getPanchayat());
-       Location locationWithNewAlternateLocation2 = allLocations.getFor(existingInvalidLocations.get(1).getDistrict(), existingInvalidLocations.get(1).getBlock(), existingInvalidLocations.get(1).getPanchayat());
+       Location locationWithNewAlternateLocation1 = allLocations.getFor("state", existingInvalidLocations.get(0).getDistrict(), existingInvalidLocations.get(0).getBlock(), existingInvalidLocations.get(0).getPanchayat());
+       Location locationWithNewAlternateLocation2 = allLocations.getFor("state", existingInvalidLocations.get(1).getDistrict(), existingInvalidLocations.get(1).getBlock(), existingInvalidLocations.get(1).getPanchayat());
        assertEquals(alternateLocation, locationWithNewAlternateLocation1.getAlternateLocation());
        assertEquals(alternateLocation, locationWithNewAlternateLocation2.getAlternateLocation());
     }
 
     @Test
     public void shouldUpdateGivenLocationAndShouldNotUpdateOthers_IfGivenLocationIsNotInvalid() {
-        Location givenLocation = new Location("district", "block", "panchayat", LocationStatus.IN_REVIEW, null);
-        Location existingLocation = new Location("d", "b", "p", LocationStatus.INVALID, givenLocation);
+        Location givenLocation = new Location("district", "block", "panchayat", "state", LocationStatus.IN_REVIEW, null);
+        Location existingLocation = new Location("d", "b", "p", "state", LocationStatus.INVALID, givenLocation);
         template.save(givenLocation);
         template.save(existingLocation);
         givenLocation.setStatus(LocationStatus.VALID);
 
         allLocations.update(givenLocation);
 
-        Location updatedLocation = allLocations.getFor(givenLocation.getDistrict(), givenLocation.getBlock(), givenLocation.getPanchayat());
+        Location updatedLocation = allLocations.getFor("state", givenLocation.getDistrict(), givenLocation.getBlock(), givenLocation.getPanchayat());
         assertEquals(givenLocation, updatedLocation);
-        Location existingLocationNotUpdated = allLocations.getFor(existingLocation.getDistrict(), existingLocation.getBlock(), existingLocation.getPanchayat());
+        Location existingLocationNotUpdated = allLocations.getFor("state", existingLocation.getDistrict(), existingLocation.getBlock(), existingLocation.getPanchayat());
         assertEquals(existingLocation, existingLocationNotUpdated);
     }
 }

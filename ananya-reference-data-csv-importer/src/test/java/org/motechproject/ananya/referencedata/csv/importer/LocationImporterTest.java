@@ -40,7 +40,7 @@ public class LocationImporterTest {
 
     @Test
     public void shouldValidateLocationRequests() {
-        final LocationImportCSVRequest locationImportCSVRequest = locationImportCSVRequest("D1", "B1", "P1", LocationStatus.VALID.getDescription());
+        final LocationImportCSVRequest locationImportCSVRequest = locationImportCSVRequest("S1", "D1", "B1", "P1", LocationStatus.VALID.getDescription());
         ArrayList<LocationImportCSVRequest> locationRequests = new ArrayList<LocationImportCSVRequest>(){{
             add(locationImportCSVRequest);
         }};
@@ -51,13 +51,13 @@ public class LocationImporterTest {
 
         assertTrue(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("district,block,panchayat,status,newDistrict,newBlock,newPanchayat,error", validationResponse.getErrors().get(0).getMessage());
+        assertEquals("state,district,block,panchayat,status,newState,newDistrict,newBlock,newPanchayat,error", validationResponse.getErrors().get(0).getMessage());
     }
 
     @Test
     public void shouldFailValidationIfLocationValidatorFails() {
         ArrayList<LocationImportCSVRequest> locationRequests = new ArrayList<>();
-        LocationImportCSVRequest locationImportCSVRequest = locationImportCSVRequest("D1", "B1", null, "VALID");
+        LocationImportCSVRequest locationImportCSVRequest = locationImportCSVRequest("S1", "D1", "B1", null, "VALID");
         locationRequests.add(locationImportCSVRequest);
 
         LocationValidationResponse locationValidationResponse = new LocationValidationResponse();
@@ -68,31 +68,32 @@ public class LocationImporterTest {
 
         assertFalse(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        String expectedErrorFileRecord = new CSVRecordBuilder().appendColumn("D1", "B1", null, "VALID", null, null, null, "[Blank district, block or panchayat]").toString();
+        String expectedErrorFileRecord = new CSVRecordBuilder().appendColumn("S1","D1", "B1", null, "VALID",null, null, null, null, "[Blank state, district, block or panchayat]").toString();
         assertEquals(expectedErrorFileRecord, validationResponse.getErrors().get(1).getMessage());
     }
 
     @Test
     public void shouldSaveLocation() {
         ArrayList<LocationImportCSVRequest> locationRequests = new ArrayList<>();
-        locationRequests.add(locationImportCSVRequest("D1", "B1", "P1", "VALID"));
+        locationRequests.add(locationImportCSVRequest("S1", "D1", "B1", "P1", "VALID"));
 
         locationImporter.postData(locationRequests);
 
         verify(locationImportService).addAllWithoutValidations(captor.capture());
         List<LocationImportCSVRequest> locationRequestsToSaveCSV = captor.getValue();
         assertEquals(1, locationRequestsToSaveCSV.size());
+        assertEquals("S1", locationRequestsToSaveCSV.get(0).getState());
         assertEquals("D1", locationRequestsToSaveCSV.get(0).getDistrict());
         assertEquals("B1", locationRequestsToSaveCSV.get(0).getBlock());
         assertEquals("P1", locationRequestsToSaveCSV.get(0).getPanchayat());
         assertEquals(LocationStatus.VALID.getDescription(), locationRequestsToSaveCSV.get(0).getStatus());
     }
 
-    private LocationImportCSVRequest locationImportCSVRequest(String district, String block, String panchayat, String status, String newDistrict, String newBlock, String newPanchayat) {
-        return new LocationImportCSVRequestBuilder().withDefaults().buildWith(district, block, panchayat, status, newDistrict, newBlock, newPanchayat);
+    private LocationImportCSVRequest locationImportCSVRequest(String state, String district, String block, String panchayat, String status, String newState, String newDistrict, String newBlock, String newPanchayat) {
+        return new LocationImportCSVRequestBuilder().withDefaults().buildWith(state, district, block, panchayat, status, newState, newDistrict, newBlock, newPanchayat);
     }
 
-    private LocationImportCSVRequest locationImportCSVRequest(String district, String block, String panchayat, String status) {
-        return locationImportCSVRequest(district, block, panchayat, status, null, null, null);
+    private LocationImportCSVRequest locationImportCSVRequest(String state, String district, String block, String panchayat, String status) {
+        return locationImportCSVRequest(state, district, block, panchayat, status, null, null, null, null);
     }
 }

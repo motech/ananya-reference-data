@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LocationServiceTest {
@@ -37,9 +37,10 @@ public class LocationServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        LocationRequest request = new LocationRequest(district, block, panchayat, "VALID");
+        String state = "state";
+        LocationRequest request = new LocationRequest(district, block, panchayat, state, "VALID");
         Location expectedLocation = new Location();
-        when(allLocations.getFor(district, block, panchayat)).thenReturn(expectedLocation);
+        when(allLocations.getFor(state, district, block, panchayat)).thenReturn(expectedLocation);
 
         Location actualLocation = locationService.createAndFetch(request);
 
@@ -51,10 +52,11 @@ public class LocationServiceTest {
         String district = "d1";
         String block = "b1";
         String panchayat = "p1";
-        Location alternateLocation = new Location("d2", "b2", "p2", LocationStatus.VALID, null);
-        Location locationToMap = new Location(district, block, panchayat, LocationStatus.INVALID, alternateLocation);
-        LocationRequest request = new LocationRequest(district, block, panchayat);
-        when(allLocations.getFor(district,block,panchayat)).thenReturn(locationToMap);
+        String state = "state";
+        Location alternateLocation = new Location("d2", "b2", "p2", state, LocationStatus.VALID, null);
+        Location locationToMap = new Location(district, block, panchayat, state, LocationStatus.INVALID, alternateLocation);
+        LocationRequest request = new LocationRequest(district, block, panchayat, state);
+        when(allLocations.getFor(state, district,block,panchayat)).thenReturn(locationToMap);
 
         Location locationToBeMapped = locationService.createAndFetch(request);
 
@@ -66,9 +68,10 @@ public class LocationServiceTest {
         String district = "district";
         String block = "block";
         String panchayat = "panchayat";
-        LocationRequest request = new LocationRequest(district, block, panchayat, "VALID");
-        Location expectedLocation = new Location(district, block, panchayat, LocationStatus.NOT_VERIFIED, null);
-        when(allLocations.getFor(district, block, panchayat)).thenReturn(null);
+        String state = "state";
+        LocationRequest request = new LocationRequest(district, block, panchayat, state, "VALID");
+        Location expectedLocation = new Location(district, block, panchayat, state, LocationStatus.NOT_VERIFIED, null);
+        when(allLocations.getFor(state, district, block, panchayat)).thenReturn(null);
 
         Location actualLocation = locationService.createAndFetch(request);
 
@@ -89,7 +92,7 @@ public class LocationServiceTest {
 
     @Test
     public void shouldGetLocationsToBeVerified() {
-        List<Location> expectedLocationList = Arrays.asList(new Location("d1", "b1", "p1", LocationStatus.NOT_VERIFIED, null));
+        List<Location> expectedLocationList = Arrays.asList(new Location("d1", "b1", "p1", "state", LocationStatus.NOT_VERIFIED, null));
         when(allLocations.getForStatuses(LocationStatus.NOT_VERIFIED, LocationStatus.IN_REVIEW)).thenReturn(expectedLocationList);
 
         List<Location> actualLocationList = locationService.getLocationsToBeVerified();

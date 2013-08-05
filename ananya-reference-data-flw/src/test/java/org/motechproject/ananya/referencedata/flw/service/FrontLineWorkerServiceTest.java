@@ -5,10 +5,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.motechproject.ananya.referencedata.flw.domain.Designation;
-import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
-import org.motechproject.ananya.referencedata.flw.domain.Location;
-import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
+import org.motechproject.ananya.referencedata.flw.domain.*;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 
 import java.util.ArrayList;
@@ -36,10 +33,10 @@ public class FrontLineWorkerServiceTest {
 
     @Test
     public void shouldUpdateLocationsOfAllFLWsFromCurrentLocationToAlternateLocation() {
-        Location alternateLocation = new Location("district", "block", "panchayat", LocationStatus.VALID, null);;
-        Location currentLocation = new Location("district", "block", "panchayat", LocationStatus.NOT_VERIFIED, alternateLocation);
+        Location alternateLocation = new Location("district", "block", "panchayat", "state", LocationStatus.VALID, null);;
+        Location currentLocation = new Location("district", "block", "panchayat", "state", LocationStatus.NOT_VERIFIED, alternateLocation);
         List<FrontLineWorker> frontLineWorkers = new ArrayList<>();
-        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "name", Designation.ASHA, currentLocation);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "name", Designation.ASHA, currentLocation, VerificationStatus.SUCCESS.name());
         frontLineWorkers.add(frontLineWorker);
         when(allFrontLineWorkers.getForLocation(currentLocation)).thenReturn(frontLineWorkers);
 

@@ -6,9 +6,11 @@ public class LocationImportCSVRequestBuilder {
     private String district;
     private String block;
     private String panchayat;
+    private String state;
     private String newDistrict;
     private String newBlock;
     private String newPanchayat;
+    private String newState;
     private String status;
 
     public LocationImportCSVRequestBuilder withDistrict(String district) {
@@ -59,19 +61,33 @@ public class LocationImportCSVRequestBuilder {
         csvRequest.setNewBlock(newBlock);
         csvRequest.setNewPanchayat(newPanchayat);
         csvRequest.setStatus(status);
+        csvRequest.setState(state);
+        csvRequest.setNewState(newState);
         return csvRequest;
     }
 
-    public LocationImportCSVRequest buildWith(String district, String block, String panchayat, String staus, String newDistrict, String newBlock, String newPanchayat) {
+    public LocationImportCSVRequest buildWith(String state, String district, String block, String panchayat, String staus, String newState, String newDistrict, String newBlock, String newPanchayat) {
         return new LocationImportCSVRequestBuilder()
                 .withDefaults().withBlock(block)
+                .withState(state)
                 .withDistrict(district).withPanchayat(panchayat)
                 .withStatus(staus).withNewBlock(newBlock)
                 .withNewDistrict(newDistrict).withNewPanchayat(newPanchayat)
+                .withNewState(newState)
                 .build();
     }
 
+    public LocationImportCSVRequestBuilder withState(String state) {
+        this.state = state;
+        return this;
+    }
+
+    public LocationImportCSVRequestBuilder withNewState(String state) {
+        this.newState = state;
+        return this;
+    }
+
     public LocationImportCSVRequest buildWith(String district, String block, String panchayat, String staus) {
-        return buildWith(district, block, panchayat, staus, null, null, null);
+        return buildWith(state, district, block, panchayat, staus, newState, null, null, null);
     }
 }

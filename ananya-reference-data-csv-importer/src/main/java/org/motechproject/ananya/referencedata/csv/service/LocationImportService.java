@@ -10,6 +10,7 @@ import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
 import org.motechproject.ananya.referencedata.flw.service.SyncService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,8 +37,12 @@ public class LocationImportService {
     }
 
     @Cacheable(value = "locationSearchCache")
-    public Location getFor(String district, String block, String panchayat) {
-        return allLocations.getFor(district, block, panchayat);
+    public Location getFor(String state, String district, String block, String panchayat) {
+        return allLocations.getFor(state, district, block, panchayat);
+    }
+
+    @CacheEvict(value = "locationSearchCache", allEntries = true)
+    public void invalidateCache() {
     }
 
     @Transactional
@@ -54,13 +59,13 @@ public class LocationImportService {
                 hasStatus(Arrays.asList(LocationStatus.NEW)), new Closure() {
             @Override
             public void execute(Object input) {
-                LocationImportCSVRequest CSVRequest = (LocationImportCSVRequest) input;
+                LocationImportCSVRequest csvRequest = (LocationImportCSVRequest) input;
 
                 Location location = new Location(
-                        CSVRequest.getDistrict(),
-                        CSVRequest.getBlock(),
-                        CSVRequest.getPanchayat(),
-                        LocationStatus.VALID,
+                        csvRequest.getDistrict(),
+                        csvRequest.getBlock(),
+                        csvRequest.getPanchayat(),
+                        csvRequest.getState(), LocationStatus.VALID,
                         null);
                 allLocations.add(location);
                 syncService.syncLocation(location);
@@ -77,7 +82,7 @@ public class LocationImportService {
                 LocationImportCSVRequest csvRequest = (LocationImportCSVRequest) input;
 
                 Location updatedLocation = allLocations.getFor(
-                        csvRequest.getDistrict(),
+                        csvRequest.getState(), csvRequest.getDistrict(),
                         csvRequest.getBlock(),
                         csvRequest.getPanchayat()
                 );
@@ -102,12 +107,12 @@ public class LocationImportService {
 
 
                 Location updatedInvalidLocation = allLocations.getFor(
-                        csvRequest.getDistrict(),
+                        csvRequest.getState(), csvRequest.getDistrict(),
                         csvRequest.getBlock(),
                         csvRequest.getPanchayat()
                 );
                 Location validLocationFromDb = allLocations.getFor(
-                        csvRequest.getNewDistrict(),
+                        csvRequest.getNewState(), csvRequest.getNewDistrict(),
                         csvRequest.getNewBlock(),
                         csvRequest.getNewPanchayat()
                 );

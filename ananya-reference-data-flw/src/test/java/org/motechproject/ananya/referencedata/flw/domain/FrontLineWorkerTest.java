@@ -12,7 +12,7 @@ public class FrontLineWorkerTest {
         String name = "flwname";
         Location location = new Location();
 
-        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, Designation.ANM, location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, name, Designation.ANM, location, VerificationStatus.SUCCESS.name());
 
         assertNotNull(frontLineWorker.getFlwId());
         assertEquals(msisdn, (long) frontLineWorker.getMsisdn());
@@ -29,6 +29,18 @@ public class FrontLineWorkerTest {
 
         assertTrue(frontLineWorker1.hasBeenVerified());
         assertFalse(frontLineWorker2.hasBeenVerified());
+
+    }
+
+    @Test
+    public void shouldSetVerificationStatusToNullIfNullOrEmpty() {
+        FrontLineWorker frontLineWorker1= new FrontLineWorker();
+        frontLineWorker1.setVerificationStatus(null);
+        FrontLineWorker frontLineWorker2 = new FrontLineWorker();
+        frontLineWorker1.setVerificationStatus(VerificationStatus.from(""));
+
+        assertTrue(frontLineWorker1.getVerificationStatus() == null);
+        assertTrue(frontLineWorker2.getVerificationStatus() == null);
 
     }
 }

@@ -15,7 +15,7 @@ import static org.junit.Assert.assertFalse;
 public class FrontLineWorkerVerificationWebRequestTest {
 
     @Test
-    public void shouldMandatoryFields() {
+    public void shouldHandleMandatoryFields() {
         FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(null, null, null, null, null, null, null);
         Errors errors = webRequest.validate();
         assertEquals(4, errors.getCount());
@@ -52,7 +52,7 @@ public class FrontLineWorkerVerificationWebRequestTest {
     public void shouldReturnVerificationRequest() {
         UUID flwId = UUID.randomUUID();
         Long msisdn = new Long("9900503456");
-        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "state");
         String name = "fwlName";
         String reason = "reason";
         FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(flwId.toString(), Long.toString(msisdn), "INVALID", name, Designation.ASHA.name(), locationRequest, reason);
@@ -72,7 +72,7 @@ public class FrontLineWorkerVerificationWebRequestTest {
     public void shouldReturnVerificationRequestForMsisdnHaving91AsPrefix() {
         UUID flwId = UUID.randomUUID();
         Long msisdn = new Long("919900503456");
-        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "state");
         String name = "fwlName";
         String reason = "reason";
         FrontLineWorkerVerificationWebRequest webRequest = new FrontLineWorkerVerificationWebRequest(flwId.toString(), Long.toString(msisdn), "INVALID", name, Designation.ASHA.name(), locationRequest, reason);
@@ -80,6 +80,27 @@ public class FrontLineWorkerVerificationWebRequestTest {
 
         Long expectedMsisdn = 919900503456L;
         assertEquals(expectedMsisdn, verificationRequest.getMsisdn());
+    }
+
+    @Test
+    public void shouldUseBiharIfStateFieldIsMissing() {
+        FrontLineWorkerVerificationWebRequest webRequest = FrontLineWorkerVerificationWebRequestBuilder.requestWithState(null);
+        FrontLineWorkerVerificationRequest verificationRequest = webRequest.getVerificationRequest();
+        assertEquals("Bihar",verificationRequest.getLocation().getState());
+    }
+
+    @Test
+    public void shouldUseStateWhenProvided() {
+        FrontLineWorkerVerificationWebRequest webRequest = FrontLineWorkerVerificationWebRequestBuilder.requestWithState("Orissa");
+        FrontLineWorkerVerificationRequest verificationRequest = webRequest.getVerificationRequest();
+        assertEquals("Orissa",verificationRequest.getLocation().getState());
+    }
+
+    @Test
+    public void shouldNotHandleBlankValueForState() {
+        FrontLineWorkerVerificationWebRequest webRequest = FrontLineWorkerVerificationWebRequestBuilder.requestWithState("");
+        FrontLineWorkerVerificationRequest verificationRequest = webRequest.getVerificationRequest();
+        assertEquals("",verificationRequest.getLocation().getState());
     }
 
 }

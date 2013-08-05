@@ -5,19 +5,28 @@ import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportR
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 
-public class FrontLineWorkerImportMapper {
-    public static FrontLineWorker mapToNewFlw(FrontLineWorkerImportRequest frontLineWorkerImportRequest, Location location) {
-        Long msisdn = StringUtils.isBlank(frontLineWorkerImportRequest.getMsisdn()) ? null : formatMsisdn(frontLineWorkerImportRequest.getMsisdn());
+import java.util.UUID;
 
-        return new FrontLineWorker(msisdn, trim(frontLineWorkerImportRequest.getName()), Designation.from(frontLineWorkerImportRequest.getDesignation()), location);
+public class FrontLineWorkerImportMapper {
+
+    public static final String FLW_CSV_UPLOAD_REASON = "via CSV Upload";
+
+    public static FrontLineWorker mapToNewFlw(FrontLineWorkerImportRequest request, Location location) {
+        Long msisdn = StringUtils.isBlank(request.getMsisdn()) ? null : formatMsisdn(request.getMsisdn());
+        String verificationStatus = StringUtils.isBlank(request.getVerificationStatus())? null :request.getVerificationStatus();
+        return new FrontLineWorker(msisdn, trim(request.getName()), Designation.from(request.getDesignation()),
+                location, verificationStatus, UUID.randomUUID(), FLW_CSV_UPLOAD_REASON);
     }
 
-    public static FrontLineWorker mapToExistingFlw(FrontLineWorker existingFrontLineWorker, FrontLineWorkerImportRequest frontLineWorkerImportRequest, Location location) {
-        existingFrontLineWorker.setName(trim(frontLineWorkerImportRequest.getName()));
-        existingFrontLineWorker.setDesignation(getDesignation(frontLineWorkerImportRequest.getDesignation()));
+    public static FrontLineWorker mapToExistingFlw(FrontLineWorker existingFrontLineWorker, FrontLineWorkerImportRequest request, Location location) {
+        existingFrontLineWorker.setName(trim(request.getName()));
+        existingFrontLineWorker.setDesignation(getDesignation(request.getDesignation()));
         existingFrontLineWorker.setLocation(location);
+        existingFrontLineWorker.setVerificationStatus(VerificationStatus.from(request.getVerificationStatus()));
+        existingFrontLineWorker.setReason(FLW_CSV_UPLOAD_REASON);
 
         return existingFrontLineWorker;
     }

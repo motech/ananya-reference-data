@@ -8,15 +8,33 @@ import org.motechproject.ananya.referencedata.csv.utils.CSVRecordBuilder;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 
 public class LocationImportCSVRequest {
+    private String state;
     private String district;
     private String block;
     private String panchayat;
+    private String newState;
     private String newDistrict;
     private String newBlock;
     private String newPanchayat;
     private String status;
 
     public LocationImportCSVRequest() {
+    }
+
+    public String getNewState() {
+        return newState;
+    }
+
+    public void setNewState(String newState) {
+        this.newState = newState;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getDistrict() {
@@ -81,10 +99,12 @@ public class LocationImportCSVRequest {
 
     public String toCSV() {
         CSVRecordBuilder builder = new CSVRecordBuilder();
-        builder.appendColumn(district)
+        builder.appendColumn(state)
+                .appendColumn(district)
                 .appendColumn(block)
                 .appendColumn(panchayat)
                 .appendColumn(status)
+                .appendColumn(newState)
                 .appendColumn(newDistrict)
                 .appendColumn(newBlock)
                 .appendColumn(newPanchayat);
@@ -92,13 +112,14 @@ public class LocationImportCSVRequest {
     }
 
     public boolean hasAlternateLocation() {
-        return StringUtils.isNotEmpty(newBlock)
+        return StringUtils.isNotEmpty(newState)
+                && StringUtils.isNotEmpty(newBlock)
                 && StringUtils.isNotEmpty(newDistrict)
                 && StringUtils.isNotEmpty(newPanchayat);
     }
 
-    public boolean matchesLocation(String district, String block, String panchayat) {
-        return this.district.equals(district) && this.block.equals(block) && this.panchayat.equals(panchayat);
+    public boolean matchesLocation(String state, String district, String block, String panchayat) {
+        return this.district.equals(district) && this.block.equals(block) && this.panchayat.equals(panchayat) && this.state.equals(state);
     }
 
     @Override
@@ -109,6 +130,7 @@ public class LocationImportCSVRequest {
         LocationImportCSVRequest that = (LocationImportCSVRequest) o;
 
         return new EqualsBuilder()
+                .append(toUpperCase(this.state), toUpperCase(that.state))
                 .append(toUpperCase(this.district), toUpperCase(that.district))
                 .append(toUpperCase(this.block), toUpperCase(that.block))
                 .append(toUpperCase(this.panchayat), toUpperCase(that.panchayat))
@@ -118,6 +140,7 @@ public class LocationImportCSVRequest {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
+                .append(toUpperCase(this.state))
                 .append(toUpperCase(this.district))
                 .append(toUpperCase(this.block))
                 .append(toUpperCase(this.panchayat))
@@ -134,7 +157,8 @@ public class LocationImportCSVRequest {
     }
 
     private void validateLocationFields(LocationValidationResponse validationResponse) {
-        if(StringUtils.isEmpty(district)
+        if(StringUtils.isEmpty(state)
+                || StringUtils.isEmpty(district)
                 || StringUtils.isEmpty(block)
                 || StringUtils.isEmpty(panchayat))
             validationResponse.forBlankFieldsInLocation();
@@ -147,7 +171,7 @@ public class LocationImportCSVRequest {
 
     public String getHeaderRowForErrors() {
         CSVRecordBuilder builder = new CSVRecordBuilder(false);
-        builder.appendColumn("district", "block", "panchayat", "status", "newDistrict", "newBlock", "newPanchayat", "error");
+        builder.appendColumn("state", "district", "block", "panchayat", "status", "newState", "newDistrict", "newBlock", "newPanchayat", "error");
         return builder.toString();
     }
 }

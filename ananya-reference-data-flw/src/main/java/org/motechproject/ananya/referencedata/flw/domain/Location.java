@@ -22,6 +22,9 @@ public class Location extends BaseEntity implements Cloneable {
     @Enumerated(EnumType.STRING)
     private LocationStatus status;
 
+    @Column(name = "state")
+    private String state;
+
     @ManyToOne
     @JoinColumn(name = "alternate_location")
     private Location alternateLocation;
@@ -29,11 +32,12 @@ public class Location extends BaseEntity implements Cloneable {
     public Location() {
     }
 
-    public Location(String district, String block, String panchayat, LocationStatus status, Location alternateLocation) {
+    public Location(String district, String block, String panchayat, String state, LocationStatus status, Location alternateLocation) {
         this.alternateLocation = alternateLocation;
         this.district = WordUtils.capitalizeFully(StringUtils.trimToEmpty(district));
         this.block = WordUtils.capitalizeFully(StringUtils.trimToEmpty(block));
         this.panchayat = WordUtils.capitalizeFully(StringUtils.trimToEmpty(panchayat));
+        this.state = WordUtils.capitalizeFully(StringUtils.trimToEmpty(state));
         this.status = status;
     }
 
@@ -65,6 +69,14 @@ public class Location extends BaseEntity implements Cloneable {
         this.alternateLocation = alternateLocation;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
     public boolean isValidatedLocation() {
         return status == LocationStatus.VALID;
     }
@@ -87,7 +99,7 @@ public class Location extends BaseEntity implements Cloneable {
         if (panchayat != null ? !panchayat.equalsIgnoreCase(location.panchayat) : location.panchayat != null)
             return false;
         if (status != null ? !status.equals(location.status) : location.status != null) return false;
-
+        if (state != null ? !state.equalsIgnoreCase(location.state) : location.state != null) return false;
         return true;
     }
 
@@ -98,6 +110,7 @@ public class Location extends BaseEntity implements Cloneable {
         result = 31 * result + (panchayat != null ? panchayat.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (alternateLocation != null ? alternateLocation.hashCode() : 0);
+        result = 31 * result + (state != null ? state.hashCode() : 0);
         return result;
     }
 

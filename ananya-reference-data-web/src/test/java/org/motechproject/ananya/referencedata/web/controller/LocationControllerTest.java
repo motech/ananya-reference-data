@@ -37,6 +37,8 @@ public class LocationControllerTest {
     @Mock
     private LocationService locationService;
     @Mock
+    private LocationRequest locationRequest;
+    @Mock
     private CsvUploadRequest mockLocationsCsvRequest;
 
     @Before
@@ -46,7 +48,7 @@ public class LocationControllerTest {
 
     @Test
     public void shouldGetLocationMasterCsv() throws Exception {
-        final Location validLocation = new Location("d1", "b1", "p1", LocationStatus.VALID, null);
+        final Location validLocation = new Location("d1", "b1", "p1", "state", LocationStatus.VALID, null);
         String channel = "contact_center";
         when(locationService.getAllValidLocations()).thenReturn(new ArrayList<Location>() {{
             add(validLocation);
@@ -70,7 +72,7 @@ public class LocationControllerTest {
 
     @Test
     public void shouldSyncAValidLocation() throws Exception {
-        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat");
+        LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "state");
 
         MvcResult result = mockMvc(locationController)
                 .perform(post("/location")
@@ -99,6 +101,16 @@ public class LocationControllerTest {
                 .body(TestUtils.toJson(new LocationRequest()).getBytes()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
+    }
+
+    @Test
+    public void sychShouldHandleMissingState() {
+        when(locationRequest.getBlock()).thenReturn("foo");
+        when(locationRequest.getDistrict()).thenReturn("foo");
+        when(locationRequest.getPanchayat()).thenReturn("foo");
+        when(locationRequest.getState()).thenReturn("foo");
+        locationController.syncLocation(locationRequest);
+        verify(locationRequest).handleMissingState();
     }
 
     private void assertLocationResponse(Location expectedLocation, LocationResponse response) {

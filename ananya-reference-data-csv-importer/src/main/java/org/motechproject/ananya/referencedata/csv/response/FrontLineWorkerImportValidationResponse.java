@@ -7,29 +7,65 @@ public class FrontLineWorkerImportValidationResponse {
     private List<String> message = new ArrayList<String>();
     private boolean isValid = true;
 
-    public void forBlankFieldsInLocation() {
-        isValid = false;
-        this.message.add("Blank district, block or panchayat");
-    }
-
-    public void forDuplicateLocation() {
-        isValid = false;
-        this.message.add("Location already present");
-    }
-
     public void forInvalidMsisdn() {
         isValid = false;
-        this.message.add("Invalid msisdn");
+        addMessage("Invalid msisdn");
+    }
+
+    public void forDuplicateRecordWithStatus() {
+        isValid = false;
+        addMessage("Flw with same Msisdn having non blank verification status already present");
+    }
+
+    public void forNonMatchingMsisdn() {
+        isValid = false;
+        addMessage("Msisdn is not matching with the record in DB for the given FLW ID");
+    }
+
+
+    public void forMissingFLW() {
+        isValid = false;
+        addMessage("FLW with given id not found in DB");
+    }
+
+    public void forInvalidAlternateContactNumber() {
+        isValid = false;
+        addMessage("Invalid alternate contact number");
+    }
+
+    public void forInvalidId() {
+        isValid = false;
+        addMessage("Invalid id");
+    }
+
+    public void forInvalidVerificationStatus() {
+        isValid = false;
+        addMessage("Invalid verification status");
+    }
+
+    public void forUpdatingVerificationStatusToBlank() {
+        isValid = false;
+        addMessage("Cannot update non blank verification status to blank");
     }
 
     public void forInvalidLocation() {
         isValid = false;
-        this.message.add("Invalid location");
+        addMessage("Invalid location");
     }
 
     public void forInvalidName() {
         isValid = false;
-        this.message.add("Invalid name");
+        addMessage("Invalid name");
+    }
+
+    public void forMissingVerificationStatus() {
+        isValid = false;
+        addMessage("Verification Status cannot be blank when FLW ID is given");
+    }
+
+    public void forInvalidDuplicatesInCSV() {
+        isValid = false;
+        addMessage("Duplicate with verification status found in CSV");
     }
 
     public boolean isValid() {
@@ -47,5 +83,20 @@ public class FrontLineWorkerImportValidationResponse {
 
     public boolean isInValid() {
         return !isValid;
+    }
+
+    private void addMessage(String message) {
+        if(!this.message.contains(message))
+            this.message.add(message);
+    }
+
+    public void forInvalidDesignation() {
+        isValid = false;
+        addMessage("Designation field has invalid value");
+    }
+
+    public void forBlankDesignation() {
+        isValid = false;
+        addMessage("Designation field is missing");
     }
 }

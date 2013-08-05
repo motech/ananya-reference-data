@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +34,7 @@ public class SyncServiceTest {
     public void shouldPublishFlwDataIntoQueue() {
         when(propertiesService.isSyncOn()).thenReturn(true);
 
-        final FrontLineWorker frontLineWorker = new FrontLineWorker(12L, "Aragorn", Designation.ANM, null);
+        final FrontLineWorker frontLineWorker = new FrontLineWorker(12L, "Aragorn", Designation.ANM, null, VerificationStatus.SUCCESS.name());
         syncService.syncFrontLineWorker(frontLineWorker);
 
         verify(frontLineWorkerSyncService).sync(new ArrayList<FrontLineWorker>(){{add(frontLineWorker);}});
@@ -42,7 +43,7 @@ public class SyncServiceTest {
     @Test
     public void shouldNotPublishFlwDataIntoQueueIfSyncHasBeenTurnedOff() {
         when(propertiesService.isSyncOn()).thenReturn(false);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(12L, "Aragorn", Designation.ANM, null);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(12L, "Aragorn", Designation.ANM, null, VerificationStatus.SUCCESS.name());
 
         syncService.syncFrontLineWorker(frontLineWorker);
 
@@ -53,8 +54,8 @@ public class SyncServiceTest {
     public void shouldSyncAllFrontLineWorkers() {
         when(propertiesService.isSyncOn()).thenReturn(true);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
-        FrontLineWorker frontLineWorker1 = new FrontLineWorker(1234567890L, "name", Designation.ASHA, new Location());
-        FrontLineWorker frontLineWorker2 = new FrontLineWorker(1234567891L, "name", Designation.ASHA, new Location());
+        FrontLineWorker frontLineWorker1 = new FrontLineWorker(1234567890L, "name", Designation.ASHA, new Location(), VerificationStatus.SUCCESS.name());
+        FrontLineWorker frontLineWorker2 = new FrontLineWorker(1234567891L, "name", Designation.ASHA, new Location(), VerificationStatus.SUCCESS.name());
         frontLineWorkers.addAll(Arrays.asList(frontLineWorker1, frontLineWorker2));
 
         syncService.syncAllFrontLineWorkers(frontLineWorkers);

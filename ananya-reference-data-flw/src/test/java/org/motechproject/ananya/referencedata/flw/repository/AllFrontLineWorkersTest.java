@@ -23,7 +23,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     public void setUp() {
         template.deleteAll(template.loadAll(FrontLineWorker.class));
         template.deleteAll(template.loadAll(Location.class));
-        location = new Location("district", "block", "panchayat", LocationStatus.NOT_VERIFIED, null);
+        location = new Location("district", "block", "panchayat", "state", LocationStatus.NOT_VERIFIED, null);
         template.save(location);
     }
 
@@ -36,7 +36,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     @Test
     public void shouldAddFLWToDB() {
         template.save(location);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "name", Designation.AWW, location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "name", Designation.AWW, location, VerificationStatus.SUCCESS.name());
 
         allFrontLineWorkers.add(frontLineWorker);
 
@@ -49,13 +49,13 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     @Test
     public void shouldUpdateFLWToDB() {
         long msisdn = 1234567890L;
-        FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
+        FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location, VerificationStatus.SUCCESS.name());
         String newName = "new_name";
         Designation newDesignation = Designation.ANM;
         String newDistrict = "District1";
         existingFrontLineWorker.setName(newName);
         LocationStatus status = LocationStatus.VALID;
-        Location newLocation = new Location(newDistrict, "block1", "panchayat1", status, null);
+        Location newLocation = new Location(newDistrict, "block1", "panchayat1", "state", status, null);
         template.save(existingFrontLineWorker);
         template.save(newLocation);
         existingFrontLineWorker.setDesignation(newDesignation);
@@ -74,13 +74,13 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     @Test
     public void shouldAddOrUpdateFLWToDB() {
         long msisdn = 1234567890L;
-        FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
+        FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location, VerificationStatus.SUCCESS.name());
         String newName = "new_name";
         Designation newDesignation = Designation.ANM;
         String newDistrict = "District1";
         existingFrontLineWorker.setName(newName);
         LocationStatus status = LocationStatus.VALID;
-        Location newLocation = new Location(newDistrict, "block1", "panchayat1", status, null);
+        Location newLocation = new Location(newDistrict, "block1", "panchayat1", "state", status, null);
         template.save(newLocation);
         existingFrontLineWorker.setDesignation(newDesignation);
         existingFrontLineWorker.setLocation(newLocation);
@@ -98,8 +98,8 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
 
     @Test
     public void shouldGetAllFLWsFromDB() {
-        FrontLineWorker frontLineWorker1 = new FrontLineWorker(1234567890L, "name", Designation.AWW, location);
-        FrontLineWorker frontLineWorker2 = new FrontLineWorker(1234567890L, "name", Designation.AWW, location);
+        FrontLineWorker frontLineWorker1 = new FrontLineWorker(1234567890L, "name", Designation.AWW, location, VerificationStatus.SUCCESS.name());
+        FrontLineWorker frontLineWorker2 = new FrontLineWorker(1234567890L, "name", Designation.AWW, location, VerificationStatus.SUCCESS.name());
 
         allFrontLineWorkers.add(frontLineWorker1);
         allFrontLineWorkers.add(frontLineWorker2);
@@ -111,7 +111,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     @Test
     public void shouldGetAnFLWForTheGivenMsisdn() {
         Long msisdn = 1234567890L;
-        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, "name", Designation.AWW, location, VerificationStatus.SUCCESS.name());
         allFrontLineWorkers.add(frontLineWorker);
 
         List<FrontLineWorker> frontLineWorkerFromDB = allFrontLineWorkers.getByMsisdn(msisdn);
@@ -123,8 +123,8 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     @Test
     public void shouldAddAllFLWs() {
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
-        frontLineWorkers.add(new FrontLineWorker(1234567890L, "name1", Designation.AWW, location));
-        frontLineWorkers.add(new FrontLineWorker(1234567800L, "name2", Designation.AWW, location));
+        frontLineWorkers.add(new FrontLineWorker(1234567890L, "name1", Designation.AWW, location, VerificationStatus.SUCCESS.name()));
+        frontLineWorkers.add(new FrontLineWorker(1234567800L, "name2", Designation.AWW, location, VerificationStatus.SUCCESS.name()));
 
         allFrontLineWorkers.createOrUpdateAll(frontLineWorkers);
 
@@ -138,7 +138,7 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
         Long msisdn = 1234567890L;
         String name = "name";
         Designation anm = Designation.ANM;
-        allFrontLineWorkers.add(new FrontLineWorker(msisdn, name, anm, location, flwId, VerificationStatus.INVALID, null));
+        allFrontLineWorkers.add(new FrontLineWorker(msisdn, name, anm, location, VerificationStatus.INVALID.name(), flwId, null));
 
         FrontLineWorker actualFrontLineWorker = allFrontLineWorkers.getByFlwId(flwId);
 
@@ -156,8 +156,8 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     @Test
     public void shouldGetAllFlwWithGivenLocation() {
         List<FrontLineWorker> expectedFrontLineWorkers = new ArrayList<FrontLineWorker>() {{
-            add(new FrontLineWorker(1234567890L, "name", Designation.ANM, location));
-            add(new FrontLineWorker(1234567891L, "name", Designation.ANM, location));
+            add(new FrontLineWorker(1234567890L, "name", Designation.ANM, location, VerificationStatus.SUCCESS.name()));
+            add(new FrontLineWorker(1234567891L, "name", Designation.ANM, location, VerificationStatus.SUCCESS.name()));
         }};
         template.saveOrUpdateAll(expectedFrontLineWorkers);
 
@@ -170,10 +170,10 @@ public class AllFrontLineWorkersTest extends SpringIntegrationTest {
     public void shouldGetByMsisdnWithNoStatus() {
         final long msisdn = 1234567890L;
         List<FrontLineWorker> flwWithStatus = new ArrayList<FrontLineWorker>() {{
-            add(new FrontLineWorker(msisdn, "name", Designation.ANM, location, UUID.randomUUID(), VerificationStatus.SUCCESS, "reason"));
+            add(new FrontLineWorker(msisdn, "name", Designation.ANM, location, VerificationStatus.SUCCESS.name(), UUID.randomUUID(), "reason"));
         }};
         ArrayList<FrontLineWorker> flwWithoutStatus = new ArrayList<FrontLineWorker>() {{
-            add(new FrontLineWorker(msisdn, "name", Designation.ANM, location));
+            add(new FrontLineWorker(msisdn, "name", Designation.ANM, location, null));
         }};
         template.saveOrUpdateAll(flwWithoutStatus);
         template.saveOrUpdateAll(flwWithStatus);

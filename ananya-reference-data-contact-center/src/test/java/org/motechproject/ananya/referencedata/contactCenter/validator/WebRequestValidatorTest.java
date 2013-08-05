@@ -67,7 +67,7 @@ public class WebRequestValidatorTest {
         errors = new Errors();
         validator.validateVerificationStatus("  ", errors);
         assertEquals(1, errors.getCount());
-        assertEquals("verificationStatus field has invalid value", errors.allMessages());
+        assertEquals("verificationStatus field is missing", errors.allMessages());
 
         errors = new Errors();
         validator.validateVerificationStatus("SUCCESS", errors);
@@ -159,12 +159,13 @@ public class WebRequestValidatorTest {
     @Test
     public void shouldReturnErrorForAnInvalidLocationRequest() {
         Errors errors = new Errors();
-        validator.validateLocation(new LocationRequest(null, null, null, null), errors);
+        validator.validateLocation(new LocationRequest(null, null, null, null, null), errors);
 
-        assertEquals(3, errors.getCount());
+        assertEquals(4, errors.getCount());
         assertTrue(errors.hasMessage("district field is blank"));
         assertTrue(errors.hasMessage("block field is blank"));
         assertTrue(errors.hasMessage("panchayat field is blank"));
+        assertTrue(errors.hasMessage("state field is blank"));
     }
 
     @Test
@@ -179,7 +180,7 @@ public class WebRequestValidatorTest {
     @Test
     public void shouldNotContainErrorsForAValidLocationRequest() {
         Errors errors = new Errors();
-        validator.validateLocation(new LocationRequest("district", "block", "panchayat", null), errors);
+        validator.validateLocation(new LocationRequest("district", "block", "panchayat", "state", null), errors);
 
         assertEquals(0, errors.getCount());
     }
