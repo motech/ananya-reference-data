@@ -39,7 +39,6 @@
                     <printSummary>true</printSummary>
                     <excludes>
                         <exclude>**/functional/**/*.java</exclude>
-                        <exclude>**/newfunctional/**/*.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -95,6 +94,7 @@
                             <argLine>-XX:MaxPermSize=1024M</argLine>
                             <includes>
                                 <include>**/functional/**/*Test.java</include>
+                                <include>**/*IT.java</include>
                             </includes>
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         </configuration>
@@ -241,6 +241,11 @@
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.restfuse</groupId>
+            <artifactId>com.eclipsesource.restfuse</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

@@ -1,6 +1,7 @@
 package org.motechproject.ananya.referencedata.contactCenter.service;
 
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
+import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 
@@ -15,10 +16,11 @@ public class FrontLineWorkerVerificationRequest {
     private Designation designation;
     private LocationRequest location;
     private String reason;
-    private final static UUID DUMMY_UUID = UUID.fromString("11111111-1111-1111-1111-111111111111");
 
     public FrontLineWorkerVerificationRequest(UUID flwId, Long msisdn, VerificationStatus verificationStatus, String name, Designation designation, LocationRequest location, String reason) {
         this.verificationStatus = verificationStatus;
+        if (verificationStatus == VerificationStatus.SUCCESS && location != null)
+            location.handleMissingState();
         this.msisdn = msisdn;
         this.flwId = flwId;
         this.name = name;
@@ -56,6 +58,6 @@ public class FrontLineWorkerVerificationRequest {
     }
 
     public boolean isDummyFlwId(){
-        return DUMMY_UUID.equals(flwId);
+        return FrontLineWorker.DEFAULT_UUID.equals(flwId);
     }
 }

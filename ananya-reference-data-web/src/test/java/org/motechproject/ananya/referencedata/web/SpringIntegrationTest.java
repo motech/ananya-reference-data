@@ -1,19 +1,17 @@
-package org.motechproject.ananya.referencedata.web.functional;
+package org.motechproject.ananya.referencedata.web;
 
 import org.junit.runner.RunWith;
+import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
+import org.motechproject.ananya.referencedata.web.controller.LocationController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")
 @Transactional
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public abstract class SpringIntegrationTest {
-
-    @Autowired
-    @Qualifier("testDataAccessTemplate")
-    protected TestDataAccessTemplate template;
-
 }

@@ -52,7 +52,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
         String oldReason = "oldReason";
         String newReason = "newReason";
-        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), flwId, verificationStatus, oldReason);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(Long.valueOf(msisdn), "", Designation.ANM, new Location(), verificationStatus.name(), flwId, oldReason);
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
@@ -76,8 +76,8 @@ public class FrontLineWorkerContactCenterServiceTest {
         String oldName = "batman";
         String newName = "spiderMan";
 
-        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdnWithPrefix, oldName, Designation.ANM, new Location(), flwId, verificationStatus, null);
-        FrontLineWorker unmodifiedMockFrontLineWorker = new FrontLineWorker(msisdnWithPrefix, oldName, Designation.ANM, new Location(), flwId, verificationStatus, null);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(msisdnWithPrefix, oldName, Designation.ANM, new Location(), verificationStatus.name(), flwId, null);
+        FrontLineWorker unmodifiedMockFrontLineWorker = new FrontLineWorker(msisdnWithPrefix, oldName, Designation.ANM, new Location(), verificationStatus.name(), flwId, null);
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker).thenReturn(unmodifiedMockFrontLineWorker);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
@@ -103,7 +103,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         Long msisdnWithPrefix = 919988776655L;
 
         VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
-        FrontLineWorker frontLineWorker1 = new FrontLineWorker(msisdnWithPrefix, "", Designation.ANM, new Location(), flwId, verificationStatus, null);
+        FrontLineWorker frontLineWorker1 = new FrontLineWorker(msisdnWithPrefix, "", Designation.ANM, new Location(), verificationStatus.name(), flwId, null);
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         frontLineWorkers.add(frontLineWorker1);
@@ -133,8 +133,8 @@ public class FrontLineWorkerContactCenterServiceTest {
         Long msisdnWithPrefix = 919988776655L;
 
         VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
-        FrontLineWorker frontLineWorkerWithStatus = new FrontLineWorker(msisdnWithPrefix, "", Designation.ANM, new Location(), flwId, verificationStatus, null);
-        FrontLineWorker frontLineWorkerWithoutStatus = new FrontLineWorker(msisdnWithPrefix, "", Designation.ANM, new Location());
+        FrontLineWorker frontLineWorkerWithStatus = new FrontLineWorker(msisdnWithPrefix, "", Designation.ANM, new Location(), verificationStatus.name(), flwId, null);
+        FrontLineWorker frontLineWorkerWithoutStatus = new FrontLineWorker(msisdnWithPrefix, "", Designation.ANM, new Location(), VerificationStatus.SUCCESS.name());
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<>();
         frontLineWorkers.add(frontLineWorkerWithStatus);
@@ -187,7 +187,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         String newMsisdn = "911122334455";
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
         String reason = "reason";
-        FrontLineWorker frontLineWorker = new FrontLineWorker(existingMsisdn, "", Designation.ANM, new Location(), flwId, verificationStatus, reason);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(existingMsisdn, "", Designation.ANM, new Location(), verificationStatus.name(), flwId, reason);
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
 
@@ -205,7 +205,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         String newMsisdn = "911122334455";
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
         String reason = "reason";
-        FrontLineWorker frontLineWorker = new FrontLineWorker(existingMsisdn, "", Designation.ANM, new Location(), flwId, verificationStatus, reason);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(existingMsisdn, "", Designation.ANM, new Location(), verificationStatus.name(), flwId, reason);
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
         Errors errors = new Errors();
         errors.add("some");
@@ -226,7 +226,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         String name = "aragorn";
         Designation designation = Designation.ANM;
         Location location = new Location("d1","b1","p1", name, LocationStatus.VALID,null);
-        FrontLineWorker frontLineWorker = new FrontLineWorker(existingMsisdn, name, designation, location, flwId, verificationStatus, null);
+        FrontLineWorker frontLineWorker = new FrontLineWorker(existingMsisdn, name, designation, location, verificationStatus.name(), flwId, null);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
         FrontLineWorkerVerificationWebRequest request = successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), existingMsisdn.toString(), verificationStatus.name(),name,designation.name(),location.getDistrict(),location.getBlock(),location.getPanchayat());

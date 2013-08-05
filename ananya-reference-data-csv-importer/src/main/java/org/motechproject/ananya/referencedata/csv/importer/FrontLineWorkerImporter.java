@@ -3,10 +3,10 @@ package org.motechproject.ananya.referencedata.csv.importer;
 import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportRequest;
 import org.motechproject.ananya.referencedata.csv.response.FrontLineWorkerImportValidationResponse;
 import org.motechproject.ananya.referencedata.csv.service.FrontLineWorkerImportService;
+import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
 import org.motechproject.ananya.referencedata.csv.validator.FrontLineWorkerImportRequestValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
 import org.motechproject.importer.annotation.CSVImporter;
 import org.motechproject.importer.annotation.Post;
 import org.motechproject.importer.annotation.Validate;
@@ -27,11 +27,14 @@ public class FrontLineWorkerImporter {
     private FrontLineWorkerImportService frontLineWorkerImportService;
     private LocationImportService locationImportService;
     private Logger logger = LoggerFactory.getLogger(FrontLineWorkerImporter.class);
+    private FrontLineWorkerImportRequestValidator frontLineWorkerValidator;
 
     @Autowired
-    public FrontLineWorkerImporter(FrontLineWorkerImportService frontLineWorkerImportService, LocationImportService locationImportService) {
+    public FrontLineWorkerImporter(FrontLineWorkerImportService frontLineWorkerImportService, LocationImportService locationImportService
+            , FrontLineWorkerImportRequestValidator frontLineWorkerValidator) {
         this.frontLineWorkerImportService = frontLineWorkerImportService;
         this.locationImportService = locationImportService;
+        this.frontLineWorkerValidator = frontLineWorkerValidator;
     }
 
     @Validate
@@ -40,12 +43,11 @@ public class FrontLineWorkerImporter {
         int recordCounter = 0;
         List<Error> errors = new ArrayList<Error>();
 
-        FrontLineWorkerImportRequestValidator frontLineWorkerValidator = new FrontLineWorkerImportRequestValidator();
         addHeader(errors);
         logger.info("Started validating FLW csv records");
         for (FrontLineWorkerImportRequest frontLineWorkerImportRequest : frontLineWorkerImportRequests) {
             Location location = getLocationFor(frontLineWorkerImportRequest.getLocation());
-            FrontLineWorkerImportValidationResponse responseImport = frontLineWorkerValidator.validate(frontLineWorkerImportRequest, location);
+            FrontLineWorkerImportValidationResponse responseImport = frontLineWorkerValidator.validate(frontLineWorkerImportRequests, frontLineWorkerImportRequest, location);
             if (responseImport.isInValid()) {
                 isValid = false;
             }
@@ -53,6 +55,7 @@ public class FrontLineWorkerImporter {
             errors.add(new Error(frontLineWorkerImportRequest.toCSV() + "," + "\"" + responseImport.getMessage() + "\""));
         }
         logger.info("Completed validating FLW csv records");
+        locationImportService.invalidateCache();
         return constructValidationResponse(isValid, errors);
     }
 
@@ -75,6 +78,6 @@ public class FrontLineWorkerImporter {
     }
 
     private void addHeader(List<Error> errors) {
-        errors.add(new Error("msisdn,name,designation,district,block,panchayat,error"));
+        errors.add(new Error("id,msisdn,name,designation,verification_status,state,district,block,panchayat,error"));
     }
 }

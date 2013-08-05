@@ -3,6 +3,7 @@ package org.motechproject.ananya.referencedata.contactCenter.validator;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.domain.Channel;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
+import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
@@ -17,7 +18,7 @@ public class WebRequestValidator {
             errors.add("id field is missing");
             return;
         }
-        if (!Pattern.matches("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", flwId)) {
+        if (!Pattern.matches(FrontLineWorker.FLW_ID_FORMAT, flwId)) {
             errors.add("id field is not in valid UUID format");
         }
     }
@@ -33,7 +34,7 @@ public class WebRequestValidator {
     }
 
     public void validateVerificationStatus(String verificationStatus, Errors errors) {
-        if (StringUtils.isEmpty(verificationStatus)) {
+        if (StringUtils.isBlank(verificationStatus)) {
             errors.add("verificationStatus field is missing");
             return;
         }

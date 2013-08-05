@@ -14,6 +14,7 @@ import java.io.File;
 public class CsvImporter {
 
     private static final String APPLICATION_CONTEXT_XML = "applicationContext-csv-importer.xml";
+    private static ClassPathXmlApplicationContext context;
 
     public static void main(String args[]) throws Exception {
         try {
@@ -26,11 +27,15 @@ public class CsvImporter {
             importFile(filePath, importType);
         } catch (Exception exception) {
             throw exception;
+        } finally {
+            if (context != null) {
+                context.close();
+            }
         }
     }
 
     private static void importFile(String filePath, ImportType importType) {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_XML);
+        context = new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_XML);
         CSVDataImporter csvDataImporter = (CSVDataImporter) context.getBean("csvDataImporter");
         importType.performAction(filePath, csvDataImporter);
     }

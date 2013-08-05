@@ -9,20 +9,22 @@ import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportR
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
+import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.service.SyncService;
+import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
+import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 public class FrontLineWorkerImportServiceTest {
 
@@ -55,8 +57,8 @@ public class FrontLineWorkerImportServiceTest {
         String panchayat = "panchayat";
         String msisdn1 = "911234454522";
         String msisdn2 = "911234454623";
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest1 = new FrontLineWorkerImportRequest(msisdn1, "name", "ASHA", new LocationRequest(district, block, panchayat, "state", "VALID"));
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest2 = new FrontLineWorkerImportRequest(msisdn2, "name", "ASHA", new LocationRequest(district, block, panchayat, "state", "VALID"));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest1 = new FrontLineWorkerImportRequest(UUID.randomUUID().toString(), msisdn1, "1234567891", "name", "ASHA", VerificationStatus.SUCCESS.name(), new LocationRequest(district, block, panchayat, "state", "VALID"));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest2 = new FrontLineWorkerImportRequest(UUID.randomUUID().toString(), msisdn2, "1234567891", "name", "ASHA", VerificationStatus.SUCCESS.name(), new LocationRequest(district, block, panchayat, "state", "VALID"));
         when(allLocations.getFor("state", district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.VALID, null));
         when(allLocations.getFor("state", district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.VALID, null));
 
@@ -78,7 +80,7 @@ public class FrontLineWorkerImportServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         String msisdn1 = "911234454545";
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest1 = new FrontLineWorkerImportRequest(msisdn1, "name", "ASHA", new LocationRequest(district, block, panchayat, "state", "VALID"));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest1 = new FrontLineWorkerImportRequest(UUID.randomUUID().toString(), msisdn1, "1234567891", "name", "ASHA", VerificationStatus.SUCCESS.name(), new LocationRequest(district, block, panchayat, "state", "VALID"));
         when(allLocations.getFor("state", district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.VALID, null));
         FrontLineWorker expectedFLW = new FrontLineWorker();
         List<FrontLineWorker> frontLineWorkers = new ArrayList<>();
@@ -104,8 +106,8 @@ public class FrontLineWorkerImportServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         String msisdn = "12344545";
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest1 = new FrontLineWorkerImportRequest(msisdn, "name", "ASHA", new LocationRequest(district, block, panchayat, "state", "VALID"));
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest2 = new FrontLineWorkerImportRequest(msisdn, "name", "ASHA", new LocationRequest(district, block, panchayat, "state", "VALID"));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest1 = new FrontLineWorkerImportRequest(UUID.randomUUID().toString(), msisdn, "1234567891", "name", "ASHA", VerificationStatus.SUCCESS.name(), new LocationRequest(district, block, panchayat, "state", "VALID"));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest2 = new FrontLineWorkerImportRequest(UUID.randomUUID().toString(), msisdn, "1234567891", "name", "ASHA", VerificationStatus.SUCCESS.name(), new LocationRequest(district, block, panchayat, "state", "VALID"));
         when(allLocations.getFor("state", district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.VALID, null));
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerImportRequests = new ArrayList<>();
         frontLineWorkerImportRequests.add(frontLineWorkerImportRequest1);
@@ -124,7 +126,7 @@ public class FrontLineWorkerImportServiceTest {
         String block = "block";
         String panchayat = "panchayat";
         String msisdn = "12344545";
-        FrontLineWorkerImportRequest frontLineWorkerImportRequest1 = new FrontLineWorkerImportRequest(msisdn, "name", "ASHA", new LocationRequest(district, block, panchayat, "state", "INVALID"));
+        FrontLineWorkerImportRequest frontLineWorkerImportRequest1 = new FrontLineWorkerImportRequest(UUID.randomUUID().toString(), msisdn, "1234567891", "name", "ASHA", VerificationStatus.SUCCESS.name(), new LocationRequest(district, block, panchayat, "state", "INVALID"));
         Location validLocation = new Location("d1", "b1", "p1", "state", LocationStatus.VALID, null);
         when(allLocations.getFor("state", district, block, panchayat)).thenReturn(new Location(district, block, panchayat, "state", LocationStatus.INVALID, validLocation));
         ArrayList<FrontLineWorkerImportRequest> frontLineWorkerImportRequests = new ArrayList<>();
@@ -145,5 +147,23 @@ public class FrontLineWorkerImportServiceTest {
         frontLineWorkerImportService.getAllByMsisdn(msisdn);
 
         verify(allFrontLineWorkers).getByMsisdn(msisdn);
+    }
+
+    @Test
+    public void shouldMapToExistingFLWWithVerificationStatusIncaseOfDuplicates() {
+        String msisdn = "1234567890";
+        FrontLineWorkerImportRequest request = new FrontLineWorkerImportRequest(null, msisdn, "1234567891", "name", "ASHA", VerificationStatus.SUCCESS.name(), new LocationRequest());
+        UUID flwId = UUID.randomUUID();
+        FrontLineWorker frontLineWorkerWithStatus = new FrontLineWorker(null, null, null, null, VerificationStatus.INVALID.name(), flwId,null);
+        FrontLineWorker otherFrontLineWorker = new FrontLineWorker();
+        when(allFrontLineWorkers.getByMsisdn(PhoneNumber.formatPhoneNumber(msisdn))).thenReturn(asList(otherFrontLineWorker, frontLineWorkerWithStatus));
+        when(allLocations.getFor(anyString(),anyString(),anyString(),anyString())).thenReturn(new Location());
+
+        frontLineWorkerImportService.addAllWithoutValidations(asList(request));
+
+        verify(allFrontLineWorkers).createOrUpdateAll(captor.capture());
+        List<FrontLineWorker> actualFlws = captor.getValue();
+        assertEquals(1, actualFlws.size());
+        assertEquals(flwId, actualFlws.get(0).getFlwId());
     }
 }
