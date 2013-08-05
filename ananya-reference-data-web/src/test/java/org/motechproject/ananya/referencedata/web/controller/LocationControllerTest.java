@@ -14,7 +14,6 @@ import org.motechproject.ananya.referencedata.flw.validators.ValidationException
 import org.motechproject.ananya.referencedata.web.domain.CsvUploadRequest;
 import org.motechproject.ananya.referencedata.web.response.LocationResponse;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
-import org.motechproject.ananya.referencedata.web.service.DefaultRequestValues;
 import org.motechproject.ananya.referencedata.web.utils.TestUtils;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.server.MvcResult;
@@ -39,14 +38,10 @@ public class LocationControllerTest {
     private LocationService locationService;
     @Mock
     private CsvUploadRequest mockLocationsCsvRequest;
-    private DefaultRequestValues defaultRequestValues;
-    private String DEFAULT_STATE;
 
     @Before
     public void setUp() {
-        DEFAULT_STATE = "BIHAR";
-        defaultRequestValues = new DefaultRequestValues(DEFAULT_STATE);
-        locationController = new LocationController(locationService, defaultRequestValues);
+        locationController = new LocationController(locationService);
     }
 
     @Test
@@ -89,26 +84,6 @@ public class LocationControllerTest {
         BaseResponse actualResponse = TestUtils.fromJson(BaseResponse.class, responseString);
         assertEquals(BaseResponse.success("New location has been synchronized successfully."), actualResponse);
     }
-
-    @Test
-    public void shouldSyncAValidLocation_withDefaultState() throws Exception {
-        LocationRequest locationRequest = new LocationRequest(null, "district", "block", "panchayat");
-
-        MvcResult result = mockMvc(locationController)
-                .perform(post("/location")
-                        .body(TestUtils.toJson(locationRequest).getBytes()).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        locationRequest.setState(DEFAULT_STATE);
-
-        assertEquals(LocationStatus.NOT_VERIFIED.name(), locationRequest.getStatus());
-        verify(locationService).createAndFetch(locationRequest);
-        String responseString = result.getResponse().getContentAsString();
-        BaseResponse actualResponse = TestUtils.fromJson(BaseResponse.class, responseString);
-        assertEquals(BaseResponse.success("New location has been synchronized successfully."), actualResponse);
-    }
-
 
     @Test(expected = ValidationException.class)
     public void shouldThrowValidationExceptionAndNotSyncForAnInvalidLocation(){
