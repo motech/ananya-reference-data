@@ -1,6 +1,5 @@
 package org.motechproject.ananya.referencedata.contactCenter.request;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -8,8 +7,8 @@ import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWor
 import org.motechproject.ananya.referencedata.contactCenter.validator.WebRequestValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -53,13 +52,17 @@ public class FrontLineWorkerVerificationWebRequest {
     @JsonProperty
     private LocationRequest location;
 
+    @XmlElement
+    @JsonProperty
+    private ChangeMsisdnRequest changeMsisdn;
+
     @JsonIgnore
     private String channel;
 
     public FrontLineWorkerVerificationWebRequest() {
     }
 
-    public FrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String alternateContactNumber, String verificationStatus, String name, String designation, LocationRequest location, String reason) {
+    public FrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String alternateContactNumber, String verificationStatus, String name, String designation, LocationRequest location, String reason, ChangeMsisdnRequest changeMsisdn) {
         this.flwId = flwId;
         this.msisdn = msisdn;
         this.alternateContactNumber = alternateContactNumber;
@@ -68,6 +71,7 @@ public class FrontLineWorkerVerificationWebRequest {
         this.designation = designation;
         this.location = location;
         this.reason = reason;
+        this.changeMsisdn = changeMsisdn;
     }
 
     public void setChannel(String channel) {
@@ -88,6 +92,7 @@ public class FrontLineWorkerVerificationWebRequest {
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (designation != null ? !designation.equals(that.designation) : that.designation != null) return false;
         if (location != null ? !location.equals(that.location) : that.location != null) return false;
+        if (changeMsisdn != null ? !changeMsisdn.equals(that.changeMsisdn) : that.changeMsisdn != null) return false;
         if (reason != null ? !reason.equals(that.reason) : that.reason != null) return false;
 
         return true;
@@ -102,6 +107,7 @@ public class FrontLineWorkerVerificationWebRequest {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (designation != null ? designation.hashCode() : 0);
         result = 31 * result + (location != null ? location.hashCode() : 0);
+        result = 31 * result + (changeMsisdn != null ? changeMsisdn.hashCode() : 0);
         result = 31 * result + (reason != null ? reason.hashCode() : 0);
         return result;
     }
@@ -135,5 +141,9 @@ public class FrontLineWorkerVerificationWebRequest {
                 formatPhoneNumber(msisdn), altNumber, VerificationStatus.from(verificationStatus),
                 name, designationEnum, location, reason);
         return verificationRequest;
+    }
+
+    public ChangeMsisdnRequest getChangeMsisdn() {
+        return changeMsisdn;
     }
 }

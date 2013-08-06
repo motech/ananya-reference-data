@@ -1,6 +1,7 @@
 package org.motechproject.ananya.referencedata.contactCenter.request;
 
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 
 import java.util.UUID;
@@ -18,6 +19,7 @@ public class FrontLineWorkerVerificationWebRequestBuilder {
     private boolean failedVerification;
     private String state = "state";
     private String alternateContactNumber;
+    private ChangeMsisdnRequest changeMsisdnRequest;
 
     public FrontLineWorkerVerificationWebRequestBuilder withFlwId(String flwId) {
         this.flwId = flwId;
@@ -74,7 +76,7 @@ public class FrontLineWorkerVerificationWebRequestBuilder {
     }
 
     public FrontLineWorkerVerificationWebRequest build() {
-        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, alternateContactNumber, verificationStatus, name, designation, failedVerification ? null : new LocationRequest(district, block, panchayat, state), reason);
+        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, alternateContactNumber, verificationStatus, name, designation, failedVerification ? null : new LocationRequest(district, block, panchayat, state), reason, changeMsisdnRequest);
     }
 
     public FrontLineWorkerVerificationWebRequestBuilder withFailedVerification(boolean failedVerification) {
@@ -93,5 +95,10 @@ public class FrontLineWorkerVerificationWebRequestBuilder {
                 withFlwId(UUID.randomUUID().toString()).
                 withVerificationStatus(VerificationStatus.SUCCESS.name()).
                 withMsisdn("1111111111").build();
+    }
+
+    public FrontLineWorkerVerificationWebRequestBuilder withChangeMsisdn(ChangeMsisdnRequest changeMsisdnRequest) {
+        this.changeMsisdnRequest = changeMsisdnRequest;
+        return this;
     }
 }

@@ -1,6 +1,7 @@
 package org.motechproject.ananya.referencedata.web.utils;
 
 import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequest;
+import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 
 public class FrontLineWorkerVerificationWebRequestBuilder {
@@ -16,6 +17,7 @@ public class FrontLineWorkerVerificationWebRequestBuilder {
     String state;
     private boolean failedVerification;
     private String alternateContactNumber;
+    private ChangeMsisdnRequest changeMsisdn;
 
     public FrontLineWorkerVerificationWebRequestBuilder withFlwId(String flwId) {
         this.flwId = flwId;
@@ -77,11 +79,16 @@ public class FrontLineWorkerVerificationWebRequestBuilder {
     }
 
     public FrontLineWorkerVerificationWebRequest build() {
-        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, alternateContactNumber, verificationStatus, name, designation, failedVerification ? null : new LocationRequest(district, block, panchayat, state), reason);
+        return new FrontLineWorkerVerificationWebRequest(flwId, msisdn, alternateContactNumber, verificationStatus, name, designation, failedVerification ? null : new LocationRequest(district, block, panchayat, state), reason, changeMsisdn);
     }
 
     public FrontLineWorkerVerificationWebRequestBuilder withFailedVerification(boolean failedVerification) {
         this.failedVerification = failedVerification;
+        return this;
+    }
+
+    public FrontLineWorkerVerificationWebRequestBuilder withChangeMsisdn(ChangeMsisdnRequest changeMsisdn) {
+        this.changeMsisdn = changeMsisdn;
         return this;
     }
 }

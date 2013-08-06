@@ -13,12 +13,15 @@ public class LocationRequest {
     @XmlElement
     @JsonProperty
     private String district;
+
     @XmlElement
     @JsonProperty
     private String block;
+
     @XmlElement
     @JsonProperty
     private String panchayat;
+
     @XmlElement
     @JsonProperty
     private String state;
@@ -121,4 +124,5 @@ public class LocationRequest {
     public void handleMissingState() {
         if (state == null) state = "Bihar";
     }
+
 }

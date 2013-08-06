@@ -8,6 +8,7 @@ import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWor
 import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWorkerContactCenterService;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
 import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 import org.motechproject.ananya.referencedata.web.utils.FrontLineWorkerVerificationWebRequestBuilder;
@@ -160,7 +161,7 @@ public class FrontLineWorkerControllerTest {
     private void postFLWRequestXml(FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest, BaseResponse expectedResponse, ResultMatcher statusMatcher, String channel) throws Exception {
         MvcResult result = mockMvc(frontLineWorkerController)
                 .perform(post("/flw").body(TestUtils.toXml(FrontLineWorkerVerificationWebRequest.class, frontLineWorkerWebRequest).getBytes()).param("channel", channel)
-                        .contentType(MediaType.APPLICATION_XML).accept(MediaType.APPLICATION_XML))
+                .contentType(MediaType.APPLICATION_XML).accept(MediaType.APPLICATION_XML))
                 .andExpect(statusMatcher)
                 .andExpect(content().type("application/xml"))
                 .andReturn();
@@ -173,7 +174,7 @@ public class FrontLineWorkerControllerTest {
     private void postFlwRequestJson(FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest, BaseResponse expectedResponse, ResultMatcher statusMatcher) throws Exception {
         MvcResult result = mockMvc(frontLineWorkerController)
                 .perform(post("/flw").body(TestUtils.toJson(frontLineWorkerWebRequest).getBytes()).param("channel", channel)
-                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(statusMatcher)
                 .andExpect(content().type("application/json"))
                 .andReturn();
@@ -195,7 +196,8 @@ public class FrontLineWorkerControllerTest {
         FrontLineWorkerVerificationWebRequestBuilder builder = new FrontLineWorkerVerificationWebRequestBuilder();
         builder.withDefaults().withFlwId(flwId).withMsisdn(msisdn).withVerificationStatus(verificationStatus);
         builder.withName(name).withDesignation(designation).withDistrict(district).withBlock(block).withPanchayat(panchayat)
-        .withState(state).withAlternateContactNumber("");
+        .withState(state)
+        .withAlternateContactNumber("");
         return builder.build();
     }
 }

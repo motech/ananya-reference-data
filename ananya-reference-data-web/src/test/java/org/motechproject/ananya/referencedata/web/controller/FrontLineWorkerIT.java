@@ -45,7 +45,7 @@ public class FrontLineWorkerIT extends SpringIntegrationTest {
     private void createFlw(String state, String msisdn) {
         LocationRequest location = new LocationRequest("D1", "B1", "P1", state);
         webRequest = new FrontLineWorkerVerificationWebRequest(flwId.toString(), msisdn,
-                "", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), location, null);
+                "", VerificationStatus.SUCCESS.name(), "name", Designation.ANM.name(), location, null,null);
         frontLineWorkerController.updateVerifiedFlw(webRequest, "contact_center");
     }
 }
