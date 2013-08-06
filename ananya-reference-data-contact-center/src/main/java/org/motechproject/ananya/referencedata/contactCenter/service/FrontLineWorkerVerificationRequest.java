@@ -3,12 +3,14 @@ package org.motechproject.ananya.referencedata.contactCenter.service;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 
 import java.util.UUID;
 
 public class FrontLineWorkerVerificationRequest {
 
+    private final ChangeMsisdnRequest changeMsisdn;
     private VerificationStatus verificationStatus;
     private Long msisdn;
     private Long alternateContactNumber;
@@ -18,7 +20,7 @@ public class FrontLineWorkerVerificationRequest {
     private LocationRequest location;
     private String reason;
 
-    public FrontLineWorkerVerificationRequest(UUID flwId, Long msisdn, Long alternateContactNumber, VerificationStatus verificationStatus, String name, Designation designation, LocationRequest location, String reason) {
+    public FrontLineWorkerVerificationRequest(UUID flwId, Long msisdn, Long alternateContactNumber, VerificationStatus verificationStatus, String name, Designation designation, LocationRequest location, String reason, ChangeMsisdnRequest changeMsisdn) {
         this.verificationStatus = verificationStatus;
         if (verificationStatus == VerificationStatus.SUCCESS && location != null)
             location.handleMissingState();
@@ -29,6 +31,7 @@ public class FrontLineWorkerVerificationRequest {
         this.designation = designation;
         this.location = location;
         this.reason = reason;
+        this.changeMsisdn = changeMsisdn;
     }
 
     public VerificationStatus getVerificationStatus() {
@@ -65,5 +68,9 @@ public class FrontLineWorkerVerificationRequest {
 
     public boolean isDummyFlwId(){
         return FrontLineWorker.DEFAULT_UUID.equals(flwId);
+    }
+
+    public ChangeMsisdnRequest getChangeMsisdn() {
+        return changeMsisdn;
     }
 }

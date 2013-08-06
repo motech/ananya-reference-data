@@ -140,7 +140,7 @@ public class FrontLineWorkerVerificationWebRequest {
         Long altNumber = isBlank(alternateContactNumber) ? null: formatPhoneNumber(alternateContactNumber);
         FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.fromString(flwId),
                 formatPhoneNumber(msisdn), altNumber, VerificationStatus.from(verificationStatus),
-                name, designationEnum, location, reason);
+                name, designationEnum, location, reason, changeMsisdn);
         return verificationRequest;
     }
 

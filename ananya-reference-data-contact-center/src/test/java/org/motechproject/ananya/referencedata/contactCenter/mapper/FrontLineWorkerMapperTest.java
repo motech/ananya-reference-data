@@ -23,7 +23,7 @@ public class FrontLineWorkerMapperTest {
         UUID flwId = UUID.randomUUID();
         FrontLineWorker existingFrontLineWorker = new FrontLineWorker(msisdn, null, name, anm, location, VerificationStatus.OTHER.name(), flwId, null);
 
-        FrontLineWorker newFrontLineWorker = FrontLineWorkerMapper.mapFrom(new FrontLineWorkerVerificationRequest(flwId, msisdn, null, verificationStatus, null, null, null, reason), existingFrontLineWorker);
+        FrontLineWorker newFrontLineWorker = FrontLineWorkerMapper.mapFrom(new FrontLineWorkerVerificationRequest(flwId, msisdn, null, verificationStatus, null, null, null, reason, null), existingFrontLineWorker);
 
         assertEquals(flwId, newFrontLineWorker.getFlwId());
         assertEquals(msisdn, newFrontLineWorker.getMsisdn());
@@ -43,7 +43,7 @@ public class FrontLineWorkerMapperTest {
         FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, null, name, designation, new Location("d1", "b1", "p1", name, LocationStatus.NOT_VERIFIED, null), VerificationStatus.SUCCESS.name(), flwId, null);
         String newName = "name123";
         Designation newDesignation = Designation.ASHA;
-        FrontLineWorkerVerificationRequest request = new FrontLineWorkerVerificationRequest(flwId, msisdn, alternateContactNumber, VerificationStatus.SUCCESS, newName, newDesignation, new LocationRequest("d", "b", "p", "state"), null);
+        FrontLineWorkerVerificationRequest request = new FrontLineWorkerVerificationRequest(flwId, msisdn, alternateContactNumber, VerificationStatus.SUCCESS, newName, newDesignation, new LocationRequest("d", "b", "p", "state"), null, null);
 
         FrontLineWorker actualFrontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(request, frontLineWorker, expectedLocation);
 
