@@ -5,11 +5,15 @@ import org.motechproject.ananya.referencedata.domain.Channel;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
 import java.util.regex.Pattern;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class WebRequestValidator {
 
@@ -18,27 +22,15 @@ public class WebRequestValidator {
             errors.add("id field is missing");
             return;
         }
-        if (!Pattern.matches(FrontLineWorker.FLW_ID_FORMAT, flwId)) {
-            errors.add("id field is not in valid UUID format");
-        }
+        validateFlwIdFormat(flwId, "id", errors);
     }
 
     public void validateMsisdn(String msisdn, Errors errors) {
-        if (StringUtils.isEmpty(msisdn)) {
-            errors.add("msisdn field is missing");
-            return;
-        }
-        validateMsisdnFormat(msisdn, "msisdn", errors);
-    }
-
-    void validateMsisdnFormat(String msisdn, final String fieldName, Errors errors) {
-        if (!PhoneNumber.isValid(msisdn, false, false)) {
-            errors.add(fieldName + " field has invalid value");
-        }
+        validMsisdnWithMissing(msisdn, "msisdn", errors);
     }
 
     public void validateVerificationStatus(String verificationStatus, Errors errors) {
-        if (StringUtils.isBlank(verificationStatus)) {
+        if (isBlank(verificationStatus)) {
             errors.add("verificationStatus field is missing");
             return;
         }
@@ -95,6 +87,12 @@ public class WebRequestValidator {
             validateMsisdnFormat(alternateContactNumber, "alternate_contact_number", errors);
     }
 
+    void validateMsisdnFormat(String msisdn, final String fieldName, Errors errors) {
+        if (!PhoneNumber.isValid(msisdn, false, false)) {
+            errors.add(fieldName + " field has invalid value");
+        }
+    }
+
     private boolean alternateContactNumberMissing(String alternateContactNumber) {
         return alternateContactNumber == null;
     }
@@ -109,5 +107,26 @@ public class WebRequestValidator {
 
     private boolean verificationSuccess(String verificationStatus) {
         return VerificationStatus.SUCCESS.name().equals(verificationStatus);
+    }
+
+    private void validateFlwIdFormat(String flwId, String id, Errors errors) {
+        if (!Pattern.matches(FrontLineWorker.FLW_ID_FORMAT, flwId)) {
+            errors.add(id +" field is not in valid UUID format");
+        }
+    }
+    private void validMsisdnWithMissing(String msisdn, String fieldName, Errors errors) {
+        if (StringUtils.isEmpty(msisdn)) {
+            errors.add(fieldName +" field is missing");
+            return;
+        }
+        validateMsisdnFormat(msisdn, fieldName, errors);
+    }
+
+    public void validateChangeMsisdn(ChangeMsisdnRequest changeMsisdn, Errors errors) {
+        if(changeMsisdn == null || (isBlank(changeMsisdn.getMsisdn()) && isBlank(changeMsisdn.getFlwId())))
+            return;
+        validMsisdnWithMissing(changeMsisdn.getMsisdn(),"msisdn in newMsisdn", errors);
+        if(isNotBlank(changeMsisdn.getFlwId()))
+            validateFlwIdFormat(changeMsisdn.getFlwId(), "id in newMsisdn", errors);
     }
 }

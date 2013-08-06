@@ -11,13 +11,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "newMsisdn")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChangeMsisdnRequest {
-    @XmlElement
-    @JsonProperty
-    private String msisdn;
+    @JsonProperty(value = "id")
+    @XmlElement(name = "id")
+    private String flwId;
 
     @XmlElement
     @JsonProperty
-    private String flwId;
+    private String msisdn;
 
     public ChangeMsisdnRequest(String msisdn, String flwId) {
         this.msisdn = msisdn;

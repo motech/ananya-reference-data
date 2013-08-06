@@ -52,8 +52,8 @@ public class FrontLineWorkerVerificationWebRequest {
     @JsonProperty
     private LocationRequest location;
 
-    @XmlElement
-    @JsonProperty
+    @JsonProperty(value = "newMsisdn")
+    @XmlElement(name = "newMsisdn")
     private ChangeMsisdnRequest changeMsisdn;
 
     @JsonIgnore
@@ -125,6 +125,7 @@ public class FrontLineWorkerVerificationWebRequest {
         validator.validateAlternateContactNumber(alternateContactNumber, verificationStatus, errors);
         validator.validateVerificationStatus(verificationStatus, errors);
         validator.validateChannel(channel, errors);
+        validator.validateChangeMsisdn(changeMsisdn, errors);
 
         if(designation != null) {
             validator.validateDesignation(designation, errors);

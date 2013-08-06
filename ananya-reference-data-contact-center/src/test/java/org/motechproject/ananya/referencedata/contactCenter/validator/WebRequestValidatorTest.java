@@ -1,6 +1,7 @@
 package org.motechproject.ananya.referencedata.contactCenter.validator;
 
 import org.junit.Test;
+import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
@@ -175,6 +176,63 @@ public class WebRequestValidatorTest {
 
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("location is missing"));
+    }
+
+    @Test
+    public void shouldValidateChangeMsisdnWithInvalidFormat() {
+        Errors errors = new Errors();
+        ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("123", UUID.randomUUID().toString());
+        validator.validateChangeMsisdn(changeMsisdn,errors);
+
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("msisdn in newMsisdn field has invalid value"));
+    }
+
+    @Test
+    public void shouldValidateChangeMsisdnWhenMsisdnIsMissing() {
+        Errors errors = new Errors();
+        ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("", UUID.randomUUID().toString());
+        validator.validateChangeMsisdn(changeMsisdn,errors);
+
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("msisdn in newMsisdn field is missing"));
+    }
+
+    @Test
+    public void shouldValidateFlwIdFormat() {
+        Errors errors = new Errors();
+
+        ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("1234567890", "1");
+        validator.validateChangeMsisdn(changeMsisdn,errors);
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("id in newMsisdn field is not in valid UUID format"));
+    }
+
+    @Test
+    public void shouldAllowNullOrBlankFlwIdInNewMsisdn() {
+        Errors errors = new Errors();
+
+        ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("1234567890", null);
+        validator.validateChangeMsisdn(changeMsisdn,errors);
+        assertEquals(0, errors.getCount());
+
+        changeMsisdn.setFlwId("");
+        validator.validateChangeMsisdn(changeMsisdn,errors);
+        assertEquals(0, errors.getCount());
+    }
+
+    @Test
+    public void shouldIgnoreChangeMsisdnFieldWhenNullOrEmpty() {
+        Errors errors = new Errors();
+        ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("", "");
+
+        validator.validateChangeMsisdn(changeMsisdn,errors);
+        assertEquals(0, errors.getCount());
+
+        changeMsisdn = null;
+
+        validator.validateChangeMsisdn(changeMsisdn,errors);
+        assertEquals(0, errors.getCount());
     }
 
     @Test
