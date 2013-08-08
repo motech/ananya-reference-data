@@ -2,6 +2,7 @@ package org.motechproject.ananya.referencedata.web.controller;
 
 import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
 import org.motechproject.ananya.referencedata.contactCenter.validator.WebRequestValidator;
+import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
 import org.motechproject.ananya.referencedata.flw.validators.CSVRequestValidationException;
@@ -12,6 +13,7 @@ import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import static org.apache.commons.lang.WordUtils.capitalizeFully;
 
 import java.io.IOException;
 
@@ -28,9 +30,10 @@ public class LocationController extends BaseController {
     @RequestMapping(method = RequestMethod.GET, value = "/alllocations", produces = "text/csv")
     public
     @ResponseBody
-    LocationResponseList getLocationMaster(@RequestParam String channel) throws IOException {
+    LocationResponseList getLocationMaster(@RequestParam String channel, @RequestParam(required = false) String state) throws IOException {
+        if(state == null) state = Location.DEFAULT_STATE;
         validateRequest(channel);
-        return LocationResponseMapper.mapValidLocations(locationService.getAllValidLocations());
+        return LocationResponseMapper.mapValidLocations(locationService.getAllValidLocations(capitalizeFully(state)));
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/location")

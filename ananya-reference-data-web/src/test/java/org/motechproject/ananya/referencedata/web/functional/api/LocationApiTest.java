@@ -34,7 +34,7 @@ public class LocationApiTest extends FunctionalTest {
             "\"panchayat\" : \"Masigan\",  " +
             "\"state\" : \"Orissa\"  " +
             "}";
-    public static final String LOCATION_HEADERS = "state,district,block,panchayat";
+    public static final String LOCATION_HEADERS = "district,block,panchayat";
 
     @Context
     private Response response;
