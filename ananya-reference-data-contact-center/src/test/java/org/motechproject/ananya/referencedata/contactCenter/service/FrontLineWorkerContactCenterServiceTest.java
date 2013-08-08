@@ -225,7 +225,7 @@ public class FrontLineWorkerContactCenterServiceTest {
         VerificationStatus verificationStatus = VerificationStatus.INVALID;
         String name = "aragorn";
         Designation designation = Designation.ANM;
-        Location location = new Location("d1","b1","p1", name, LocationStatus.VALID,null);
+        Location location = new Location(name, "d1","b1","p1", LocationStatus.VALID,null);
         FrontLineWorker frontLineWorker = new FrontLineWorker(existingMsisdn, name, designation, location, verificationStatus.name(), flwId, null);
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
         when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);

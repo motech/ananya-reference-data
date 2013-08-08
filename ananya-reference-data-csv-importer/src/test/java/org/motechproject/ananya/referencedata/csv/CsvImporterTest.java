@@ -28,11 +28,11 @@ public class CsvImporterTest extends SpringIntegrationTest {
     @Test
     @Ignore("Have to find a way around hibernate template returning things from the session instead of from the database.")
     public void shouldImportLocationData() throws Exception {
-        Location location1 = new Location("D2", "B2", "P2", "state", LocationStatus.NOT_VERIFIED, null);
-        Location location2 = new Location("D2", "B2", "P4", "state", LocationStatus.NOT_VERIFIED, null);
-        Location location3 = new Location("D5", "B5", "P5", "state", LocationStatus.VALID, null);
-        Location location4 = new Location("D3", "B3", "P3", "state", LocationStatus.VALID, null);
-        Location location5 = new Location("D6", "B6", "P6", "state", LocationStatus.NOT_VERIFIED, null);
+        Location location1 = new Location("state", "D2", "B2", "P2", LocationStatus.NOT_VERIFIED, null);
+        Location location2 = new Location("state", "D2", "B2", "P4", LocationStatus.NOT_VERIFIED, null);
+        Location location3 = new Location("state", "D5", "B5", "P5", LocationStatus.VALID, null);
+        Location location4 = new Location("state", "D3", "B3", "P3", LocationStatus.VALID, null);
+        Location location5 = new Location("state", "D6", "B6", "P6", LocationStatus.NOT_VERIFIED, null);
         template.save(location1);
         template.save(location2);
         template.save(location3);
@@ -46,12 +46,12 @@ public class CsvImporterTest extends SpringIntegrationTest {
         List<Location> locationDimensions = template.loadAll(Location.class);
         assertEquals(6, locationDimensions.size());
 
-        Location expectedLocation1 = new Location("D2", "B2", "P2", "state", LocationStatus.VALID, null);
-        Location expectedLocation2 = new Location("D2", "B2", "P4", "state", LocationStatus.INVALID, expectedLocation1);
-        Location expectedLocation5 = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
-        Location expectedLocation3 = new Location("D3", "B3", "P3", "state", LocationStatus.INVALID, expectedLocation5);
-        Location expectedLocation4 = new Location("D5", "B5", "P5", "state", LocationStatus.VALID, null);
-        Location expectedLocation6 = new Location("D6", "B6", "P6", "state", LocationStatus.IN_REVIEW, null);
+        Location expectedLocation1 = new Location("state", "D2", "B2", "P2", LocationStatus.VALID, null);
+        Location expectedLocation2 = new Location("state", "D2", "B2", "P4", LocationStatus.INVALID, expectedLocation1);
+        Location expectedLocation5 = new Location("state", "D1", "B1", "P1", LocationStatus.VALID, null);
+        Location expectedLocation3 = new Location("state", "D3", "B3", "P3", LocationStatus.INVALID, expectedLocation5);
+        Location expectedLocation4 = new Location("state", "D5", "B5", "P5", LocationStatus.VALID, null);
+        Location expectedLocation6 = new Location("state", "D6", "B6", "P6", LocationStatus.IN_REVIEW, null);
         assertTrue(locationDimensions.contains(expectedLocation1));
         assertTrue(locationDimensions.contains(expectedLocation2));
         assertTrue(locationDimensions.contains(expectedLocation3));
@@ -63,7 +63,7 @@ public class CsvImporterTest extends SpringIntegrationTest {
     @Test
     @Ignore
     public void shouldImportFlwData() throws Exception {
-        Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
+        Location location = new Location("state", "D1", "B1", "P1", LocationStatus.VALID, null);
         template.save(location);
         URL flwData = this.getClass().getResource("/flwData.csv");
         String[] arguments = {"FrontLineWorker", flwData.getPath()};
@@ -77,7 +77,7 @@ public class CsvImporterTest extends SpringIntegrationTest {
 
     @Test(expected = InvalidArgumentException.class)
     public void shouldFailForRandomEntityNames() throws Exception {
-        Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
+        Location location = new Location("state", "D1", "B1", "P1", LocationStatus.VALID, null);
         template.save(location);
         URL flwData = this.getClass().getResource("/flwData.csv");
         String[] arguments = {"RandomEntityName", flwData.getPath()};
@@ -87,7 +87,7 @@ public class CsvImporterTest extends SpringIntegrationTest {
 
     @Test(expected = WrongNumberArgsException.class)
     public void shouldFailForWrongNumberOfArguments() throws Exception {
-        Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
+        Location location = new Location("state", "D1", "B1", "P1", LocationStatus.VALID, null);
         template.save(location);
         URL flwData = this.getClass().getResource("/flwData.csv");
         String[] arguments = {"FrontLineWorker", flwData.getPath(), "unwanted-argument"};
@@ -97,7 +97,7 @@ public class CsvImporterTest extends SpringIntegrationTest {
 
     @Test(expected = FileReadException.class)
     public void shouldFailForInvalidImportFile() throws Exception {
-        Location location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
+        Location location = new Location("state", "D1", "B1", "P1", LocationStatus.VALID, null);
         template.save(location);
         String[] arguments = {"FrontLineWorker", "random-file-path.csv"};
 

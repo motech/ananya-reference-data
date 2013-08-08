@@ -12,6 +12,11 @@ public class FrontLineWorkerImportValidationResponse {
         addMessage("Invalid msisdn");
     }
 
+    public void forMissingMsisdn() {
+        isValid = false;
+        addMessage("Missing Msisdn");
+    }
+
     public void forDuplicateRecordWithStatus() {
         isValid = false;
         addMessage("Flw with same Msisdn having non blank verification status already present");
