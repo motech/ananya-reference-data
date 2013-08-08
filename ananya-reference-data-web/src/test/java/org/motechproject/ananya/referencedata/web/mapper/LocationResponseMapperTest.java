@@ -17,22 +17,22 @@ public class LocationResponseMapperTest {
     @Test
     public void shouldMapToLocationResponseWithoutStatus(){
         List<Location> locationList = new ArrayList();
-        Location location1 = new Location("D1", "B1", "P1", "S1", LocationStatus.IN_REVIEW, null);
-        Location location2 = new Location("D2", "B2", "P2", "S2", LocationStatus.VALID, null);
+        Location location1 = new Location("S1", "D1", "B1", "P1", LocationStatus.IN_REVIEW, null);
+        Location location2 = new Location("S2", "D2", "B2", "P2", LocationStatus.VALID, null);
         locationList.add(location1);
         locationList.add(location2);
 
         LocationResponseList locationResponses = LocationResponseMapper.mapValidLocations(locationList);
 
-        assertLocationResponse(location1,locationResponses.get(0));
-        assertLocationResponse(location2,locationResponses.get(1));
+        assertLocationResponseWithoutState(location1,locationResponses.get(0));
+        assertLocationResponseWithoutState(location2,locationResponses.get(1));
     }
 
     @Test
     public void shouldMapToLocationResponseWithStatus(){
         List<Location> locationList = new ArrayList();
-        Location location1 = new Location("D1", "B1", "P1", "S1", LocationStatus.IN_REVIEW, null);
-        Location location2 = new Location("D2", "B2", "P2", "S2", LocationStatus.VALID, null);
+        Location location1 = new Location("S1", "D1", "B1", "P1", LocationStatus.IN_REVIEW, null);
+        Location location2 = new Location("S2", "D2", "B2", "P2", LocationStatus.VALID, null);
         locationList.add(location1);
         locationList.add(location2);
 
@@ -48,10 +48,12 @@ public class LocationResponseMapperTest {
     }
 
     private void assertLocationResponse(Location expectedLocation, LocationResponse response) {
-        LocationResponse locationResponse = response;
-        assertEquals(expectedLocation.getBlock(), locationResponse.getBlock());
-        assertEquals(expectedLocation.getDistrict(), locationResponse.getDistrict());
-        assertEquals(expectedLocation.getPanchayat(), locationResponse.getPanchayat());
-        assertEquals(expectedLocation.getState(), locationResponse.getState());
+        assertLocationResponseWithoutState(expectedLocation,response);
+        assertEquals(expectedLocation.getState(), response.getState());
+    }
+    private void assertLocationResponseWithoutState(Location expectedLocation, LocationResponse response) {
+        assertEquals(expectedLocation.getBlock(), response.getBlock());
+        assertEquals(expectedLocation.getDistrict(), response.getDistrict());
+        assertEquals(expectedLocation.getPanchayat(), response.getPanchayat());
     }
 }

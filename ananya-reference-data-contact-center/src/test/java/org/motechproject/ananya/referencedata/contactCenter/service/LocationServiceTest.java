@@ -11,13 +11,13 @@ import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.service.SyncService;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LocationServiceTest {
@@ -53,8 +53,8 @@ public class LocationServiceTest {
         String block = "b1";
         String panchayat = "p1";
         String state = "state";
-        Location alternateLocation = new Location("d2", "b2", "p2", state, LocationStatus.VALID, null);
-        Location locationToMap = new Location(district, block, panchayat, state, LocationStatus.INVALID, alternateLocation);
+        Location alternateLocation = new Location(state, "d2", "b2", "p2", LocationStatus.VALID, null);
+        Location locationToMap = new Location(state, district, block, panchayat, LocationStatus.INVALID, alternateLocation);
         LocationRequest request = new LocationRequest(district, block, panchayat, state);
         when(allLocations.getFor(state, district,block,panchayat)).thenReturn(locationToMap);
 
@@ -70,7 +70,7 @@ public class LocationServiceTest {
         String panchayat = "panchayat";
         String state = "state";
         LocationRequest request = new LocationRequest(district, block, panchayat, state, "VALID");
-        Location expectedLocation = new Location(district, block, panchayat, state, LocationStatus.NOT_VERIFIED, null);
+        Location expectedLocation = new Location(state, district, block, panchayat, LocationStatus.NOT_VERIFIED, null);
         when(allLocations.getFor(state, district, block, panchayat)).thenReturn(null);
 
         Location actualLocation = locationService.createAndFetch(request);
@@ -81,18 +81,19 @@ public class LocationServiceTest {
     }
 
     @Test
-    public void shouldGetAllValidLocation() {
-        ArrayList<Location> expectedLocationList = new ArrayList<>();
-        when(allLocations.getForStatuses(LocationStatus.VALID)).thenReturn(expectedLocationList);
+    public void shouldGetAllValidLocationsForAState() {
+        List<Location> expectedLocationList = mock(List.class);
+        String state = "state";
+        when(allLocations.getForStatusesInAGivenState(state, LocationStatus.VALID)).thenReturn(expectedLocationList);
 
-        List<Location> actualLocationList = locationService.getAllValidLocations();
+        List<Location> actualLocationList = locationService.getAllValidLocations(state);
 
         assertEquals(expectedLocationList, actualLocationList);
     }
 
     @Test
     public void shouldGetLocationsToBeVerified() {
-        List<Location> expectedLocationList = Arrays.asList(new Location("d1", "b1", "p1", "state", LocationStatus.NOT_VERIFIED, null));
+        List<Location> expectedLocationList = Arrays.asList(new Location("state", "d1", "b1", "p1", LocationStatus.NOT_VERIFIED, null));
         when(allLocations.getForStatuses(LocationStatus.NOT_VERIFIED, LocationStatus.IN_REVIEW)).thenReturn(expectedLocationList);
 
         List<Location> actualLocationList = locationService.getLocationsToBeVerified();
