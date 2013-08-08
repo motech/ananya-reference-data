@@ -125,7 +125,7 @@ public class FrontLineWorkerVerificationWebRequest {
         validator.validateAlternateContactNumber(alternateContactNumber, verificationStatus, errors);
         validator.validateVerificationStatus(verificationStatus, errors);
         validator.validateChannel(channel, errors);
-        validator.validateChangeMsisdn(changeMsisdn, errors);
+        validator.validateChangeMsisdn(changeMsisdn, errors, verificationStatus);
 
         if(designation != null) {
             validator.validateDesignation(designation, errors);

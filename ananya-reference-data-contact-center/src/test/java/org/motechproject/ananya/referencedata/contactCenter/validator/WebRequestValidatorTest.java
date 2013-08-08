@@ -182,7 +182,7 @@ public class WebRequestValidatorTest {
     public void shouldValidateChangeMsisdnWithInvalidFormat() {
         Errors errors = new Errors();
         ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("123", UUID.randomUUID().toString());
-        validator.validateChangeMsisdn(changeMsisdn,errors);
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
 
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("msisdn in newMsisdn field has invalid value"));
@@ -192,7 +192,7 @@ public class WebRequestValidatorTest {
     public void shouldValidateChangeMsisdnWhenMsisdnIsMissing() {
         Errors errors = new Errors();
         ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("", UUID.randomUUID().toString());
-        validator.validateChangeMsisdn(changeMsisdn,errors);
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
 
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("msisdn in newMsisdn field is missing"));
@@ -203,7 +203,7 @@ public class WebRequestValidatorTest {
         Errors errors = new Errors();
 
         ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("1234567890", "1");
-        validator.validateChangeMsisdn(changeMsisdn,errors);
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("id in newMsisdn field is not in valid UUID format"));
     }
@@ -213,11 +213,11 @@ public class WebRequestValidatorTest {
         Errors errors = new Errors();
 
         ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("1234567890", null);
-        validator.validateChangeMsisdn(changeMsisdn,errors);
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
         assertEquals(0, errors.getCount());
 
         changeMsisdn.setFlwId("");
-        validator.validateChangeMsisdn(changeMsisdn,errors);
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
         assertEquals(0, errors.getCount());
     }
 
@@ -226,13 +226,28 @@ public class WebRequestValidatorTest {
         Errors errors = new Errors();
         ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("", "");
 
-        validator.validateChangeMsisdn(changeMsisdn,errors);
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
         assertEquals(0, errors.getCount());
 
         changeMsisdn = null;
 
-        validator.validateChangeMsisdn(changeMsisdn,errors);
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
         assertEquals(0, errors.getCount());
+    }
+
+    @Test
+    public void shouldNotAllowNewMsisdnForOthersAndInvalidStatuses() {
+        Errors errors = new Errors();
+
+        ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("1234567890", null);
+        validator.validateChangeMsisdn(changeMsisdn,errors, "INVALID");
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("newMsisdn field should not be a part of the request"));
+
+        errors = new Errors();
+        validator.validateChangeMsisdn(changeMsisdn,errors, "OTHERS");
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("newMsisdn field should not be a part of the request"));
     }
 
     @Test

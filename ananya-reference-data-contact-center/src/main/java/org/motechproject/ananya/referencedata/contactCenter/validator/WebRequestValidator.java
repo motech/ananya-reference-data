@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.motechproject.ananya.referencedata.flw.domain.VerificationStatus.*;
 
 public class WebRequestValidator {
 
@@ -34,7 +35,7 @@ public class WebRequestValidator {
             errors.add("verificationStatus field is missing");
             return;
         }
-        if (!VerificationStatus.isValid(verificationStatus))
+        if (!isValid(verificationStatus))
             errors.add("verificationStatus field has invalid value");
     }
 
@@ -106,7 +107,7 @@ public class WebRequestValidator {
     }
 
     private boolean verificationSuccess(String verificationStatus) {
-        return VerificationStatus.SUCCESS.name().equals(verificationStatus);
+        return SUCCESS.name().equals(verificationStatus);
     }
 
     private void validateFlwIdFormat(String flwId, String id, Errors errors) {
@@ -122,9 +123,13 @@ public class WebRequestValidator {
         validateMsisdnFormat(msisdn, fieldName, errors);
     }
 
-    public void validateChangeMsisdn(ChangeMsisdnRequest changeMsisdn, Errors errors) {
+    public void validateChangeMsisdn(ChangeMsisdnRequest changeMsisdn, Errors errors, String verificationStatus) {
         if(changeMsisdn == null || (isBlank(changeMsisdn.getMsisdn()) && isBlank(changeMsisdn.getFlwId())))
             return;
+        if(!SUCCESS.toString().equals(verificationStatus)){
+            errors.add("newMsisdn field should not be a part of the request");
+            return;
+        }
         validMsisdnWithMissing(changeMsisdn.getMsisdn(),"msisdn in newMsisdn", errors);
         if(isNotBlank(changeMsisdn.getFlwId()))
             validateFlwIdFormat(changeMsisdn.getFlwId(), "id in newMsisdn", errors);
