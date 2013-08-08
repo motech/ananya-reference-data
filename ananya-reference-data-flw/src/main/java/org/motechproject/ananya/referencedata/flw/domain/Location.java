@@ -29,15 +29,17 @@ public class Location extends BaseEntity implements Cloneable {
     @JoinColumn(name = "alternate_location")
     private Location alternateLocation;
 
+    public final static String DEFAULT_STATE = "Bihar";
+
     public Location() {
     }
 
-    public Location(String district, String block, String panchayat, String state, LocationStatus status, Location alternateLocation) {
-        this.alternateLocation = alternateLocation;
+    public Location(String state, String district, String block, String panchayat, LocationStatus status, Location alternateLocation) {
+        this.state = WordUtils.capitalizeFully(StringUtils.trimToEmpty(state));
         this.district = WordUtils.capitalizeFully(StringUtils.trimToEmpty(district));
         this.block = WordUtils.capitalizeFully(StringUtils.trimToEmpty(block));
         this.panchayat = WordUtils.capitalizeFully(StringUtils.trimToEmpty(panchayat));
-        this.state = WordUtils.capitalizeFully(StringUtils.trimToEmpty(state));
+        this.alternateLocation = alternateLocation;
         this.status = status;
     }
 

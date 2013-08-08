@@ -46,7 +46,7 @@ public class FrontLineWorkerImporterTest {
 
     @Before
     public void setUp() {
-        location = new Location("D1", "B1", "P1", "state", LocationStatus.VALID, null);
+        location = new Location("state", "D1", "B1", "P1", LocationStatus.VALID, null);
         when(locationImportService.getFor("state", "D1", "B1", "P1")).thenReturn(location);
         FrontLineWorkerImportRequestValidator frontLineWorkerValidator = new FrontLineWorkerImportRequestValidator(allFrontLineWorkers);
         frontLineWorkerImporter = new FrontLineWorkerImporter(frontLineWorkerImportService, locationImportService, frontLineWorkerValidator);

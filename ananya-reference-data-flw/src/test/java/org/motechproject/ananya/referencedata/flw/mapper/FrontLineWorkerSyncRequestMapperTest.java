@@ -17,7 +17,7 @@ public class FrontLineWorkerSyncRequestMapperTest {
         String state = "State1";
         DateTime now = DateTime.now();
         LocationStatus status = LocationStatus.VALID;
-        Location location = new Location(district, block, panchayat, state, status, null);
+        Location location = new Location(state, district, block, panchayat, status, null);
         location.setLastModified(now);
 
         Long msisdn = 1234567890L;

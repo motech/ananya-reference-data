@@ -38,7 +38,7 @@ public class HomeControllerIT extends SpringIntegrationTest {
 
     @Before
     public void setUp() {
-        location = new Location("District", "Block", "Panchayat", "State", LocationStatus.VALID, null);
+        location = new Location("State", "District", "Block", "Panchayat", LocationStatus.VALID, null);
         allLocations.add(location);
     }
 

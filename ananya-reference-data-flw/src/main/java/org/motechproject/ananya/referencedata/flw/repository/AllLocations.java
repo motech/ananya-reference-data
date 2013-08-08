@@ -58,6 +58,14 @@ public class AllLocations {
         return template.findByCriteria(criteria);
     }
 
+    @Transactional(readOnly = true)
+    public List<Location> getForStatusesInAGivenState(String state, LocationStatus... statuses) {
+        DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
+        criteria.add(Restrictions.eq("state", state));
+        criteria.add(Restrictions.in("status", statuses));
+        return template.findByCriteria(criteria);
+    }
+
     private List<Location> getForAlternateLocation(Location location) {
         DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
         criteria.add(Restrictions.eq("alternateLocation", location));

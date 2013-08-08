@@ -3,6 +3,7 @@ package org.motechproject.ananya.referencedata.flw.request;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 
 import javax.xml.bind.annotation.*;
@@ -122,7 +123,7 @@ public class LocationRequest {
     }
 
     public void handleMissingState() {
-        if (state == null) state = "Bihar";
+        if (state == null) state = Location.DEFAULT_STATE;
     }
 
 }

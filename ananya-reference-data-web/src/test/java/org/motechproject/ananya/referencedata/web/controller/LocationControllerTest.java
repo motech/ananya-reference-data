@@ -22,7 +22,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.motechproject.ananya.referencedata.web.utils.MVCTestUtils.mockMvc;
@@ -48,17 +47,34 @@ public class LocationControllerTest {
 
     @Test
     public void shouldGetLocationMasterCsv() throws Exception {
-        final Location validLocation = new Location("d1", "b1", "p1", "state", LocationStatus.VALID, null);
+        final Location validLocation = new Location("State", "d1", "b1", "p1", LocationStatus.VALID, null);
         String channel = "contact_center";
-        when(locationService.getAllValidLocations()).thenReturn(new ArrayList<Location>() {{
+
+        when(locationService.getAllValidLocations("State")).thenReturn(new ArrayList<Location>() {{
             add(validLocation);
         }});
 
-        LocationResponseList responses = locationController.getLocationMaster(channel);
+        LocationResponseList responses = locationController.getLocationMaster(channel, "state");
 
         assertEquals(1, responses.size());
         assertLocationResponse(validLocation, responses.get(0));
-        assertNotNull(responses.getFileName());
+    }
+
+    @Test
+    public void shouldGetLocationMasterCsvForDefaultState() throws Exception {
+        String state = "state";
+        final Location validLocation = new Location(state, "d1", "b1", "p1", LocationStatus.VALID, null);
+        String channel = "contact_center";
+        when(locationService.getAllValidLocations(Location.DEFAULT_STATE)).thenReturn(new ArrayList<Location>() {{
+            add(validLocation);
+        }});
+
+        mockMvc(locationController)
+                .perform(get("/alllocations").param("channel", channel).accept(new MediaType("text", "csv", Charset.defaultCharset())))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        verify(locationService).getAllValidLocations(Location.DEFAULT_STATE);
     }
 
     @Test
