@@ -11,6 +11,7 @@ import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
 import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
+import org.motechproject.ananya.referencedata.web.service.DefaultRequestValues;
 import org.motechproject.ananya.referencedata.web.utils.FrontLineWorkerVerificationWebRequestBuilder;
 import org.motechproject.ananya.referencedata.web.utils.TestUtils;
 import org.springframework.http.MediaType;
@@ -30,6 +31,7 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.s
 
 public class FrontLineWorkerControllerTest {
 
+    private static final String DEFAULT_STATE = "Bihar";
     @Mock
     private FrontLineWorkerContactCenterService frontLineWorkerContactCenterService;
 
@@ -37,11 +39,14 @@ public class FrontLineWorkerControllerTest {
     private FrontLineWorkerController frontLineWorkerController;
     private String flwId = UUID.randomUUID().toString();
     private String channel = "contact_center";
+    private DefaultRequestValues defaultRequestValues;
 
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerController = new FrontLineWorkerController(frontLineWorkerContactCenterService);
+
+        defaultRequestValues = new DefaultRequestValues(DEFAULT_STATE);
+        frontLineWorkerController = new FrontLineWorkerController(frontLineWorkerContactCenterService,defaultRequestValues);
     }
 
     @Test
@@ -111,15 +116,17 @@ public class FrontLineWorkerControllerTest {
     @Test
     public void shouldReturnValidationErrorForAnInvalidSuccessfulFLWRequestJson() throws Exception {
         FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "1234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), null, null, null, null);
+        FrontLineWorkerVerificationWebRequest expectedFrontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "1234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), null, null, null, DEFAULT_STATE);
+
         BaseResponse expectedResponse = BaseResponse.failure("some validation failed");
-        doThrow(new ValidationException("some validation failed")).when(frontLineWorkerContactCenterService).updateVerifiedFlw(frontLineWorkerWebRequest);
+        doThrow(new ValidationException("some validation failed")).when(frontLineWorkerContactCenterService).updateVerifiedFlw(expectedFrontLineWorkerWebRequest);
 
         postFlwRequestJson(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest());
 
         ArgumentCaptor<FrontLineWorkerVerificationWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerVerificationWebRequest.class);
         verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
         FrontLineWorkerVerificationWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
-        assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
+        assertEquals(expectedFrontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
     }
 
     @Test
@@ -137,15 +144,17 @@ public class FrontLineWorkerControllerTest {
     @Test
     public void shouldReturnValidationErrorForAnInvalidSuccessfulFLWRequestXml() throws Exception {
         FrontLineWorkerVerificationWebRequest frontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "1234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), null, null, null, null);
+        FrontLineWorkerVerificationWebRequest expectedFrontLineWorkerWebRequest = successfulFrontLineWorkerVerificationWebRequest(flwId, "1234567890", VerificationStatus.SUCCESS.name(), null, Designation.ANM.name(), null, null, null, DEFAULT_STATE);
+
         BaseResponse expectedResponse = BaseResponse.failure("some validation failed");
-        doThrow(new ValidationException("some validation failed")).when(frontLineWorkerContactCenterService).updateVerifiedFlw(frontLineWorkerWebRequest);
+        doThrow(new ValidationException("some validation failed")).when(frontLineWorkerContactCenterService).updateVerifiedFlw(expectedFrontLineWorkerWebRequest);
 
         postFLWRequestXml(frontLineWorkerWebRequest, expectedResponse, status().isBadRequest(), "contact_center");
 
         ArgumentCaptor<FrontLineWorkerVerificationWebRequest> captor = ArgumentCaptor.forClass(FrontLineWorkerVerificationWebRequest.class);
         verify(frontLineWorkerContactCenterService).updateVerifiedFlw(captor.capture());
         FrontLineWorkerVerificationWebRequest deserializedFrontLineWorkerWebRequest = captor.getValue();
-        assertEquals(frontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
+        assertEquals(expectedFrontLineWorkerWebRequest, deserializedFrontLineWorkerWebRequest);
     }
 
     @Test

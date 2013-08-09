@@ -147,4 +147,8 @@ public class FrontLineWorkerVerificationWebRequest {
     public ChangeMsisdnRequest getChangeMsisdn() {
         return changeMsisdn;
     }
+
+        public LocationRequest getLocation() {
+        return location;
+    }
 }

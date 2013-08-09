@@ -132,12 +132,7 @@ public class FrontLineWorkerVerificationWebRequestTest {
         assertEquals(expectedMsisdn, verificationRequest.getMsisdn());
     }
 
-    @Test
-    public void shouldUseBiharIfStateFieldIsMissing() {
-        FrontLineWorkerVerificationWebRequest webRequest = FrontLineWorkerVerificationWebRequestBuilder.requestWithState(null);
-        FrontLineWorkerVerificationRequest verificationRequest = webRequest.getVerificationRequest();
-        assertEquals("Bihar", verificationRequest.getLocation().getState());
-    }
+
 
     @Test
     public void shouldUseStateWhenProvided() {

@@ -22,8 +22,6 @@ public class FrontLineWorkerVerificationRequest {
 
     public FrontLineWorkerVerificationRequest(UUID flwId, Long msisdn, Long alternateContactNumber, VerificationStatus verificationStatus, String name, Designation designation, LocationRequest location, String reason, ChangeMsisdnRequest changeMsisdn) {
         this.verificationStatus = verificationStatus;
-        if (verificationStatus == VerificationStatus.SUCCESS && location != null)
-            location.handleMissingState();
         this.msisdn = msisdn;
         this.alternateContactNumber = alternateContactNumber;
         this.flwId = flwId;

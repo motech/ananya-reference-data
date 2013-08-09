@@ -14,6 +14,7 @@ import org.motechproject.ananya.referencedata.flw.validators.ValidationException
 import org.motechproject.ananya.referencedata.web.domain.CsvUploadRequest;
 import org.motechproject.ananya.referencedata.web.response.LocationResponse;
 import org.motechproject.ananya.referencedata.web.response.LocationResponseList;
+import org.motechproject.ananya.referencedata.web.service.DefaultRequestValues;
 import org.motechproject.ananya.referencedata.web.utils.TestUtils;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.server.MvcResult;
@@ -22,6 +23,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.motechproject.ananya.referencedata.web.utils.MVCTestUtils.mockMvc;
@@ -32,6 +34,7 @@ import static org.springframework.test.web.server.result.MockMvcResultMatchers.s
 @RunWith(MockitoJUnitRunner.class)
 public class LocationControllerTest {
 
+    private static final String DEFAULT_STATE = "Bihar";
     private LocationController locationController;
     @Mock
     private LocationService locationService;
@@ -40,9 +43,13 @@ public class LocationControllerTest {
     @Mock
     private CsvUploadRequest mockLocationsCsvRequest;
 
+    private DefaultRequestValues defaultRequestValues;
+
+
     @Before
     public void setUp() {
-        locationController = new LocationController(locationService);
+    defaultRequestValues = new DefaultRequestValues(DEFAULT_STATE);
+        locationController = new LocationController(locationService,defaultRequestValues);
     }
 
     @Test
@@ -121,12 +128,9 @@ public class LocationControllerTest {
 
     @Test
     public void sychShouldHandleMissingState() {
-        when(locationRequest.getBlock()).thenReturn("foo");
-        when(locationRequest.getDistrict()).thenReturn("foo");
-        when(locationRequest.getPanchayat()).thenReturn("foo");
-        when(locationRequest.getState()).thenReturn("foo");
+       LocationRequest locationRequest = new LocationRequest("d","b","p",null);
         locationController.syncLocation(locationRequest);
-        verify(locationRequest).handleMissingState();
+        assertTrue(locationRequest.getState().equals(DEFAULT_STATE));
     }
 
     private void assertLocationResponse(Location expectedLocation, LocationResponse response) {
