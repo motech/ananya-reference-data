@@ -122,4 +122,8 @@ public class FrontLineWorkerVerificationWebRequest {
                 name, designationEnum, location, reason);
         return verificationRequest;
     }
+
+    public LocationRequest getLocation() {
+        return location;
+    }
 }
