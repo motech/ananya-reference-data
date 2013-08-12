@@ -52,6 +52,24 @@ public class AllFrontLineWorkersIT extends SpringIntegrationTest {
     }
 
     @Test
+    public void shouldDeleteFlwFromDb() {
+        template.save(location);
+        long alternateContactNumber = 9234567890L;
+        String reason = "reason";
+        FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, alternateContactNumber, "name", Designation.AWW, location, VerificationStatus.SUCCESS.name(), UUID.randomUUID(), reason);
+
+        allFrontLineWorkers.add(frontLineWorker);
+
+        List<FrontLineWorker> frontLineWorkerList = template.loadAll(FrontLineWorker.class);
+        assertEquals(1, frontLineWorkerList.size());
+
+        allFrontLineWorkers.delete(frontLineWorkerList.get(0).getFlwId().toString());
+
+        List<FrontLineWorker> frontLineWorkerList2 = template.loadAll(FrontLineWorker.class);
+        assertEquals(0, frontLineWorkerList2.size());
+    }
+
+    @Test
     public void shouldAllowNullAlternateContactNumber() {
         template.save(location);
         FrontLineWorker frontLineWorker = new FrontLineWorker(1234567890L, "name", Designation.AWW, location, VerificationStatus.SUCCESS.name());

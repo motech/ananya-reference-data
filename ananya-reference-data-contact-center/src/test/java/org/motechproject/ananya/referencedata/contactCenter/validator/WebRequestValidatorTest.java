@@ -36,7 +36,7 @@ public class WebRequestValidatorTest {
         errors = new Errors();
         validator.validateMsisdn("  ", errors);
         assertEquals(1, errors.getCount());
-        assertEquals("msisdn field has invalid value", errors.allMessages());
+        assertEquals("msisdn field is missing", errors.allMessages());
 
         errors = new Errors();
         validator.validateMsisdn("919900503246", errors);

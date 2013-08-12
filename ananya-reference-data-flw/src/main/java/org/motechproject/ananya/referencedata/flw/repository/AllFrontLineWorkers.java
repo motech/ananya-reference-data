@@ -69,4 +69,8 @@ public class AllFrontLineWorkers {
 
         return template.findByCriteria(criteria);
     }
+
+    public void delete(String flwId) {
+        template.delete(getByFlwId(UUID.fromString(flwId)));
+    }
 }

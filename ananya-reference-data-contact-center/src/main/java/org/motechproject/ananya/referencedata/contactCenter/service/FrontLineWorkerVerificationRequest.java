@@ -8,9 +8,11 @@ import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 
 import java.util.UUID;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 public class FrontLineWorkerVerificationRequest {
 
-    private final ChangeMsisdnRequest changeMsisdn;
+    private ChangeMsisdnRequest changeMsisdnRequest;
     private VerificationStatus verificationStatus;
     private Long msisdn;
     private Long alternateContactNumber;
@@ -20,7 +22,7 @@ public class FrontLineWorkerVerificationRequest {
     private LocationRequest location;
     private String reason;
 
-    public FrontLineWorkerVerificationRequest(UUID flwId, Long msisdn, Long alternateContactNumber, VerificationStatus verificationStatus, String name, Designation designation, LocationRequest location, String reason, ChangeMsisdnRequest changeMsisdn) {
+    public FrontLineWorkerVerificationRequest(UUID flwId, Long msisdn, Long alternateContactNumber, VerificationStatus verificationStatus, String name, Designation designation, LocationRequest location, String reason, ChangeMsisdnRequest changeMsisdnRequest) {
         this.verificationStatus = verificationStatus;
         this.msisdn = msisdn;
         this.alternateContactNumber = alternateContactNumber;
@@ -29,7 +31,7 @@ public class FrontLineWorkerVerificationRequest {
         this.designation = designation;
         this.location = location;
         this.reason = reason;
-        this.changeMsisdn = changeMsisdn;
+        this.changeMsisdnRequest = changeMsisdnRequest;
     }
 
     public VerificationStatus getVerificationStatus() {
@@ -64,11 +66,25 @@ public class FrontLineWorkerVerificationRequest {
         return reason;
     }
 
-    public boolean isDummyFlwId(){
+    public boolean isDummyFlwId() {
         return FrontLineWorker.DEFAULT_UUID.equals(flwId);
     }
 
-    public ChangeMsisdnRequest getChangeMsisdn() {
-        return changeMsisdn;
+    public ChangeMsisdnRequest getChangeMsisdnRequest() {
+        return changeMsisdnRequest;
+    }
+
+    public boolean hasMsisdnChange() {
+        return changeMsisdnRequest != null && isNotBlank(changeMsisdnRequest.getMsisdn());
+    }
+
+    boolean duplicateMsisdnExists() {
+        return hasMsisdnChange() && getChangeMsisdnRequest().flwIdInDb();
+    }
+
+    String duplicateFlwId() {
+        if (duplicateMsisdnExists())
+            return getChangeMsisdnRequest().getFlwId();
+        throw new IllegalStateException("Duplicate flw does not exist");
     }
 }

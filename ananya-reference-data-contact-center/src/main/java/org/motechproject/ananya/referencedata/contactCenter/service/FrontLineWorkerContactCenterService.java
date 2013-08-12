@@ -51,14 +51,17 @@ public class FrontLineWorkerContactCenterService {
         FrontLineWorker frontLineWorker = getFrontLineWorker(request);
         //The clone below is done to avoid checking with the same updated session object.
         FrontLineWorker flwFromDb = frontLineWorker.clone();
-        FrontLineWorker updatedFrontLineWorker = constructFrontLineWorker(request, frontLineWorker);
-        if (doesIdenticalFLWexistInDB(updatedFrontLineWorker, flwFromDb)) return;
-
-        allFrontLineWorkers.createOrUpdate(updatedFrontLineWorker);
-        syncService.syncFrontLineWorker(updatedFrontLineWorker);
+        frontLineWorker = mapFlwFields(request, frontLineWorker);
+        FrontLineWorker frontLineWorkerForSync = frontLineWorker.clone();
+        frontLineWorker.updateToNewMsisdn();
+        if (noUpdate(frontLineWorker, flwFromDb)) return;
+        allFrontLineWorkers.createOrUpdate(frontLineWorker);
+        if (request.duplicateMsisdnExists())
+            allFrontLineWorkers.delete(request.duplicateFlwId());
+        syncService.syncFrontLineWorker(frontLineWorkerForSync);
     }
 
-    private FrontLineWorker constructFrontLineWorker(FrontLineWorkerVerificationRequest request, FrontLineWorker frontLineWorker) {
+    private FrontLineWorker mapFlwFields(FrontLineWorkerVerificationRequest request, FrontLineWorker frontLineWorker) {
         FrontLineWorker updatedFrontLineWorker = FrontLineWorkerMapper.mapFrom(request, frontLineWorker);
         if (VerificationStatus.SUCCESS == request.getVerificationStatus()) {
             Location location = locationService.createAndFetch(request.getLocation());
@@ -109,7 +112,8 @@ public class FrontLineWorkerContactCenterService {
         }
     }
 
-    private boolean doesIdenticalFLWexistInDB(FrontLineWorker updatedFrontLineWorker, FrontLineWorker flwFromDb) {
+    private boolean noUpdate(FrontLineWorker updatedFrontLineWorker, FrontLineWorker flwFromDb) {
         return updatedFrontLineWorker.equals(flwFromDb);
     }
+
 }

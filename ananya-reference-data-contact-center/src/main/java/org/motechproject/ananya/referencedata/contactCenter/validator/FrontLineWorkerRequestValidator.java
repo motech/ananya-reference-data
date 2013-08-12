@@ -53,9 +53,6 @@ public class FrontLineWorkerRequestValidator {
         if (request.getDesignation() != null) {
             errors.add("designation field should not be a part of the request");
         }
-        if (request.getChangeMsisdn() != null) {
-            errors.add("newMsisdn field should not be a part of the request");
-        }
     }
 
     private void validateSuccessfulVerification(FrontLineWorkerVerificationRequest request, Errors errors) {

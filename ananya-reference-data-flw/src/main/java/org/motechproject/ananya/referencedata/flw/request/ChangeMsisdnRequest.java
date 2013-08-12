@@ -2,11 +2,15 @@ package org.motechproject.ananya.referencedata.flw.request;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @XmlRootElement(name = "newMsisdn")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -64,5 +68,9 @@ public class ChangeMsisdnRequest {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public boolean flwIdInDb() {
+        return isNotBlank(flwId) && !FrontLineWorker.DEFAULT_UUID_STRING.equals(flwId);
     }
 }

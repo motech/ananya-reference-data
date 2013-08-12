@@ -108,14 +108,6 @@ public class FrontLineWorkerRequestValidatorTest {
     }
 
     @Test
-    public void shouldInvalidateInvalidRequestIfChangeMsisdnFiedlIsPresent() {
-        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber("9900504646"), null, VerificationStatus.INVALID, null, null, null, "fasfsad", new ChangeMsisdnRequest());
-        Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
-        assertEquals(1, errors.getCount());
-        assertEquals("newMsisdn field should not be a part of the request", errors.allMessages());
-    }
-
-    @Test
     public void shouldInvalidateInvalidRequestIfExtraFieldsAreFound() {
         FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber("9900504646"), Long.MIN_VALUE, VerificationStatus.INVALID, "name", Designation.ASHA, new LocationRequest(), "some reason", null);
         Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);

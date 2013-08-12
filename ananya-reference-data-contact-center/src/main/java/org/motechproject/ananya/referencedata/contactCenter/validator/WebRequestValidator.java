@@ -116,7 +116,7 @@ public class WebRequestValidator {
         }
     }
     private void validMsisdnWithMissing(String msisdn, String fieldName, Errors errors) {
-        if (StringUtils.isEmpty(msisdn)) {
+        if (StringUtils.isBlank(msisdn)) {
             errors.add(fieldName +" field is missing");
             return;
         }
@@ -126,7 +126,7 @@ public class WebRequestValidator {
     public void validateChangeMsisdn(ChangeMsisdnRequest changeMsisdn, Errors errors, String verificationStatus) {
         if(changeMsisdn == null || (isBlank(changeMsisdn.getMsisdn()) && isBlank(changeMsisdn.getFlwId())))
             return;
-        if(!SUCCESS.toString().equals(verificationStatus)){
+        if(!SUCCESS.name().equals(verificationStatus)){
             errors.add("newMsisdn field should not be a part of the request");
             return;
         }

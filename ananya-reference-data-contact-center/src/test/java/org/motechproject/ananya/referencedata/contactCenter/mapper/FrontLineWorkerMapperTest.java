@@ -1,16 +1,29 @@
 package org.motechproject.ananya.referencedata.contactCenter.mapper;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWorkerVerificationRequest;
 import org.motechproject.ananya.referencedata.flw.domain.*;
 import org.motechproject.ananya.referencedata.flw.mapper.LocationMapper;
+import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 
 import java.util.UUID;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class FrontLineWorkerMapperTest {
+
+    @Mock
+    private FrontLineWorkerVerificationRequest frontLineWorkerVerificationRequest;
 
     @Test
     public void shouldMapForAnUnsuccessfulFLWWebRequestToAnExistingFLW() {
@@ -51,5 +64,24 @@ public class FrontLineWorkerMapperTest {
         assertEquals(newDesignation.name(), actualFrontLineWorker.getDesignation());
         assertEquals(expectedLocation, actualFrontLineWorker.getLocation());
         assertEquals(alternateContactNumber, actualFrontLineWorker.getAlternateContactNumber());
+        assertNull(actualFrontLineWorker.getNewMsisdn());
+    }
+
+    @Test
+    public void shouldMapChangeMsisdnWhenRequested() {
+        when(frontLineWorkerVerificationRequest.hasMsisdnChange()).thenReturn(true);
+        when(frontLineWorkerVerificationRequest.getChangeMsisdnRequest()).thenReturn(new ChangeMsisdnRequest(null,null));
+        FrontLineWorker frontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(frontLineWorkerVerificationRequest, new FrontLineWorker(), null);
+        verify(frontLineWorkerVerificationRequest).hasMsisdnChange();
+        verify(frontLineWorkerVerificationRequest).getChangeMsisdnRequest();
+        assertTrue(frontLineWorker.msisdnChange());
+    }
+
+    @Test
+    public void shouldMapChangeMsisdnOnlyWhenRequested() {
+        when(frontLineWorkerVerificationRequest.hasMsisdnChange()).thenReturn(false);
+        FrontLineWorker frontLineWorker = FrontLineWorkerMapper.mapSuccessfulRegistration(frontLineWorkerVerificationRequest, new FrontLineWorker(), null);
+        verify(frontLineWorkerVerificationRequest).hasMsisdnChange();
+        assertFalse(frontLineWorker.msisdnChange());
     }
 }
