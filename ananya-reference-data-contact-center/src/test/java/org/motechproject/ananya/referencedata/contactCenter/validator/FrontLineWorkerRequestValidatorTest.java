@@ -162,7 +162,7 @@ public class FrontLineWorkerRequestValidatorTest {
         Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
 
         assertEquals(1, errors.getCount());
-        assertEquals("NewMsisdn FrontLineWorker with given flwId not found", errors.allMessages());
+        assertEquals("FrontLine worker with id in newMsisdn section not found", errors.allMessages());
     }
 
     @Test
@@ -180,6 +180,6 @@ public class FrontLineWorkerRequestValidatorTest {
         Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
 
         assertEquals(1, errors.getCount());
-        assertEquals("Msisdns do not match for FrontLineWorker of NewMsisdn request", errors.allMessages());
+        assertEquals("Frontline worker with new msisdn and id does not exist", errors.allMessages());
     }
 }

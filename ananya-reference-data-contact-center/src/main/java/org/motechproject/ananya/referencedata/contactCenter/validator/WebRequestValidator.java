@@ -13,7 +13,8 @@ import java.util.regex.Pattern;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.motechproject.ananya.referencedata.flw.domain.VerificationStatus.*;
+import static org.motechproject.ananya.referencedata.flw.domain.VerificationStatus.SUCCESS;
+import static org.motechproject.ananya.referencedata.flw.domain.VerificationStatus.isValid;
 
 public class WebRequestValidator {
 
@@ -88,19 +89,26 @@ public class WebRequestValidator {
     }
 
     public void validateChangeMsisdn(ChangeMsisdnRequest changeMsisdn, Errors errors, String verificationStatus, String currentMsisdn) {
-        if(changeMsisdn == null || (isBlank(changeMsisdn.getMsisdn()) && isBlank(changeMsisdn.getFlwId())))
+        if (changeMsisdn == null || (isBlank(changeMsisdn.getMsisdn()) && isBlank(changeMsisdn.getFlwId())))
             return;
-        if(!SUCCESS.name().equals(verificationStatus)){
+        if (!SUCCESS.name().equals(verificationStatus)) {
             errors.add("newMsisdn field should not be a part of the request");
             return;
         }
-        validMsisdnWithMissing(changeMsisdn.getMsisdn(),"msisdn in newMsisdn", errors);
+        validateNewMsisdn(changeMsisdn, errors, currentMsisdn);
+    }
 
-        if(changeMsisdn.getMsisdn().equals(currentMsisdn)){
-            errors.add("New Msisdn cannot be same as current msisdn");
+    private void validateNewMsisdn(ChangeMsisdnRequest changeMsisdn, Errors errors, String currentMsisdn) {
+        if (StringUtils.isBlank(changeMsisdn.getMsisdn())) {
+            errors.add("msisdn in newMsisdn field is missing");
             return;
         }
-        if(isNotBlank(changeMsisdn.getFlwId()))
+        validateMsisdnFormat(changeMsisdn.getMsisdn(), "msisdn in newMsisdn", errors);
+        if (changeMsisdn.getMsisdn().equals(currentMsisdn)) {
+            errors.add("New msisdn cannot be same as current msisdn");
+            return;
+        }
+        if (isNotBlank(changeMsisdn.getFlwId()))
             validateFlwIdFormat(changeMsisdn.getFlwId(), "id in newMsisdn", errors);
     }
 
@@ -126,15 +134,15 @@ public class WebRequestValidator {
         return SUCCESS.name().equals(verificationStatus);
     }
 
-    private void validateFlwIdFormat(String flwId, String id, Errors errors) {
+    private void validateFlwIdFormat(String flwId, String messagePrefix, Errors errors) {
         if (!Pattern.matches(FrontLineWorker.FLW_ID_FORMAT, flwId)) {
-            errors.add(id +" field is not in valid UUID format");
+            errors.add(messagePrefix + " field is not in valid UUID format");
         }
     }
 
     private void validMsisdnWithMissing(String msisdn, String fieldName, Errors errors) {
         if (StringUtils.isBlank(msisdn)) {
-            errors.add(fieldName +" field is missing");
+            errors.add(fieldName + " field is missing");
             return;
         }
         validateMsisdnFormat(msisdn, fieldName, errors);

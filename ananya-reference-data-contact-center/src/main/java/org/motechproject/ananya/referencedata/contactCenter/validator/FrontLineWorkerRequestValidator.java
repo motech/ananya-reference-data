@@ -78,11 +78,11 @@ public class FrontLineWorkerRequestValidator {
             return;
         FrontLineWorker frontLineWorker = allFrontLineWorkers.getByFlwId(UUID.fromString(request.getFlwId()));
         if (frontLineWorker == null) {
-            errors.add("NewMsisdn FrontLineWorker with given flwId not found");
+            errors.add("FrontLine worker with id in newMsisdn section not found");
             return;
         }
         if (!frontLineWorker.getMsisdn().equals(PhoneNumber.formatPhoneNumber(request.getMsisdn()))) {
-            errors.add("Msisdns do not match for FrontLineWorker of NewMsisdn request");
+            errors.add("Frontline worker with new msisdn and id does not exist");
         }
     }
 }

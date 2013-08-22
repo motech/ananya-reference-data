@@ -264,6 +264,6 @@ public class WebRequestValidatorTest {
         validator.validateChangeMsisdn(new ChangeMsisdnRequest("1234567890",""), errors,"SUCCESS", "1234567890");
 
         assertEquals(1, errors.getCount());
-        assertTrue(errors.hasMessage("New Msisdn cannot be same as current msisdn"));
+        assertTrue(errors.hasMessage("New msisdn cannot be same as current msisdn"));
     }
 }
