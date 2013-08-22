@@ -148,4 +148,38 @@ public class FrontLineWorkerRequestValidatorTest {
         assertEquals(1, errors.getCount());
         assertEquals("Conflicting flw record exists. Please try again later.", errors.allMessages());
     }
+
+    @Test
+    public void shouldInvalidateIfNewMsisdnFlwDoesNotExist(){
+        final UUID flwId = UUID.randomUUID();
+        final Long msisdn = 911234567890L;
+        ChangeMsisdnRequest changeMsisdnRequest = new ChangeMsisdnRequest("1231231231",flwId.toString());
+
+        when(allFrontLineWorkers.getByMsisdnWithStatus(msisdn)).thenReturn(new ArrayList<FrontLineWorker>());
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(null);
+        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber(msisdn.toString()), PhoneNumber.formatPhoneNumber(msisdn.toString()), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("D1", "B1", "P1", "state"), null, changeMsisdnRequest);
+
+        Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
+
+        assertEquals(1, errors.getCount());
+        assertEquals("NewMsisdn FrontLineWorker with given flwId not found", errors.allMessages());
+    }
+
+    @Test
+    public void shouldInvalidateIfMsisdnDoesNotMatchWithNewMsisdnRequest(){
+        final UUID flwId = UUID.randomUUID();
+        final Long msisdn = 911234567890L;
+        ChangeMsisdnRequest changeMsisdnRequest = new ChangeMsisdnRequest("1231231231",flwId.toString());
+        FrontLineWorker frontLineWorker = new FrontLineWorker();
+        frontLineWorker.setMsisdn(912234567890L);
+
+        when(allFrontLineWorkers.getByMsisdnWithStatus(msisdn)).thenReturn(new ArrayList<FrontLineWorker>());
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(frontLineWorker);
+        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.randomUUID(), PhoneNumber.formatPhoneNumber(msisdn.toString()), PhoneNumber.formatPhoneNumber(msisdn.toString()), VerificationStatus.SUCCESS, "name", Designation.ASHA, new LocationRequest("D1", "B1", "P1", "state"), null, changeMsisdnRequest);
+
+        Errors errors = frontLineWorkerRequestValidator.validate(verificationRequest);
+
+        assertEquals(1, errors.getCount());
+        assertEquals("Msisdns do not match for FrontLineWorker of NewMsisdn request", errors.allMessages());
+    }
 }

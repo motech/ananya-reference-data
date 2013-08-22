@@ -19,6 +19,7 @@ public abstract class SpringIntegrationTest {
     @Qualifier("testDataAccessTemplate")
     protected TestDataAccessTemplate template;
 
+    @org.junit.Before
     @After
     public void tearDown(){
         template.deleteAll(template.loadAll(FrontLineWorker.class));

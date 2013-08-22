@@ -55,7 +55,9 @@ public class FrontLineWorkerContactCenterService {
         FrontLineWorker frontLineWorkerForSync = frontLineWorker.clone();
         frontLineWorker.updateToNewMsisdn();
         if (noUpdate(frontLineWorker, flwFromDb)) return;
+
         allFrontLineWorkers.createOrUpdate(frontLineWorker);
+
         if (request.duplicateMsisdnExists())
             allFrontLineWorkers.delete(request.duplicateFlwId());
         syncService.syncFrontLineWorker(frontLineWorkerForSync);
