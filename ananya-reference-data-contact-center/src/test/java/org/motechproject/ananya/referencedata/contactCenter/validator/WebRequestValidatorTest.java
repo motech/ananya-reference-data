@@ -182,7 +182,7 @@ public class WebRequestValidatorTest {
     public void shouldValidateChangeMsisdnWithInvalidFormat() {
         Errors errors = new Errors();
         ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("123", UUID.randomUUID().toString());
-        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
 
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("msisdn in newMsisdn field has invalid value"));
@@ -192,7 +192,7 @@ public class WebRequestValidatorTest {
     public void shouldValidateChangeMsisdnWhenMsisdnIsMissing() {
         Errors errors = new Errors();
         ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("", UUID.randomUUID().toString());
-        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
 
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("msisdn in newMsisdn field is missing"));
@@ -203,7 +203,7 @@ public class WebRequestValidatorTest {
         Errors errors = new Errors();
 
         ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("1234567890", "1");
-        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("id in newMsisdn field is not in valid UUID format"));
     }
@@ -213,11 +213,11 @@ public class WebRequestValidatorTest {
         Errors errors = new Errors();
 
         ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("1234567890", null);
-        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
         assertEquals(0, errors.getCount());
 
         changeMsisdn.setFlwId("");
-        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
         assertEquals(0, errors.getCount());
     }
 
@@ -226,12 +226,12 @@ public class WebRequestValidatorTest {
         Errors errors = new Errors();
         ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("", "");
 
-        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
         assertEquals(0, errors.getCount());
 
         changeMsisdn = null;
 
-        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS");
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
         assertEquals(0, errors.getCount());
     }
 
@@ -240,12 +240,12 @@ public class WebRequestValidatorTest {
         Errors errors = new Errors();
 
         ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("1234567890", null);
-        validator.validateChangeMsisdn(changeMsisdn,errors, "INVALID");
+        validator.validateChangeMsisdn(changeMsisdn,errors, "INVALID", null);
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("newMsisdn field should not be a part of the request"));
 
         errors = new Errors();
-        validator.validateChangeMsisdn(changeMsisdn,errors, "OTHERS");
+        validator.validateChangeMsisdn(changeMsisdn,errors, "OTHERS", null);
         assertEquals(1, errors.getCount());
         assertTrue(errors.hasMessage("newMsisdn field should not be a part of the request"));
     }
@@ -256,5 +256,14 @@ public class WebRequestValidatorTest {
         validator.validateLocation(new LocationRequest("district", "block", "panchayat", "state", null), errors);
 
         assertEquals(0, errors.getCount());
+    }
+
+    @Test
+    public void changeMsisdnShouldBeADifferentNumber() {
+        Errors errors = new Errors();
+        validator.validateChangeMsisdn(new ChangeMsisdnRequest("1234567890",""), errors,"SUCCESS", "1234567890");
+
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("New Msisdn cannot be same as current msisdn"));
     }
 }

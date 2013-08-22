@@ -184,10 +184,10 @@ public class FrontLineWorkerContactCenterServiceIT extends SpringIntegrationTest
     }
 
     @Test
-    public void shouldCreateFlwWithNewMsisdnAndRemoveExistingFlwWithChangeMsisdnNumber() {
+    public void shouldCreateFlwWithNewMsisdnAndRemoveExistingFlw() {
         String msisdn = "911234567890";
         String alternateContactNumber = "911234567899";
-        Long newMsisdn = 919888881212L;
+        Long newMsisdn = 911234567891L;
         FrontLineWorker frontLineWorker = new FrontLineWorker(newMsisdn, null, "ToBeDeleted", null, null, VerificationStatus.INVALID.name(), flwId, null);
         String name = "New Name";
         LocationRequest locationRequest = new LocationRequest("district", "block", "panchayat", "state");

@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.domain.Channel;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
-import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
@@ -88,6 +87,23 @@ public class WebRequestValidator {
             validateMsisdnFormat(alternateContactNumber, "alternate_contact_number", errors);
     }
 
+    public void validateChangeMsisdn(ChangeMsisdnRequest changeMsisdn, Errors errors, String verificationStatus, String currentMsisdn) {
+        if(changeMsisdn == null || (isBlank(changeMsisdn.getMsisdn()) && isBlank(changeMsisdn.getFlwId())))
+            return;
+        if(!SUCCESS.name().equals(verificationStatus)){
+            errors.add("newMsisdn field should not be a part of the request");
+            return;
+        }
+        validMsisdnWithMissing(changeMsisdn.getMsisdn(),"msisdn in newMsisdn", errors);
+
+        if(changeMsisdn.getMsisdn().equals(currentMsisdn)){
+            errors.add("New Msisdn cannot be same as current msisdn");
+            return;
+        }
+        if(isNotBlank(changeMsisdn.getFlwId()))
+            validateFlwIdFormat(changeMsisdn.getFlwId(), "id in newMsisdn", errors);
+    }
+
     void validateMsisdnFormat(String msisdn, final String fieldName, Errors errors) {
         if (!PhoneNumber.isValid(msisdn, false, false)) {
             errors.add(fieldName + " field has invalid value");
@@ -115,23 +131,12 @@ public class WebRequestValidator {
             errors.add(id +" field is not in valid UUID format");
         }
     }
+
     private void validMsisdnWithMissing(String msisdn, String fieldName, Errors errors) {
         if (StringUtils.isBlank(msisdn)) {
             errors.add(fieldName +" field is missing");
             return;
         }
         validateMsisdnFormat(msisdn, fieldName, errors);
-    }
-
-    public void validateChangeMsisdn(ChangeMsisdnRequest changeMsisdn, Errors errors, String verificationStatus) {
-        if(changeMsisdn == null || (isBlank(changeMsisdn.getMsisdn()) && isBlank(changeMsisdn.getFlwId())))
-            return;
-        if(!SUCCESS.name().equals(verificationStatus)){
-            errors.add("newMsisdn field should not be a part of the request");
-            return;
-        }
-        validMsisdnWithMissing(changeMsisdn.getMsisdn(),"msisdn in newMsisdn", errors);
-        if(isNotBlank(changeMsisdn.getFlwId()))
-            validateFlwIdFormat(changeMsisdn.getFlwId(), "id in newMsisdn", errors);
     }
 }

@@ -1,11 +1,11 @@
 package org.motechproject.ananya.referencedata.contactCenter.validator;
 
-import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWorkerVerificationRequest;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
+import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -70,17 +70,18 @@ public class FrontLineWorkerRequestValidator {
         if (request.getReason() != null) {
             errors.add("reason field should not be a part of the request");
         }
-        validateChangeMSISDNRequest(request.getChangeMsisdnRequest(),errors);
+        validateChangeMSISDNRequest(request.getChangeMsisdnRequest(), errors);
     }
 
     private void validateChangeMSISDNRequest(ChangeMsisdnRequest request, Errors errors) {
-        if(request ==null||isBlank(request.getFlwId()) || FrontLineWorker.DEFAULT_UUID_STRING.equals(request.getFlwId()))return;
+        if (request == null || isBlank(request.getFlwId()) || FrontLineWorker.DEFAULT_UUID_STRING.equals(request.getFlwId()))
+            return;
         FrontLineWorker frontLineWorker = allFrontLineWorkers.getByFlwId(UUID.fromString(request.getFlwId()));
-        if(frontLineWorker == null){
+        if (frontLineWorker == null) {
             errors.add("NewMsisdn FrontLineWorker with given flwId not found");
             return;
         }
-        if(!frontLineWorker.getMsisdn().toString().equals(request.getMsisdn())){
+        if (!frontLineWorker.getMsisdn().equals(PhoneNumber.formatPhoneNumber(request.getMsisdn()))) {
             errors.add("Msisdns do not match for FrontLineWorker of NewMsisdn request");
         }
     }

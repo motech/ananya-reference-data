@@ -49,7 +49,6 @@ public class FrontLineWorkerContactCenterService {
 
     private void saveAndSync(FrontLineWorkerVerificationRequest request) {
         FrontLineWorker frontLineWorker = getFrontLineWorker(request);
-        //The clone below is done to avoid checking with the same updated session object.
         FrontLineWorker flwFromDb = frontLineWorker.clone();
         frontLineWorker = mapFlwFields(request, frontLineWorker);
         FrontLineWorker frontLineWorkerForSync = frontLineWorker.clone();
@@ -57,10 +56,13 @@ public class FrontLineWorkerContactCenterService {
         if (noUpdate(frontLineWorker, flwFromDb)) return;
 
         allFrontLineWorkers.createOrUpdate(frontLineWorker);
+        removeDuplicates(request);
+        syncService.syncFrontLineWorker(frontLineWorkerForSync);
+    }
 
+    private void removeDuplicates(FrontLineWorkerVerificationRequest request) {
         if (request.duplicateMsisdnExists())
             allFrontLineWorkers.delete(request.duplicateFlwId());
-        syncService.syncFrontLineWorker(frontLineWorkerForSync);
     }
 
     private FrontLineWorker mapFlwFields(FrontLineWorkerVerificationRequest request, FrontLineWorker frontLineWorker) {

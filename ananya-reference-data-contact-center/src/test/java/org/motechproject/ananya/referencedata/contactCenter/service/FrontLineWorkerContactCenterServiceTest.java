@@ -231,7 +231,7 @@ public class FrontLineWorkerContactCenterServiceTest {
     }
 
     @Test
-    public void shouldUpdateFlwWithNewMSISDNWhenOnlyMsisdn() {
+    public void shouldChangeToNewMsisdn() {
         VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
 
         FrontLineWorker frontLineWorker = new FrontLineWorker(MSISDN_WITH_PREFIX, null, NAME, Designation.ANM, new Location(), verificationStatus.name(), flwId, null);
@@ -243,18 +243,11 @@ public class FrontLineWorkerContactCenterServiceTest {
 
         frontLineWorkerContactCenterService.updateVerifiedFlw(webRequest);
 
-        ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
-        verify(allFrontLineWorkers).createOrUpdate(captor.capture());
-        FrontLineWorker actualFrontLineWorker = captor.getValue();
-        assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
-        assertEquals(frontLineWorker.getFlwId(), actualFrontLineWorker.getFlwId());
-        assertEquals(existingLocation, actualFrontLineWorker.getLocation());
-        assertEquals(NEW_MSISDN_WITH_PREFIX, actualFrontLineWorker.getMsisdn());
-        assertEquals(null, actualFrontLineWorker.getReason());
+        verifyFlwUpdateAndSync(verificationStatus, frontLineWorker, existingLocation);
     }
 
     @Test
-    public void shouldUpdateFlwWithNewMSISDNWhenDefaultFlwIdIsGivenAsARequest() {
+    public void shouldChangeToMsisdnPartiallyRegisteredInBBC() {
         VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
 
         FrontLineWorker frontLineWorker = new FrontLineWorker(MSISDN_WITH_PREFIX, null, NAME, Designation.ANM, new Location(), verificationStatus.name(), flwId, null);
@@ -266,18 +259,37 @@ public class FrontLineWorkerContactCenterServiceTest {
 
         frontLineWorkerContactCenterService.updateVerifiedFlw(webRequest);
 
+        verifyFlwUpdateAndSync(verificationStatus, frontLineWorker, existingLocation);
+        verify(allFrontLineWorkers, never()).delete(anyString());
+    }
+
+    @Test
+    public void shouldCompleteRegistrationOfAPartiallyRegisteredFlwWithAnotherMsisdnPartiallyRegisteredInBBC() {
+        VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
+
+        when(allFrontLineWorkers.getByMsisdn(MSISDN)).thenReturn(new ArrayList<FrontLineWorker>());
+        when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
+        Location existingLocation = setUpLocationMock();
+        ChangeMsisdnRequest changeMsisdnRequest = new ChangeMsisdnRequest(NEW_MSISDN.toString(), FrontLineWorker.DEFAULT_UUID_STRING);
+        FrontLineWorkerVerificationWebRequest webRequest = successfulFrontLineWorkerVerificationWebRequest(FrontLineWorker.DEFAULT_UUID_STRING, MSISDN.toString(), verificationStatus.name(), NAME, Designation.ANM.name(), "district", "block", "panchy", changeMsisdnRequest);
+
+        frontLineWorkerContactCenterService.updateVerifiedFlw(webRequest);
+
         ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
         verify(allFrontLineWorkers).createOrUpdate(captor.capture());
         FrontLineWorker actualFrontLineWorker = captor.getValue();
         assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
-        assertEquals(frontLineWorker.getFlwId(), actualFrontLineWorker.getFlwId());
+        assertNotEquals(FrontLineWorker.DEFAULT_UUID, actualFrontLineWorker.getFlwId());
         assertEquals(existingLocation, actualFrontLineWorker.getLocation());
         assertEquals(NEW_MSISDN_WITH_PREFIX, actualFrontLineWorker.getMsisdn());
         assertEquals(null, actualFrontLineWorker.getReason());
+        verifyFlwSync();
+        verify(allFrontLineWorkers, never()).delete(anyString());
+
     }
 
     @Test
-    public void shouldUpdateFlwWithNewMSISDNAndRemoveExistingNewMsisdn() {
+    public void shouldUpdateFlwToMsisdnAlreadyInUse() {
         VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
 
         String newFlwId = UUID.randomUUID().toString();
@@ -290,23 +302,15 @@ public class FrontLineWorkerContactCenterServiceTest {
 
         frontLineWorkerContactCenterService.updateVerifiedFlw(webRequest);
 
-        ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
-        verify(allFrontLineWorkers).createOrUpdate(captor.capture());
+        verifyFlwUpdateAndSync(verificationStatus, frontLineWorker, existingLocation);
         verify(allFrontLineWorkers).delete(newFlwId);
-        FrontLineWorker actualFrontLineWorker = captor.getValue();
-        assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
-        assertEquals(frontLineWorker.getFlwId(), actualFrontLineWorker.getFlwId());
-        assertEquals(existingLocation, actualFrontLineWorker.getLocation());
-        assertEquals(NEW_MSISDN_WITH_PREFIX, actualFrontLineWorker.getMsisdn());
-        assertEquals(null, actualFrontLineWorker.getReason());
     }
 
     @Test
-    public void shouldCreateFlwWithNewMSISDNAndRemoveExistingNewMsisdn() {
+    public void shouldCreateFlwWithMsisdnAlreadyInUse() {
         VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
         String newFlwId = UUID.randomUUID().toString();
 
-        FrontLineWorker frontLineWorker = new FrontLineWorker(MSISDN_WITH_PREFIX, null, NAME, Designation.ANM, new Location(), verificationStatus.name(), FrontLineWorker.DEFAULT_UUID, null);
         when(allFrontLineWorkers.getByMsisdn(MSISDN)).thenReturn(new ArrayList<FrontLineWorker>());
         when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
         Location existingLocation = setUpLocationMock();
@@ -315,38 +319,16 @@ public class FrontLineWorkerContactCenterServiceTest {
 
         frontLineWorkerContactCenterService.updateVerifiedFlw(webRequest);
 
-        ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
-        verify(allFrontLineWorkers).createOrUpdate(captor.capture());
+        ArgumentCaptor<FrontLineWorker> savedFlw = ArgumentCaptor.forClass(FrontLineWorker.class);
+        verify(allFrontLineWorkers).createOrUpdate(savedFlw.capture());
         verify(allFrontLineWorkers).delete(newFlwId);
-        FrontLineWorker actualFrontLineWorker = captor.getValue();
+        FrontLineWorker actualFrontLineWorker = savedFlw.getValue();
         assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
-        assertNotEquals(frontLineWorker.getFlwId(), actualFrontLineWorker.getFlwId());
+        assertNotEquals(FrontLineWorker.DEFAULT_UUID, actualFrontLineWorker.getFlwId());
         assertEquals(existingLocation, actualFrontLineWorker.getLocation());
         assertEquals(NEW_MSISDN_WITH_PREFIX, actualFrontLineWorker.getMsisdn());
         assertEquals(null, actualFrontLineWorker.getReason());
-    }
-
-    @Test
-    public void shouldCreateFlwWithNewMSISDNWhenFlwIdsAreDefaultGuids() {
-        VerificationStatus verificationStatus = VerificationStatus.SUCCESS;
-
-        FrontLineWorker frontLineWorker = new FrontLineWorker(MSISDN_WITH_PREFIX, null, NAME, Designation.ANM, new Location(), verificationStatus.name(), FrontLineWorker.DEFAULT_UUID, null);
-        when(allFrontLineWorkers.getByMsisdn(MSISDN)).thenReturn(new ArrayList<FrontLineWorker>());
-        when(requestValidator.validate(any(FrontLineWorkerVerificationRequest.class))).thenReturn(new Errors());
-        Location existingLocation = setUpLocationMock();
-        ChangeMsisdnRequest changeMsisdnRequest = new ChangeMsisdnRequest(NEW_MSISDN.toString(), FrontLineWorker.DEFAULT_UUID_STRING);
-        FrontLineWorkerVerificationWebRequest webRequest = successfulFrontLineWorkerVerificationWebRequest(flwId.toString(), MSISDN.toString(), verificationStatus.name(), NAME, Designation.ANM.name(), "district", "block", "panchy", changeMsisdnRequest);
-
-        frontLineWorkerContactCenterService.updateVerifiedFlw(webRequest);
-
-        ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
-        verify(allFrontLineWorkers).createOrUpdate(captor.capture());
-        FrontLineWorker actualFrontLineWorker = captor.getValue();
-        assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
-        assertNotEquals(frontLineWorker.getFlwId(), actualFrontLineWorker.getFlwId());
-        assertEquals(existingLocation, actualFrontLineWorker.getLocation());
-        assertEquals(NEW_MSISDN_WITH_PREFIX, actualFrontLineWorker.getMsisdn());
-        assertEquals(null, actualFrontLineWorker.getReason());
+        verifyFlwSync();
     }
 
     private Location setUpLocationMock() {
@@ -369,5 +351,23 @@ public class FrontLineWorkerContactCenterServiceTest {
         builder.withName(name).withDesignation(designation).withDistrict(district).withBlock(block).withPanchayat(panchayat);
         builder.withChangeMsisdn(changeMsisdnRequest);
         return builder.build();
+    }
+
+    private void verifyFlwUpdateAndSync(VerificationStatus verificationStatus, FrontLineWorker frontLineWorker, Location existingLocation) {
+        ArgumentCaptor<FrontLineWorker> captor = ArgumentCaptor.forClass(FrontLineWorker.class);
+        verify(allFrontLineWorkers).createOrUpdate(captor.capture());
+        FrontLineWorker actualFrontLineWorker = captor.getValue();
+        assertEquals(verificationStatus.name(), actualFrontLineWorker.getVerificationStatus());
+        assertEquals(frontLineWorker.getFlwId(), actualFrontLineWorker.getFlwId());
+        assertEquals(existingLocation, actualFrontLineWorker.getLocation());
+        assertEquals(NEW_MSISDN_WITH_PREFIX, actualFrontLineWorker.getMsisdn());
+        assertEquals(null, actualFrontLineWorker.getReason());
+        verifyFlwSync();
+    }
+
+    private void verifyFlwSync() {
+        ArgumentCaptor<FrontLineWorker> syncFlw = ArgumentCaptor.forClass(FrontLineWorker.class);
+        verify(syncService).syncFrontLineWorker(syncFlw.capture());
+        assertEquals(MSISDN_WITH_PREFIX, syncFlw.getValue().getMsisdn());
     }
 }
