@@ -24,12 +24,15 @@ public class FrontLineWorkerSyncRequestMapperTest {
         Long alternateContactNumber = 1234567890L;
         String name = "name1";
         Designation designation = Designation.ANM;
+        NewMsisdn newMsisdn = new NewMsisdn("1234567899", null);
 
         FrontLineWorker frontLineWorker = new FrontLineWorker(msisdn, alternateContactNumber,name, designation, location, VerificationStatus.SUCCESS.name(), UUID.randomUUID(),null);
         frontLineWorker.setLastModified(now);
+        frontLineWorker.setNewMsisdn(newMsisdn);
         FrontLineWorkerSyncRequest frontLineWorkerSyncRequest = FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker);
 
         assertEquals(msisdn.toString(), frontLineWorkerSyncRequest.getMsisdn());
+        assertEquals(newMsisdn.msisdn().toString(), frontLineWorkerSyncRequest.getNewMsisdn());
         assertEquals(alternateContactNumber.toString(), frontLineWorkerSyncRequest.getAlternateContactNumber());
         assertEquals(name, frontLineWorkerSyncRequest.getName());
         assertEquals(designation.name(), frontLineWorkerSyncRequest.getDesignation());
