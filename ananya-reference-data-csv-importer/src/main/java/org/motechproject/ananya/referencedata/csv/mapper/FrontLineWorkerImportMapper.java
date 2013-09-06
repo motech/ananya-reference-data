@@ -10,24 +10,28 @@ import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 
 import java.util.UUID;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 public class FrontLineWorkerImportMapper {
 
     public static final String FLW_CSV_UPLOAD_REASON = "via CSV Upload";
 
     public static FrontLineWorker mapToNewFlw(FrontLineWorkerImportRequest request, Location location) {
-        Long msisdn = StringUtils.isBlank(request.getMsisdn()) ? null : formatMsisdn(request.getMsisdn());
-        String verificationStatus = StringUtils.isBlank(request.getVerificationStatus())? null :request.getVerificationStatus();
-        return new FrontLineWorker(msisdn, trim(request.getName()), Designation.from(request.getDesignation()),
+        Long msisdn = isBlank(request.getMsisdn()) ? null : formatMsisdn(request.getMsisdn());
+        Long alternateContactNumber = isBlank(request.getAlternateContactNumber()) ? null : formatMsisdn(request.getAlternateContactNumber());
+        String verificationStatus = isBlank(request.getVerificationStatus())? null :request.getVerificationStatus();
+        return new FrontLineWorker(msisdn, alternateContactNumber, trim(request.getName()), Designation.from(request.getDesignation()),
                 location, verificationStatus, UUID.randomUUID(), FLW_CSV_UPLOAD_REASON);
     }
 
     public static FrontLineWorker mapToExistingFlw(FrontLineWorker existingFrontLineWorker, FrontLineWorkerImportRequest request, Location location) {
+        if(isNotBlank(request.getAlternateContactNumber()))
+            existingFrontLineWorker.setAlternateContactNumber(formatMsisdn(request.getAlternateContactNumber()));
         existingFrontLineWorker.setName(trim(request.getName()));
         existingFrontLineWorker.setDesignation(getDesignation(request.getDesignation()));
         existingFrontLineWorker.setLocation(location);
         existingFrontLineWorker.setVerificationStatus(VerificationStatus.from(request.getVerificationStatus()));
         existingFrontLineWorker.setReason(FLW_CSV_UPLOAD_REASON);
-
         return existingFrontLineWorker;
     }
 
@@ -39,7 +43,7 @@ public class FrontLineWorkerImportMapper {
     }
 
     private static String trim(String name) {
-        return StringUtils.defaultIfEmpty(StringUtils.strip(name), StringUtils.EMPTY);
+        return defaultIfEmpty(strip(name), EMPTY);
     }
 
     public static Long formatMsisdn(String msisdn) {

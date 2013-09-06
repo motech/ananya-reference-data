@@ -14,7 +14,7 @@ import java.util.List;
 
 import static junit.framework.Assert.*;
 
-public class AllLocationsTest extends SpringIntegrationTest {
+public class AllLocationsIT extends SpringIntegrationTest {
 
     @Autowired
     AllLocations allLocations;

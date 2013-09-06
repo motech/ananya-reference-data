@@ -129,4 +129,10 @@
         </sql>
     </changeSet>
 
+    <changeSet context="setup" author="ThoughtWorks" id="18">
+        <sql splitStatements="false">
+            ALTER TABLE ananya_reference_data.front_line_worker ADD COLUMN alternate_contact_number bigint;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

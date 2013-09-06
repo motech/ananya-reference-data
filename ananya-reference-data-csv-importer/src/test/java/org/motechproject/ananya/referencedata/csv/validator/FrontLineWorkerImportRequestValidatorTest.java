@@ -261,7 +261,7 @@ public class FrontLineWorkerImportRequestValidatorTest {
         Long number = formatPhoneNumber(msisdn);
 
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
-        FrontLineWorker worker = new FrontLineWorker(number, name, Designation.ANM, null, "SUCCESS", UUID.randomUUID(),"");
+        FrontLineWorker worker = new FrontLineWorker(number, null, name, Designation.ANM, null, "SUCCESS", UUID.randomUUID(),"");
         frontLineWorkers.add(worker);
         when(allFrontLineWorkers.getByMsisdnWithStatus(number)).thenReturn(frontLineWorkers);
 
@@ -312,7 +312,7 @@ public class FrontLineWorkerImportRequestValidatorTest {
 
         ArrayList<FrontLineWorker> frontLineWorkers = new ArrayList<FrontLineWorker>();
         UUID flwId = randomUUID();
-        FrontLineWorker worker = new FrontLineWorker(number, name, Designation.ANM, null, "SUCCESS", flwId, "");
+        FrontLineWorker worker = new FrontLineWorker(number, null, name, Designation.ANM, null, "SUCCESS", flwId, "");
         frontLineWorkers.add(worker);
         when(allFrontLineWorkers.getByMsisdnWithStatus(number)).thenReturn(frontLineWorkers);
 

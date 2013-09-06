@@ -62,7 +62,7 @@ public class FrontLineWorkerImporterTest {
 
         assertTrue(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
-        assertEquals("id,msisdn,name,designation,verification_status,state,district,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
+        assertEquals("id,msisdn,alternate_contact_number,name,designation,verification_status,state,district,block,panchayat,error", validationResponse.getErrors().get(0).getMessage());
         verify(locationImportService).invalidateCache();
     }
 
@@ -79,7 +79,7 @@ public class FrontLineWorkerImporterTest {
         assertFalse(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
         String fwlIdInQuotes = String.format("\"%s\",", flwId);
-        assertEquals(fwlIdInQuotes + "\"1asdf67890\",\"name\",\"ANM\",\"SUCCESS\",\"state\",\"D1\",\"B1\",\"P1\",\"[Invalid msisdn]\"", validationResponse.getErrors().get(1).getMessage());
+        assertEquals(fwlIdInQuotes + "\"1asdf67890\",\"1234567891\",\"name\",\"ANM\",\"SUCCESS\",\"state\",\"D1\",\"B1\",\"P1\",\"[Invalid msisdn]\"", validationResponse.getErrors().get(1).getMessage());
         verify(locationImportService).invalidateCache();
     }
 
@@ -95,7 +95,7 @@ public class FrontLineWorkerImporterTest {
 
     @Test
     public void nonBlankVerificationStatusInDBCannotBeBlanked() {
-        FrontLineWorker flwInDB = new FrontLineWorker(parseLong(msisdn), null, null, location, VerificationStatus.SUCCESS.name(), UUID.randomUUID(), "");
+        FrontLineWorker flwInDB = new FrontLineWorker(parseLong(msisdn), null, null, null, location, VerificationStatus.SUCCESS.name(), UUID.randomUUID(), "");
         when(allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn))).thenReturn(asList(flwInDB));
         FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest("", msisdn, null, null, Designation.ANM.name(), null, locationRequest);
 
@@ -132,7 +132,7 @@ public class FrontLineWorkerImporterTest {
 
     @Test
     public void shouldFailIfUnverifiedFlwIsPresentInDBWithDuplicateVerifiedFlw() {
-        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(new FrontLineWorker(formatPhoneNumber(msisdn), null, null, null, null, flwId, null));
+        when(allFrontLineWorkers.getByFlwId(flwId)).thenReturn(new FrontLineWorker(formatPhoneNumber(msisdn), null, null, null, null, null, flwId, null));
         FrontLineWorker flwInDB = new FrontLineWorker(parseLong(msisdn), null, null, location, VerificationStatus.SUCCESS.name());
         when(allFrontLineWorkers.getByMsisdnWithStatus(formatPhoneNumber(msisdn))).thenReturn(Arrays.asList(flwInDB));
         FrontLineWorkerImportRequest frontLineWorkerImportRequest = new FrontLineWorkerImportRequest(flwId.toString(), msisdn, null, null, Designation.ANM.name(), VerificationStatus.SUCCESS.name(), locationRequest);

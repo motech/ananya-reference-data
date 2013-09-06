@@ -7,17 +7,23 @@ import org.joda.time.DateTime;
 import java.io.Serializable;
 
 public class FrontLineWorkerSyncRequest implements Serializable {
+    private String alternateContactNumber;
     private String name;
     private String msisdn;
+    private String newMsisdn;
     private String designation;
     private DateTime lastModified;
     private LocationContract location;
     private String flwId;
     private String verificationStatus;
 
-    public FrontLineWorkerSyncRequest(String msisdn, String name, String designation, DateTime lastModified, LocationContract location, String flwId, String verificationStatus) {
-        this.name = name;
+    public FrontLineWorkerSyncRequest(String msisdn, Long alternateContactNumber, String name, String designation,
+                                      DateTime lastModified, LocationContract location, String flwId,
+                                      String verificationStatus, String newMsisdn) {
         this.msisdn = msisdn;
+        this.newMsisdn = newMsisdn;
+        this.alternateContactNumber = alternateContactNumber == null ? null : alternateContactNumber.toString();
+        this.name = name;
         this.designation = designation;
         this.lastModified = lastModified;
         this.location = location;
@@ -31,6 +37,10 @@ public class FrontLineWorkerSyncRequest implements Serializable {
 
     public String getMsisdn() {
         return msisdn;
+    }
+
+    public String getAlternateContactNumber() {
+        return alternateContactNumber;
     }
 
     public String getDesignation() {
@@ -53,6 +63,10 @@ public class FrontLineWorkerSyncRequest implements Serializable {
         return verificationStatus;
     }
 
+    public String getNewMsisdn() {
+        return newMsisdn;
+    }
+
     @Override
     public boolean equals(Object other) {
         return EqualsBuilder.reflectionEquals(this, other);
@@ -62,4 +76,5 @@ public class FrontLineWorkerSyncRequest implements Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
+
 }

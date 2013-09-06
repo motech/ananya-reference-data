@@ -16,6 +16,9 @@ public class FrontLineWorker extends BaseEntity implements Cloneable {
     @Column(name = "msisdn")
     private Long msisdn;
 
+    @Column(name = "alternate_contact_number")
+    private Long alternateContactNumber;
+
     @Column(name = "name")
     private String name;
 
@@ -36,6 +39,9 @@ public class FrontLineWorker extends BaseEntity implements Cloneable {
     @Column(name = "reason")
     private String reason;
 
+    @Transient
+    private NewMsisdn newMsisdn;
+
     public FrontLineWorker() {
     }
 
@@ -44,10 +50,10 @@ public class FrontLineWorker extends BaseEntity implements Cloneable {
     }
 
     public FrontLineWorker(Long msisdn, String name, Designation designation, Location location, String verificationStatus) {
-        this(msisdn, name, designation, location, verificationStatus, UUID.randomUUID(), null);
+        this(msisdn, null, name, designation, location, verificationStatus, UUID.randomUUID(), null);
     }
 
-    public FrontLineWorker(Long msisdn, String name, Designation designation, Location location, String verificationStatus, UUID flwId, String reason) {
+    public FrontLineWorker(Long msisdn, Long alternateContactNumber, String name, Designation designation, Location location, String verificationStatus, UUID flwId, String reason) {
         this.flwId = flwId;
         this.msisdn = msisdn;
         this.name = name;
@@ -55,10 +61,15 @@ public class FrontLineWorker extends BaseEntity implements Cloneable {
         this.location = location;
         this.verificationStatus = verificationStatus;
         this.reason = reason;
+        this.alternateContactNumber = alternateContactNumber;
     }
 
     public Long getMsisdn() {
         return msisdn;
+    }
+
+    public Long getAlternateContactNumber() {
+        return alternateContactNumber;
     }
 
     public String getName() {
@@ -89,8 +100,12 @@ public class FrontLineWorker extends BaseEntity implements Cloneable {
         this.msisdn = msisdn;
     }
 
+    public void setAlternateContactNumber(Long alternateContactNumber) {
+        this.alternateContactNumber = alternateContactNumber;
+    }
+
     public void setVerificationStatus(VerificationStatus verificationStatus) {
-        this.verificationStatus = verificationStatus == null? null : verificationStatus.name();
+        this.verificationStatus = verificationStatus == null ? null : verificationStatus.name();
     }
 
     public void setName(String name) {
@@ -133,6 +148,8 @@ public class FrontLineWorker extends BaseEntity implements Cloneable {
         if (flwId != null ? !flwId.equals(that.flwId) : that.flwId != null) return false;
         if (location != null ? !location.equals(that.location) : that.location != null) return false;
         if (msisdn != null ? !msisdn.equals(that.msisdn) : that.msisdn != null) return false;
+        if (alternateContactNumber != null ? !alternateContactNumber.equals(that.alternateContactNumber) : that.alternateContactNumber != null)
+            return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (reason != null ? !reason.equals(that.reason) : that.reason != null) return false;
         if (verificationStatus != null ? !verificationStatus.equals(that.verificationStatus) : that.verificationStatus != null)
@@ -144,6 +161,7 @@ public class FrontLineWorker extends BaseEntity implements Cloneable {
     @Override
     public int hashCode() {
         int result = msisdn != null ? msisdn.hashCode() : 0;
+        result = 31 * result + (alternateContactNumber != null ? alternateContactNumber.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (designation != null ? designation.hashCode() : 0);
         result = 31 * result + (location != null ? location.hashCode() : 0);
@@ -156,5 +174,22 @@ public class FrontLineWorker extends BaseEntity implements Cloneable {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public void setNewMsisdn(NewMsisdn newMsisdn) {
+        this.newMsisdn = newMsisdn;
+    }
+
+    public void updateToNewMsisdn() {
+        if (msisdnChange())
+            setMsisdn(newMsisdn.msisdn());
+    }
+
+    public boolean msisdnChange() {
+        return newMsisdn != null;
+    }
+
+    public NewMsisdn getNewMsisdn() {
+        return newMsisdn;
     }
 }
