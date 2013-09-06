@@ -154,7 +154,7 @@ public class FrontLineWorkerImportServiceTest {
         String msisdn = "1234567890";
         FrontLineWorkerImportRequest request = new FrontLineWorkerImportRequest(null, msisdn, "1234567891", "name", "ASHA", VerificationStatus.SUCCESS.name(), new LocationRequest());
         UUID flwId = UUID.randomUUID();
-        FrontLineWorker frontLineWorkerWithStatus = new FrontLineWorker(null, null, null, null, VerificationStatus.INVALID.name(), flwId,null);
+        FrontLineWorker frontLineWorkerWithStatus = new FrontLineWorker(null, null, null, null, null, VerificationStatus.INVALID.name(), flwId,null);
         FrontLineWorker otherFrontLineWorker = new FrontLineWorker();
         when(allFrontLineWorkers.getByMsisdn(PhoneNumber.formatPhoneNumber(msisdn))).thenReturn(asList(otherFrontLineWorker, frontLineWorkerWithStatus));
         when(allLocations.getFor(anyString(),anyString(),anyString(),anyString())).thenReturn(new Location());

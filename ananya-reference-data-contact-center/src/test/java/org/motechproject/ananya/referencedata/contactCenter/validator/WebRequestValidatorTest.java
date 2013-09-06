@@ -1,6 +1,7 @@
 package org.motechproject.ananya.referencedata.contactCenter.validator;
 
 import org.junit.Test;
+import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
@@ -35,7 +36,7 @@ public class WebRequestValidatorTest {
         errors = new Errors();
         validator.validateMsisdn("  ", errors);
         assertEquals(1, errors.getCount());
-        assertEquals("msisdn field has invalid value", errors.allMessages());
+        assertEquals("msisdn field is missing", errors.allMessages());
 
         errors = new Errors();
         validator.validateMsisdn("919900503246", errors);
@@ -178,10 +179,91 @@ public class WebRequestValidatorTest {
     }
 
     @Test
+    public void shouldValidateChangeMsisdnWithInvalidFormat() {
+        Errors errors = new Errors();
+        ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("123", UUID.randomUUID().toString());
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
+
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("msisdn in newMsisdn field has invalid value"));
+    }
+
+    @Test
+    public void shouldValidateChangeMsisdnWhenMsisdnIsMissing() {
+        Errors errors = new Errors();
+        ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("", UUID.randomUUID().toString());
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
+
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("msisdn in newMsisdn field is missing"));
+    }
+
+    @Test
+    public void shouldValidateFlwIdFormat() {
+        Errors errors = new Errors();
+
+        ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("1234567890", "1");
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("id in newMsisdn field is not in valid UUID format"));
+    }
+
+    @Test
+    public void shouldAllowNullOrBlankFlwIdInNewMsisdn() {
+        Errors errors = new Errors();
+
+        ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("1234567890", null);
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
+        assertEquals(0, errors.getCount());
+
+        changeMsisdn.setFlwId("");
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
+        assertEquals(0, errors.getCount());
+    }
+
+    @Test
+    public void shouldIgnoreChangeMsisdnFieldWhenNullOrEmpty() {
+        Errors errors = new Errors();
+        ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("", "");
+
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
+        assertEquals(0, errors.getCount());
+
+        changeMsisdn = null;
+
+        validator.validateChangeMsisdn(changeMsisdn,errors, "SUCCESS", null);
+        assertEquals(0, errors.getCount());
+    }
+
+    @Test
+    public void shouldNotAllowNewMsisdnForOthersAndInvalidStatuses() {
+        Errors errors = new Errors();
+
+        ChangeMsisdnRequest changeMsisdn = new ChangeMsisdnRequest("1234567890", null);
+        validator.validateChangeMsisdn(changeMsisdn,errors, "INVALID", null);
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("newMsisdn field should not be a part of the request"));
+
+        errors = new Errors();
+        validator.validateChangeMsisdn(changeMsisdn,errors, "OTHERS", null);
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("newMsisdn field should not be a part of the request"));
+    }
+
+    @Test
     public void shouldNotContainErrorsForAValidLocationRequest() {
         Errors errors = new Errors();
         validator.validateLocation(new LocationRequest("district", "block", "panchayat", "state", null), errors);
 
         assertEquals(0, errors.getCount());
+    }
+
+    @Test
+    public void changeMsisdnShouldBeADifferentNumber() {
+        Errors errors = new Errors();
+        validator.validateChangeMsisdn(new ChangeMsisdnRequest("1234567890",""), errors,"SUCCESS", "1234567890");
+
+        assertEquals(1, errors.getCount());
+        assertTrue(errors.hasMessage("New msisdn cannot be same as current msisdn"));
     }
 }

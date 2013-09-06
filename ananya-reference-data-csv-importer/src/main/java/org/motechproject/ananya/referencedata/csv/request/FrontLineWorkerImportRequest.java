@@ -93,9 +93,14 @@ public class FrontLineWorkerImportRequest {
         location.setState(state);
     }
 
-    @ColumnName(name= "verification_status")
+    @ColumnName(name = "verification_status")
     public void setVerificationStatus(String verificationStatus) {
         this.verificationStatus = verificationStatus;
+    }
+
+    @ColumnName(name = "alternate_contact_number")
+    public void setAlternateContactNumber(String alternateContactNumber) {
+        this.alternateContactNumber = alternateContactNumber;
     }
 
     @Override
@@ -116,8 +121,8 @@ public class FrontLineWorkerImportRequest {
     }
 
     public String toCSV() {
-        return String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"",
-                id,msisdn, name, designation, verificationStatus,location.getState(),
+        return String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"",
+                id, msisdn, alternateContactNumber, name, designation, verificationStatus, location.getState(),
                 location.getDistrict(), location.getBlock(), location.getPanchayat());
     }
 

@@ -6,12 +6,17 @@ import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorkerSyncRequ
 public class FrontLineWorkerSyncRequestMapper {
 
     public static FrontLineWorkerSyncRequest mapFrom(FrontLineWorker frontLineWorker) {
-        return new FrontLineWorkerSyncRequest(frontLineWorker.getMsisdn().toString(),
+        String newMsisdn = frontLineWorker.msisdnChange() ? frontLineWorker.getNewMsisdn().msisdn().toString() : "";
+        return new FrontLineWorkerSyncRequest(
+                frontLineWorker.getMsisdn().toString(),
+                frontLineWorker.getAlternateContactNumber(),
                 frontLineWorker.getName(),
                 frontLineWorker.getDesignation(),
                 frontLineWorker.getLastModified(),
                 LocationContractMapper.mapFrom(frontLineWorker.getLocation()),
                 frontLineWorker.getFlwId().toString(),
-                frontLineWorker.getVerificationStatus());
+                frontLineWorker.getVerificationStatus(),
+                newMsisdn
+        );
     }
 }

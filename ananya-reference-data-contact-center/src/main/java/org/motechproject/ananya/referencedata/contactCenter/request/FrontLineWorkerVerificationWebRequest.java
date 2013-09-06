@@ -7,13 +7,16 @@ import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWor
 import org.motechproject.ananya.referencedata.contactCenter.validator.WebRequestValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.UUID;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.*;
 
 @XmlRootElement(name = "flw")
 public class FrontLineWorkerVerificationWebRequest {
@@ -24,6 +27,10 @@ public class FrontLineWorkerVerificationWebRequest {
     @XmlElement
     @JsonProperty
     protected String msisdn;
+
+    @XmlElement
+    @JsonProperty
+    protected String alternateContactNumber;
 
     @XmlElement
     @JsonProperty
@@ -45,20 +52,26 @@ public class FrontLineWorkerVerificationWebRequest {
     @JsonProperty
     private LocationRequest location;
 
+    @JsonProperty(value = "newMsisdn")
+    @XmlElement(name = "newMsisdn")
+    private ChangeMsisdnRequest changeMsisdn;
+
     @JsonIgnore
     private String channel;
 
     public FrontLineWorkerVerificationWebRequest() {
     }
 
-    public FrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String verificationStatus, String name, String designation, LocationRequest location, String reason) {
+    public FrontLineWorkerVerificationWebRequest(String flwId, String msisdn, String alternateContactNumber, String verificationStatus, String name, String designation, LocationRequest location, String reason, ChangeMsisdnRequest changeMsisdn) {
         this.flwId = flwId;
         this.msisdn = msisdn;
+        this.alternateContactNumber = alternateContactNumber;
         this.verificationStatus = verificationStatus;
         this.name = name;
         this.designation = designation;
         this.location = location;
         this.reason = reason;
+        this.changeMsisdn = changeMsisdn;
     }
 
     public void setChannel(String channel) {
@@ -74,10 +87,12 @@ public class FrontLineWorkerVerificationWebRequest {
 
         if (flwId != null ? !flwId.equals(that.flwId) : that.flwId != null) return false;
         if (msisdn != null ? !msisdn.equals(that.msisdn) : that.msisdn != null) return false;
+        if (alternateContactNumber != null ? !alternateContactNumber.equals(that.alternateContactNumber) : that.alternateContactNumber != null) return false;
         if (verificationStatus != null ? !verificationStatus.equals(that.verificationStatus) : that.verificationStatus != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (designation != null ? !designation.equals(that.designation) : that.designation != null) return false;
         if (location != null ? !location.equals(that.location) : that.location != null) return false;
+        if (changeMsisdn != null ? !changeMsisdn.equals(that.changeMsisdn) : that.changeMsisdn != null) return false;
         if (reason != null ? !reason.equals(that.reason) : that.reason != null) return false;
 
         return true;
@@ -87,10 +102,12 @@ public class FrontLineWorkerVerificationWebRequest {
     public int hashCode() {
         int result = flwId != null ? flwId.hashCode() : 0;
         result = 31 * result + (msisdn != null ? msisdn.hashCode() : 0);
+        result = 31 * result + (alternateContactNumber != null ? alternateContactNumber.hashCode() : 0);
         result = 31 * result + (verificationStatus != null ? verificationStatus.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (designation != null ? designation.hashCode() : 0);
         result = 31 * result + (location != null ? location.hashCode() : 0);
+        result = 31 * result + (changeMsisdn != null ? changeMsisdn.hashCode() : 0);
         result = 31 * result + (reason != null ? reason.hashCode() : 0);
         return result;
     }
@@ -105,8 +122,10 @@ public class FrontLineWorkerVerificationWebRequest {
         WebRequestValidator validator = new WebRequestValidator();
         validator.validateFlwId(flwId, errors);
         validator.validateMsisdn(msisdn, errors);
+        validator.validateAlternateContactNumber(alternateContactNumber, verificationStatus, errors);
         validator.validateVerificationStatus(verificationStatus, errors);
         validator.validateChannel(channel, errors);
+        validator.validateChangeMsisdn(changeMsisdn, errors, verificationStatus, msisdn);
 
         if(designation != null) {
             validator.validateDesignation(designation, errors);
@@ -118,12 +137,18 @@ public class FrontLineWorkerVerificationWebRequest {
     @JsonIgnore
     public FrontLineWorkerVerificationRequest getVerificationRequest() {
         Designation designationEnum = designation == null ? null: Designation.from(designation);
-        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.fromString(flwId), PhoneNumber.formatPhoneNumber(msisdn), VerificationStatus.from(verificationStatus),
-                name, designationEnum, location, reason);
+        Long altNumber = isBlank(alternateContactNumber) ? null: formatPhoneNumber(alternateContactNumber);
+        FrontLineWorkerVerificationRequest verificationRequest = new FrontLineWorkerVerificationRequest(UUID.fromString(flwId),
+                formatPhoneNumber(msisdn), altNumber, VerificationStatus.from(verificationStatus),
+                name, designationEnum, location, reason, changeMsisdn);
         return verificationRequest;
     }
 
-    public LocationRequest getLocation() {
+    public ChangeMsisdnRequest getChangeMsisdn() {
+        return changeMsisdn;
+    }
+
+        public LocationRequest getLocation() {
         return location;
     }
 }
