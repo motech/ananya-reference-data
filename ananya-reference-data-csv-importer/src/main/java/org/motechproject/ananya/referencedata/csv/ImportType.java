@@ -44,6 +44,26 @@ public enum ImportType {
         public String responseFilePrefix() {
             return "location_upload_failures";
         }
+    }, Msisdn {
+        @Override
+        void performAction(String importFile, CSVDataImporter csvDataImporter) {
+            csvDataImporter.importData(ImportType.Msisdn.name(), true, importFile);
+        }
+
+        @Override
+        public String successMessage() {
+            return "MSISDNs have been updated successfully.";
+        }
+
+        @Override
+        public String errorMessage(int maximumNumberOfRecords) {
+            return String.format("MSISDN CSV file can have a maximum of %d records.", maximumNumberOfRecords);
+        }
+
+        @Override
+        public String responseFilePrefix() {
+            return "msisdn_upload_failures";
+        }
     };
 
     public static boolean isInValid(String entity) {

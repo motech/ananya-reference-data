@@ -18,6 +18,12 @@ public class CSVRecordBuilder {
         isEmpty = true;
     }
 
+    public CSVRecordBuilder(String existingCSVColumns, boolean shouldQuoteValues) {
+        stringBuilder.append(existingCSVColumns);
+        this.shouldQuoteValues = shouldQuoteValues;
+        isEmpty = false;
+    }
+
     public CSVRecordBuilder appendColumn(String... values) {
         for(String value: values) {
             appendColumn(value);

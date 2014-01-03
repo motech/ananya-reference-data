@@ -11,13 +11,14 @@ import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
 import org.motechproject.ananya.referencedata.web.SpringIntegrationTest;
 import org.motechproject.ananya.referencedata.web.domain.CsvUploadRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
-
+//TODO: Write IT for valid content upload check
 public class HomeControllerIT extends SpringIntegrationTest {
     public static final String CSV_HEADER = "id,msisdn,alternate_contact_number,name,designation,verification_status,state,district,block,panchayat\n";
     public static final String SUCCESS_VERIFICATION = "SUCCESS";
@@ -43,8 +44,12 @@ public class HomeControllerIT extends SpringIntegrationTest {
     }
 
     @Test
-    public void shouldUseLimitInPropertiesFile() {
-        assertTrue(homeController.exceedsMaximumNumberOfRecords(HomeControllerTest.createCSVRecordsWith(501)));
+    public void shouldUseLimitInPropertiesFileAndReturnErrorResponse() throws Exception {
+        ModelAndView modelAndView = homeController.uploadFrontLineWorkers(
+                createCsvUploadRequestWithMultipleRows(VALID_MSISDN, SUCCESS_VERIFICATION, FrontLineWorker.DEFAULT_UUID.toString(), 6), null);
+
+        assertEquals("admin/home", modelAndView.getViewName());
+        assertEquals("FLW file can have a maximum of 5 records.", modelAndView.getModel().get("errorMessage"));
     }
 
     @Test
@@ -148,6 +153,11 @@ public class HomeControllerIT extends SpringIntegrationTest {
         return getCsvUploadRequestWithCustomCsvContents(csvContent);
     }
 
+    private CsvUploadRequest createCsvUploadRequestWithMultipleRows(String validMsisdn, String verificationStatus, String guid, int numberOfRows) {
+        String csvContent = getCsvContent(getCsvRows(guid, validMsisdn, verificationStatus, numberOfRows));
+        return getCsvUploadRequestWithCustomCsvContents(csvContent);
+    }
+
     private void verifySuccessfulUpload(String validMsisdn, String verificationStatus) {
         List<FrontLineWorker> flwsInDb = allFrontLineWorkers.getByMsisdn(formatPhoneNumber(validMsisdn));
         assertEquals(1, flwsInDb.size());
@@ -177,13 +187,20 @@ public class HomeControllerIT extends SpringIntegrationTest {
     }
 
     private String getCsvContent(String rows) {
-        return String.format(CSV_HEADER + "%s",rows);
+        return String.format(CSV_HEADER + "%s", rows);
     }
 
     private String getCsvRows(String guid, String msisdn, String verificationStatus) {
-        return String.format(
-                "%s,%s,1234567893," + VALID_NAME + "," + VALID_DESIGNATION + ",%s,State,District,Block,Panchayat\n",
-                guid, msisdn, verificationStatus);
+        return getCsvRows(guid, msisdn, verificationStatus, 1);
     }
 
+    private String getCsvRows(String guid, String msisdn, String verificationStatus, int numberOfRows) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int rowCount = 0; rowCount < numberOfRows; rowCount++) {
+            stringBuilder.append(String.format(
+                    "%s,%s,1234567893," + VALID_NAME + "," + VALID_DESIGNATION + ",%s,State,District,Block,Panchayat\n",
+                    guid, msisdn, verificationStatus));
+        }
+        return stringBuilder.toString();
+    }
 }

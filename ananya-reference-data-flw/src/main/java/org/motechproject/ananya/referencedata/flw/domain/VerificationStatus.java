@@ -1,7 +1,5 @@
 package org.motechproject.ananya.referencedata.flw.domain;
 
-import org.apache.commons.lang.StringUtils;
-
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.trimToEmpty;
 
@@ -22,5 +20,10 @@ public enum VerificationStatus {
             return false;
         }
         return true;
+    }
+
+    public static boolean isInvalidOrOther(String verificationStatus) {
+        VerificationStatus givenStatus = from(verificationStatus);
+        return VerificationStatus.INVALID.equals(givenStatus) || VerificationStatus.OTHER.equals(givenStatus);
     }
 }

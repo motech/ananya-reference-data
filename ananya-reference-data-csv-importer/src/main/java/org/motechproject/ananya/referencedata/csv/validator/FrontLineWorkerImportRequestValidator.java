@@ -9,8 +9,7 @@ import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
-import org.motechproject.ananya.referencedata.flw.utils.ValidationUtils;
-import org.motechproject.ananya.referencedata.flw.validators.Errors;
+import org.motechproject.ananya.referencedata.flw.utils.FLWValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,10 +19,11 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import static org.apache.commons.collections.CollectionUtils.find;
-import static org.apache.commons.collections.CollectionUtils.select;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.*;
+import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
+import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValid;
+import static org.motechproject.ananya.referencedata.flw.utils.FLWValidationUtils.getDuplicateRecordsByMsisdn;
 
 @Component
 public class FrontLineWorkerImportRequestValidator {
@@ -53,7 +53,7 @@ public class FrontLineWorkerImportRequestValidator {
             response.forBlankDesignation();
             return;
         }
-        if(!Designation.isValid(designation)) {
+        if (!Designation.isValid(designation)) {
             response.forInvalidDesignation();
         }
     }
@@ -71,7 +71,7 @@ public class FrontLineWorkerImportRequestValidator {
     }
 
     void validateAlternateContactNumber(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
-        if (!isValidWithBlanksAllowed(request.getAlternateContactNumber())) {
+        if (!FLWValidationUtils.isValidAlternateContactNumber(request.getAlternateContactNumber())) {
             response.forInvalidAlternateContactNumber();
         }
     }
@@ -92,7 +92,7 @@ public class FrontLineWorkerImportRequestValidator {
     }
 
     void validateMsisdn(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
-        if(isBlank(request.getMsisdn())){
+        if (isBlank(request.getMsisdn())) {
             response.forMissingMsisdn();
             return;
         }
@@ -110,7 +110,7 @@ public class FrontLineWorkerImportRequestValidator {
 
     void validateName(FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
         String name = request.getName();
-        if (ValidationUtils.isInvalidNameWithBlankAllowed(name)) {
+        if (FLWValidationUtils.isInvalidNameWithBlankAllowed(name)) {
             response.forInvalidName();
         }
     }
@@ -132,7 +132,7 @@ public class FrontLineWorkerImportRequestValidator {
             return;
         }
 
-        if(isBlank(request.getMsisdn())){
+        if (isBlank(request.getMsisdn())) {
             response.forMissingMsisdn();
             return;
         }
@@ -176,7 +176,7 @@ public class FrontLineWorkerImportRequestValidator {
     }
 
     private void validateDuplicates(List<FrontLineWorkerImportRequest> requests, FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
-        Collection flwsByMsisdn = select(requests, new FLWPredicate(request.getMsisdn()));
+        Collection flwsByMsisdn = getDuplicateRecordsByMsisdn(requests, request.getMsisdn());
         if (flwsByMsisdn.size() > 1) {
             if (find(flwsByMsisdn, flwWithVerificationStatus()) != null)
                 response.forInvalidDuplicatesInCSV();
@@ -190,19 +190,5 @@ public class FrontLineWorkerImportRequestValidator {
                 return isNotBlank(((FrontLineWorkerImportRequest) o).getVerificationStatus());
             }
         };
-    }
-
-    class FLWPredicate implements Predicate {
-        private String msisdn;
-
-        public FLWPredicate(String msisdn) {
-            super();
-            this.msisdn = msisdn;
-        }
-
-        @Override
-        public boolean evaluate(Object o) {
-            return msisdn.equals(((FrontLineWorkerImportRequest) o).getMsisdn());
-        }
     }
 }
