@@ -73,4 +73,8 @@ public class AllFrontLineWorkers {
     public void delete(String flwId) {
         template.delete(getByFlwId(UUID.fromString(flwId)));
     }
+
+    public void deleteByMsisdn(Long msisdn) {
+        template.deleteAll(getByMsisdn(msisdn));
+    }
 }

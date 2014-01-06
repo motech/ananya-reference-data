@@ -3,9 +3,11 @@ package org.motechproject.ananya.referencedata.csv.importer;
 import org.apache.commons.collections.CollectionUtils;
 import org.motechproject.ananya.referencedata.csv.request.MsisdnImportRequest;
 import org.motechproject.ananya.referencedata.csv.response.MsisdnImportValidationResponse;
+import org.motechproject.ananya.referencedata.csv.service.MsisdnImportService;
 import org.motechproject.ananya.referencedata.csv.utils.CSVRecordBuilder;
 import org.motechproject.ananya.referencedata.csv.validator.MsisdnImportRequestValidator;
 import org.motechproject.importer.annotation.CSVImporter;
+import org.motechproject.importer.annotation.Post;
 import org.motechproject.importer.annotation.Validate;
 import org.motechproject.importer.domain.Error;
 import org.motechproject.importer.domain.ValidationResponse;
@@ -24,10 +26,12 @@ public class MsisdnImporter {
     private static Logger logger = LoggerFactory.getLogger(MsisdnImporter.class);
 
     private MsisdnImportRequestValidator msisdnImportRequestValidator;
+    private MsisdnImportService msisdnImportService;
 
     @Autowired
-    public MsisdnImporter(MsisdnImportRequestValidator msisdnImportRequestValidator) {
+    public MsisdnImporter(MsisdnImportRequestValidator msisdnImportRequestValidator, MsisdnImportService msisdnImportService) {
         this.msisdnImportRequestValidator = msisdnImportRequestValidator;
+        this.msisdnImportService = msisdnImportService;
     }
 
     @Validate
@@ -52,6 +56,13 @@ public class MsisdnImporter {
         }
         logger.info("Completed validating MSISDN csv records");
         return constructValidationResponse(isValid, errors, invalidRequests);
+    }
+
+    @Post
+    public void postData(List<MsisdnImportRequest> msisdnImportRequests) {
+        logger.info("Started updating MSISDN data");
+        msisdnImportService.updateFLWContactDetailsWithoutValidations(msisdnImportRequests);
+        logger.info("Finished updating MSISDN data");
     }
 
     private ValidationResponse constructValidationResponse(boolean isValid, List<Error> errors, List<MsisdnImportRequest> invalidRequests) {

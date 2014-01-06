@@ -220,4 +220,20 @@ public class AllFrontLineWorkersIT extends SpringIntegrationTest {
         assertEquals(1, flwFromDb.size());
         assertEquals(flwWithStatus, flwFromDb);
     }
+
+    @Test
+    public void shouldDeleteFLWByMsisdn() {
+        Long msisdn = 911234567890L;
+        FrontLineWorker frontLineWorker1 = new FrontLineWorker(UUID.randomUUID());
+        frontLineWorker1.setMsisdn(msisdn);
+        template.save(frontLineWorker1);
+        FrontLineWorker frontLineWorker2 = new FrontLineWorker(UUID.randomUUID());
+        frontLineWorker2.setMsisdn(msisdn);
+        template.save(frontLineWorker2);
+
+        allFrontLineWorkers.deleteByMsisdn(msisdn);
+
+        List<FrontLineWorker> frontLineWorkers = template.loadAll(FrontLineWorker.class);
+        assertTrue(frontLineWorkers.isEmpty());
+    }
 }

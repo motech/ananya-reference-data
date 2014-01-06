@@ -8,19 +8,31 @@ import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
+import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 import org.motechproject.ananya.referencedata.web.SpringIntegrationTest;
 import org.motechproject.ananya.referencedata.web.domain.CsvUploadRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.UUID;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.matches;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
-//TODO: Write IT for valid content upload check
+
 public class HomeControllerIT extends SpringIntegrationTest {
     public static final String CSV_HEADER = "id,msisdn,alternate_contact_number,name,designation,verification_status,state,district,block,panchayat\n";
+    public static final String MSISDN_CSV_HEADER = "msisdn,new_msisdn,alternate_contact_number\n";
     public static final String SUCCESS_VERIFICATION = "SUCCESS";
     public static final String VALID_NAME = "Kumari Manju";
     public static final String VALID_DESIGNATION = "ANM";
@@ -146,6 +158,64 @@ public class HomeControllerIT extends SpringIntegrationTest {
 
         List<FrontLineWorker> flwsInDb = allFrontLineWorkers.getByMsisdn(formatPhoneNumber(VALID_MSISDN));
         assertEquals(2, flwsInDb.size());
+    }
+
+    @Test
+    public void shouldChangeMSISDNOfFLWsOfValidRecordsInCSVAndThrowErrorsForInvalidRecords() throws Exception {
+        String msisdn1 = "919876543210";
+        String msisdn2 = "919876543211";
+        String newMsisdn1 = "919999999999";
+        String newMsisdn2 = "8888888888";
+        String alternateContactNumber1 = "911122334455";
+        String alternateContactNumber2 = "6677889900";
+        createFLWs(msisdn1, msisdn2);
+        CsvUploadRequest csvRequest = createMsisdnCsvRequest(asList(msisdn1, msisdn2), asList(newMsisdn1, newMsisdn2), asList(alternateContactNumber1, alternateContactNumber2));
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        ServletOutputStream outputStream = mock(ServletOutputStream.class);
+        when(response.getOutputStream()).thenReturn(outputStream);
+        String expectedErrorCsvContent = "msisdn,new_msisdn,alternate_contact_number,error\n" +
+                "\"invalidMsisdn\",\"1234567890\",\"\",\"[Invalid msisdn]\"\n" +
+                "\"1234567890\",\"\",\"\",\"[Either of new msisdn or alternate contact number or both should be present, No FLW present in DB with msisdn]\"\n";
+
+
+        homeController.uploadMSISDNs(csvRequest, response);
+
+        assertFLWDetailsAfterImport(msisdn1, newMsisdn1);
+        assertFLWDetailsAfterImport(msisdn2, newMsisdn2);
+
+        verify(outputStream).write(expectedErrorCsvContent.getBytes());
+        verify(response).setHeader(eq("Content-Disposition"), matches(
+                "attachment; filename=msisdn_upload_failures\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}.csv"));
+    }
+
+    private void createFLWs(String msisdn1, String msisdn2) {
+        FrontLineWorker frontLineWorker1 = new FrontLineWorker(UUID.randomUUID());
+        frontLineWorker1.setMsisdn(PhoneNumber.formatPhoneNumber(msisdn1));
+        FrontLineWorker frontLineWorker2 = new FrontLineWorker(UUID.randomUUID());
+        frontLineWorker2.setMsisdn(PhoneNumber.formatPhoneNumber(msisdn2));
+        allFrontLineWorkers.createOrUpdateAll(asList(frontLineWorker1, frontLineWorker2));
+    }
+
+    private CsvUploadRequest createMsisdnCsvRequest(List<String> validMsisdns, List<String> validNewMsisdns, List<String> validAlternateContactNumbers) {
+        String validCsvRecords = getMsisdnCsvRecords(validMsisdns, validNewMsisdns, validAlternateContactNumbers);
+        String invalidRecords = "invalidMsisdn,1234567890, \n1234567890,,\n";
+
+        String csvContent = String.format("%s%s%s", MSISDN_CSV_HEADER, validCsvRecords, invalidRecords);
+        return getCsvUploadRequestWithCustomCsvContents(csvContent);
+    }
+
+    private String getMsisdnCsvRecords(List<String> validMsisdns, List<String> validNewMsisdns, List<String> validAlternateContactNumbers) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int csvRowCounter = 0; csvRowCounter < validMsisdns.size() && csvRowCounter < validNewMsisdns.size(); csvRowCounter++) {
+            stringBuilder.append(String.format("%s,%s,%s\n", validMsisdns.get(csvRowCounter), validNewMsisdns.get(csvRowCounter), validAlternateContactNumbers.get(csvRowCounter)));
+        }
+        return stringBuilder.toString();
+    }
+
+    private void assertFLWDetailsAfterImport(String msisdn, String newMsisdn) {
+        assertTrue(allFrontLineWorkers.getByMsisdn(PhoneNumber.formatPhoneNumber(msisdn)).isEmpty());
+        List<FrontLineWorker> flwByNewMsisdn = allFrontLineWorkers.getByMsisdn(PhoneNumber.formatPhoneNumber(newMsisdn));
+        assertEquals(1, flwByNewMsisdn.size());
     }
 
     private CsvUploadRequest createCsvUploadRequest(String validMsisdn, String verificationStatus, String guid) {

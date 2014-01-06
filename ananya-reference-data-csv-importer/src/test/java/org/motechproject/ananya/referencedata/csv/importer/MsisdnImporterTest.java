@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.ananya.referencedata.csv.request.MsisdnImportRequest;
 import org.motechproject.ananya.referencedata.csv.response.MsisdnImportValidationResponse;
+import org.motechproject.ananya.referencedata.csv.service.MsisdnImportService;
 import org.motechproject.ananya.referencedata.csv.validator.MsisdnImportRequestValidator;
 import org.motechproject.importer.domain.ValidationResponse;
 
@@ -16,6 +17,7 @@ import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -23,12 +25,14 @@ public class MsisdnImporterTest {
 
     @Mock
     private MsisdnImportRequestValidator msisdnImportRequestValidator;
+    @Mock
+    private MsisdnImportService msisdnImportService;
 
     private MsisdnImporter msisdnImporter;
 
     @Before
     public void setUp() throws Exception {
-        msisdnImporter = new MsisdnImporter(msisdnImportRequestValidator);
+        msisdnImporter = new MsisdnImporter(msisdnImportRequestValidator, msisdnImportService);
     }
 
     @Test
@@ -67,4 +71,12 @@ public class MsisdnImporterTest {
         assertTrue(validationResponse.getInvalidRecords().isEmpty());
     }
 
+    @Test
+    public void shouldUpdateFLWsWithMsisdnRequestWithoutValidation() {
+        List<MsisdnImportRequest> msisdnImportRequests = asList(new MsisdnImportRequest(), new MsisdnImportRequest());
+
+        msisdnImporter.postData(msisdnImportRequests);
+
+        verify(msisdnImportService).updateFLWContactDetailsWithoutValidations(msisdnImportRequests);
+    }
 }
