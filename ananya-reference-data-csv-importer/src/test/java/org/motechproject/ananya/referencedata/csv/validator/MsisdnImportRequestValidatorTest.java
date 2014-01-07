@@ -47,7 +47,7 @@ public class MsisdnImportRequestValidatorTest {
         MsisdnImportValidationResponse response = msisdnImportRequestValidator.validate(requests, invalidRequest);
 
         assertFalse(response.isValid());
-        assertTrue(response.getMessage().contains("Duplicate records with same msisdn/new msisdn found"));
+        assertTrue(response.getMessage().contains("There are duplicate rows in CSV for MSISDN"));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class MsisdnImportRequestValidatorTest {
         MsisdnImportValidationResponse response = msisdnImportRequestValidator.validate(requests, invalidRequest);
 
         assertFalse(response.isValid());
-        assertFalse(response.getMessage().contains("Duplicate records with same msisdn/new msisdn found"));
+        assertFalse(response.getMessage().contains("There are duplicate rows in CSV for MSISDN"));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class MsisdnImportRequestValidatorTest {
         MsisdnImportValidationResponse response = msisdnImportRequestValidator.validate(requests, invalidRequest);
 
         assertFalse(response.isValid());
-        assertTrue(response.getMessage().contains("Duplicate records with same msisdn/new msisdn found"));
+        assertTrue(response.getMessage().contains("There are duplicate rows in CSV for New MSISDN"));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class MsisdnImportRequestValidatorTest {
         MsisdnImportValidationResponse response = msisdnImportRequestValidator.validate(requests, invalidRequest);
 
         assertFalse(response.isValid());
-        assertTrue(response.getMessage().contains("Either of new msisdn or alternate contact number or both should be present"));
+        assertTrue(response.getMessage().contains("At least one of the updates, new msisdn or alternate contact number, should be present"));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class MsisdnImportRequestValidatorTest {
         assertFalse(response.isValid());
         List<String> responseMessage = response.getMessage();
         assertEquals(1, responseMessage.size());
-        assertTrue(responseMessage.contains("Missing msisdn"));
+        assertTrue(responseMessage.contains("MSISDN is not provided"));
         verify(allFrontLineWorkers, never()).getByMsisdn(null);
     }
 
@@ -117,7 +117,7 @@ public class MsisdnImportRequestValidatorTest {
         assertFalse(response.isValid());
         List<String> responseMessage = response.getMessage();
         assertEquals(1, responseMessage.size());
-        assertTrue(responseMessage.contains("Invalid msisdn"));
+        assertTrue(responseMessage.contains("MSISDN is not in a valid format"));
         verify(allFrontLineWorkers, never()).getByMsisdn(Long.valueOf(msisdn));
     }
 
@@ -134,7 +134,7 @@ public class MsisdnImportRequestValidatorTest {
         assertFalse(response.isValid());
         List<String> responseMessage = response.getMessage();
         assertEquals(1, responseMessage.size());
-        assertTrue(responseMessage.contains("No FLW present in DB with msisdn"));
+        assertTrue(responseMessage.contains("Could not find an FLW record in database with provided MSISDN"));
     }
 
     @Test
@@ -151,20 +151,20 @@ public class MsisdnImportRequestValidatorTest {
         assertFalse(response.isValid());
         List<String> responseMessage = response.getMessage();
         assertEquals(1, responseMessage.size());
-        assertTrue(responseMessage.contains("Duplicate FLWs present with same msisdn"));
+        assertTrue(responseMessage.contains("Duplicate FLW records are present in database for provided MSISDN"));
     }
 
     @Test
     public void shouldValidateIfVerificationStatusOfFlwIsInvalidForGivenValidMsisdn() {
-        testVerificationStatus(VerificationStatus.INVALID);
+        testVerificationStatus(VerificationStatus.INVALID, "Verification Status of FLW for provided MSISDN is INVALID");
     }
 
     @Test
     public void shouldValidateIfVerificationStatusOfFlwIsOtherForGivenValidMsisdn() {
-        testVerificationStatus(VerificationStatus.OTHER);
+        testVerificationStatus(VerificationStatus.OTHER, "Verification Status of FLW for provided MSISDN is OTHER");
     }
 
-    private void testVerificationStatus(final VerificationStatus verificationStatus) {
+    private void testVerificationStatus(VerificationStatus verificationStatus, String errorMessage) {
         String msisdn = "911234567890";
         List<MsisdnImportRequest> requests = new ArrayList<>();
         MsisdnImportRequest invalidRequest = new MsisdnImportRequest(msisdn, "911234567891", null);
@@ -178,7 +178,7 @@ public class MsisdnImportRequestValidatorTest {
         assertFalse(response.isValid());
         List<String> responseMessage = response.getMessage();
         assertEquals(1, responseMessage.size());
-        assertTrue(responseMessage.contains("Verification Status of FLW is INVALID or OTHER"));
+        assertTrue(responseMessage.contains(errorMessage));
     }
 
     @Test
@@ -197,7 +197,7 @@ public class MsisdnImportRequestValidatorTest {
         assertFalse(response.isValid());
         List<String> responseMessage = response.getMessage();
         assertEquals(1, responseMessage.size());
-        assertTrue(responseMessage.contains("Duplicate FLWs present with same new msisdn"));
+        assertTrue(responseMessage.contains("Duplicate FLW records present in database for provided New MSISDN"));
     }
 
     @Test
@@ -209,7 +209,7 @@ public class MsisdnImportRequestValidatorTest {
         MsisdnImportValidationResponse response = msisdnImportRequestValidator.validate(requests, invalidRequest);
 
         assertFalse(response.isValid());
-        assertTrue(response.getMessage().contains("Invalid new msisdn"));
+        assertTrue(response.getMessage().contains("New MSISDN is not in a valid format"));
     }
 
     @Test
@@ -234,7 +234,7 @@ public class MsisdnImportRequestValidatorTest {
         MsisdnImportValidationResponse response = msisdnImportRequestValidator.validate(requests, invalidRequest);
 
         assertFalse(response.isValid());
-        assertTrue(response.getMessage().contains("Invalid alternate contact number"));
+        assertTrue(response.getMessage().contains("Alternate contact number is not in a valid format"));
     }
 
     @Test
@@ -263,8 +263,8 @@ public class MsisdnImportRequestValidatorTest {
         assertFalse(response.isValid());
         List<String> responseMessage = response.getMessage();
         assertEquals(3, responseMessage.size());
-        assertTrue(responseMessage.contains("Duplicate records with same msisdn/new msisdn found"));
-        assertTrue(responseMessage.contains("Invalid msisdn"));
-        assertTrue(responseMessage.contains("Either of new msisdn or alternate contact number or both should be present"));
+        assertTrue(responseMessage.contains("There are duplicate rows in CSV for MSISDN"));
+        assertTrue(responseMessage.contains("MSISDN is not in a valid format"));
+        assertTrue(responseMessage.contains("At least one of the updates, new msisdn or alternate contact number, should be present"));
     }
 }

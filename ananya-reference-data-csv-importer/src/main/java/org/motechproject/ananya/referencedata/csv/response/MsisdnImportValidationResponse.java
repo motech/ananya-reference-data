@@ -7,44 +7,52 @@ public class MsisdnImportValidationResponse {
     private List<String> message = new ArrayList<>();
     private boolean isValid = true;
 
-    public void forDuplicateRecords() {
-        invalidate("Duplicate records with same msisdn/new msisdn found");
+    public void forDuplicateMsisdnRecords() {
+        invalidate("There are duplicate rows in CSV for MSISDN");
+    }
+
+    public void forDuplicateNewMsisdnRecords() {
+        invalidate("There are duplicate rows in CSV for New MSISDN");
     }
 
     public void forRequestIntegrity() {
-        invalidate("Either of new msisdn or alternate contact number or both should be present");
+        invalidate("At least one of the updates, new msisdn or alternate contact number, should be present");
     }
 
     public void forInvalidMsisdn() {
-        invalidate("Invalid msisdn");
+        invalidate("MSISDN is not in a valid format");
     }
 
     public void forMissingMsisdn() {
-        invalidate("Missing msisdn");
+        invalidate("MSISDN is not provided");
     }
 
     public void forInvalidNewMsisdn() {
-        invalidate("Invalid new msisdn");
+        invalidate("New MSISDN is not in a valid format");
     }
 
     public void forInvalidAlternateContactNumber() {
-        invalidate("Invalid alternate contact number");
+        invalidate("Alternate contact number is not in a valid format");
     }
 
     public void forMissingFlw() {
-        invalidate("No FLW present in DB with msisdn");
+        invalidate("Could not find an FLW record in database with provided MSISDN");
     }
 
     public void forDuplicateFlwsByMsisdn() {
-        invalidate("Duplicate FLWs present with same msisdn");
+        invalidate("Duplicate FLW records are present in database for provided MSISDN");
     }
 
     public void forInvalidVerificationStatus() {
-        invalidate("Verification Status of FLW is INVALID or OTHER");
+        invalidate("Verification Status of FLW for provided MSISDN is INVALID");
+    }
+
+    public void forOtherVerificationStatus() {
+        invalidate("Verification Status of FLW for provided MSISDN is OTHER");
     }
 
     public void forDuplicateFlwsByNewMsisdn() {
-        invalidate("Duplicate FLWs present with same new msisdn");
+        invalidate("Duplicate FLW records present in database for provided New MSISDN");
     }
 
     public boolean isValid() {

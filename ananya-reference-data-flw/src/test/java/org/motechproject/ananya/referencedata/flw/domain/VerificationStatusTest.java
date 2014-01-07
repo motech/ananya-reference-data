@@ -23,12 +23,22 @@ public class VerificationStatusTest {
     }
 
     @Test
-    public void shouldCheckIfGivenVerificationStatusIsInvalidOrOther() {
-        assertTrue(VerificationStatus.isInvalidOrOther("other"));
-        assertTrue(VerificationStatus.isInvalidOrOther("INVALID"));
+    public void shouldCheckIfGivenVerificationStatusIsInvalid() {
+        assertTrue(VerificationStatus.isInvalid("INVALID"));
 
-        assertFalse(VerificationStatus.isInvalidOrOther("success"));
-        assertFalse(VerificationStatus.isInvalidOrOther(null));
-        assertFalse(VerificationStatus.isInvalidOrOther(""));
+        assertFalse(VerificationStatus.isInvalid("success"));
+        assertFalse(VerificationStatus.isInvalid("other"));
+        assertFalse(VerificationStatus.isInvalid(null));
+        assertFalse(VerificationStatus.isInvalid(""));
+    }
+
+    @Test
+    public void shouldCheckIfGivenVerificationStatusIsOther() {
+        assertTrue(VerificationStatus.isOther("other"));
+
+        assertFalse(VerificationStatus.isOther("success"));
+        assertFalse(VerificationStatus.isOther("INVALID"));
+        assertFalse(VerificationStatus.isOther(null));
+        assertFalse(VerificationStatus.isOther("  "));
     }
 }

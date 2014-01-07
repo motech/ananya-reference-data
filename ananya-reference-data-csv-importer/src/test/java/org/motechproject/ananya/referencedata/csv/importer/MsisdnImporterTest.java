@@ -51,7 +51,7 @@ public class MsisdnImporterTest {
         assertFalse(validationResponse.isValid());
         assertEquals(2, validationResponse.getErrors().size());
         assertEquals("msisdn,new_msisdn,alternate_contact_number,error", validationResponse.getErrors().get(0).getMessage());
-        assertEquals("\"msisdn0987\",\"newmsisdn1234\",\"1234567890\",\"[Invalid msisdn, Invalid new msisdn]\"", validationResponse.getErrors().get(1).getMessage());
+        assertEquals("\"msisdn0987\",\"newmsisdn1234\",\"1234567890\",\"[MSISDN is not in a valid format, New MSISDN is not in a valid format]\"", validationResponse.getErrors().get(1).getMessage());
         assertEquals(1, validationResponse.getInvalidRecords().size());
         assertEquals(invalidRequest, validationResponse.getInvalidRecords().get(0));
     }

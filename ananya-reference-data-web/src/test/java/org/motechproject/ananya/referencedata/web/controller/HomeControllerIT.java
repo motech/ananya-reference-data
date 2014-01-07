@@ -174,9 +174,8 @@ public class HomeControllerIT extends SpringIntegrationTest {
         ServletOutputStream outputStream = mock(ServletOutputStream.class);
         when(response.getOutputStream()).thenReturn(outputStream);
         String expectedErrorCsvContent = "msisdn,new_msisdn,alternate_contact_number,error\n" +
-                "\"invalidMsisdn\",\"1234567890\",\"\",\"[Invalid msisdn]\"\n" +
-                "\"1234567890\",\"\",\"\",\"[Either of new msisdn or alternate contact number or both should be present, No FLW present in DB with msisdn]\"\n";
-
+                "\"invalidMsisdn\",\"1234567890\",\"\",\"[MSISDN is not in a valid format]\"\n" +
+                "\"1234567890\",\"\",\"\",\"[At least one of the updates, new msisdn or alternate contact number, should be present, Could not find an FLW record in database with provided MSISDN]\"\n";
 
         homeController.uploadMSISDNs(csvRequest, response);
 

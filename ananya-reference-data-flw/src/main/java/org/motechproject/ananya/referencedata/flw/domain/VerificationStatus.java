@@ -22,8 +22,13 @@ public enum VerificationStatus {
         return true;
     }
 
-    public static boolean isInvalidOrOther(String verificationStatus) {
+    public static boolean isInvalid(String verificationStatus) {
         VerificationStatus givenStatus = from(verificationStatus);
-        return VerificationStatus.INVALID.equals(givenStatus) || VerificationStatus.OTHER.equals(givenStatus);
+        return VerificationStatus.INVALID.equals(givenStatus);
+    }
+
+    public static boolean isOther(String verificationStatus) {
+        VerificationStatus givenStatus = from(verificationStatus);
+        return VerificationStatus.OTHER.equals(givenStatus);
     }
 }

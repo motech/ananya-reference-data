@@ -30,8 +30,7 @@ public class MsisdnImportRequestValidator {
 
     public MsisdnImportValidationResponse validate(List<MsisdnImportRequest> requests, MsisdnImportRequest request) {
         MsisdnImportValidationResponse response = new MsisdnImportValidationResponse();
-        validateDuplicates(requests, "msisdn", request.getMsisdn(), response);
-        validateDuplicates(requests, "newMsisdn", request.getNewMsisdn(), response);
+        validateDuplicates(requests, request, response);
         validateIntegrity(request, response);
         validateMsisdn(request, response);
         validateNewMsisdn(request, response);
@@ -39,10 +38,15 @@ public class MsisdnImportRequestValidator {
         return response;
     }
 
-    private void validateDuplicates(List<MsisdnImportRequest> requests, String fieldName, String fieldValue, MsisdnImportValidationResponse response) {
-        Collection flwsByMsisdn = getDuplicateRecordsByField(requests, fieldName, fieldValue);
+    private void validateDuplicates(List<MsisdnImportRequest> requests, MsisdnImportRequest request, MsisdnImportValidationResponse response) {
+        Collection flwsByMsisdn = getDuplicateRecordsByField(requests, "msisdn", request.getMsisdn());
         if (flwsByMsisdn.size() > 1) {
-            response.forDuplicateRecords();
+            response.forDuplicateMsisdnRecords();
+        }
+
+        Collection flwsByNewMsisdn = getDuplicateRecordsByField(requests, "newMsisdn", request.getNewMsisdn());
+        if (flwsByNewMsisdn.size() > 1) {
+            response.forDuplicateNewMsisdnRecords();
         }
     }
 
@@ -84,8 +88,14 @@ public class MsisdnImportRequestValidator {
     }
 
     private void validateVerificationStatus(FrontLineWorker frontLineWorker, MsisdnImportValidationResponse response) {
-        if (VerificationStatus.isInvalidOrOther(frontLineWorker.getVerificationStatus())) {
+        String verificationStatus = frontLineWorker.getVerificationStatus();
+        if (VerificationStatus.isInvalid(verificationStatus)) {
             response.forInvalidVerificationStatus();
+            return;
+        }
+
+        if (VerificationStatus.isOther(verificationStatus)) {
+            response.forOtherVerificationStatus();
         }
     }
 
