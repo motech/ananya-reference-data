@@ -21,9 +21,9 @@ import java.util.regex.Pattern;
 import static org.apache.commons.collections.CollectionUtils.find;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.motechproject.ananya.referencedata.flw.utils.FLWValidationUtils.getDuplicateRecordsByField;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.formatPhoneNumber;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValid;
-import static org.motechproject.ananya.referencedata.flw.utils.FLWValidationUtils.getDuplicateRecordsByMsisdn;
 
 @Component
 public class FrontLineWorkerImportRequestValidator {
@@ -176,7 +176,7 @@ public class FrontLineWorkerImportRequestValidator {
     }
 
     private void validateDuplicates(List<FrontLineWorkerImportRequest> requests, FrontLineWorkerImportRequest request, FrontLineWorkerImportValidationResponse response) {
-        Collection flwsByMsisdn = getDuplicateRecordsByMsisdn(requests, request.getMsisdn());
+        Collection flwsByMsisdn = getDuplicateRecordsByField(requests, "msisdn", request.getMsisdn());
         if (flwsByMsisdn.size() > 1) {
             if (find(flwsByMsisdn, flwWithVerificationStatus()) != null)
                 response.forInvalidDuplicatesInCSV();

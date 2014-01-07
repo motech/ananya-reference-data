@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.motechproject.ananya.referencedata.flw.utils.FLWValidationUtils.getDuplicateRecordsByMsisdn;
+import static org.motechproject.ananya.referencedata.flw.utils.FLWValidationUtils.getDuplicateRecordsByField;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValid;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValidWithBlanksAllowed;
 
@@ -30,7 +30,8 @@ public class MsisdnImportRequestValidator {
 
     public MsisdnImportValidationResponse validate(List<MsisdnImportRequest> requests, MsisdnImportRequest request) {
         MsisdnImportValidationResponse response = new MsisdnImportValidationResponse();
-        validateDuplicates(requests, request, response);
+        validateDuplicates(requests, "msisdn", request.getMsisdn(), response);
+        validateDuplicates(requests, "newMsisdn", request.getNewMsisdn(), response);
         validateIntegrity(request, response);
         validateMsisdn(request, response);
         validateNewMsisdn(request, response);
@@ -38,8 +39,8 @@ public class MsisdnImportRequestValidator {
         return response;
     }
 
-    private void validateDuplicates(List<MsisdnImportRequest> requests, MsisdnImportRequest request, MsisdnImportValidationResponse response) {
-        Collection flwsByMsisdn = getDuplicateRecordsByMsisdn(requests, request.getMsisdn());
+    private void validateDuplicates(List<MsisdnImportRequest> requests, String fieldName, String fieldValue, MsisdnImportValidationResponse response) {
+        Collection flwsByMsisdn = getDuplicateRecordsByField(requests, fieldName, fieldValue);
         if (flwsByMsisdn.size() > 1) {
             response.forDuplicateRecords();
         }

@@ -47,7 +47,35 @@ public class MsisdnImportRequestValidatorTest {
         MsisdnImportValidationResponse response = msisdnImportRequestValidator.validate(requests, invalidRequest);
 
         assertFalse(response.isValid());
-        assertTrue(response.getMessage().contains("Duplicate records with same msisdn found"));
+        assertTrue(response.getMessage().contains("Duplicate records with same msisdn/new msisdn found"));
+    }
+
+    @Test
+    public void shouldNotCheckForDuplicateRecordsIfMsisdnIsBlank() {
+        List<MsisdnImportRequest> requests = new ArrayList<>();
+        MsisdnImportRequest invalidRequest = new MsisdnImportRequest("", "1234567891", null);
+        requests.add(invalidRequest);
+        requests.add(new MsisdnImportRequest("", "1234567892", null));
+        requests.add(new MsisdnImportRequest("1234567891", "1234567893", null));
+
+        MsisdnImportValidationResponse response = msisdnImportRequestValidator.validate(requests, invalidRequest);
+
+        assertFalse(response.isValid());
+        assertFalse(response.getMessage().contains("Duplicate records with same msisdn/new msisdn found"));
+    }
+
+    @Test
+    public void shouldValidateForDuplicateRecordsByNewMsisdn() {
+        List<MsisdnImportRequest> requests = new ArrayList<>();
+        MsisdnImportRequest invalidRequest = new MsisdnImportRequest("1234567890", "1234567893", null);
+        requests.add(invalidRequest);
+        requests.add(new MsisdnImportRequest("1234567891", "1234567893", null));
+        requests.add(new MsisdnImportRequest("1234567892", "1234567894", null));
+
+        MsisdnImportValidationResponse response = msisdnImportRequestValidator.validate(requests, invalidRequest);
+
+        assertFalse(response.isValid());
+        assertTrue(response.getMessage().contains("Duplicate records with same msisdn/new msisdn found"));
     }
 
     @Test
@@ -235,7 +263,7 @@ public class MsisdnImportRequestValidatorTest {
         assertFalse(response.isValid());
         List<String> responseMessage = response.getMessage();
         assertEquals(3, responseMessage.size());
-        assertTrue(responseMessage.contains("Duplicate records with same msisdn found"));
+        assertTrue(responseMessage.contains("Duplicate records with same msisdn/new msisdn found"));
         assertTrue(responseMessage.contains("Invalid msisdn"));
         assertTrue(responseMessage.contains("Either of new msisdn or alternate contact number or both should be present"));
     }

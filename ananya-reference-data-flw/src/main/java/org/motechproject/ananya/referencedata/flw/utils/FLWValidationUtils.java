@@ -9,22 +9,23 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.apache.commons.collections.CollectionUtils.select;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValidWithBlanksAllowed;
 
 public class FLWValidationUtils {
     public static boolean isInvalidNameWithBlankAllowed(String name) {
-        return StringUtils.isNotBlank(name) && !Pattern.matches("[a-zA-Z0-9\\s\\.]*", name);
+        return isNotBlank(name) && !Pattern.matches("[a-zA-Z0-9\\s\\.]*", name);
     }
 
     public static boolean isInvalidName(String name) {
         return StringUtils.isBlank(name) || !Pattern.matches("[a-zA-Z0-9\\s\\.]*", name);
     }
 
-    public static <T> Collection getDuplicateRecordsByMsisdn(List<T> list, final String msisdn) {
+    public static <T> Collection getDuplicateRecordsByField(List<T> list, final String fieldName, final String filedValue) {
         return select(list, new Predicate() {
             @Override
             public boolean evaluate(Object object) {
-                return msisdn != null && msisdn.equals(getValue(object, "msisdn"));
+                return isNotBlank(filedValue) && filedValue.equals(getValue(object, fieldName));
             }
         });
     }

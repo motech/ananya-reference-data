@@ -8,7 +8,7 @@ public class MsisdnImportValidationResponse {
     private boolean isValid = true;
 
     public void forDuplicateRecords() {
-        invalidate("Duplicate records with same msisdn found");
+        invalidate("Duplicate records with same msisdn/new msisdn found");
     }
 
     public void forRequestIntegrity() {
