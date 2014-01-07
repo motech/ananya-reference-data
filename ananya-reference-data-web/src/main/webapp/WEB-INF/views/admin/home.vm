@@ -42,7 +42,6 @@
             <strong>Upload Locations</strong>
         </div>
     </div>
-
     <div class="row-fluid">
         <div class="span12">
             <form method="post" action="admin/location/upload"
@@ -79,7 +78,6 @@
             <strong>Upload Front Line Workers</strong>
         </div>
     </div>
-
     <div class="row-fluid">
         <div class="span12">
             <form method="post" action="admin/flw/upload"
@@ -101,5 +99,29 @@
         </div>
     </div>
 
-</div>
+    <hr/>
+    <div class="row-fluid">
+        <div class="well well-small">
+            <strong>Upload Contact Details</strong>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <form method="post" action="admin/msisdn/upload"
+                  enctype="multipart/form-data" modelattribute="csvUpload" class="csvUploadForm">
+                <fieldset>
+                    <div class="control-group">
+                        <div class="controls">
+                            <label for="fileData">$label.page.flw.contact.details.master.upload</label>
+                            <input name="fileData" type="file" class="required fileData"/>
+                        </div>
+                    </div>
 
+                    <input name="upload" type="submit" class="input-medium btn-primary uploadAction"
+                           value="Upload"/>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
