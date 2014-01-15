@@ -34,6 +34,7 @@ public class MsisdnImportService {
         for (MsisdnImportRequest msisdnImportRequest : msisdnImportRequests) {
             FrontLineWorker frontLineWorker = allFrontLineWorkers.getByMsisdn(msisdnImportRequest.msisdnAsLong()).get(0);
             updateNewMsisdn(frontLineWorker, msisdnImportRequest);
+            updateAlternateContactNumber(frontLineWorker, msisdnImportRequest);
 
             frontLineWorkersToUpdate.add(frontLineWorker);
         }
@@ -48,5 +49,12 @@ public class MsisdnImportService {
 
         frontLineWorker.setNewMsisdn(new NewMsisdn(request.getNewMsisdn(), frontLineWorker.getFlwId().toString()));
         frontLineWorker.updateToNewMsisdn();
+    }
+
+    private void updateAlternateContactNumber(FrontLineWorker frontLineWorker, MsisdnImportRequest request) {
+        if (!request.isUpdateAlternateContactNumber()) {
+            return;
+        }
+        frontLineWorker.setAlternateContactNumber(request.alternateContactNumberAsLong());
     }
 }

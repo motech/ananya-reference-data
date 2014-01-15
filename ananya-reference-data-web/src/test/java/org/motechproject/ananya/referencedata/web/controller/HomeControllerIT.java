@@ -16,10 +16,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
@@ -161,60 +164,83 @@ public class HomeControllerIT extends SpringIntegrationTest {
     }
 
     @Test
-    public void shouldChangeMSISDNOfFLWsOfValidRecordsInCSVAndThrowErrorsForInvalidRecords() throws Exception {
-        String msisdn1 = "919876543210";
-        String msisdn2 = "919876543211";
-        String newMsisdn1 = "919999999999";
-        String newMsisdn2 = "8888888888";
-        String alternateContactNumber1 = "911122334455";
-        String alternateContactNumber2 = "6677889900";
-        createFLWs(msisdn1, msisdn2);
-        CsvUploadRequest csvRequest = createMsisdnCsvRequest(asList(msisdn1, msisdn2), asList(newMsisdn1, newMsisdn2), asList(alternateContactNumber1, alternateContactNumber2));
+    public void shouldUpdateFLWsForValidRecordsInMsisdnImportCSVAndThrowErrorsForInvalidRecords() throws Exception {
+        MsisdnCsvRecord csvRecord1 = new MsisdnCsvRecord("919876543210", "919999999999", "911122334455");
+        MsisdnCsvRecord csvRecord2 = new MsisdnCsvRecord("919876543211", "8888888888", "");
+        MsisdnCsvRecord csvRecord3 = new MsisdnCsvRecord("919876543212", " ", "6677889900");
+        List<MsisdnCsvRecord> csvRecords = asList(csvRecord1, csvRecord2, csvRecord3);
+        createFLWsByMsisdn(csvRecords);
+        CsvUploadRequest csvRequest = createMsisdnCsvRequest(csvRecords);
         HttpServletResponse response = mock(HttpServletResponse.class);
         ServletOutputStream outputStream = mock(ServletOutputStream.class);
         when(response.getOutputStream()).thenReturn(outputStream);
         String expectedErrorCsvContent = "msisdn,new_msisdn,alternate_contact_number,error\n" +
                 "\"invalidMsisdn\",\"1234567890\",\"\",\"[MSISDN is not in a valid format]\"\n" +
-                "\"1234567890\",\"\",\"\",\"[At least one of the updates, new msisdn or alternate contact number, should be present, Could not find an FLW record in database with provided MSISDN]\"\n";
+                "\"1234567899\",\"\",\"\",\"[At least one of the updates, new msisdn or alternate contact number, should be present, Could not find an FLW record in database with provided MSISDN]\"\n";
 
         homeController.uploadMSISDNs(csvRequest, response);
 
-        assertFLWDetailsAfterImport(msisdn1, newMsisdn1);
-        assertFLWDetailsAfterImport(msisdn2, newMsisdn2);
+        assertFLWDetailsAfterImport(csvRecords);
 
         verify(outputStream).write(expectedErrorCsvContent.getBytes());
         verify(response).setHeader(eq("Content-Disposition"), matches(
                 "attachment; filename=msisdn_upload_failures\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}.csv"));
     }
 
-    private void createFLWs(String msisdn1, String msisdn2) {
-        FrontLineWorker frontLineWorker1 = new FrontLineWorker(UUID.randomUUID());
-        frontLineWorker1.setMsisdn(PhoneNumber.formatPhoneNumber(msisdn1));
-        FrontLineWorker frontLineWorker2 = new FrontLineWorker(UUID.randomUUID());
-        frontLineWorker2.setMsisdn(PhoneNumber.formatPhoneNumber(msisdn2));
-        allFrontLineWorkers.createOrUpdateAll(asList(frontLineWorker1, frontLineWorker2));
+    private void createFLWsByMsisdn(List<MsisdnCsvRecord> csvRecords) {
+        List<FrontLineWorker> frontLineWorkers = new ArrayList<>();
+        for (MsisdnCsvRecord csvRecord : csvRecords) {
+            FrontLineWorker frontLineWorker = new FrontLineWorker(UUID.randomUUID());
+            frontLineWorker.setMsisdn(PhoneNumber.formatPhoneNumber(csvRecord.getMsisdn()));
+            frontLineWorkers.add(frontLineWorker);
+        }
+        allFrontLineWorkers.createOrUpdateAll(frontLineWorkers);
     }
 
-    private CsvUploadRequest createMsisdnCsvRequest(List<String> validMsisdns, List<String> validNewMsisdns, List<String> validAlternateContactNumbers) {
-        String validCsvRecords = getMsisdnCsvRecords(validMsisdns, validNewMsisdns, validAlternateContactNumbers);
-        String invalidRecords = "invalidMsisdn,1234567890, \n1234567890,,\n";
+    private CsvUploadRequest createMsisdnCsvRequest(List<MsisdnCsvRecord> csvRecords) {
+        String validCsvRecords = getMsisdnCsvRecords(csvRecords);
+        String invalidRecords = "invalidMsisdn,1234567890, \n1234567899,,\n";
 
         String csvContent = String.format("%s%s%s", MSISDN_CSV_HEADER, validCsvRecords, invalidRecords);
         return getCsvUploadRequestWithCustomCsvContents(csvContent);
     }
 
-    private String getMsisdnCsvRecords(List<String> validMsisdns, List<String> validNewMsisdns, List<String> validAlternateContactNumbers) {
+    private String getMsisdnCsvRecords(List<MsisdnCsvRecord> csvRecords) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (int csvRowCounter = 0; csvRowCounter < validMsisdns.size() && csvRowCounter < validNewMsisdns.size(); csvRowCounter++) {
-            stringBuilder.append(String.format("%s,%s,%s\n", validMsisdns.get(csvRowCounter), validNewMsisdns.get(csvRowCounter), validAlternateContactNumbers.get(csvRowCounter)));
+        for (MsisdnCsvRecord csvRecord : csvRecords) {
+            stringBuilder.append(String.format("%s,%s,%s\n", csvRecord.getMsisdn(), csvRecord.getNewMsisdn(), csvRecord.getAlternateContactNumber()));
         }
         return stringBuilder.toString();
     }
 
-    private void assertFLWDetailsAfterImport(String msisdn, String newMsisdn) {
-        assertTrue(allFrontLineWorkers.getByMsisdn(PhoneNumber.formatPhoneNumber(msisdn)).isEmpty());
+    private void assertFLWDetailsAfterImport(List<MsisdnCsvRecord> csvRecords) {
+        for (MsisdnCsvRecord csvRecord : csvRecords) {
+            String msisdn = csvRecord.getMsisdn();
+            List<FrontLineWorker> flwByMsisdn = allFrontLineWorkers.getByMsisdn(PhoneNumber.formatPhoneNumber(msisdn));
+            assertNewMsisdn(csvRecord.getNewMsisdn(), flwByMsisdn);
+            assertAlternateContactNumber(csvRecord, flwByMsisdn);
+        }
+    }
+
+    private void assertNewMsisdn(String newMsisdn, List<FrontLineWorker> flwByMsisdn) {
+        if (isBlank(newMsisdn))
+            return;
+        assertTrue(flwByMsisdn.isEmpty());
         List<FrontLineWorker> flwByNewMsisdn = allFrontLineWorkers.getByMsisdn(PhoneNumber.formatPhoneNumber(newMsisdn));
         assertEquals(1, flwByNewMsisdn.size());
+    }
+
+    private void assertAlternateContactNumber(MsisdnCsvRecord csvRecord, List<FrontLineWorker> frontLineWorkers) {
+        String alternateContactNumber = csvRecord.getAlternateContactNumber();
+        String newMsisdn = csvRecord.getNewMsisdn();
+        if (isBlank(alternateContactNumber))
+            return;
+
+        if (isNotBlank(newMsisdn)) {
+            frontLineWorkers = allFrontLineWorkers.getByMsisdn(PhoneNumber.formatPhoneNumber(newMsisdn));
+        }
+        assertEquals(1, frontLineWorkers.size());
+        assertEquals(PhoneNumber.formatPhoneNumber(alternateContactNumber), frontLineWorkers.get(0).getAlternateContactNumber());
     }
 
     private CsvUploadRequest createCsvUploadRequest(String validMsisdn, String verificationStatus, String guid) {
@@ -271,5 +297,29 @@ public class HomeControllerIT extends SpringIntegrationTest {
                     guid, msisdn, verificationStatus));
         }
         return stringBuilder.toString();
+    }
+
+    private class MsisdnCsvRecord {
+        private final String msisdn;
+        private final String newMsisdn;
+        private final String alternateContactNumber;
+
+        public MsisdnCsvRecord(String msisdn, String newMsisdn, String alternateContactNumber) {
+            this.msisdn = msisdn;
+            this.newMsisdn = newMsisdn;
+            this.alternateContactNumber = alternateContactNumber;
+        }
+
+        public String getMsisdn() {
+            return msisdn;
+        }
+
+        public String getNewMsisdn() {
+            return newMsisdn;
+        }
+
+        public String getAlternateContactNumber() {
+            return alternateContactNumber;
+        }
     }
 }

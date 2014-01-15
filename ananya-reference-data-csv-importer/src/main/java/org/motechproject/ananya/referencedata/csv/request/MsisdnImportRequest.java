@@ -55,6 +55,10 @@ public class MsisdnImportRequest {
         return isNotEmpty(newMsisdn) ? PhoneNumber.formatPhoneNumber(newMsisdn) : null;
     }
 
+    public Long alternateContactNumberAsLong() {
+        return isNotEmpty(alternateContactNumber) ? PhoneNumber.formatPhoneNumber(alternateContactNumber) : null;
+    }
+
     public boolean isChangeMsisdn() {
         return isNotBlank(newMsisdn);
     }

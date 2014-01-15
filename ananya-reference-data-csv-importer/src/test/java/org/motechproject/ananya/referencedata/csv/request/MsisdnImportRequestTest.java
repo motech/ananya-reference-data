@@ -61,4 +61,22 @@ public class MsisdnImportRequestTest {
         msisdnImportRequest = new MsisdnImportRequest("1234567890", null, "1234567892");
         assertNull(msisdnImportRequest.newMsisdnAsLong());
     }
+
+    @Test
+    public void shouldReturnAlternateContactNumberAsLong() {
+        MsisdnImportRequest msisdnImportRequest = new MsisdnImportRequest("1234567890", null, "1234567892");
+        assertEquals(911234567892L, (long) msisdnImportRequest.alternateContactNumberAsLong());
+
+        msisdnImportRequest = new MsisdnImportRequest("1234567890", null, "911234567892");
+        assertEquals(911234567892L, (long) msisdnImportRequest.alternateContactNumberAsLong());
+
+        msisdnImportRequest = new MsisdnImportRequest("1234567890", "1234567891", "001234567892");
+        assertEquals(911234567892L, (long) msisdnImportRequest.alternateContactNumberAsLong());
+
+        msisdnImportRequest = new MsisdnImportRequest("1234567890", "1234567891", null);
+        assertNull(msisdnImportRequest.alternateContactNumberAsLong());
+
+        msisdnImportRequest = new MsisdnImportRequest("1234567890", "1234567891", "");
+        assertNull(msisdnImportRequest.alternateContactNumberAsLong());
+    }
 }

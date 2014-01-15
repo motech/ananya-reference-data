@@ -45,7 +45,7 @@ public class MsisdnImporter {
         for (MsisdnImportRequest msisdnImportRequest : msisdnImportRequests) {
             MsisdnImportValidationResponse validationResponse = msisdnImportRequestValidator.validate(msisdnImportRequests, msisdnImportRequest);
 
-            logger.info("Validated MSISDN record number : " + recordCounter++ + "with validation status : " + validationResponse.isValid());
+            logger.info("Validated MSISDN record number: " + recordCounter++ + " with validation status: " + validationResponse.isValid());
             if (validationResponse.isValid()) {
                 continue;
             }
