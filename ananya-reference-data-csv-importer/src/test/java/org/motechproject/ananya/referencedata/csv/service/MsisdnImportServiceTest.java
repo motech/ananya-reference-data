@@ -10,6 +10,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.motechproject.ananya.referencedata.csv.request.MsisdnImportRequest;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
+import org.motechproject.ananya.referencedata.flw.service.SyncService;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
 
 import java.util.List;
@@ -29,6 +30,8 @@ public class MsisdnImportServiceTest {
 
     @Mock
     private AllFrontLineWorkers allFrontLineWorkers;
+    @Mock
+    private SyncService syncService;
     @Captor
     private ArgumentCaptor<List<FrontLineWorker>> frontLineWorkerCaptor;
 
@@ -36,7 +39,7 @@ public class MsisdnImportServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        msisdnImportService = new MsisdnImportService(allFrontLineWorkers);
+        msisdnImportService = new MsisdnImportService(allFrontLineWorkers, syncService);
     }
 
     @Test
@@ -113,6 +116,26 @@ public class MsisdnImportServiceTest {
         assertEquals(2, actualFLWs.size());
         assertNull(actualFLWs.get(0).getAlternateContactNumber());
         assertNull(actualFLWs.get(1).getAlternateContactNumber());
+    }
+
+    @Test
+    public void shouldSyncUpdatedFLWs() {
+        String newMsisdn1 = "1234567891";
+        String alternateContactNumber1 = "1234567892";
+        String newMsisdn2 = "9876543211";
+        String alternateContactNumber2 = "9876543212";
+        MsisdnImportRequest msisdnImportRequest1 = setUpRequest("1234567890", newMsisdn1, alternateContactNumber1);
+        MsisdnImportRequest msisdnImportRequest2 = setUpRequest("9876543210", newMsisdn2, alternateContactNumber2);
+
+        msisdnImportService.updateFLWContactDetailsWithoutValidations(asList(msisdnImportRequest1, msisdnImportRequest2));
+
+        verify(syncService).syncAllFrontLineWorkers(frontLineWorkerCaptor.capture());
+        List<FrontLineWorker> syncedFLWs = frontLineWorkerCaptor.getValue();
+        assertEquals(2, syncedFLWs.size());
+        assertEquals(PhoneNumber.formatPhoneNumber(newMsisdn1), syncedFLWs.get(0).getMsisdn());
+        assertEquals(PhoneNumber.formatPhoneNumber(alternateContactNumber1), syncedFLWs.get(0).getAlternateContactNumber());
+        assertEquals(PhoneNumber.formatPhoneNumber(newMsisdn2), syncedFLWs.get(1).getMsisdn());
+        assertEquals(PhoneNumber.formatPhoneNumber(alternateContactNumber2), syncedFLWs.get(1).getAlternateContactNumber());
     }
 
     private MsisdnImportRequest setUpRequest(String msisdn, String newMsisdn, String alternateContactNumber) {

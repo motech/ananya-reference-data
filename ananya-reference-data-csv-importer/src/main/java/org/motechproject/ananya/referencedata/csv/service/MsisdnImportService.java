@@ -5,6 +5,7 @@ import org.motechproject.ananya.referencedata.csv.request.MsisdnImportRequest;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.NewMsisdn;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
+import org.motechproject.ananya.referencedata.flw.service.SyncService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,15 @@ public class MsisdnImportService {
     private static Logger logger = LoggerFactory.getLogger(MsisdnImporter.class);
 
     private AllFrontLineWorkers allFrontLineWorkers;
+    private SyncService syncService;
 
     public MsisdnImportService() {
     }
 
     @Autowired
-    public MsisdnImportService(AllFrontLineWorkers allFrontLineWorkers) {
+    public MsisdnImportService(AllFrontLineWorkers allFrontLineWorkers, SyncService syncService) {
         this.allFrontLineWorkers = allFrontLineWorkers;
+        this.syncService = syncService;
     }
 
     @Transactional
@@ -39,6 +42,7 @@ public class MsisdnImportService {
             frontLineWorkersToUpdate.add(frontLineWorker);
         }
         allFrontLineWorkers.createOrUpdateAll(frontLineWorkersToUpdate);
+        syncService.syncAllFrontLineWorkers(frontLineWorkersToUpdate);
     }
 
     private void updateNewMsisdn(FrontLineWorker frontLineWorker, MsisdnImportRequest request) {
