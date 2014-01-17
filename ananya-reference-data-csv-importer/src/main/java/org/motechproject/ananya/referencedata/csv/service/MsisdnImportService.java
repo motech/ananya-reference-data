@@ -34,25 +34,29 @@ public class MsisdnImportService {
     @Transactional
     public void updateFLWContactDetailsWithoutValidations(List<MsisdnImportRequest> msisdnImportRequests) {
         List<FrontLineWorker> frontLineWorkersToUpdate = new ArrayList<>();
+        List<FrontLineWorker> frontLineWorkersToSync = new ArrayList<>();
         for (MsisdnImportRequest msisdnImportRequest : msisdnImportRequests) {
             FrontLineWorker frontLineWorker = allFrontLineWorkers.getByMsisdn(msisdnImportRequest.msisdnAsLong()).get(0);
-            updateNewMsisdn(frontLineWorker, msisdnImportRequest);
             updateAlternateContactNumber(frontLineWorker, msisdnImportRequest);
+            FrontLineWorker frontLineWorkerToSync = changeMsisdnAndGetFLWToSync(frontLineWorker, msisdnImportRequest);
 
             frontLineWorkersToUpdate.add(frontLineWorker);
+            frontLineWorkersToSync.add(frontLineWorkerToSync);
         }
         allFrontLineWorkers.createOrUpdateAll(frontLineWorkersToUpdate);
-        syncService.syncAllFrontLineWorkers(frontLineWorkersToUpdate);
+        syncService.syncAllFrontLineWorkers(frontLineWorkersToSync);
     }
 
-    private void updateNewMsisdn(FrontLineWorker frontLineWorker, MsisdnImportRequest request) {
+    private FrontLineWorker changeMsisdnAndGetFLWToSync(FrontLineWorker frontLineWorker, MsisdnImportRequest request) {
         if (!request.isChangeMsisdn()) {
-            return;
+            return frontLineWorker;
         }
         allFrontLineWorkers.deleteByMsisdn(request.newMsisdnAsLong());
 
         frontLineWorker.setNewMsisdn(new NewMsisdn(request.getNewMsisdn(), frontLineWorker.getFlwId().toString()));
+        FrontLineWorker frontLineWorkerToSync = frontLineWorker.clone();
         frontLineWorker.updateToNewMsisdn();
+        return frontLineWorkerToSync;
     }
 
     private void updateAlternateContactNumber(FrontLineWorker frontLineWorker, MsisdnImportRequest request) {

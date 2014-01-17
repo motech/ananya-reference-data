@@ -120,21 +120,25 @@ public class MsisdnImportServiceTest {
 
     @Test
     public void shouldSyncUpdatedFLWs() {
+        String msisdn1 = "1234567890";
         String newMsisdn1 = "1234567891";
         String alternateContactNumber1 = "1234567892";
-        String newMsisdn2 = "9876543211";
+        String msisdn2 = "9876543210";
+        String newMsisdn2 = "";
         String alternateContactNumber2 = "9876543212";
-        MsisdnImportRequest msisdnImportRequest1 = setUpRequest("1234567890", newMsisdn1, alternateContactNumber1);
-        MsisdnImportRequest msisdnImportRequest2 = setUpRequest("9876543210", newMsisdn2, alternateContactNumber2);
+        MsisdnImportRequest msisdnImportRequest1 = setUpRequest(msisdn1, newMsisdn1, alternateContactNumber1);
+        MsisdnImportRequest msisdnImportRequest2 = setUpRequest(msisdn2, newMsisdn2, alternateContactNumber2);
 
         msisdnImportService.updateFLWContactDetailsWithoutValidations(asList(msisdnImportRequest1, msisdnImportRequest2));
 
         verify(syncService).syncAllFrontLineWorkers(frontLineWorkerCaptor.capture());
         List<FrontLineWorker> syncedFLWs = frontLineWorkerCaptor.getValue();
         assertEquals(2, syncedFLWs.size());
-        assertEquals(PhoneNumber.formatPhoneNumber(newMsisdn1), syncedFLWs.get(0).getMsisdn());
+        assertEquals(PhoneNumber.formatPhoneNumber(msisdn1), syncedFLWs.get(0).getMsisdn());
+        assertEquals(PhoneNumber.formatPhoneNumber(newMsisdn1), syncedFLWs.get(0).getNewMsisdn().msisdn());
         assertEquals(PhoneNumber.formatPhoneNumber(alternateContactNumber1), syncedFLWs.get(0).getAlternateContactNumber());
-        assertEquals(PhoneNumber.formatPhoneNumber(newMsisdn2), syncedFLWs.get(1).getMsisdn());
+        assertEquals(PhoneNumber.formatPhoneNumber(msisdn2), syncedFLWs.get(1).getMsisdn());
+        assertNull(syncedFLWs.get(1).getNewMsisdn());
         assertEquals(PhoneNumber.formatPhoneNumber(alternateContactNumber2), syncedFLWs.get(1).getAlternateContactNumber());
     }
 
