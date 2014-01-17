@@ -30,7 +30,8 @@ public class FrontLineWorkerSyncService {
     public void sync(List<FrontLineWorker> frontLineWorkerList) {
         for (FrontLineWorker frontLineWorker : frontLineWorkerList) {
             logger.info("Raising event to sync for flw: " + frontLineWorker.toString());
-            if (frontLineWorker.hasBeenVerified() || allFrontLineWorkers.getByMsisdn(frontLineWorker.getMsisdn()).size() == 1) {
+
+            if (frontLineWorker.hasBeenVerified() || dbHasOnlyOneFlwByMsisdn(frontLineWorker)) {
                 List<SyncEndpoint> flwSyncEndpoints = syncEndpointService.getFlwSyncEndpoints();
                 for (SyncEndpoint flwSyncEndpoint : flwSyncEndpoints) {
                     HashMap<String, String> headers = new HashMap<>();
@@ -39,5 +40,12 @@ public class FrontLineWorkerSyncService {
                 }
             }
         }
+    }
+
+    private boolean dbHasOnlyOneFlwByMsisdn(FrontLineWorker frontLineWorker) {
+        List<FrontLineWorker> flwsByMsisdn = frontLineWorker.msisdnChange()
+                ? allFrontLineWorkers.getByMsisdn(frontLineWorker.getNewMsisdn().msisdn())
+                : allFrontLineWorkers.getByMsisdn(frontLineWorker.getMsisdn());
+        return flwsByMsisdn.size() == 1;
     }
 }

@@ -6,7 +6,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.motechproject.ananya.referencedata.flw.domain.*;
+import org.motechproject.ananya.referencedata.flw.domain.Designation;
+import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
+import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorkerSyncRequest;
+import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
+import org.motechproject.ananya.referencedata.flw.domain.NewMsisdn;
+import org.motechproject.ananya.referencedata.flw.domain.SyncEndpoint;
+import org.motechproject.ananya.referencedata.flw.domain.SyncEndpointService;
+import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.mapper.FrontLineWorkerSyncRequestMapper;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.http.client.service.HttpClientService;
@@ -15,8 +23,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
-import static org.mockito.Mockito.*;
+import static java.util.Arrays.asList;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FrontLineWorkerSyncServiceTest {
@@ -114,5 +126,31 @@ public class FrontLineWorkerSyncServiceTest {
 
         FrontLineWorkerSyncRequest frontLineWorkerSyncRequest = FrontLineWorkerSyncRequestMapper.mapFrom(frontLineWorker1);
         verify(httpClientService, times(0)).post(syncEndpoint.getUrl(), frontLineWorkerSyncRequest);
+    }
+
+    @Test
+    public void shouldGetFLWByNewMsisdnIfMsisdnIsChanged() {
+        Long msisdn1 = 919876543210L;
+        FrontLineWorker flwWithSameMsisdn = new FrontLineWorker(msisdn1, "name", Designation.ANM, null, null);
+        Long msisdn2 = 911234567890L;
+        Long newMsisdn = 919999999999L;
+        FrontLineWorker flwWithNewMsisdn = new FrontLineWorker(msisdn2, null, "name", Designation.ANM, null, null, UUID.randomUUID(), null);
+        flwWithNewMsisdn.setNewMsisdn(new NewMsisdn(newMsisdn.toString(), flwWithNewMsisdn.getFlwId().toString()));
+        when(allFrontLineWorkers.getByMsisdn(msisdn1)).thenReturn(asList(flwWithSameMsisdn));
+        when(allFrontLineWorkers.getByMsisdn(newMsisdn)).thenReturn(asList(flwWithNewMsisdn));
+
+        Map<String, String> headers = new HashMap<>();
+        String apiKeyName = "someAPIKeyName";
+        String apiKeyValue = "someAPIKeyValue";
+        headers.put(apiKeyName, apiKeyValue);
+        SyncEndpoint syncEndpoint = new SyncEndpoint("url", apiKeyName, apiKeyValue);
+        when(syncEndpointService.getFlwSyncEndpoints()).thenReturn(asList(syncEndpoint));
+
+        frontLineWorkerSyncService.sync(asList(flwWithSameMsisdn, flwWithNewMsisdn));
+
+        FrontLineWorkerSyncRequest syncRequestForFlwWithSameMsisdn = FrontLineWorkerSyncRequestMapper.mapFrom(flwWithSameMsisdn);
+        verify(httpClientService).post(syncEndpoint.getUrl(), syncRequestForFlwWithSameMsisdn, headers);
+        FrontLineWorkerSyncRequest syncRequestForFlwWithNewMsisdn = FrontLineWorkerSyncRequestMapper.mapFrom(flwWithNewMsisdn);
+        verify(httpClientService).post(syncEndpoint.getUrl(), syncRequestForFlwWithNewMsisdn, headers);
     }
 }
