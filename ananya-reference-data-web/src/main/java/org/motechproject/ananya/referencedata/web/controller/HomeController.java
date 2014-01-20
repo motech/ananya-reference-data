@@ -105,7 +105,7 @@ public class HomeController {
         Matcher matcher = NEW_LINE_PATTERN.matcher(csvContent);
         while (matcher.find())
             count++;
-        return count > maximumNumberOfRecords + HEADER_SIZE;
+        return count >= maximumNumberOfRecords + HEADER_SIZE;
     }
 
     private void downloadErrorCsv(HttpServletResponse httpServletResponse, String errorCsv, String responseFilePrefix) throws IOException {

@@ -24,7 +24,12 @@ import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.matches;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.motechproject.ananya.referencedata.web.utils.MVCTestUtils.mockMvc;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
@@ -170,10 +175,12 @@ public class HomeControllerTest {
         assertEquals("MSISDN CSV file can have a maximum of 50 records.", modelAndView.getModel().get("errorMessage"));
     }
 
-    static String createCSVRecordsWith(int count) {
+    static String createCSVRecordsWith(int numberOfRows) {
         String csv = "header1,header2\r";
-        for (int i = 0; i < count; i++)
-            if (i % 2 == 0) {
+        for (int rowCount = 1; rowCount <= numberOfRows; rowCount++)
+            if (rowCount == numberOfRows) {
+                csv += "recordA,recordB";
+            } else if (rowCount % 2 == 0) {
                 csv += "recordA,recordB\r\n";
             } else {
                 csv += "recordA,recordB\n";
