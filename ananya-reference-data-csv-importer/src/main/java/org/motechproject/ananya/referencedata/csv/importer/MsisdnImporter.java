@@ -36,6 +36,11 @@ public class MsisdnImporter {
 
     @Validate
     public ValidationResponse validate(List<MsisdnImportRequest> msisdnImportRequests) {
+        if (msisdnImportRequests.isEmpty()) {
+            logger.info("No records in CSV to validate.");
+            return new ValidationResponse(true);
+        }
+
         boolean isValid = true;
         int recordCounter = 0;
         List<Error> errors = new ArrayList<>();
@@ -60,6 +65,11 @@ public class MsisdnImporter {
 
     @Post
     public void postData(List<MsisdnImportRequest> msisdnImportRequests) {
+        if (msisdnImportRequests.isEmpty()) {
+            logger.info("No valid records to update contact details.");
+            return;
+        }
+
         logger.info("Started updating MSISDN data");
         msisdnImportService.updateFLWContactDetailsWithoutValidations(msisdnImportRequests);
         logger.info("Finished updating MSISDN data");

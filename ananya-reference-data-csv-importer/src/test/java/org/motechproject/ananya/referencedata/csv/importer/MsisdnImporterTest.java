@@ -11,6 +11,7 @@ import org.motechproject.ananya.referencedata.csv.service.MsisdnImportService;
 import org.motechproject.ananya.referencedata.csv.validator.MsisdnImportRequestValidator;
 import org.motechproject.importer.domain.ValidationResponse;
 
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -18,6 +19,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -78,5 +80,20 @@ public class MsisdnImporterTest {
         msisdnImporter.postData(msisdnImportRequests);
 
         verify(msisdnImportService).updateFLWContactDetailsWithoutValidations(msisdnImportRequests);
+    }
+
+    @Test
+    public void shouldNotValidateIfThereAreNoRecordsInCSV() {
+        ValidationResponse validationResponse = msisdnImporter.validate(Collections.EMPTY_LIST);
+
+        verifyZeroInteractions(msisdnImportRequestValidator);
+        assertTrue(validationResponse.isValid());
+    }
+
+    @Test
+    public void shouldNotUpdateContactDetailsIfThereAreNoRecords() {
+        msisdnImporter.postData(Collections.EMPTY_LIST);
+
+        verifyZeroInteractions(msisdnImportService);
     }
 }
