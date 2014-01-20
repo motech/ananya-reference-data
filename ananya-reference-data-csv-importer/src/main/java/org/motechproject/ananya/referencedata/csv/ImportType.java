@@ -52,17 +52,17 @@ public enum ImportType {
 
         @Override
         public String successMessage() {
-            return "MSISDNs have been updated successfully.";
+            return "Contact details have been updated successfully.";
         }
 
         @Override
         public String errorMessage(int maximumNumberOfRecords) {
-            return String.format("MSISDN CSV file can have a maximum of %d records.", maximumNumberOfRecords);
+            return String.format("Contact details file can have a maximum of %d records.", maximumNumberOfRecords);
         }
 
         @Override
         public String responseFilePrefix() {
-            return "msisdn_upload_failures";
+            return "contact_details_upload_failures";
         }
     };
 

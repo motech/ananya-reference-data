@@ -145,7 +145,7 @@ public class HomeControllerTest {
 
         verify(csvDataImportProcessor).processContent(csvFileRequest.getStringContent(), true);
         assertEquals("admin/home", modelAndView.getViewName());
-        assertEquals("MSISDNs have been updated successfully.", modelAndView.getModel().get("successMessage"));
+        assertEquals("Contact details have been updated successfully.", modelAndView.getModel().get("successMessage"));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class HomeControllerTest {
 
         verify(outputStream).write(errorCSV.getBytes());
         verify(response).setHeader(eq("Content-Disposition"), matches(
-                "attachment; filename=msisdn_upload_failures\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}.csv"));
+                "attachment; filename=contact_details_upload_failures\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}.csv"));
         verify(outputStream).flush();
     }
 
@@ -172,7 +172,7 @@ public class HomeControllerTest {
 
         verifyZeroInteractions(allCSVDataImportProcessor);
         assertEquals("admin/home", modelAndView.getViewName());
-        assertEquals("MSISDN CSV file can have a maximum of 50 records.", modelAndView.getModel().get("errorMessage"));
+        assertEquals("Contact details file can have a maximum of 50 records.", modelAndView.getModel().get("errorMessage"));
     }
 
     static String createCSVRecordsWith(int numberOfRows) {
