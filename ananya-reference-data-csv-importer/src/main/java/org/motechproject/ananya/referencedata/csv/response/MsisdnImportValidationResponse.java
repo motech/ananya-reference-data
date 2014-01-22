@@ -55,6 +55,14 @@ public class MsisdnImportValidationResponse {
         invalidate("Duplicate FLW records present in database for provided New MSISDN");
     }
 
+    public void forConflictingNewMsisdn() {
+        invalidate("There is another record in CSV with MSISDN same as provided New MSISDN");
+    }
+
+    public void forConflictingMsisdn() {
+        invalidate("There is another record in CSV with New MSISDN same as provided MSISDN");
+    }
+
     public boolean isValid() {
         return isValid;
     }
@@ -65,7 +73,7 @@ public class MsisdnImportValidationResponse {
 
     private void invalidate(String message) {
         isValid = false;
-        if(!this.message.contains(message))
+        if (!this.message.contains(message))
             this.message.add(message);
     }
 

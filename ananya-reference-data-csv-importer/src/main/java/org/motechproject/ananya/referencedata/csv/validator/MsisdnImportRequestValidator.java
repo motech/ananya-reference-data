@@ -9,12 +9,11 @@ import org.motechproject.ananya.referencedata.flw.utils.FLWValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.motechproject.ananya.referencedata.flw.utils.FLWValidationUtils.getDuplicateRecordsByField;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValid;
 import static org.motechproject.ananya.referencedata.flw.utils.PhoneNumber.isValidWithBlanksAllowed;
 
@@ -38,15 +37,38 @@ public class MsisdnImportRequestValidator {
         return response;
     }
 
-    private void validateDuplicates(List<MsisdnImportRequest> requests, MsisdnImportRequest request, MsisdnImportValidationResponse response) {
-        Collection flwsByMsisdn = getDuplicateRecordsByField(requests, "msisdn", request.getMsisdn());
-        if (flwsByMsisdn.size() > 1) {
+    private void validateDuplicates(List<MsisdnImportRequest> allRequests, MsisdnImportRequest request, MsisdnImportValidationResponse response) {
+        for (MsisdnImportRequest otherRequest : allRequests) {
+            if (request.equals(otherRequest))
+                continue;
+            validateDuplicateMsisdn(request.getMsisdn(), otherRequest.getMsisdn(), response);
+            validateDuplicateNewMsisdn(request.getNewMsisdn(), otherRequest.getNewMsisdn(), response);
+            validateIfMsisdnIsSameAsNewMsisdnOfAnotherRequest(request.getMsisdn(), otherRequest.getNewMsisdn(), response);
+            validateIfNewMsisdnIsSameAsMsisdnOfAnotherRequest(request.getNewMsisdn(), otherRequest.getMsisdn(), response);
+        }
+    }
+
+    private void validateDuplicateMsisdn(String msisdn, String otherMsisdn, MsisdnImportValidationResponse response) {
+        if (isNotBlank(msisdn) && msisdn.equals(otherMsisdn)) {
             response.forDuplicateMsisdnRecords();
         }
+    }
 
-        Collection flwsByNewMsisdn = getDuplicateRecordsByField(requests, "newMsisdn", request.getNewMsisdn());
-        if (flwsByNewMsisdn.size() > 1) {
+    private void validateDuplicateNewMsisdn(String newMsisdn, String otherNewMsisdn, MsisdnImportValidationResponse response) {
+        if (isNotBlank(newMsisdn) && newMsisdn.equals(otherNewMsisdn)) {
             response.forDuplicateNewMsisdnRecords();
+        }
+    }
+
+    private void validateIfMsisdnIsSameAsNewMsisdnOfAnotherRequest(String msisdn, String otherNewMsisdn, MsisdnImportValidationResponse response) {
+        if (isNotBlank(msisdn) && msisdn.equals(otherNewMsisdn)) {
+            response.forConflictingMsisdn();
+        }
+    }
+
+    private void validateIfNewMsisdnIsSameAsMsisdnOfAnotherRequest(String newMsisdn, String otherMsisdn, MsisdnImportValidationResponse response) {
+        if (isNotBlank(newMsisdn) && newMsisdn.equals(otherMsisdn)) {
+            response.forConflictingNewMsisdn();
         }
     }
 

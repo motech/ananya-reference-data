@@ -251,12 +251,13 @@ public class MsisdnImportRequestValidatorTest {
     }
 
     @Test
-    public void shouldReturnResponseWithMultipleErrosIfThereAreMultipleValidationFailures() {
+    public void shouldReturnResponseWithMultipleErrorsIfThereAreMultipleValidationFailures_AndImplicitlyChecksIfEqualsIsNotOverridden() {
         String msisdn = "1234567890111";
         List<MsisdnImportRequest> requests = new ArrayList<>();
         MsisdnImportRequest invalidRequest = new MsisdnImportRequest(msisdn, null, "");
+        MsisdnImportRequest requestWithSameValues = new MsisdnImportRequest(msisdn, null, "");
         requests.add(invalidRequest);
-        requests.add(invalidRequest);
+        requests.add(requestWithSameValues);
 
         MsisdnImportValidationResponse response = msisdnImportRequestValidator.validate(requests, invalidRequest);
 
@@ -266,5 +267,29 @@ public class MsisdnImportRequestValidatorTest {
         assertTrue(responseMessage.contains("There are duplicate rows in CSV for MSISDN"));
         assertTrue(responseMessage.contains("MSISDN is not in a valid format"));
         assertTrue(responseMessage.contains("At least one of the updates, new msisdn or alternate contact number, should be present"));
+    }
+
+    @Test
+    public void shouldValidateIfMsisdnOfGivenRecordIsSameAsNewMsisdnOfAnyOtherRecord() {
+        String msisdn = "1234567890";
+        MsisdnImportRequest request1 = new MsisdnImportRequest(msisdn, "1234567891", "");
+        MsisdnImportRequest request2 = new MsisdnImportRequest("9876543210", msisdn, null);
+
+        MsisdnImportValidationResponse response = msisdnImportRequestValidator.validate(asList(request1, request2), request1);
+
+        assertFalse(response.isValid());
+        assertTrue(response.getMessage().contains("There is another record in CSV with New MSISDN same as provided MSISDN"));
+    }
+
+    @Test
+    public void shouldValidateIfNewMsisdnOfGivenRecordIsSameAsMsisdnOfAnyOtherRecord() {
+        String newMsisdn = "1234567891";
+        MsisdnImportRequest request1 = new MsisdnImportRequest("1234567890", newMsisdn, "");
+        MsisdnImportRequest request2 = new MsisdnImportRequest(newMsisdn, "9876543210", null);
+
+        MsisdnImportValidationResponse response = msisdnImportRequestValidator.validate(asList(request1, request2), request1);
+
+        assertFalse(response.isValid());
+        assertTrue(response.getMessage().contains("There is another record in CSV with MSISDN same as provided New MSISDN"));
     }
 }
