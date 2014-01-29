@@ -15,7 +15,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,11 +31,11 @@ import java.util.regex.Pattern;
 
 @Controller
 public class HomeController {
-    public static final String NEW_LINE = "\r\n|\r|\n";
-    public static final Pattern NEW_LINE_PATTERN = Pattern.compile(NEW_LINE);
-    public static final int HEADER_SIZE = 1;
+    private static final String NEW_LINE = "\r\n|\r|\n";
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile(NEW_LINE);
+    private static final int HEADER_SIZE = 1;
     private Logger logger = LoggerFactory.getLogger(HomeController.class);
-    private int maximumNumberOfRecords;
+    private Properties referenceDataProperties;
 
     private LocationService locationService;
     private AllCSVDataImportProcessor allCSVDataImportProcessor;
@@ -41,7 +45,7 @@ public class HomeController {
                           @Qualifier("referencedataProperties") Properties properties) {
         this.locationService = locationService;
         this.allCSVDataImportProcessor = allCSVDataImportProcessor;
-        this.maximumNumberOfRecords = Integer.parseInt(properties.getProperty("flw.csv.max.records"));
+        this.referenceDataProperties = properties;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = {"/admin", "/admin/home"})
@@ -62,20 +66,33 @@ public class HomeController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/admin/flw/upload")
     public ModelAndView uploadFrontLineWorkers(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws Exception {
-        String csvContent = csvUploadRequest.getStringContent();
-        if (exceedsMaximumNumberOfRecords(csvContent)) {
-            return new ModelAndView("admin/home").addObject("errorMessage", ImportType.FrontLineWorker.errorMessage(maximumNumberOfRecords));
-        }
-        return uploadFile(csvUploadRequest, httpServletResponse, ImportType.FrontLineWorker);
+        int maximumNumberOfRecords = Integer.parseInt(referenceDataProperties.getProperty("flw.csv.max.records"));
+        return processRequest(csvUploadRequest, httpServletResponse, ImportType.FrontLineWorker, maximumNumberOfRecords, false);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/admin/location/upload")
     public ModelAndView uploadLocations(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws Exception {
-        return uploadFile(csvUploadRequest, httpServletResponse, ImportType.Location);
+        return uploadFile(csvUploadRequest, httpServletResponse, ImportType.Location, false);
     }
 
-    private ModelAndView uploadFile(CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse, ImportType entity) throws Exception {
-        String response = allCSVDataImportProcessor.get(entity.name()).processContent(csvUploadRequest.getStringContent());
+    @RequestMapping(method = RequestMethod.POST, value = "/admin/msisdn/upload")
+    public ModelAndView uploadMSISDNs(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws Exception {
+        int maximumNumberOfRecords = Integer.parseInt(referenceDataProperties.getProperty("msisdn.csv.max.records"));
+        return processRequest(csvUploadRequest, httpServletResponse, ImportType.Msisdn, maximumNumberOfRecords, true);
+    }
+
+    private ModelAndView processRequest(CsvUploadRequest request, HttpServletResponse response,
+                                        ImportType entity, int maximumNumberOfRecords, boolean shouldUpdateValidRecords) throws Exception {
+        String csvContent = request.getStringContent();
+        if (exceedsMaximumNumberOfRecords(csvContent, maximumNumberOfRecords)) {
+            return new ModelAndView("admin/home").addObject("errorMessage", entity.errorMessage(maximumNumberOfRecords));
+        }
+
+        return uploadFile(request, response, entity, shouldUpdateValidRecords);
+    }
+
+    private ModelAndView uploadFile(CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse, ImportType entity, Boolean shouldUpdateValidRecords) throws Exception {
+        String response = allCSVDataImportProcessor.get(entity.name()).processContent(csvUploadRequest.getStringContent(), shouldUpdateValidRecords);
         if (response != null) {
             downloadErrorCsv(httpServletResponse, response, entity.responseFilePrefix());
             return null;
@@ -83,12 +100,12 @@ public class HomeController {
         return new ModelAndView("admin/home").addObject("successMessage", entity.successMessage());
     }
 
-    boolean exceedsMaximumNumberOfRecords(String csvContent) {
+    private boolean exceedsMaximumNumberOfRecords(String csvContent, int maximumNumberOfRecords) {
         int count = 0;
         Matcher matcher = NEW_LINE_PATTERN.matcher(csvContent);
         while (matcher.find())
             count++;
-        return count > maximumNumberOfRecords + HEADER_SIZE;
+        return count >= maximumNumberOfRecords + HEADER_SIZE;
     }
 
     private void downloadErrorCsv(HttpServletResponse httpServletResponse, String errorCsv, String responseFilePrefix) throws IOException {

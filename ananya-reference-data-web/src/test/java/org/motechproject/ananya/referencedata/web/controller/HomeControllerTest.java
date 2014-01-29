@@ -24,7 +24,12 @@ import java.util.Properties;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.matches;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.motechproject.ananya.referencedata.web.utils.MVCTestUtils.mockMvc;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.server.request.MockMvcRequestBuilders.post;
@@ -49,6 +54,7 @@ public class HomeControllerTest {
     public void setup() {
         properties = new Properties();
         properties.setProperty("flw.csv.max.records", "50");
+        properties.setProperty("msisdn.csv.max.records", "50");
         homeController = new HomeController(locationService, allCSVDataImportProcessor, properties);
     }
 
@@ -78,7 +84,7 @@ public class HomeControllerTest {
     public void shouldUploadLocationsFile() throws Exception {
         CsvUploadRequest csvFileRequest = mockCSVFileRequest(ImportType.Location.name());
         String errorCsv = "response";
-        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent())).thenReturn(errorCsv);
+        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent(), false)).thenReturn(errorCsv);
 
         homeController.uploadLocations(csvFileRequest, response);
 
@@ -91,7 +97,7 @@ public class HomeControllerTest {
     @Test
     public void shouldRespondWithSuccessMessageOnLocationsUpload() throws Exception {
         CsvUploadRequest csvFileRequest = mockCSVFileRequest(ImportType.Location.name());
-        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent())).thenReturn(null);
+        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent(), false)).thenReturn(null);
         ModelAndView modelAndView = homeController.uploadLocations(csvFileRequest, response);
         assertEquals("admin/home", modelAndView.getViewName());
         assertEquals("Locations Uploaded Successfully.", modelAndView.getModel().get("successMessage"));
@@ -101,7 +107,7 @@ public class HomeControllerTest {
     public void shouldUploadFLWFile() throws Exception {
         CsvUploadRequest csvFileRequest = mockCSVFileRequest(ImportType.FrontLineWorker.name());
         String errorCsv = "response";
-        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent())).thenReturn(errorCsv);
+        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent(), false)).thenReturn(errorCsv);
 
         homeController.uploadFrontLineWorkers(csvFileRequest, response);
 
@@ -114,26 +120,67 @@ public class HomeControllerTest {
     @Test
     public void shouldRespondWithSuccessMessageOnFLWUpload() throws Exception {
         CsvUploadRequest csvFileRequest = mockCSVFileRequest(ImportType.FrontLineWorker.name());
-        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent())).thenReturn(null);
+        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent(), false)).thenReturn(null);
         ModelAndView modelAndView = homeController.uploadFrontLineWorkers(csvFileRequest, response);
         assertEquals("admin/home", modelAndView.getViewName());
         assertEquals("FLWs Uploaded Successfully.", modelAndView.getModel().get("successMessage"));
     }
 
     @Test
-    public void shouldRespondWithErrorMessageOnUploadOfMoreThan5000FLWRecords() throws Exception {
-        String csvWith5001Records = createCSVRecordsWith(51);
+    public void shouldRespondWithErrorMessageOnUploadOfMoreThan51FLWRecords() throws Exception {
+        String csvWith51Records = createCSVRecordsWith(51);
         CsvUploadRequest csvFileRequest = mock(CsvUploadRequest.class);
-        when(csvFileRequest.getStringContent()).thenReturn(csvWith5001Records);
+        when(csvFileRequest.getStringContent()).thenReturn(csvWith51Records);
         ModelAndView modelAndView = homeController.uploadFrontLineWorkers(csvFileRequest, response);
         assertEquals("admin/home", modelAndView.getViewName());
         assertEquals("FLW file can have a maximum of 50 records.", modelAndView.getModel().get("errorMessage"));
     }
 
-    static String createCSVRecordsWith(int count) {
+    @Test
+    public void shouldUploadMSISDNFileSuccessfullyAndConsiderValidRecords() throws Exception {
+        CsvUploadRequest csvFileRequest = mockCSVFileRequest(ImportType.Msisdn.name());
+        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent(), true)).thenReturn(null);
+
+        ModelAndView modelAndView = homeController.uploadMSISDNs(csvFileRequest, this.response);
+
+        verify(csvDataImportProcessor).processContent(csvFileRequest.getStringContent(), true);
+        assertEquals("admin/home", modelAndView.getViewName());
+        assertEquals("Contact details have been updated successfully.", modelAndView.getModel().get("successMessage"));
+    }
+
+    @Test
+    public void shouldRespondWithErrorsCSVIfAnyErrorDuringMSISDNImport() throws Exception {
+        CsvUploadRequest csvFileRequest = mockCSVFileRequest(ImportType.Msisdn.name());
+        String errorCSV = "errorCSV";
+        when(csvDataImportProcessor.processContent(csvFileRequest.getStringContent(), true)).thenReturn(errorCSV);
+
+        homeController.uploadMSISDNs(csvFileRequest, response);
+
+        verify(outputStream).write(errorCSV.getBytes());
+        verify(response).setHeader(eq("Content-Disposition"), matches(
+                "attachment; filename=contact_details_upload_failures\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}.csv"));
+        verify(outputStream).flush();
+    }
+
+    @Test
+    public void shouldRespondWithErrorMessageOnUploadOfMoreThanAllowedNumberOfMsisdnRecords() throws Exception {
+        String csvWith51Records = createCSVRecordsWith(51);
+        CsvUploadRequest csvFileRequest = mock(CsvUploadRequest.class);
+        when(csvFileRequest.getStringContent()).thenReturn(csvWith51Records);
+
+        ModelAndView modelAndView = homeController.uploadMSISDNs(csvFileRequest, response);
+
+        verifyZeroInteractions(allCSVDataImportProcessor);
+        assertEquals("admin/home", modelAndView.getViewName());
+        assertEquals("Contact details file can have a maximum of 50 records.", modelAndView.getModel().get("errorMessage"));
+    }
+
+    static String createCSVRecordsWith(int numberOfRows) {
         String csv = "header1,header2\r";
-        for (int i = 0; i < count; i++)
-            if (i % 2 == 0) {
+        for (int rowCount = 1; rowCount <= numberOfRows; rowCount++)
+            if (rowCount == numberOfRows) {
+                csv += "recordA,recordB";
+            } else if (rowCount % 2 == 0) {
                 csv += "recordA,recordB\r\n";
             } else {
                 csv += "recordA,recordB\n";

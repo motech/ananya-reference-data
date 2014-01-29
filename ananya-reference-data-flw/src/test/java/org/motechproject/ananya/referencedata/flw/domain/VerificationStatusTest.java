@@ -17,8 +17,28 @@ public class VerificationStatusTest {
     }
 
     @Test
-    public void shouldMapEmptyVerificationStatusToNull(){
+    public void shouldMapEmptyVerificationStatusToNull() {
         VerificationStatus status = VerificationStatus.from("");
-        assertEquals(null,status);
+        assertEquals(null, status);
+    }
+
+    @Test
+    public void shouldCheckIfGivenVerificationStatusIsInvalid() {
+        assertTrue(VerificationStatus.isInvalid("INVALID"));
+
+        assertFalse(VerificationStatus.isInvalid("success"));
+        assertFalse(VerificationStatus.isInvalid("other"));
+        assertFalse(VerificationStatus.isInvalid(null));
+        assertFalse(VerificationStatus.isInvalid(""));
+    }
+
+    @Test
+    public void shouldCheckIfGivenVerificationStatusIsOther() {
+        assertTrue(VerificationStatus.isOther("other"));
+
+        assertFalse(VerificationStatus.isOther("success"));
+        assertFalse(VerificationStatus.isOther("INVALID"));
+        assertFalse(VerificationStatus.isOther(null));
+        assertFalse(VerificationStatus.isOther("  "));
     }
 }

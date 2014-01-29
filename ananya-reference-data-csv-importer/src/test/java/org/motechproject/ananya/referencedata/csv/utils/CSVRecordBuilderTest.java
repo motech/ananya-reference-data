@@ -49,4 +49,13 @@ public class CSVRecordBuilderTest {
 
         assertEquals("name, is \"khan\",hello\"\"", builder.toString());
     }
+
+    @Test
+    public void shouldGetCSVContentWithAdditionalColumnGivenValidExistingCSVContent() {
+        String csvRecord = new CSVRecordBuilder("\"column1\",\"column2\"", true)
+                .appendColumn("column3")
+                .toString();
+
+        assertEquals("\"column1\",\"column2\",\"column3\"", csvRecord);
+    }
 }

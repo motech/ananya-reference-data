@@ -1,5 +1,6 @@
 package org.motechproject.ananya.referencedata.flw.repository;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
@@ -72,5 +73,12 @@ public class AllFrontLineWorkers {
 
     public void delete(String flwId) {
         template.delete(getByFlwId(UUID.fromString(flwId)));
+    }
+
+    public void deleteByMsisdn(Long msisdn) {
+        List<FrontLineWorker> frontLineWorkers = getByMsisdn(msisdn);
+        if (CollectionUtils.isEmpty(frontLineWorkers))
+            return;
+        template.deleteAll(frontLineWorkers);
     }
 }
