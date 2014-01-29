@@ -59,7 +59,7 @@ public class MsisdnImporter {
             invalidRequests.add(msisdnImportRequest);
             addError(errors, msisdnImportRequest, validationResponse);
         }
-        logger.info("Completed validating MSISDN csv records");
+        logger.info(String.format("Completed validating MSISDN csv records. Found %s invalid CSV records", invalidRequests.size()));
         return constructValidationResponse(isValid, errors, invalidRequests);
     }
 
@@ -70,9 +70,9 @@ public class MsisdnImporter {
             return;
         }
 
-        logger.info("Started updating MSISDN data");
+        logger.info(String.format("Started updating %s valid MSISDN records", msisdnImportRequests.size()));
         msisdnImportService.updateFLWContactDetailsWithoutValidations(msisdnImportRequests);
-        logger.info("Finished updating MSISDN data");
+        logger.info(String.format("Finished updating %s valid MSISDN records", msisdnImportRequests.size()));
     }
 
     private ValidationResponse constructValidationResponse(boolean isValid, List<Error> errors, List<MsisdnImportRequest> invalidRequests) {
