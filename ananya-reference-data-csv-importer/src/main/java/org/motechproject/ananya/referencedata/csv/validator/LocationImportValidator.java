@@ -76,6 +76,11 @@ public class LocationImportValidator {
         }
         if (alternateLocationFromCSV == null && !isAlternateLocationPresentInDbAsValid(csvRequest))
             validationResponse.forInvalidAlternateLocation();
+        Location oldLocation = getLocationFormDb(csvRequest.getState(), csvRequest.getDistrict(), csvRequest.getBlock(), csvRequest.getPanchayat());
+        Location alternateLocation = getLocationFormDb(csvRequest.getNewState(), csvRequest.getNewDistrict(), csvRequest.getNewBlock(), csvRequest.getNewPanchayat());
+        if(oldLocation.equals(alternateLocation)){
+        	validationResponse.forSameOldAndNewLocation();
+        }
     }
 
     private LocationImportCSVRequest getIfPresentInCsv(LocationImportCSVRequest locationCSVRequest, List<LocationImportCSVRequest> locationImportCSVRequests) {
