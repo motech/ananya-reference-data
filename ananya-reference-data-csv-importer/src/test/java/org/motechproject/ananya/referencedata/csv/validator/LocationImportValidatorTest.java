@@ -120,6 +120,7 @@ public class LocationImportValidatorTest {
         locationImportRequestsFromCsv.add(locationImportCSVRequest("S3", "D3", "B3", "P3", LocationStatus.VALID.getDescription()));
         LocationImportCSVRequest locationRequest = locationImportCSVRequest("S1", "D1", "B1", "P1", LocationStatus.INVALID.getDescription(), "S2", "D2", "B2", "P2");
         when(allLocations.getFor("S2", "D2", "B2", "P2")).thenReturn(new Location("S2", "D2", "B2", "P2", LocationStatus.NEW, null));
+        when(allLocations.getFor("S1", "D1", "B1", "P1")).thenReturn(new Location("S1", "D1", "B1", "P1", LocationStatus.INVALID, null));
 
         LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequestsFromCsv);
 
@@ -134,6 +135,7 @@ public class LocationImportValidatorTest {
         locationImportRequestsFromCsv.add(locationImportCSVRequest("S2", "D2", "B2", "P2", null));
         LocationImportCSVRequest locationRequest = locationImportCSVRequest("S1", "D1", "B1", "P1", LocationStatus.INVALID.getDescription(), "S2", "D2", "B2", "P2");
         when(allLocations.getFor("S2", "D2", "B2", "P2")).thenReturn(null);
+        when(allLocations.getFor("S1", "D1", "B1", "P1")).thenReturn(new Location("S1", "D1", "B1", "P1", LocationStatus.INVALID, null));
 
         LocationValidationResponse locationValidationResponse = locationImportValidator.validate(locationRequest, locationImportRequestsFromCsv);
 
@@ -186,6 +188,7 @@ public class LocationImportValidatorTest {
         locationImportRequests.add(locationImportCSVRequest("S1", "d1", "B1", "P1", LocationStatus.NEW.getDescription()));
         LocationImportCSVRequest locationImportCSVRequest = locationImportCSVRequest("S1", "D1", "B1", "P1", LocationStatus.INVALID.getDescription(), "S4", "D4", "B4", "P4");
         locationImportRequests.add(locationImportCSVRequest);
+        when(allLocations.getFor("S1", "D1", "B1", "P1")).thenReturn(new Location("S1", "D1", "B1", "P1", LocationStatus.VALID, null));
 
         LocationValidationResponse response = locationImportValidator.validate(locationImportCSVRequest, locationImportRequests);
 
@@ -273,6 +276,7 @@ public class LocationImportValidatorTest {
     public void shouldNotHaveAlternateLocationSameAsTheLocation() {
         ArrayList<LocationImportCSVRequest> locationImportRequests = new ArrayList<>();
         LocationImportCSVRequest locationImportCSVRequest = locationImportCSVRequest("S1", "D1", "B1", "P1", LocationStatus.INVALID.getDescription(), "S1", "D1", "B1", "P1");
+        when(allLocations.getFor("S1", "D1", "B1", "P1")).thenReturn(new Location("S1", "D1", "B1", "P1", LocationStatus.INVALID, null));
 
         LocationValidationResponse response = locationImportValidator.validate(locationImportCSVRequest, locationImportRequests);
 
@@ -295,8 +299,8 @@ public class LocationImportValidatorTest {
         LocationImportCSVRequest locationImportRequest2 = locationImportCSVRequest(s2, d2, b2, p2, LocationStatus.INVALID.getDescription(), s1, d1, b1, p1);
         locationImportRequests.add(locationImportRequest1);
         locationImportRequests.add(locationImportRequest2);
-        when(allLocations.getFor("state", d1, b1, p1)).thenReturn(new Location("state", d1, b1, p1, LocationStatus.VALID, null));
-        when(allLocations.getFor("state", d2, b2, p2)).thenReturn(new Location("state", d2, b2, p2, LocationStatus.VALID, null));
+        when(allLocations.getFor(s1, d1, b1, p1)).thenReturn(new Location(s1, d1, b1, p1, LocationStatus.VALID, null));
+        when(allLocations.getFor(s2, d2, b2, p2)).thenReturn(new Location(s2, d2, b2, p2, LocationStatus.VALID, null));
 
         LocationValidationResponse response = locationImportValidator.validate(locationImportRequest2, locationImportRequests);
 
