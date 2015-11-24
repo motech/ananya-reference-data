@@ -353,7 +353,7 @@
             <dependency>
                 <groupId>org.motechproject.contrib-ananya</groupId>
                 <artifactId>motech-bulk-export-import</artifactId>
-                <version>${motech.contrib.version}</version>
+                <version>0.9</version>
             </dependency>
             <dependency>
                 <groupId>org.motechproject.contrib-ananya</groupId>
@@ -508,6 +508,8 @@
                 <version>1.2.0</version>
                 <scope>test</scope>
             </dependency>
+            
+ 
         </dependencies>
 
     </dependencyManagement>

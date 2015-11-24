@@ -52,4 +52,8 @@ public class LocationService {
     private Location getExistingLocation(LocationRequest request) {
         return allLocations.getFor(request.getState(), request.getDistrict(), request.getBlock(), request.getPanchayat());
     }
+    
+    public List<Location> getLocationbyStatus(LocationRequest locationRequest, LocationStatus locationStatus) {
+    	return allLocations.getLocationByStatus(locationRequest, locationStatus);
+    }
 }

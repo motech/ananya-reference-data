@@ -6,9 +6,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequest;
 import org.motechproject.ananya.referencedata.contactCenter.service.FrontLineWorkerContactCenterService;
+import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
 import org.motechproject.ananya.referencedata.flw.domain.Designation;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.response.BaseResponse;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
 import org.motechproject.ananya.referencedata.web.service.DefaultRequestValues;
@@ -40,13 +42,14 @@ public class FrontLineWorkerControllerTest {
     private String flwId = UUID.randomUUID().toString();
     private String channel = "contact_center";
     private DefaultRequestValues defaultRequestValues;
-
+    @Mock
+    private LocationService locationService;
     @Before
     public void setUp() {
         initMocks(this);
 
         defaultRequestValues = new DefaultRequestValues(DEFAULT_STATE);
-        frontLineWorkerController = new FrontLineWorkerController(frontLineWorkerContactCenterService,defaultRequestValues);
+        frontLineWorkerController = new FrontLineWorkerController(frontLineWorkerContactCenterService,defaultRequestValues,locationService);
     }
 
     @Test

@@ -2,6 +2,8 @@ package org.motechproject.ananya.referencedata.flw.service;
 
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.response.SyncResponse;
+import org.motechproject.ananya.referencedata.flw.response.SyncResponseFlw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,15 +32,19 @@ public class SyncService {
         }
     }
 
-    public void syncAllFrontLineWorkers(List<FrontLineWorker> frontLineWorkers) {
+    public List<SyncResponseFlw> syncAllFrontLineWorkers(List<FrontLineWorker> frontLineWorkers) {
+    	List<SyncResponseFlw> syncResponseFlws = new ArrayList<SyncResponseFlw>();
         if (propertiesService.isSyncOn()) {
-            frontLineWorkerSyncService.sync(frontLineWorkers);
+            syncResponseFlws.addAll(frontLineWorkerSyncService.sync(frontLineWorkers));
         }
+        return syncResponseFlws;
     }
 
-    public void syncLocation(Location location) {
+    public List<SyncResponse> syncLocation(Location location) {
+    	List<SyncResponse> syncResponseList = new ArrayList<SyncResponse>();
         if (propertiesService.isSyncOn()) {
-            locationSyncService.sync(location);
+            syncResponseList.addAll(locationSyncService.sync(location));
         }
+        return syncResponseList;
     }
 }

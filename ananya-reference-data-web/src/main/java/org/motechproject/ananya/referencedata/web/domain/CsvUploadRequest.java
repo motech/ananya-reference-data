@@ -1,9 +1,12 @@
 package org.motechproject.ananya.referencedata.web.domain;
 
+import java.io.Serializable;
+
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-public class CsvUploadRequest {
-    private CommonsMultipartFile fileData;
+public class CsvUploadRequest implements Serializable {
+
+	private CommonsMultipartFile fileData;
 
     public CsvUploadRequest() {
     }

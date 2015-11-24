@@ -1,0 +1,158 @@
+
+<div>
+
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="page-header">
+                <h2>Manage Location Master</h2>
+            </div>
+        </div>
+    </div>
+
+    #if(${successMessage})
+    <div class="alert alert-success">
+        ${successMessage}
+        <a class="close" data-dismiss="alert">x</a>
+    </div>
+    #end
+    #if(${errorMessage})
+    <div class="alert alert-error">
+        ${errorMessage}
+        <a class="close" data-dismiss="alert">x</a>
+    </div>
+    #end
+
+    <div class="row-fluid">
+        <div class="well well-small">
+            <strong>Download Locations</strong>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <span>$label.page.location.download</span>
+            <div>
+                <br />
+                <a class="btn btn-primary" data-dismiss="" href="admin/locationsToBeVerified/download">Download</a>
+            </div>
+        </div>
+    </div>
+
+    <hr/>
+    <div class="row-fluid">
+        <div class="well well-small">
+            <strong>Upload Locations</strong>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <form method = "post" action="admin/loc/upload"  modelattribute="csvUpload"
+            enctype="multipart/form-data" id="csvUploadForm">
+                <fieldset>
+                    <div class="control-group">
+                        <div class="controls">
+                            <label for="fileData">$label.page.location.master.upload</label>
+                            <button class="browse-button" disabled ="true">Browse...</button> $file
+                            <br/>
+                            <br/>
+                        </div>
+                    	<input name="upload" type="submit" class="input-medium btn-primary uploadAction" id="loc-btn"
+                           value="Upload" disabled ="true"/> 
+		</div>
+                	<div>
+				 	
+				 	   	<div>
+							<table>
+							    	<tr>
+							     		<th> Steps </th>
+							         	<th> Status </th>
+							        </tr>
+							        <tr>
+							        	<td> Validation </td>
+							            	<td> ${validation} </td>
+							        </tr>
+							        <tr>
+							        	<td> Refdb Persistence </td>
+							            	<td> ${persistence} </td>
+							        </tr>
+							        <tr> 
+							        	<td> Location Sync </td>
+							        	<td> ${sync} </td>
+							        </tr>
+							</table>
+						</div>
+						<br/>
+						<a href="$request.contextPath/admin/loc/sync"><h4><u>Sync</u></h4></a> 
+						<br/>
+						<div class="static-message" >
+							<h4> The data has been persisted in RefDb. Please sync the data. </h4>
+						</div>
+                    			</div> 
+				
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+</div>
+<div>
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="page-header">
+                <h2>Manage Front Line Workers</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="well well-small">
+            <strong>Upload Front Line Workers</strong>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <form method="post" action="admin/flw/upload"
+                  enctype="multipart/form-data" modelattribute="csvUpload" class="csvUploadForm">
+                <fieldset>
+                    <div class="control-group">
+                        <div class="controls">
+                            <label for="fileData">$label.page.flw.master.upload</label>
+                            <button class="browse-button" disabled ="true">Browse...</button>
+
+                        </div>
+                    </div>
+
+                    <input name="upload" type="submit" class="input-medium btn-primary uploadAction" id="flw-btn"
+                           value="Upload" disabled="true"/>
+				<div id="div-process">
+				</div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <hr/>
+    <div class="row-fluid">
+        <div class="well well-small">
+            <strong>Upload Contact Details (MSISDN)</strong>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <form method="post" action="admin/msisdn/upload"
+                  enctype="multipart/form-data" modelattribute="csvUpload" class="csvUploadForm">
+                <fieldset>
+                    <div class="control-group">
+                        <div class="controls">
+                            <label for="fileData">$label.page.flw.contact.details.master.upload</label>
+                            <button class="browse-button" disabled ="true">Browse...</button>
+                        </div>
+                    </div>
+
+                    <input name="upload" type="submit" class="input-medium btn-primary uploadAction"
+                           value="Upload" disabled ="true"/>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

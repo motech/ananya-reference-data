@@ -12,6 +12,7 @@ import org.motechproject.ananya.referencedata.flw.domain.SyncEndpointService;
 import org.motechproject.ananya.referencedata.flw.service.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.service.request.LocationSyncRequest;
 import org.motechproject.http.client.service.HttpClientService;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,10 +27,12 @@ public class LocationSyncServiceTest {
     private HttpClientService httpClientService;
     @Mock
     private SyncEndpointService syncEndpointService;
+    @Mock
+    private RestTemplate restTemplate;
 
     @Test
     public void shouldSyncAllLocations() {
-        LocationSyncService locationSyncService = new LocationSyncService(httpClientService, syncEndpointService);
+        LocationSyncService locationSyncService = new LocationSyncService(syncEndpointService);
         final Location locationToBeSynced = new Location("state", "D1", "B1", "P1", LocationStatus.NOT_VERIFIED, null);
         DateTime dateTime = DateTime.now();
         locationToBeSynced.setLastModified(dateTime);

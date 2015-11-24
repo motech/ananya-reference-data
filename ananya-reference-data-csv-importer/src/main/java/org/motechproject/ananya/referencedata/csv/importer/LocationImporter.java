@@ -5,8 +5,10 @@ import org.motechproject.ananya.referencedata.csv.response.LocationValidationRes
 import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
 import org.motechproject.ananya.referencedata.csv.utils.LocationComparator;
 import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
+import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.importer.annotation.CSVImporter;
 import org.motechproject.importer.annotation.Post;
+import org.motechproject.importer.annotation.Sync;
 import org.motechproject.importer.annotation.Validate;
 import org.motechproject.importer.domain.Error;
 import org.motechproject.importer.domain.ValidationResponse;
@@ -54,13 +56,20 @@ public class LocationImporter {
     }
 
     @Post
-    public void postData(List<LocationImportCSVRequest> locationImportCSVRequests) {
-        logger.info("Started posting location data");
-        Collections.sort(locationImportCSVRequests, new LocationComparator());
-        locationImportService.addAllWithoutValidations(locationImportCSVRequests);
-        logger.info("Finished posting location data");
+    public String postData(List<LocationImportCSVRequest> locationImportCSVRequests) {
+    	
+         logger.info("Started posting location data");
+         Collections.sort(locationImportCSVRequests, new LocationComparator());
+         String uuid_persist = locationImportService.addAllWithoutValidations(locationImportCSVRequests);
+         logger.info("Finished posting location data");
+         return uuid_persist;
     }
-
+    
+    @Sync
+    public String syncData(List<String> uuids) {
+    	return locationImportService.syncAllLocations(uuids.get(0));
+    }
+    
     private ValidationResponse constructValidationResponse(boolean isValid, List<Error> errors) {
         ValidationResponse validationResponse = new ValidationResponse(isValid);
         for (Error error : errors)

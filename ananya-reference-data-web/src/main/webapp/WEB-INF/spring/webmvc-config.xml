@@ -67,6 +67,19 @@
             <util:map map-class="java.util.LinkedHashMap">
                 <entry key="admin/login" value="layout/admin-login.vm" />
                 <entry key="admin/*" value="layout/admin-default.vm" />
+                <entry key="admin/locError" value="layout/admin-error.vm"/>
+                <entry key="admin/flwError" value="layout/admin-error.vm"/>
+                <entry key="admin/locStatus" value="layout/admin-status.vm"/>
+                <entry key="admin/flwStatus" value="layout/admin-status.vm"/>
+                <entry key="admin/locUpload" value="layout/admin-process.vm"/>
+                <entry key="admin/flwUpload" value="layout/admin-process.vm"/>
+                <entry key="admin/locValidate" value="layout/admin-process.vm"/>
+                <entry key="admin/flwValidate" value="layout/admin-process.vm"/>
+                <entry key="admin/locPersist" value="layout/admin-process.vm"/>
+                <entry key="admin/flwPersist" value="layout/admin-process.vm"/>
+                <entry key="admin/locSync" value="layout/admin-process.vm"/>
+                <entry key="admin/flwSync" value="layout/admin-process.vm"/>
+                <entry key="forcedsync" value="layout/forcedsync.vm"/>
                 <entry key="*" value="layout/empty.vm" />
             </util:map>
         </property>

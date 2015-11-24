@@ -1,14 +1,17 @@
 package org.motechproject.ananya.referencedata.csv.importer;
 
 import org.motechproject.ananya.referencedata.csv.request.FrontLineWorkerImportRequest;
+import org.motechproject.ananya.referencedata.csv.request.LocationImportCSVRequest;
 import org.motechproject.ananya.referencedata.csv.response.FrontLineWorkerImportValidationResponse;
 import org.motechproject.ananya.referencedata.csv.service.FrontLineWorkerImportService;
 import org.motechproject.ananya.referencedata.csv.service.LocationImportService;
+import org.motechproject.ananya.referencedata.csv.utils.LocationComparator;
 import org.motechproject.ananya.referencedata.csv.validator.FrontLineWorkerImportRequestValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.importer.annotation.CSVImporter;
 import org.motechproject.importer.annotation.Post;
+import org.motechproject.importer.annotation.Sync;
 import org.motechproject.importer.annotation.Validate;
 import org.motechproject.importer.domain.Error;
 import org.motechproject.importer.domain.ValidationResponse;
@@ -18,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -60,10 +64,16 @@ public class FrontLineWorkerImporter {
     }
 
     @Post
-    public void postData(List<FrontLineWorkerImportRequest> frontLineWorkerImportRequests) {
+    public String postData(List<FrontLineWorkerImportRequest> frontLineWorkerImportRequests) {
         logger.info("Started posting FLW data");
-        frontLineWorkerImportService.addAllWithoutValidations(frontLineWorkerImportRequests);
+         String uuid_persist = frontLineWorkerImportService.addAllWithoutValidations(frontLineWorkerImportRequests);
         logger.info("Finished posting FLW data");
+        return uuid_persist;
+    }
+    
+    @Sync
+    public String syncData(List<String> uuids) {
+    	 return frontLineWorkerImportService.syncflw(uuids.get(0));
     }
 
     private ValidationResponse constructValidationResponse(boolean isValid, List<Error> errors) {

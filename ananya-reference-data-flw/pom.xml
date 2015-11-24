@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.motechproject.contrib-ananya</groupId>
             <artifactId>motech-http-client</artifactId>
-        </dependency>
+         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>

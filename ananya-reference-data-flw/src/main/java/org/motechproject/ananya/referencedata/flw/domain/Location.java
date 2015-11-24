@@ -1,9 +1,9 @@
 package org.motechproject.ananya.referencedata.flw.domain;
 
 import liquibase.util.StringUtils;
+
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
-
 import javax.persistence.*;
 
 @Entity
@@ -12,7 +12,7 @@ public class Location extends BaseEntity implements Cloneable {
     @Column(name = "district")
     private String district;
 
-    @Column(name = "block")
+	@Column(name = "block")
     private String block;
 
     @Column(name = "panchayat")
@@ -85,6 +85,10 @@ public class Location extends BaseEntity implements Cloneable {
 
     public boolean isInvalid() {
         return status == LocationStatus.INVALID;
+    }
+    
+    public boolean isNotVerified() {
+    	return status == LocationStatus.NOT_VERIFIED;
     }
 
     @Override

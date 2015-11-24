@@ -1,12 +1,15 @@
 package org.motechproject.ananya.referencedata.contactCenter.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.motechproject.ananya.referencedata.contactCenter.mapper.FrontLineWorkerMapper;
 import org.motechproject.ananya.referencedata.contactCenter.request.FrontLineWorkerVerificationWebRequest;
 import org.motechproject.ananya.referencedata.contactCenter.validator.FrontLineWorkerRequestValidator;
 import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.service.SyncService;
 import org.motechproject.ananya.referencedata.flw.validators.Errors;
 import org.motechproject.ananya.referencedata.flw.validators.ValidationException;
@@ -43,9 +46,46 @@ public class FrontLineWorkerContactCenterService {
 
     private void updateVerifiedFlw(FrontLineWorkerVerificationRequest request) {
         Errors validationErrors = requestValidator.validate(request);
-        raiseExceptionIfThereAreErrors(validationErrors);
+        raiseExceptionIfThereAreErrors(validationErrors,request.getLocation());
         saveAndSync(request);
     }
+    
+
+    /**
+    * @author vishnu
+    * Rectified null pointer issue.
+    * @param locationRequest
+    * @return
+    */
+   private String checkDuplicateLocation(LocationRequest locationRequest) {
+//   	boolean flag = true;
+	   String result = null;
+   	  if (locationRequest != null && 
+   			  !StringUtils.isEmpty(locationRequest.getDistrict()) && 
+   			  !StringUtils.isEmpty(locationRequest.getBlock()) &&
+              !StringUtils.isEmpty(locationRequest.getPanchayat()) &&
+              !StringUtils.isEmpty(locationRequest.getState())) {
+   		  List<Location> validLocationlist = locationService.getLocationbyStatus(locationRequest, LocationStatus.VALID); 
+   		  List<Location> notVerifiedLocationList = locationService.getLocationbyStatus(locationRequest, LocationStatus.NOT_VERIFIED);
+   		  if(validLocationlist.size() == 0) {
+   			  if(notVerifiedLocationList.size()==0) {
+   				  result = "add";
+   			  }else if(notVerifiedLocationList.size()==1){
+   				  result = "update";
+   			  }else if (notVerifiedLocationList.size()>1){
+   				  result = "error";
+   			  }
+   			  
+   		  } 
+   		  else if(validLocationlist.size()==1){
+   			  result="update";
+   			 }
+   		  else{
+   			  result="error";
+   		  }
+   	  }
+   	return result;
+   }
 
     private void saveAndSync(FrontLineWorkerVerificationRequest request) {
         FrontLineWorker frontLineWorker = getFrontLineWorker(request);
@@ -110,9 +150,19 @@ public class FrontLineWorkerContactCenterService {
             throw new ValidationException(String.format("Given msisdn %s does not match existing msisdn %s for the given id.", requestMsisdn, existingMsisdn));
     }
 
-    private void raiseExceptionIfThereAreErrors(Errors validationErrors) {
+    private void raiseExceptionIfThereAreErrors(Errors validationErrors, LocationRequest locationRequest) {
         if (validationErrors.hasErrors()) {
             throw new ValidationException(validationErrors.allMessages());
+        } else {
+        	if(checkDuplicateLocation(locationRequest)=="error") {
+        		Errors errors = new Errors();
+        		errors.add("Location already exists.");
+        		throw new ValidationException(errors.allMessages());
+        	}
+        	else if(checkDuplicateLocation(locationRequest)=="update") {
+        		Errors errors = new Errors();
+        		errors.add("Location already exists.");
+        	}
         }
     }
 

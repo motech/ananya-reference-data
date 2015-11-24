@@ -1,22 +1,32 @@
 package org.motechproject.ananya.referencedata.contactCenter.validator;
 
-import org.apache.commons.lang.StringUtils;
-import org.motechproject.ananya.referencedata.domain.Channel;
-import org.motechproject.ananya.referencedata.flw.domain.Designation;
-import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
-import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
-import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
-import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
-import org.motechproject.ananya.referencedata.flw.validators.Errors;
-
-import java.util.regex.Pattern;
-
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.motechproject.ananya.referencedata.flw.domain.VerificationStatus.SUCCESS;
 import static org.motechproject.ananya.referencedata.flw.domain.VerificationStatus.isValid;
 
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+import org.motechproject.ananya.referencedata.contactCenter.service.LocationService;
+import org.motechproject.ananya.referencedata.domain.Channel;
+import org.motechproject.ananya.referencedata.flw.domain.Designation;
+import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
+import org.motechproject.ananya.referencedata.flw.domain.Location;
+import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
+import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
+import org.motechproject.ananya.referencedata.flw.repository.DataAccessTemplate;
+import org.motechproject.ananya.referencedata.flw.request.ChangeMsisdnRequest;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
+import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
+import org.motechproject.ananya.referencedata.flw.validators.Errors;
+import org.springframework.beans.factory.annotation.Autowired;
+
 public class WebRequestValidator {
+	
+	@Autowired
+	private LocationService locationService;
 
     public void validateFlwId(String flwId, Errors errors) {
         if (StringUtils.isEmpty(flwId)) {
@@ -74,7 +84,8 @@ public class WebRequestValidator {
         if (StringUtils.isEmpty(locationRequest.getState()))
             errors.add("state field is blank");
     }
-
+    
+    
     public void validateAlternateContactNumber(String alternateContactNumber, String verificationStatus, Errors errors) {
         if (verificationSuccess(verificationStatus) && alternateContactNumberMissing(alternateContactNumber)) {
             errors.add("alternate contact number field is mandatory");

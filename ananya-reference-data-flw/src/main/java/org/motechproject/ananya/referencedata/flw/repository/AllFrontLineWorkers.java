@@ -36,7 +36,17 @@ public class AllFrontLineWorkers {
         List frontLineWorkerList = template.findByCriteria(criteria);
         return frontLineWorkerList;
     }
-
+    
+    
+    @Transactional(readOnly = true)
+    public FrontLineWorker getForid(int id) {
+        DetachedCriteria criteria = DetachedCriteria.forClass(FrontLineWorker.class);
+        criteria.add(Restrictions.eq("id", id));
+        List flwLst = template.findByCriteria(criteria);
+        return  (FrontLineWorker) (flwLst.isEmpty() ? null : flwLst.get(0));
+    }
+    
+    
     public void createOrUpdate(FrontLineWorker frontLineWorker) {
         template.saveOrUpdate(frontLineWorker);
     }

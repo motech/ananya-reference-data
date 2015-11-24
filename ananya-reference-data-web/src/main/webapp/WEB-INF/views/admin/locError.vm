@@ -1,0 +1,18 @@
+<div class="error_page">
+    <div>
+    	<h1>ERROR LOGGING PROCESS</h1>
+    </div>
+    <div>
+    <div class="float-right">
+    	<a href="$request.contextPath/admin/home"><h3>Back</h3></a>
+    </div>
+    <div class="error-message">
+    	<h3>Location Upload Process Failed due to invalid records in the error sheet.Download error file to see specific errors.</h3>
+    </div>
+    </div>
+    
+   
+    <div class="error-sheet">
+	<a href="$request.contextPath/admin/loc/error">${downloadErrorCsvName}</a>
+    </div>
+</div>    

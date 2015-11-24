@@ -1,0 +1,39 @@
+<div class="final-status_page">
+	    	<div>
+	    		<h1>SYNC PROCESS</h1>
+	    	</div>
+	    <div>
+	    	<div class="float-right">
+	    		<a href="$request.contextPath/admin/home"><h3>Back</h3></a>
+	    	</div>
+	    	
+	    	<div class="sync-message">
+	    		<h3>Sync Status of Location Records uploaded</h3>
+	    	</div>
+	    </div>	
+	    	
+	    	<div class="sync-table">
+	    		<table>
+					<tr>
+						<th> Status of Records </th>
+						<th> Valid </th>
+						<th> Invalid </th>
+					</tr>
+					<tr>
+						<td> Total Number of Record Synced </td>
+						<td class="green"> ${passedValid} </td>
+						<td class="green">  ${passedInvalid} </td>
+					</tr>
+					<tr>
+						<td> Total Number of Record Failed </td>
+						<td class="red"> ${failedValid} </td>
+						<td class="red"> ${failedInvalid} </td>
+					</tr>
+					<tr> 
+						<td> Total records </td>
+						<td> ${sumValid} </td>
+						<td> ${sumInvalid} </td>
+					</tr>
+				</table>
+	    	</div>	    	
+	   </div>   

@@ -46,4 +46,5 @@ public class FrontLineWorkerServiceTest {
         List<FrontLineWorker> actualFrontLineWorkers = captor.getValue();
         assertEquals(alternateLocation, actualFrontLineWorkers.get(0).getLocation());
     }
+    
 }

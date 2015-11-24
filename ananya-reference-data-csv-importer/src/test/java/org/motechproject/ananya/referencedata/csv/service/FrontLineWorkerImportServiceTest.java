@@ -10,8 +10,10 @@ import org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
 import org.motechproject.ananya.referencedata.flw.domain.VerificationStatus;
+import org.motechproject.ananya.referencedata.flw.repository.AllFlwUuid;
 import org.motechproject.ananya.referencedata.flw.repository.AllFrontLineWorkers;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
+import org.motechproject.ananya.referencedata.flw.repository.AllUploadFlwMetaData;
 import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.motechproject.ananya.referencedata.flw.service.SyncService;
 import org.motechproject.ananya.referencedata.flw.utils.PhoneNumber;
@@ -36,7 +38,10 @@ public class FrontLineWorkerImportServiceTest {
     private SyncService syncService;
     @Mock
     private Properties clientServicesProperties;
-
+    @Mock
+    private AllUploadFlwMetaData allUploadFlwMetaData;
+    @Mock
+    private AllFlwUuid allFlwUuid;
     @Captor
     ArgumentCaptor<List<FrontLineWorker>> captor;
     @Captor
@@ -47,7 +52,9 @@ public class FrontLineWorkerImportServiceTest {
     @Before
     public void setUp() {
         initMocks(this);
-        frontLineWorkerImportService = new FrontLineWorkerImportService(allLocations, allFrontLineWorkers, syncService);
+        frontLineWorkerImportService = new FrontLineWorkerImportService(allLocations, 
+        		allFrontLineWorkers, 
+        		syncService,allUploadFlwMetaData,allFlwUuid);
     }
 
     @Test

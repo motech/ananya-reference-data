@@ -1,0 +1,31 @@
+log4j.rootLogger=INFO, file
+
+log4j.appender.file=org.apache.log4j.RollingFileAppender
+log4j.appender.file.File=/home/vishnu/Desktop/apache-tomcat-7.0.22-second/logs/ananya-referencedata.log
+log4j.appender.file.MaxFileSize=4MB
+log4j.appender.file.MaxBackupIndex=10
+log4j.appender.file.layout=org.apache.log4j.EnhancedPatternLayout
+log4j.appender.file.layout.ConversionPattern=[%t] - %d %p [%c] - %m%n
+
+log4j.appender.flw=org.apache.log4j.RollingFileAppender
+log4j.appender.flw.File=/home/vishnu/Desktop/apache-tomcat-7.0.22-second/logs/ananya-flw.log
+log4j.appender.flw.MaxFileSize=4MB
+log4j.appender.flw.MaxBackupIndex=10
+log4j.appender.flw.layout=org.apache.log4j.EnhancedPatternLayout
+log4j.appender.flw.layout.ConversionPattern=[%t] - %d %p [%c] - %m%n
+
+log4j.appender.importer=org.apache.log4j.RollingFileAppender
+log4j.appender.importer.File=/home/vishnu/Desktop/apache-tomcat-7.0.22-second/logs/ananya-refdata-csv-importer.log
+log4j.appender.importer.MaxFileSize=4MB
+log4j.appender.importer.MaxBackupIndex=10
+log4j.appender.importer.layout=org.apache.log4j.EnhancedPatternLayout
+log4j.appender.importer.layout.ConversionPattern=[%t] - %d %p [%c] - %m%n
+
+log4j.logger.org.motechproject.importer=INFO, importer
+log4j.logger.org.motechproject.ananya.referencedata.csv=INFO, importer
+log4j.logger.org.motechproject.ananya.referencedata.flw=INFO, flw
+log4j.logger.org.springframework=ERROR, file
+log4j.logger.org.apache=ERROR, file
+log4j.logger.org.quartz=ERROR, file
+
+

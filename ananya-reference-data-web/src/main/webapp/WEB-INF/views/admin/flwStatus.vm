@@ -1,0 +1,35 @@
+<div class="final-status_page">
+	    	<div>
+	    		<h1>SYNC PROCESS</h1>
+	    	</div>
+	    <div>
+	    	<div class="float-right">
+	    		<a href="$request.contextPath/admin/home"><h3>Back</h3></a>
+	    	</div>
+	    	
+	    	<div class="sync-message">
+	    		<h3>Sync Status of FLW Records uploaded</h3>
+	    	</div>
+	    </div>	
+	    	
+	    	<div class="sync-table">
+	    		<table>
+					<tr>
+						<th> Status of Records </th>
+						<th> Flw </th>
+						</tr>
+					<tr>
+						<td> Total Number of Records Synced </td>
+						<td class="green"> ${flwPassed} </td>
+					</tr>
+					<tr>
+						<td> Total Number of Record Failed </td>
+						<td class="red"> ${flwFailed} </td>
+					</tr>
+					<tr> 
+						<td> Total records </td>
+						<td> ${sumflw} </td>
+					</tr>
+				</table>
+	    	</div>	    	
+	   </div>   

@@ -12,7 +12,9 @@ import org.motechproject.ananya.referencedata.csv.utils.LocationImportCSVRequest
 import org.motechproject.ananya.referencedata.csv.validator.LocationImportValidator;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
+import org.motechproject.ananya.referencedata.flw.repository.AllLocationFilename;
 import org.motechproject.ananya.referencedata.flw.repository.AllLocations;
+import org.motechproject.ananya.referencedata.flw.repository.AllUploadLocationMetaData;
 import org.motechproject.ananya.referencedata.flw.service.FrontLineWorkerService;
 import org.motechproject.ananya.referencedata.flw.service.SyncService;
 
@@ -34,10 +36,15 @@ public class LocationImportServiceTest {
     @Mock
     private SyncService syncService;
     LocationImportService locationImportService;
+    @Mock
+    AllUploadLocationMetaData allUploadMetaData;
+    
+    @Mock
+    AllLocationFilename allLocationFilename;
 
     @Before
     public void setUp() {
-        locationImportService = new LocationImportService(allLocations, frontLineWorkerService, syncService);
+        locationImportService = new LocationImportService(allLocations, frontLineWorkerService, syncService,allUploadMetaData,allLocationFilename);
     }
 
 

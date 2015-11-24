@@ -7,6 +7,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.motechproject.ananya.referencedata.flw.domain.Location;
 import org.motechproject.ananya.referencedata.flw.domain.LocationStatus;
+import org.motechproject.ananya.referencedata.flw.request.LocationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,20 +43,42 @@ public class AllLocations {
     public Location getFor(String state, String district, String block, String panchayat) {
         DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
 
+        LocationStatus [] status = {LocationStatus.NOT_VERIFIED,LocationStatus.VALID};
         criteria.add(Restrictions.eq("state", state).ignoreCase());
         criteria.add(Restrictions.eq("district", district).ignoreCase());
         criteria.add(Restrictions.eq("block", block).ignoreCase());
         criteria.add(Restrictions.eq("panchayat", panchayat).ignoreCase());
+        criteria.add(Restrictions.in("status", status));
 
-        List locationList = template.findByCriteria(criteria);
-        return locationList.isEmpty() ? null : (Location) locationList.get(0);
+        List<Location> locationList = template.findByCriteria(criteria);
+        return locationList.isEmpty() ? null : locationList.get(0);
     }
-
+    
+    @Transactional(readOnly = true)
+    public List<Location> getLocationByStatus(LocationRequest locationRequest, LocationStatus locationStatus) {
+        DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
+        criteria.add(Restrictions.eq("state", locationRequest.getState()).ignoreCase());;
+        criteria.add(Restrictions.eq("district", locationRequest.getDistrict()).ignoreCase());
+        criteria.add(Restrictions.eq("block", locationRequest.getBlock()).ignoreCase());
+        criteria.add(Restrictions.eq("panchayat", locationRequest.getPanchayat()).ignoreCase());
+        criteria.add(Restrictions.eq("status", locationStatus));
+        List<Location> locationList = (List<Location>) template.findByCriteria(criteria);
+        return (locationList == null)?new ArrayList<Location>():locationList;
+    }
+    
     @Transactional(readOnly = true)
     public List<Location> getForStatuses(LocationStatus... statuses) {
         DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
         criteria.add(Restrictions.in("status", statuses));
         return template.findByCriteria(criteria);
+    }
+    
+    @Transactional(readOnly = true)
+    public Location getForid(int id) {
+        DetachedCriteria criteria = DetachedCriteria.forClass(Location.class);
+        criteria.add(Restrictions.eq("id", id));
+        List<Location> locationList = template.findByCriteria(criteria);
+        return  (Location) (locationList.isEmpty() ? null :  locationList.get(0));
     }
 
     @Transactional(readOnly = true)

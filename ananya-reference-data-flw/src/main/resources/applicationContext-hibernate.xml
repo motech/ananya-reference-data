@@ -12,6 +12,11 @@
                 <value>org.motechproject.ananya.referencedata.flw.domain.AnanyaReferenceDataProperty</value>
                 <value>org.motechproject.ananya.referencedata.flw.domain.FrontLineWorker</value>
                 <value>org.motechproject.ananya.referencedata.flw.domain.Location</value>
+                <value>org.motechproject.ananya.referencedata.flw.domain.UploadCsvFile</value>
+                <value>org.motechproject.ananya.referencedata.flw.domain.UploadLocationMetaData</value>
+                <value>org.motechproject.ananya.referencedata.flw.domain.UploadFlwMetaData</value>
+                <value>org.motechproject.ananya.referencedata.flw.domain.LocationFilename</value>
+                <value>org.motechproject.ananya.referencedata.flw.domain.FlwUuid</value>
             </list>
         </property>
         <property name="entityInterceptor">

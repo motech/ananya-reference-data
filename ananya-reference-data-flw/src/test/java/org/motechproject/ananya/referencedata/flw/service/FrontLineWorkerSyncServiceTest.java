@@ -42,7 +42,7 @@ public class FrontLineWorkerSyncServiceTest {
 
     @Before
     public void setUp() {
-        frontLineWorkerSyncService = new FrontLineWorkerSyncService(httpClientService, syncEndpointService, allFrontLineWorkers);
+        frontLineWorkerSyncService = new FrontLineWorkerSyncService(syncEndpointService, allFrontLineWorkers);
     }
 
     @Test

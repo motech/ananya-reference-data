@@ -64,7 +64,7 @@ public class HomeController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/admin/flw/upload")
+    @RequestMapping(method = RequestMethod.POST, value = "/admin/flw/upload/start")
     public ModelAndView uploadFrontLineWorkers(@ModelAttribute("csvUpload") CsvUploadRequest csvUploadRequest, HttpServletResponse httpServletResponse) throws Exception {
         int maximumNumberOfRecords = Integer.parseInt(referenceDataProperties.getProperty("flw.csv.max.records"));
         return processRequest(csvUploadRequest, httpServletResponse, ImportType.FrontLineWorker, maximumNumberOfRecords, false);

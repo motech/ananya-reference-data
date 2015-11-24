@@ -134,5 +134,70 @@
             ALTER TABLE ananya_reference_data.front_line_worker ADD COLUMN alternate_contact_number bigint;
         </sql>
     </changeSet>
+    
+    <changeSet context="setup" author="ThoughtWorks" id="19">
+        <sql splitStatements="false">
+            CREATE TABLE ananya_reference_data.upload_loc_metadata(
+            id serial,
+            uuid varchar(255),
+            passed_valid bigint,
+            passed_invalid bigint,
+            failed_valid bigint,
+            failed_invalid bigint
+            );
+        </sql>
+    </changeSet>
+    
+      <changeSet context="setup" author="ThoughtWorks" id="20">
+        <sql splitStatements="false">
+            ALTER TABLE ananya_reference_data.upload_loc_metadata ADD date_uploaded timestamp;
+        </sql>
+    </changeSet>
+    
+    <changeSet context="setup" author="ThoughtWorks" id="21">
+        <sql splitStatements="false">
+            CREATE TABLE ananya_reference_data.csv_upload_location(
+            id serial,
+            uuid varchar(255),
+            content text
+            
+            );
+        </sql>
+    </changeSet>
+    <changeSet context="setup" author="ThoughtWorks" id="22">
+        <sql splitStatements="false">
+            CREATE TABLE ananya_reference_data.upload_flw_metadata(
+            id serial,
+            uuid varchar(255),
+            flw_passed bigint,
+            flw_failed bigint
+            );
+        </sql>
+    </changeSet>
+    <changeSet context="setup" author="ThoughtWorks" id="23">
+        <sql splitStatements="false">
+            ALTER TABLE ananya_reference_data.upload_flw_metadata ADD date_uploaded timestamp;
+        </sql>
+    </changeSet>
+    
+    <changeSet context="setup" author="ThoughtWorks" id="24">
+        <sql splitStatements="false">
+            CREATE TABLE ananya_reference_data.locationfilename(
+            id serial,
+            uuid varchar(255),
+            location_id integer
+            );
+        </sql>
+    </changeSet>
+    
+    <changeSet context="setup" author="ThoughtWorks" id="25">
+        <sql splitStatements="false">
+            CREATE TABLE ananya_reference_data.flwuuid(
+            id serial,
+            uuid varchar(255),
+            flw_id integer
+            );
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>

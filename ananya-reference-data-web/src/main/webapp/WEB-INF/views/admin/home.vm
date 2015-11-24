@@ -44,8 +44,8 @@
     </div>
     <div class="row-fluid">
         <div class="span12">
-            <form method="post" action="admin/location/upload"
-                  enctype="multipart/form-data" modelattribute="csvUpload" class="csvUploadForm">
+            <form method="post" action="admin/loc/upload"
+                  enctype="multipart/form-data" modelattribute="csvUpload" class="csvUploadForm" id="csvUploadForm">
                 <fieldset>
                     <div class="control-group">
                         <div class="controls">
@@ -56,7 +56,7 @@
                     </div>
 
                     <input name="upload" type="submit" class="input-medium btn-primary uploadAction"
-                           value="Upload"/>
+                           value="Upload" id="loc-upload-button"/>
 
                 </fieldset>
             </form>
@@ -92,7 +92,7 @@
                     </div>
 
                     <input name="upload" type="submit" class="input-medium btn-primary uploadAction"
-                           value="Upload"/>
+                           value="Upload" id="flw-upload-button"/>
 
                 </fieldset>
             </form>
@@ -118,7 +118,7 @@
                     </div>
 
                     <input name="upload" type="submit" class="input-medium btn-primary uploadAction"
-                           value="Upload"/>
+                           value="Upload" id="msisdn-upload-button"/>
 
                 </fieldset>
             </form>
